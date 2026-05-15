@@ -1,50 +1,77 @@
 /**
- * Oh-pi BTW / QQ Extension — parallel side conversations
+ * Oh-pi BTW / QQ Extension — parallel side conversations (overlay-based)
  *
- * Adds /btw and /qq commands that open a side conversation without interrupting
- * the main agent run. Answers stream into a widget above the editor.
+ * Adds /btw and /qq commands that open an overlay-based side conversation
+ * without interrupting the main agent run. The overlay supports multi-turn
+ * chat with tool access (read, bash, edit, write).
  *
  * Features:
- * - Runs immediately, even while the main agent is busy
- * - Maintains a continuous BTW thread across exchanges
- * - Keeps BTW entries out of the main agent's LLM context
- * - Can inject the full thread or a summary back into the main agent
+ * - Overlay UI with multi-turn chat input
+ * - Side session with createAgentSession + tools (read, bash, edit, write)
+ * - Real-time streaming via session.subscribe()
+ * - Close flow: Keep side thread or Inject summary into main chat
+ * - Thread persistence via btw-thread-entry / btw-thread-reset resources
+ * - Can inject full thread or a summary back into the main agent
  * - Optionally saves individual exchanges as visible session notes with --save
  *
- * Based on https://github.com/dbachelder/pi-btw by Dan Bachelder (MIT).
+ * Based on https://github.com/mitsuhiko/agent-stuff by Armin Ronacher (MIT).
+ * Adapted from https://github.com/dbachelder/pi-btw by Dan Bachelder (MIT).
  */
 
-import type { AssistantMessage, Message, ThinkingLevel as AiThinkingLevel } from "@mariozechner/pi-ai";
-import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@mariozechner/pi-coding-agent";
-
-import { completeSimple, streamSimple } from "@mariozechner/pi-ai";
-import { buildSessionContext, getMarkdownTheme } from "@mariozechner/pi-coding-agent";
-import { Container, Markdown, Text } from "@mariozechner/pi-tui";
+import {
+	buildSessionContext,
+	createAgentSession,
+	createExtensionRuntime,
+	getMarkdownTheme,
+	SessionManager,
+	type AgentSession,
+	type AgentSessionEvent,
+	type ExtensionAPI,
+	type ExtensionCommandContext,
+	type ExtensionContext,
+	type ResourceLoader,
+} from "@mariozechner/pi-coding-agent";
+import { type AssistantMessage, type Message, type ThinkingLevel as AiThinkingLevel } from "@mariozechner/pi-ai";
+import {
+	Container,
+	Input,
+	Markdown,
+	truncateToWidth,
+	visibleWidth,
+	type Focusable,
+	type KeybindingsManager,
+	type OverlayHandle,
+	type TUI,
+} from "@mariozechner/pi-tui";
 
 const BTW_MESSAGE_TYPE = "btw-note";
 const BTW_ENTRY_TYPE = "btw-thread-entry";
 const BTW_RESET_TYPE = "btw-thread-reset";
 
 const BTW_SYSTEM_PROMPT = [
-	"You are having an aside conversation with the user, separate from their main working session.",
-	"The main session messages are provided for context only — that work is being handled by another agent.",
-	"Focus on answering the user's side questions, helping them think through ideas, or planning next steps.",
-	"Do not act as if you need to continue unfinished work from the main session unless the user explicitly asks you to prepare something for injection back to it.",
-	"Format your responses using Markdown for readability.",
+	"You are BTW, a side-channel assistant embedded in the user's coding agent.",
+	"You have access to the main conversation context — use it to give informed answers.",
+	"Help with focused questions, planning, and quick explorations.",
+	"Be direct and practical.",
 ].join(" ");
-const STARTUP_THREAD_RESTORE_DELAY_MS = 250;
+
+const BTW_SUMMARY_PROMPT =
+	"Summarize this side conversation for handoff into the main conversation. Keep key decisions, findings, risks, and next actions. Output only the summary.";
 
 type SessionThinkingLevel = "off" | AiThinkingLevel;
 
 interface BtwDetails {
 	question: string;
-	thinking: string;
 	answer: string;
+	timestamp: number;
 	provider: string;
 	model: string;
 	thinkingLevel: SessionThinkingLevel;
-	timestamp: number;
 	usage?: AssistantMessage["usage"];
+}
+
+interface BtwResetDetails {
+	timestamp: number;
 }
 
 interface ParsedBtwArgs {
@@ -52,119 +79,158 @@ interface ParsedBtwArgs {
 	save: boolean;
 }
 
-type SaveState = "not-saved" | "saved" | "queued";
+type OverlayRuntime = {
+	handle?: OverlayHandle;
+	refresh?: () => void;
+	close?: () => void;
+	finish?: () => void;
+	setDraft?: (value: string) => void;
+	closed?: boolean;
+};
 
-interface BtwSlot {
-	question: string;
-	modelLabel: string;
-	thinking: string;
-	answer: string;
-	done: boolean;
-	controller: AbortController;
+type SideSessionRuntime = {
+	session: AgentSession;
+	modelKey: string;
+	unsubscribe: () => void;
+};
+
+type ToolCallInfo = {
+	toolCallId: string;
+	toolName: string;
+	args: string;
+	status: "running" | "done" | "error";
+};
+
+// ── Utility functions ─────────────────────────────────────────────────────
+
+function stripDynamicSystemPromptFooter(systemPrompt: string): string {
+	return systemPrompt
+		.replace(/\nCurrent date and time:[^\n]*(?:\nCurrent working directory:[^\n]*)?$/u, "")
+		.replace(/\nCurrent working directory:[^\n]*$/u, "")
+		.trim();
 }
 
-interface WidgetThemeHelpers {
-	dim: (text: string) => string;
-	success: (text: string) => string;
-	italic: (text: string) => string;
-	warning: (text: string) => string;
-}
+function createBtwResourceLoader(
+	ctx: ExtensionContext,
+	appendSystemPrompt: string[] = [BTW_SYSTEM_PROMPT],
+): ResourceLoader {
+	const extensionsResult = { extensions: [], errors: [], runtime: createExtensionRuntime() };
+	const systemPrompt = stripDynamicSystemPromptFooter(ctx.getSystemPrompt());
 
-function isVisibleBtwMessage(message: { role: string; customType?: string }): boolean {
-	return message.role === "custom" && message.customType === BTW_MESSAGE_TYPE;
-}
-
-function isCustomEntry(
-	entry: unknown,
-	customType: string,
-): entry is { type: "custom"; customType: string; data?: unknown } {
-	return (
-		Boolean(entry) &&
-		typeof entry === "object" &&
-		(entry as { type?: string }).type === "custom" &&
-		(entry as { customType?: string }).customType === customType
-	);
-}
-
-function toReasoning(level: SessionThinkingLevel): AiThinkingLevel | undefined {
-	return level === "off" ? undefined : level;
-}
-
-interface CompatibleModelRegistry {
-	getApiKey?: (model: NonNullable<ExtensionContext["model"]>) => Promise<string | undefined> | string | undefined;
-	getApiKeyForProvider?: (provider: string) => Promise<string | undefined> | string | undefined;
-	authStorage?: {
-		getApiKey?: (provider: string) => Promise<string | undefined> | string | undefined;
+	return {
+		getExtensions: () => extensionsResult,
+		getSkills: () => ({ skills: [], diagnostics: [] }),
+		getPrompts: () => ({ prompts: [], diagnostics: [] }),
+		getThemes: () => ({ themes: [], diagnostics: [] }),
+		getAgentsFiles: () => ({ agentsFiles: [] }),
+		getSystemPrompt: () => systemPrompt,
+		getAppendSystemPrompt: () => appendSystemPrompt,
+		extendResources: () => {},
+		reload: async () => {},
 	};
 }
 
-export async function resolveBtwApiKey(
-	model: NonNullable<ExtensionContext["model"]>,
-	modelRegistry: ExtensionContext["modelRegistry"] | CompatibleModelRegistry | undefined,
-): Promise<string | undefined> {
-	const registry = modelRegistry as CompatibleModelRegistry | undefined;
-
-	if (typeof registry?.getApiKey === "function") {
-		return await registry.getApiKey(model);
-	}
-
-	if (typeof registry?.getApiKeyForProvider === "function") {
-		return await registry.getApiKeyForProvider(model.provider);
-	}
-
-	if (typeof registry?.authStorage?.getApiKey === "function") {
-		return await registry.authStorage.getApiKey(model.provider);
-	}
-
-	try {
-		const piModule = (await import("@mariozechner/pi-coding-agent")) as Record<string, unknown>;
-		const authStorageModule = Reflect.get(piModule, "AuthStorage") as
-			| {
-					create?: () => unknown;
-			  }
-			| undefined;
-		const modelRegistryModule = Reflect.get(piModule, "ModelRegistry") as
-			| (new (authStorage: unknown) => CompatibleModelRegistry)
-			| undefined;
-
-		if (typeof authStorageModule?.create === "function" && modelRegistryModule) {
-			const fallbackRegistry = new modelRegistryModule(authStorageModule.create());
-			if (typeof fallbackRegistry.getApiKey === "function") {
-				return await fallbackRegistry.getApiKey(model);
-			}
-		}
-	} catch {
-		// Ignore and fall back to environment-based resolution below.
-	}
-
-	try {
-		const aiModule = (await import("@mariozechner/pi-ai")) as {
-			getEnvApiKey?: (provider: string) => string | undefined;
-		};
-		return aiModule.getEnvApiKey?.(model.provider);
-	} catch {
-		return undefined;
-	}
+function extractText(parts: AssistantMessage["content"]): string {
+	return parts
+		.filter((part) => part.type === "text")
+		.map((part) => part.text)
+		.join("\n")
+		.trim();
 }
 
-function extractText(parts: AssistantMessage["content"], type: "text" | "thinking"): string {
-	const chunks: string[] = [];
-	for (const part of parts) {
-		if (type === "text" && part.type === "text") {
-			chunks.push(part.text);
-		} else if (type === "thinking" && part.type === "thinking") {
-			chunks.push(part.thinking);
+function extractEventAssistantText(message: unknown): string {
+	if (!message || typeof message !== "object") {
+		return "";
+	}
+
+	const maybeMessage = message as { role?: unknown; content?: unknown };
+	if (maybeMessage.role !== "assistant" || !Array.isArray(maybeMessage.content)) {
+		return "";
+	}
+
+	return maybeMessage.content
+		.filter((part): part is { type: "text"; text: string } => {
+			return !!part && typeof part === "object" && (part as { type?: unknown }).type === "text";
+		})
+		.map((part) => part.text)
+		.join("\n")
+		.trim();
+}
+
+function getLastAssistantMessage(session: AgentSession): AssistantMessage | null {
+	for (let i = session.state.messages.length - 1; i >= 0; i--) {
+		const message = session.state.messages[i];
+		if (message.role === "assistant") {
+			return message as AssistantMessage;
 		}
 	}
-	return chunks.join("\n").trim();
+
+	return null;
 }
 
-function extractAnswer(message: AssistantMessage): string {
-	return extractText(message.content, "text") || "(No text response)";
+function buildSeedMessages(ctx: ExtensionContext, thread: BtwDetails[]): Message[] {
+	const seed: Message[] = [];
+
+	try {
+		const contextMessages = buildSessionContext(ctx.sessionManager.getEntries(), ctx.sessionManager.getLeafId()).messages;
+		seed.push(...(contextMessages.filter((message) => "role" in message) as Message[]));
+	} catch {
+		// Ignore context seed failures and continue with an empty side thread.
+	}
+
+	for (const item of thread) {
+		seed.push(
+			{
+				role: "user",
+				content: [{ type: "text", text: item.question }],
+				timestamp: item.timestamp,
+			},
+			{
+				role: "assistant",
+				content: [{ type: "text", text: item.answer }],
+				provider: item.provider,
+				model: item.model,
+				api: ctx.model?.api ?? "openai-responses",
+				usage:
+					item.usage ??
+					{
+						input: 0,
+						output: 0,
+						cacheRead: 0,
+						cacheWrite: 0,
+						totalTokens: 0,
+						cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+					},
+				stopReason: "stop",
+				timestamp: item.timestamp,
+			},
+		);
+	}
+
+	return seed;
 }
 
-function extractThinking(message: AssistantMessage): string {
-	return extractText(message.content, "thinking");
+function formatThread(thread: BtwDetails[]): string {
+	return thread
+		.map((item) => `User: ${item.question.trim()}\nAssistant: ${item.answer.trim()}`)
+		.join("\n\n---\n\n");
+}
+
+function formatToolArgs(toolName: string, args: unknown): string {
+	if (!args || typeof args !== "object") return "";
+	const a = args as Record<string, unknown>;
+	switch (toolName) {
+		case "bash":
+			return typeof a.command === "string" ? truncateToWidth(a.command.split("\n")[0], 50, "…") : "";
+		case "read":
+		case "write":
+		case "edit":
+			return typeof a.path === "string" ? a.path : "";
+		default: {
+			const first = Object.values(a)[0];
+			return typeof first === "string" ? truncateToWidth(first.split("\n")[0], 40, "…") : "";
+		}
+	}
 }
 
 function parseBtwArgs(args: string): ParsedBtwArgs {
@@ -173,105 +239,18 @@ function parseBtwArgs(args: string): ParsedBtwArgs {
 	return { question, save };
 }
 
-function buildMainMessages(ctx: ExtensionCommandContext): Message[] {
-	const sessionContext = buildSessionContext(ctx.sessionManager.getEntries(), ctx.sessionManager.getLeafId());
-	return sessionContext.messages.filter((message) => !isVisibleBtwMessage(message));
+function isVisibleBtwMessage(message: { role: string; customType?: string }): boolean {
+	return message.role === "custom" && message.customType === BTW_MESSAGE_TYPE;
 }
 
-/** Build the thread history portion of the BTW context messages. */
-function buildThreadMessages(ctx: ExtensionCommandContext, thread: BtwDetails[]): Message[] {
-	const messages: Message[] = [
-		{
-			content: [
-				{
-					type: "text",
-					text: "[The following is a separate side conversation. Continue this thread.]",
-				},
-			],
-			role: "user",
-			timestamp: Date.now(),
-		},
-		{
-			api: ctx.model?.api ?? "openai-responses",
-			content: [
-				{
-					type: "text",
-					text: "Understood, continuing our side conversation.",
-				},
-			],
-			model: ctx.model?.id ?? "unknown",
-			provider: ctx.model?.provider ?? "unknown",
-			role: "assistant",
-			stopReason: "stop",
-			timestamp: Date.now(),
-			usage: {
-				cacheRead: 0,
-				cacheWrite: 0,
-				cost: { cacheRead: 0, cacheWrite: 0, input: 0, output: 0, total: 0 },
-				input: 0,
-				output: 0,
-				totalTokens: 0,
-			},
-		},
-	];
-
-	for (const entry of thread) {
-		messages.push(
-			{
-				content: [{ type: "text", text: entry.question }],
-				role: "user",
-				timestamp: entry.timestamp,
-			},
-			{
-				api: ctx.model?.api ?? "openai-responses",
-				content: [{ type: "text", text: entry.answer }],
-				model: entry.model,
-				provider: entry.provider,
-				role: "assistant",
-				stopReason: "stop",
-				timestamp: entry.timestamp,
-				usage: entry.usage ?? {
-					input: 0,
-					output: 0,
-					cacheRead: 0,
-					cacheWrite: 0,
-					totalTokens: 0,
-					cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
-				},
-			},
-		);
+function notify(ctx: ExtensionContext | ExtensionCommandContext, message: string, level: "info" | "warning" | "error"): void {
+	if (ctx.hasUI) {
+		ctx.ui.notify(message, level);
 	}
-
-	return messages;
-}
-
-function buildBtwContext(ctx: ExtensionCommandContext, question: string, thread: BtwDetails[]) {
-	const messages: Message[] = [...buildMainMessages(ctx)];
-
-	if (thread.length > 0) {
-		messages.push(...buildThreadMessages(ctx, thread));
-	}
-
-	messages.push({
-		content: [{ type: "text", text: question }],
-		role: "user",
-		timestamp: Date.now(),
-	});
-
-	return {
-		messages,
-		systemPrompt: [ctx.getSystemPrompt(), BTW_SYSTEM_PROMPT].filter(Boolean).join("\n\n"),
-	};
 }
 
 function buildBtwMessageContent(question: string, answer: string): string {
 	return `**Question:** ${question}\n\n${answer}`;
-}
-
-function formatThread(thread: BtwDetails[]): string {
-	return thread
-		.map((entry) => `**User:** ${entry.question.trim()}\n\n**Assistant:** ${entry.answer.trim()}`)
-		.join("\n\n---\n\n");
 }
 
 function saveVisibleBtwNote(
@@ -279,7 +258,7 @@ function saveVisibleBtwNote(
 	details: BtwDetails,
 	saveRequested: boolean,
 	wasBusy: boolean,
-): SaveState {
+): "not-saved" | "saved" | "queued" {
 	if (!saveRequested) {
 		return "not-saved";
 	}
@@ -300,340 +279,736 @@ function saveVisibleBtwNote(
 	return "saved";
 }
 
-function notify(ctx: ExtensionContext | ExtensionCommandContext, message: string, level: "info" | "warning" | "error") {
-	if (ctx.hasUI) {
-		ctx.ui.notify(message, level);
+// ── BtwOverlay — overlay component ───────────────────────────────────────
+
+class BtwOverlay extends Container implements Focusable {
+	private readonly input: Input;
+	private readonly tui: TUI;
+	private readonly theme: ExtensionContext["ui"]["theme"];
+	private readonly keybindings: KeybindingsManager;
+	private readonly getTranscript: (width: number, theme: ExtensionContext["ui"]["theme"]) => string[];
+	private readonly getStatus: () => string;
+	private readonly onSubmitCallback: (value: string) => void;
+	private readonly onDismissCallback: () => void;
+	private _focused = false;
+
+	get focused(): boolean {
+		return this._focused;
 	}
-}
 
-/** Render a single slot's lines into the widget parts array. */
-function renderSlotLines(slot: BtwSlot, parts: string[], helpers: WidgetThemeHelpers) {
-	const { dim, success, italic, warning } = helpers;
-
-	parts.push(`${dim("│ ")}${success("› ")}${slot.question}`);
-
-	if (slot.thinking) {
-		const cursor = slot.answer || slot.done ? "" : warning(" ▍");
-		parts.push(`${dim("│ ")}${italic(slot.thinking)}${cursor}`);
+	set focused(value: boolean) {
+		this._focused = value;
+		this.input.focused = value;
 	}
 
-	if (slot.answer) {
-		const answerLines = slot.answer.split("\n");
-		parts.push(`${dim("│ ")}${answerLines[0]}`);
-		if (answerLines.length > 1) {
-			parts.push(answerLines.slice(1).join("\n"));
+	constructor(
+		tui: TUI,
+		theme: ExtensionContext["ui"]["theme"],
+		keybindings: KeybindingsManager,
+		getTranscript: (width: number, theme: ExtensionContext["ui"]["theme"]) => string[],
+		getStatus: () => string,
+		onSubmit: (value: string) => void,
+		onDismiss: () => void,
+	) {
+		super();
+		this.tui = tui;
+		this.theme = theme;
+		this.keybindings = keybindings;
+		this.getTranscript = getTranscript;
+		this.getStatus = getStatus;
+		this.onSubmitCallback = onSubmit;
+		this.onDismissCallback = onDismiss;
+
+		this.input = new Input();
+		this.input.onSubmit = (value) => {
+			this.onSubmitCallback(value);
+		};
+		this.input.onEscape = () => {
+			this.onDismissCallback();
+		};
+	}
+
+	handleInput(data: string): void {
+		if (this.keybindings.matches(data, "tui.select.cancel" as never)) {
+			this.onDismissCallback();
+			return;
 		}
-		if (!slot.done) {
-			parts[parts.length - 1] += warning(" ▍");
+
+		this.input.handleInput(data);
+	}
+
+	setDraft(value: string): void {
+		this.input.setValue(value);
+		this.tui.requestRender();
+	}
+
+	getDraft(): string {
+		return this.input.getValue();
+	}
+
+	private frameLine(content: string, innerWidth: number): string {
+		const truncated = truncateToWidth(content, innerWidth, "");
+		const padding = Math.max(0, innerWidth - visibleWidth(truncated));
+		return `${this.theme.fg("borderMuted", "│")}${truncated}${" ".repeat(padding)}${this.theme.fg("borderMuted", "│")}`;
+	}
+
+	private borderLine(innerWidth: number, edge: "top" | "bottom"): string {
+		const left = edge === "top" ? "┌" : "└";
+		const right = edge === "top" ? "┐" : "┘";
+		return this.theme.fg("borderMuted", `${left}${"─".repeat(innerWidth)}${right}`);
+	}
+
+	override render(width: number): string[] {
+		const dialogWidth = Math.max(56, Math.min(width, Math.floor(width * 0.9)));
+		const innerWidth = Math.max(40, dialogWidth - 2);
+		const terminalRows = process.stdout.rows ?? 30;
+		const dialogHeight = Math.max(16, Math.min(30, Math.floor(terminalRows * 0.75)));
+		const chromeHeight = 7;
+		const transcriptHeight = Math.max(6, dialogHeight - chromeHeight);
+
+		// Markdown renders to innerWidth already — no manual wrapping needed
+		const transcript = this.getTranscript(innerWidth, this.theme);
+		const visibleTranscript = transcript.slice(-transcriptHeight);
+		const transcriptPadding = Math.max(0, transcriptHeight - visibleTranscript.length);
+
+		const status = this.getStatus();
+
+		const previousFocused = this.input.focused;
+		this.input.focused = false;
+		const inputLine = this.input.render(innerWidth)[0] ?? "";
+		this.input.focused = previousFocused;
+
+		const lines = [
+			this.borderLine(innerWidth, "top"),
+			this.frameLine(this.theme.fg("accent", this.theme.bold(" BTW side chat ")), innerWidth),
+			this.frameLine(this.theme.fg("dim", "Separate side conversation. Esc closes."), innerWidth),
+			this.theme.fg("borderMuted", `├${"─".repeat(innerWidth)}┤`),
+		];
+
+		for (const line of visibleTranscript) {
+			lines.push(this.frameLine(line, innerWidth));
 		}
-	} else if (!slot.done) {
-		parts.push(`${dim("│ ")}${warning("thinking...")}`);
-	}
+		for (let i = 0; i < transcriptPadding; i++) {
+			lines.push(this.frameLine("", innerWidth));
+		}
 
-	parts.push(`${dim("│ ")}${dim(`model: ${slot.modelLabel}`)}`);
-}
+		lines.push(this.theme.fg("borderMuted", `├${"─".repeat(innerWidth)}┤`));
+		lines.push(this.frameLine(this.theme.fg("warning", status), innerWidth));
+		lines.push(
+			`${this.theme.fg("borderMuted", "│")}${inputLine}${this.theme.fg("borderMuted", "│")}`,
+		);
+		lines.push(this.frameLine(this.theme.fg("dim", "Enter submit · Esc close"), innerWidth));
+		lines.push(this.borderLine(innerWidth, "bottom"));
 
-/** Remove a slot and re-render after abort. */
-function removeSlotAndRender(
-	slot: BtwSlot,
-	allSlots: BtwSlot[],
-	ctx: ExtensionContext | ExtensionCommandContext,
-	render: (ctx: ExtensionContext | ExtensionCommandContext) => void,
-) {
-	const idx = allSlots.indexOf(slot);
-	if (idx !== -1) {
-		allSlots.splice(idx, 1);
-		render(ctx);
+		return lines;
 	}
 }
 
-/** Process the stream response after streaming completes. */
-function processStreamResponse(response: AssistantMessage, slot: BtwSlot): { answer: string; thinking: string } {
-	if (!response) {
-		throw new Error("BTW request finished without a response.");
-	}
-	if (response.stopReason === "error") {
-		throw new Error(response.errorMessage || "BTW request failed.");
-	}
-
-	return {
-		answer: extractAnswer(response),
-		thinking: extractThinking(response) || slot.thinking,
-	};
-}
+// ── Main extension ────────────────────────────────────────────────────────
 
 export default function (pi: ExtensionAPI) {
-	let pendingThread: BtwDetails[] = [];
-	let slots: BtwSlot[] = [];
-	let widgetStatus: string | null = null;
+	let thread: BtwDetails[] = [];
+	let pendingQuestion: string | null = null;
+	let pendingAnswer = "";
+	let pendingError: string | null = null;
+	let pendingToolCalls: ToolCallInfo[] = [];
+	let sideBusy = false;
+	let overlayStatus = "Ready";
+	let overlayDraft = "";
+	let overlayRuntime: OverlayRuntime | null = null;
+	let activeSideSession: SideSessionRuntime | null = null;
+	let overlayRefreshTimer: ReturnType<typeof setTimeout> | null = null;
 
-	function abortActiveSlots() {
-		for (const slot of slots) {
-			if (!slot.done) {
-				slot.controller.abort();
-			}
+	const mdTheme = getMarkdownTheme();
+
+	function getModelKey(ctx: ExtensionContext): string {
+		const model = ctx.model;
+		return model ? `${model.provider}/${model.id}` : "none";
+	}
+
+	function renderMarkdownLines(text: string, width: number): string[] {
+		if (!text) return [];
+		try {
+			const md = new Markdown(text, 0, 0, mdTheme);
+			return md.render(width);
+		} catch {
+			// Fall back to plain text wrapping if Markdown rendering fails
+			return text.split("\n").flatMap((line) => {
+				if (!line) return [""];
+				const wrapped: string[] = [];
+				for (let i = 0; i < line.length; i += width) {
+					wrapped.push(line.slice(i, i + width));
+				}
+				return wrapped.length > 0 ? wrapped : [""];
+			});
 		}
 	}
 
-	function renderWidget(ctx: ExtensionContext | ExtensionCommandContext) {
+	function renderToolCallLines(
+		toolCalls: ToolCallInfo[],
+		theme: ExtensionContext["ui"]["theme"],
+		width: number,
+	): string[] {
+		const lines: string[] = [];
+		for (const tc of toolCalls) {
+			const icon = tc.status === "running" ? "⚙" : tc.status === "error" ? "✗" : "✓";
+			const color = tc.status === "error" ? "error" : tc.status === "done" ? "success" : "dim";
+			const label = theme.fg(color, `${icon} `) + theme.fg("toolTitle", tc.toolName);
+			const argsText = tc.args ? theme.fg("dim", ` ${tc.args}`) : "";
+			lines.push(truncateToWidth(`  ${label}${argsText}`, width, ""));
+		}
+		return lines;
+	}
+
+	function getTranscriptLines(width: number, theme: ExtensionContext["ui"]["theme"]): string[] {
+		try {
+			return getTranscriptLinesInner(width, theme);
+		} catch (error) {
+			return [theme.fg("error", `Render error: ${error instanceof Error ? error.message : String(error)}`)];
+		}
+	}
+
+	function getTranscriptLinesInner(width: number, theme: ExtensionContext["ui"]["theme"]): string[] {
+		if (thread.length === 0 && !pendingQuestion && !pendingAnswer && !pendingError) {
+			return [theme.fg("dim", "No BTW messages yet. Type a question below.")];
+		}
+
+		const lines: string[] = [];
+		for (const item of thread.slice(-6)) {
+			// User message
+			const userText = item.question.trim().split("\n")[0];
+			lines.push(theme.fg("accent", theme.bold("You: ")) + truncateToWidth(userText, width - 5, "…"));
+			lines.push("");
+
+			// Assistant message rendered as markdown
+			const mdLines = renderMarkdownLines(item.answer, width);
+			lines.push(...mdLines);
+			lines.push("");
+		}
+
+		if (pendingQuestion) {
+			const userText = pendingQuestion.trim().split("\n")[0];
+			lines.push(theme.fg("accent", theme.bold("You: ")) + truncateToWidth(userText, width - 5, "…"));
+
+			// Show tool calls inline
+			if (pendingToolCalls.length > 0) {
+				lines.push(...renderToolCallLines(pendingToolCalls, theme, width));
+			}
+
+			if (pendingError) {
+				lines.push(theme.fg("error", `❌ ${pendingError}`));
+			} else if (pendingAnswer) {
+				lines.push("");
+				const mdLines = renderMarkdownLines(pendingAnswer, width);
+				lines.push(...mdLines);
+			} else if (pendingToolCalls.length === 0) {
+				lines.push(theme.fg("dim", "…"));
+			}
+		}
+
+		// Trim trailing empty line
+		while (lines.length > 0 && lines[lines.length - 1] === "") {
+			lines.pop();
+		}
+		return lines;
+	}
+
+	// ── Overlay management ───────────────────────────────────────────────────
+
+	function syncOverlay(): void {
+		overlayRuntime?.refresh?.();
+	}
+
+	function scheduleOverlayRefresh(): void {
+		if (overlayRefreshTimer) {
+			return;
+		}
+
+		overlayRefreshTimer = setTimeout(() => {
+			overlayRefreshTimer = null;
+			syncOverlay();
+		}, 16);
+	}
+
+	function setOverlayStatus(status: string, throttled = false): void {
+		overlayStatus = status;
+		if (throttled) {
+			scheduleOverlayRefresh();
+		} else {
+			syncOverlay();
+		}
+	}
+
+	function dismissOverlay(): void {
+		overlayRuntime?.close?.();
+		overlayRuntime = null;
+		if (overlayRefreshTimer) {
+			clearTimeout(overlayRefreshTimer);
+			overlayRefreshTimer = null;
+		}
+	}
+
+	function setOverlayDraft(value: string): void {
+		overlayDraft = value;
+		overlayRuntime?.setDraft?.(value);
+	}
+
+	async function ensureOverlay(ctx: ExtensionCommandContext | ExtensionContext): Promise<void> {
 		if (!ctx.hasUI) {
 			return;
 		}
 
-		if (slots.length === 0) {
-			ctx.ui.setWidget("btw", undefined);
+		if (overlayRuntime?.handle) {
+			overlayRuntime.handle.setHidden(false);
+			overlayRuntime.handle.focus();
+			overlayRuntime.refresh?.();
 			return;
 		}
 
-		ctx.ui.setWidget(
-			"btw",
-			(_tui, theme) => {
-				const helpers: WidgetThemeHelpers = {
-					dim: (text: string) => theme.fg("dim", text),
-					italic: (text: string) => theme.fg("dim", theme.italic(text)),
-					success: (text: string) => theme.fg("success", text),
-					warning: (text: string) => theme.fg("warning", text),
-				};
+		const runtime: OverlayRuntime = {};
+		const closeRuntime = () => {
+			if (runtime.closed) {
+				return;
+			}
+			runtime.closed = true;
+			runtime.handle?.hide();
+			if (overlayRuntime === runtime) {
+				overlayRuntime = null;
+			}
+			runtime.finish?.();
+		};
+		runtime.close = closeRuntime;
+		overlayRuntime = runtime;
 
-				const parts: string[] = [];
-				const title = " 💭 btw ";
-				const hint = " /btw:clear dismiss · /btw:inject send ";
-				const lineWidth = Math.max(22, 68 - title.length - hint.length);
+		void ctx.ui
+			.custom<void>(
+				async (tui, theme, keybindings, done) => {
+					runtime.finish = () => done();
 
-				parts.push(helpers.dim(`╭${title}${"─".repeat(lineWidth)}${hint}╮`));
+					const overlay = new BtwOverlay(
+						tui,
+						theme,
+						keybindings,
+						(width, t) => getTranscriptLines(width, t),
+						() => overlayStatus,
+						(value) => {
+							void submitFromOverlay(ctx, value);
+						},
+						() => {
+							void closeOverlayFlow(ctx);
+						},
+					);
 
-				for (let i = 0; i < slots.length; i++) {
-					if (i > 0) {
-						parts.push(helpers.dim("│ ───"));
+					overlay.focused = true;
+					overlay.setDraft(overlayDraft);
+					runtime.setDraft = (value) => overlay.setDraft(value);
+					runtime.refresh = () => {
+						overlay.focused = runtime.handle?.isFocused() ?? false;
+						tui.requestRender();
+					};
+					runtime.close = () => {
+						overlayDraft = overlay.getDraft();
+						closeRuntime();
+					};
+
+					if (runtime.closed) {
+						done();
 					}
-					renderSlotLines(slots[i], parts, helpers);
+
+					return overlay;
+				},
+				{
+					overlay: true,
+					overlayOptions: {
+						width: "80%",
+						minWidth: 72,
+						maxHeight: "78%",
+						anchor: "top-center",
+						margin: { top: 1, left: 2, right: 2 },
+					},
+					onHandle: (handle) => {
+						runtime.handle = handle;
+						handle.focus();
+						if (runtime.closed) {
+							closeRuntime();
+						}
+					},
+				},
+			)
+			.catch((error) => {
+				if (overlayRuntime === runtime) {
+					overlayRuntime = null;
 				}
-
-				if (widgetStatus) {
-					parts.push(`${helpers.dim("│ ")}${helpers.warning(widgetStatus)}`);
-				}
-
-				parts.push(helpers.dim(`╰${"─".repeat(68)}╯`));
-
-				return new Text(parts.join("\n"), 0, 0);
-			},
-			{ placement: "aboveEditor" },
-		);
+				notify(ctx, error instanceof Error ? error.message : String(error), "error");
+			});
 	}
 
-	function resetThread(ctx: ExtensionContext | ExtensionCommandContext, persist = true) {
-		abortActiveSlots();
-		pendingThread = [];
-		slots = [];
-		widgetStatus = null;
+	// ── Side session management ───────────────────────────────────────────────
 
-		if (persist) {
-			pi.appendEntry(BTW_RESET_TYPE, { timestamp: Date.now() });
+	async function disposeSideSession(): Promise<void> {
+		const current = activeSideSession;
+		activeSideSession = null;
+		if (!current) {
+			return;
 		}
 
-		renderWidget(ctx);
+		try {
+			current.unsubscribe();
+		} catch {
+			// Ignore unsubscribe errors during cleanup.
+		}
+
+		try {
+			await current.session.abort();
+		} catch {
+			// Ignore abort errors during cleanup.
+		}
+		current.session.dispose();
+
+		if (overlayRefreshTimer) {
+			clearTimeout(overlayRefreshTimer);
+			overlayRefreshTimer = null;
+		}
 	}
 
-	function restoreThread(ctx: ExtensionContext) {
-		abortActiveSlots();
-		pendingThread = [];
-		slots = [];
-		widgetStatus = null;
+	async function createSideSession(ctx: ExtensionCommandContext): Promise<SideSessionRuntime | null> {
+		if (!ctx.model) {
+			return null;
+		}
 
+		const { session } = await createAgentSession({
+			sessionManager: SessionManager.inMemory(),
+			model: ctx.model,
+			modelRegistry: ctx.modelRegistry as AgentSession["modelRegistry"],
+			thinkingLevel: pi.getThinkingLevel() as SessionThinkingLevel,
+			tools: ["read", "bash", "edit", "write"],
+			resourceLoader: createBtwResourceLoader(ctx),
+		});
+
+		const seedMessages = buildSeedMessages(ctx, thread);
+		if (seedMessages.length > 0) {
+			session.agent.state.messages = seedMessages as typeof session.agent.state.messages;
+		}
+
+		const unsubscribe = session.subscribe((event: AgentSessionEvent) => {
+			if (!sideBusy || !pendingQuestion) {
+				return;
+			}
+
+			switch (event.type) {
+				case "message_start":
+				case "message_update":
+				case "message_end": {
+					const streamed = extractEventAssistantText(event.message);
+					if (streamed) {
+						pendingAnswer = streamed;
+						pendingError = null;
+					}
+					setOverlayStatus(event.type === "message_end" ? "Finalizing side response..." : "Streaming side response...", true);
+					return;
+				}
+				case "tool_execution_start": {
+					const toolName = (event as { toolName?: string }).toolName ?? "unknown";
+					try {
+						pendingToolCalls.push({
+							toolCallId: (event as { toolCallId?: string }).toolCallId ?? "",
+							toolName,
+							args: formatToolArgs(toolName, (event as { args?: unknown }).args),
+							status: "running",
+						});
+					} catch {
+						// Ignore tool tracking failures
+					}
+					setOverlayStatus(`Running tool: ${toolName}...`, true);
+					return;
+				}
+				case "tool_execution_end": {
+					const endToolName = (event as { toolName?: string }).toolName ?? "unknown";
+					const tc = pendingToolCalls.find(
+						(t) => t.toolName === endToolName && t.status === "running",
+					);
+					if (tc) {
+						tc.status = (event as { isError?: boolean }).isError ? "error" : "done";
+					}
+					setOverlayStatus("Streaming side response...", true);
+					return;
+				}
+				case "turn_end": {
+					setOverlayStatus("Finalizing side response...", true);
+					return;
+				}
+				default:
+					return;
+			}
+		});
+
+		return {
+			session,
+			modelKey: getModelKey(ctx),
+			unsubscribe,
+		};
+	}
+
+	async function ensureSideSession(ctx: ExtensionCommandContext): Promise<SideSessionRuntime | null> {
+		if (!ctx.model) {
+			return null;
+		}
+
+		const expectedModelKey = getModelKey(ctx);
+		if (activeSideSession && activeSideSession.modelKey === expectedModelKey) {
+			return activeSideSession;
+		}
+
+		await disposeSideSession();
+		activeSideSession = await createSideSession(ctx);
+		return activeSideSession;
+	}
+
+	// ── Thread management ─────────────────────────────────────────────────────
+
+	async function resetThread(ctx: ExtensionContext | ExtensionCommandContext, persist = true): Promise<void> {
+		thread = [];
+		pendingQuestion = null;
+		pendingAnswer = "";
+		pendingError = null;
+		pendingToolCalls = [];
+		sideBusy = false;
+		setOverlayDraft("");
+		setOverlayStatus("Ready");
+		await disposeSideSession();
+		if (persist) {
+			const details: BtwResetDetails = { timestamp: Date.now() };
+			pi.appendEntry(BTW_RESET_TYPE, details);
+		}
+		syncOverlay();
+	}
+
+	async function restoreThread(ctx: ExtensionContext): Promise<void> {
+		await disposeSideSession();
+		thread = [];
+		pendingQuestion = null;
+		pendingAnswer = "";
+		pendingError = null;
+		pendingToolCalls = [];
+		sideBusy = false;
+		overlayStatus = "Ready";
+		overlayDraft = "";
 		const branch = ctx.sessionManager.getBranch();
 		let lastResetIndex = -1;
-
 		for (let i = 0; i < branch.length; i++) {
-			if (isCustomEntry(branch[i], BTW_RESET_TYPE)) {
+			const entry = branch[i];
+			if (entry.type === "custom" && entry.customType === BTW_RESET_TYPE) {
 				lastResetIndex = i;
 			}
 		}
 
-		for (let i = lastResetIndex + 1; i < branch.length; i++) {
-			const entry = branch[i];
-			if (isCustomEntry(entry, BTW_ENTRY_TYPE) && entry.data) {
-				const details = entry.data as BtwDetails;
-				pendingThread.push(details);
-				slots.push({
-					answer: details.answer,
-					controller: new AbortController(),
-					done: true,
-					modelLabel: `${details.provider}/${details.model}`,
-					question: details.question,
-					thinking: details.thinking,
-				});
+		for (const entry of branch.slice(lastResetIndex + 1)) {
+			if (entry.type !== "custom" || entry.customType !== BTW_ENTRY_TYPE) {
+				continue;
 			}
+			const details = entry.data as BtwDetails | undefined;
+			if (!details?.question || !details.answer) {
+				continue;
+			}
+			thread.push(details);
 		}
 
-		renderWidget(ctx);
+		syncOverlay();
 	}
 
-	/** Stream the BTW request and update the slot with incoming tokens. */
-	async function streamBtwRequest(
-		ctx: ExtensionCommandContext,
-		slot: BtwSlot,
-		threadSnapshot: BtwDetails[],
-		question: string,
-	): Promise<AssistantMessage | "aborted"> {
-		const model = ctx.model!;
-		const apiKey = await resolveBtwApiKey(model, ctx.modelRegistry);
-		if (!apiKey) {
-			throw new Error(`No credentials available for ${model.provider}/${model.id}.`);
-		}
-		const thinkingLevel = pi.getThinkingLevel() as SessionThinkingLevel;
+	// ── Summarize & inject ────────────────────────────────────────────────────
 
-		const stream = streamSimple(model, buildBtwContext(ctx, question, threadSnapshot), {
-			apiKey,
-			reasoning: toReasoning(thinkingLevel),
-			signal: slot.controller.signal,
+	async function summarizeThread(ctx: ExtensionContext, items: BtwDetails[]): Promise<string> {
+		const model = ctx.model;
+		if (!model) {
+			throw new Error("No active model selected.");
+		}
+
+		const { session } = await createAgentSession({
+			sessionManager: SessionManager.inMemory(),
+			model,
+			modelRegistry: ctx.modelRegistry as AgentSession["modelRegistry"],
+			thinkingLevel: "off",
+			tools: [],
+			resourceLoader: createBtwResourceLoader(ctx, [BTW_SUMMARY_PROMPT]),
 		});
 
-		let response: AssistantMessage | null = null;
-
-		for await (const event of stream) {
-			if (event.type === "thinking_delta") {
-				slot.thinking += event.delta;
-				renderWidget(ctx);
-			} else if (event.type === "text_delta") {
-				slot.answer += event.delta;
-				renderWidget(ctx);
-			} else if (event.type === "done") {
-				response = event.message;
-			} else if (event.type === "error") {
-				response = event.error;
+		try {
+			await session.prompt(formatThread(items), { source: "extension" });
+			const response = getLastAssistantMessage(session);
+			if (!response) {
+				throw new Error("Summary finished without a response.");
 			}
-		}
+			if (response.stopReason === "aborted") {
+				throw new Error("Summary request was aborted.");
+			}
+			if (response.stopReason === "error") {
+				throw new Error(response.errorMessage || "Summary request failed.");
+			}
 
-		if (!response) {
-			throw new Error("BTW request finished without a response.");
+			return extractText(response.content) || "(No summary generated)";
+		} finally {
+			try {
+				await session.abort();
+			} catch {
+				// Ignore abort errors during temporary session teardown.
+			}
+			session.dispose();
 		}
-
-		if (response.stopReason === "aborted") {
-			return "aborted";
-		}
-
-		return response;
 	}
 
-	async function runBtw(ctx: ExtensionCommandContext, question: string, saveRequested: boolean) {
-		const { model } = ctx;
+	async function injectSummaryIntoMain(ctx: ExtensionContext | ExtensionCommandContext): Promise<void> {
+		if (thread.length === 0) {
+			notify(ctx, "No BTW thread to summarize.", "warning");
+			return;
+		}
+
+		setOverlayStatus("Summarizing BTW thread for injection...");
+		try {
+			const summary = await summarizeThread(ctx, thread);
+			const message = `Summary of my BTW side conversation:\n\n${summary}`;
+			if (ctx.isIdle()) {
+				pi.sendUserMessage(message);
+			} else {
+				pi.sendUserMessage(message, { deliverAs: "followUp" });
+			}
+
+			await resetThread(ctx);
+			notify(ctx, "Injected BTW summary into main chat.", "info");
+		} catch (error) {
+			notify(ctx, error instanceof Error ? error.message : String(error), "error");
+		}
+	}
+
+	async function injectFullThread(ctx: ExtensionCommandContext): Promise<void> {
+		if (thread.length === 0) {
+			notify(ctx, "No BTW thread to inject.", "warning");
+			return;
+		}
+
+		const content = `Here is a side conversation I had for additional context:\n\n${formatThread(thread)}`;
+		if (ctx.isIdle()) {
+			pi.sendUserMessage(content);
+		} else {
+			pi.sendUserMessage(content, { deliverAs: "followUp" });
+		}
+
+		const count = thread.length;
+		await resetThread(ctx);
+		notify(ctx, `Injected BTW thread (${count} exchange${count === 1 ? "" : "s"}).`, "info");
+	}
+
+	async function closeOverlayFlow(ctx: ExtensionContext | ExtensionCommandContext): Promise<void> {
+		dismissOverlay();
+		if (!ctx.hasUI) {
+			return;
+		}
+
+		if (thread.length === 0) {
+			return;
+		}
+
+		const choice = await ctx.ui.select("Close BTW:", ["Keep side thread", "Inject summary into main chat"]);
+		if (choice === "Inject summary into main chat") {
+			await injectSummaryIntoMain(ctx);
+		}
+	}
+
+	// ── Core prompt flow ──────────────────────────────────────────────────────
+
+	async function runBtwPrompt(ctx: ExtensionCommandContext, question: string, saveRequested = false): Promise<void> {
+		const model = ctx.model;
 		if (!model) {
+			setOverlayStatus("No active model selected.");
 			notify(ctx, "No active model selected.", "error");
 			return;
 		}
 
-		const apiKey = await resolveBtwApiKey(model, ctx.modelRegistry);
-		if (!apiKey) {
-			notify(ctx, `No credentials available for ${model.provider}/${model.id}.`, "error");
+		if (sideBusy) {
+			notify(ctx, "BTW is still processing the previous message.", "warning");
+			return;
+		}
+
+		const side = await ensureSideSession(ctx);
+		if (!side) {
+			notify(ctx, "Unable to create BTW side session.", "error");
 			return;
 		}
 
 		const wasBusy = !ctx.isIdle();
 
-		const slot: BtwSlot = {
-			answer: "",
-			controller: new AbortController(),
-			done: false,
-			modelLabel: `${model.provider}/${model.id}`,
-			question,
-			thinking: "",
-		};
-
-		const threadSnapshot = [...pendingThread];
-		slots.push(slot);
-		renderWidget(ctx);
+		sideBusy = true;
+		pendingQuestion = question;
+		pendingAnswer = "";
+		pendingError = null;
+		pendingToolCalls = [];
+		setOverlayStatus("Streaming side response...");
+		syncOverlay();
 
 		try {
-			const response = await streamBtwRequest(ctx, slot, threadSnapshot, question);
-
-			if (response === "aborted") {
-				removeSlotAndRender(slot, slots, ctx, renderWidget);
-				return;
+			await side.session.prompt(question, { source: "extension" });
+			const response = getLastAssistantMessage(side.session);
+			if (!response) {
+				throw new Error("BTW request finished without a response.");
+			}
+			if (response.stopReason === "aborted") {
+				throw new Error("BTW request aborted.");
+			}
+			if (response.stopReason === "error") {
+				throw new Error(response.errorMessage || "BTW request failed.");
 			}
 
-			const { answer, thinking } = processStreamResponse(response, slot);
-
-			slot.thinking = thinking;
-			slot.answer = answer;
-			slot.done = true;
-			renderWidget(ctx);
-
+			const answer = extractText(response.content) || "(No text response)";
+			pendingAnswer = answer;
 			const details: BtwDetails = {
-				answer,
-				model: model.id,
-				provider: model.provider,
 				question,
-				thinking,
-				thinkingLevel: pi.getThinkingLevel() as SessionThinkingLevel,
+				answer,
 				timestamp: Date.now(),
+				provider: model.provider,
+				model: model.id,
+				thinkingLevel: pi.getThinkingLevel() as SessionThinkingLevel,
 				usage: response.usage,
 			};
-
-			pendingThread.push(details);
+			thread.push(details);
 			pi.appendEntry(BTW_ENTRY_TYPE, details);
 
+			// Save visible note if --save was requested
 			const saveState = saveVisibleBtwNote(pi, details, saveRequested, wasBusy);
 			if (saveState === "saved") {
 				notify(ctx, "Saved BTW note to the session.", "info");
 			} else if (saveState === "queued") {
 				notify(ctx, "BTW note queued to save after the current turn finishes.", "info");
 			}
+
+			pendingQuestion = null;
+			pendingAnswer = "";
+			pendingToolCalls = [];
+			setOverlayStatus("Ready for the next side question.");
 		} catch (error) {
-			if (slot.controller.signal.aborted) {
-				removeSlotAndRender(slot, slots, ctx, renderWidget);
-				return;
-			}
-
-			slot.answer = `[ERR] ${error instanceof Error ? error.message : String(error)}`;
-			slot.done = true;
-			renderWidget(ctx);
-			notify(ctx, error instanceof Error ? error.message : String(error), "error");
+			const message = error instanceof Error ? error.message : String(error);
+			pendingError = message;
+			setOverlayStatus("BTW request failed.");
+			notify(ctx, message, "error");
+		} finally {
+			sideBusy = false;
+			syncOverlay();
 		}
 	}
 
-	async function summarizeThread(ctx: ExtensionCommandContext, thread: BtwDetails[]): Promise<string> {
-		const { model } = ctx;
-		if (!model) {
-			throw new Error("No active model selected.");
+	async function submitFromOverlay(ctx: ExtensionContext | ExtensionCommandContext, rawValue: string): Promise<void> {
+		const { question, save } = parseBtwArgs(rawValue);
+		if (!question) {
+			setOverlayStatus("Enter a question first.");
+			return;
 		}
 
-		const apiKey = await resolveBtwApiKey(model, ctx.modelRegistry);
-		if (!apiKey) {
-			throw new Error(`No credentials available for ${model.provider}/${model.id}.`);
+		setOverlayDraft("");
+		if (!("waitForIdle" in ctx)) {
+			setOverlayStatus("BTW submit requires command context. Re-open with /btw.");
+			return;
 		}
 
-		const response = await completeSimple(
-			model,
-			{
-				messages: [
-					{
-						role: "user",
-						content: [{ type: "text", text: formatThread(thread) }],
-						timestamp: Date.now(),
-					},
-				],
-				systemPrompt:
-					"Summarize the side conversation concisely. Preserve key decisions, plans, insights, risks, and action items. Output only the summary.",
-			},
-			{ apiKey, reasoning: "low" },
-		);
-
-		if (response.stopReason === "error") {
-			throw new Error(response.errorMessage || "Failed to summarize BTW thread.");
-		}
-		if (response.stopReason === "aborted") {
-			throw new Error("BTW summarize aborted.");
-		}
-
-		return extractAnswer(response);
-	}
-
-	function sendThreadToMain(ctx: ExtensionCommandContext, content: string) {
-		if (ctx.isIdle()) {
-			pi.sendUserMessage(content);
-		} else {
-			pi.sendUserMessage(content, { deliverAs: "followUp" });
-		}
+		await runBtwPrompt(ctx, question, save);
 	}
 
 	// ── Message renderer ──────────────────────────────────────────────────────
@@ -658,7 +1033,7 @@ export default function (pi: ExtensionAPI) {
 		}
 
 		const container = new Container(1, 1);
-		container.addChild(new Text(headerLines.join("\n"), 0, 0));
+		container.addChild(new Markdown(headerLines.join("\n"), 0, 0, getMarkdownTheme()));
 		container.addChild(new Markdown(content, 0, 0, getMarkdownTheme()));
 		return container;
 	});
@@ -669,110 +1044,94 @@ export default function (pi: ExtensionAPI) {
 		messages: event.messages.filter((message) => !isVisibleBtwMessage(message)),
 	}));
 
-	// ── Session lifecycle — restore / cleanup ─────────────────────────────────
-
-	let startupRestoreTimer: ReturnType<typeof setTimeout> | undefined;
-	const cancelStartupRestore = () => {
-		if (!startupRestoreTimer) {
-			return;
-		}
-		clearTimeout(startupRestoreTimer);
-		startupRestoreTimer = undefined;
-	};
-	const restoreCurrentThread = (ctx: ExtensionContext) => {
-		cancelStartupRestore();
-		restoreThread(ctx);
-	};
+	// ── Session lifecycle ─────────────────────────────────────────────────────
 
 	pi.on("session_start", async (_event, ctx) => {
-		cancelStartupRestore();
-		startupRestoreTimer = setTimeout(() => {
-			startupRestoreTimer = undefined;
-			restoreThread(ctx);
-		}, STARTUP_THREAD_RESTORE_DELAY_MS);
-		startupRestoreTimer.unref?.();
-	});
-
-	pi.on("session_switch", async (_event, ctx) => {
-		restoreCurrentThread(ctx);
+		await restoreThread(ctx);
 	});
 
 	pi.on("session_tree", async (_event, ctx) => {
-		if (slots.some((s) => !s.done)) return;
-		restoreCurrentThread(ctx);
+		if (sideBusy) return;
+		await restoreThread(ctx);
 	});
 
 	pi.on("session_shutdown", async () => {
-		cancelStartupRestore();
-		abortActiveSlots();
+		await disposeSideSession();
+		dismissOverlay();
 	});
 
 	// ── Command handlers ──────────────────────────────────────────────────────
 
+	// ── Command handler functions ─────────────────────────────────────────────
+
 	const btwHandler = async (args: string, ctx: ExtensionCommandContext) => {
 		const { question, save } = parseBtwArgs(args);
+
 		if (!question) {
-			notify(ctx, "Usage: /btw [--save] <question>", "warning");
+			if (thread.length > 0 && ctx.hasUI) {
+				const choice = await ctx.ui.select("BTW side chat:", [
+					"Continue previous conversation",
+					"Start fresh",
+				]);
+				if (choice === "Continue previous conversation") {
+					// Dispose session so it's recreated with fresh main context on next submit
+					await disposeSideSession();
+					setOverlayStatus("Continuing BTW thread.");
+					await ensureOverlay(ctx);
+				} else if (choice === "Start fresh") {
+					await resetThread(ctx);
+					setOverlayStatus("Ready");
+					await ensureOverlay(ctx);
+				}
+				// null = user cancelled (Esc), do nothing
+			} else {
+				await resetThread(ctx, true);
+				setOverlayStatus("Ready");
+				await ensureOverlay(ctx);
+			}
 			return;
 		}
-		await runBtw(ctx, question, save);
-	};
 
-	const btwNewHandler = async (args: string, ctx: ExtensionCommandContext) => {
-		resetThread(ctx);
-		const { question, save } = parseBtwArgs(args);
-		if (question) {
-			await runBtw(ctx, question, save);
-		} else {
-			notify(ctx, "Started a fresh BTW thread.", "info");
-		}
+		await ensureOverlay(ctx);
+		await runBtwPrompt(ctx, question, save);
 	};
 
 	const btwClearHandler = async (_args: string, ctx: ExtensionCommandContext) => {
-		resetThread(ctx);
+		await resetThread(ctx);
+		dismissOverlay();
 		notify(ctx, "Cleared BTW thread.", "info");
 	};
 
-	const btwInjectHandler = async (args: string, ctx: ExtensionCommandContext) => {
-		if (pendingThread.length === 0) {
-			notify(ctx, "No BTW thread to inject.", "warning");
-			return;
-		}
-
-		const instructions = args.trim();
-		const content = instructions
-			? `Here is a side conversation I had. ${instructions}\n\n${formatThread(pendingThread)}`
-			: `Here is a side conversation I had for additional context:\n\n${formatThread(pendingThread)}`;
-
-		sendThreadToMain(ctx, content);
-		const count = pendingThread.length;
-		resetThread(ctx);
-		notify(ctx, `Injected BTW thread (${count} exchange${count === 1 ? "" : "s"}).`, "info");
+	const btwInjectHandler = async (_args: string, ctx: ExtensionCommandContext) => {
+		await injectFullThread(ctx);
 	};
 
 	const btwSummarizeHandler = async (args: string, ctx: ExtensionCommandContext) => {
-		if (pendingThread.length === 0) {
+		if (thread.length === 0) {
 			notify(ctx, "No BTW thread to summarize.", "warning");
 			return;
 		}
 
-		widgetStatus = "summarizing...";
-		renderWidget(ctx);
+		setOverlayStatus("Summarizing...");
+		syncOverlay();
 
 		try {
-			const summary = await summarizeThread(ctx, pendingThread);
 			const instructions = args.trim();
+			const summary = await summarizeThread(ctx, thread);
 			const content = instructions
 				? `Here is a summary of a side conversation I had. ${instructions}\n\n${summary}`
-				: `Here is a summary of a side conversation I had:\n\n${summary}`;
+				: `Summary of my BTW side conversation:\n\n${summary}`;
 
-			sendThreadToMain(ctx, content);
-			const count = pendingThread.length;
-			resetThread(ctx);
+			if (ctx.isIdle()) {
+				pi.sendUserMessage(content);
+			} else {
+				pi.sendUserMessage(content, { deliverAs: "followUp" });
+			}
+
+			const count = thread.length;
+			await resetThread(ctx);
 			notify(ctx, `Injected BTW summary (${count} exchange${count === 1 ? "" : "s"}).`, "info");
 		} catch (error) {
-			widgetStatus = null;
-			renderWidget(ctx);
 			notify(ctx, error instanceof Error ? error.message : String(error), "error");
 		}
 	};
@@ -780,17 +1139,12 @@ export default function (pi: ExtensionAPI) {
 	// ── Register /btw commands ────────────────────────────────────────────────
 
 	pi.registerCommand("btw", {
-		description: "Side conversation in a widget above the editor. Add --save to persist a visible note.",
+		description: "Open a BTW side-chat overlay. `/btw <text>` asks immediately, `/btw` opens the side thread, `/btw --save` persists a visible note.",
 		handler: btwHandler,
 	});
 
-	pi.registerCommand("btw:new", {
-		description: "Start a fresh BTW thread. Optionally ask the first question immediately.",
-		handler: btwNewHandler,
-	});
-
 	pi.registerCommand("btw:clear", {
-		description: "Dismiss the BTW widget and clear the current thread.",
+		description: "Dismiss the BTW overlay and clear the current thread.",
 		handler: btwClearHandler,
 	});
 
@@ -811,13 +1165,8 @@ export default function (pi: ExtensionAPI) {
 		handler: btwHandler,
 	});
 
-	pi.registerCommand("qq:new", {
-		description: "Start a fresh QQ thread. Alias for /btw:new.",
-		handler: btwNewHandler,
-	});
-
 	pi.registerCommand("qq:clear", {
-		description: "Dismiss the QQ widget and clear the thread. Alias for /btw:clear.",
+		description: "Dismiss the QQ overlay and clear the thread. Alias for /btw:clear.",
 		handler: btwClearHandler,
 	});
 
