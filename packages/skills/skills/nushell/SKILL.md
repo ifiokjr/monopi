@@ -36,26 +36,26 @@ ls | $in | where size > 1mb
 
 Nushell has **structured commands**, not text-processing tools:
 
-| Task | Bash | Nushell |
-|------|------|---------|
-| List files | `ls -la` | `ls` (already structured) |
-| Long listing | `ls -la` | `ls -l` or `ls --long` |
-| Find files recursively | `find . -name '*.rs'` | `ls **/*.rs` |
-| Filter by condition | `grep pattern` | `where name =~ "pattern"` or `find "text"` |
-| Sort | `sort` | `sort-by size` |
-| Take first N | `head -5` | `first 5` |
-| Take last N | `tail -3` | `last 3` |
-| Skip N | `tail -n +5` | `skip 4` |
-| Read file | `cat file.txt` | `open file.txt` or `open --raw file.txt` |
-| Write file | `echo "text" > f.txt` | `"text" \| save f.txt` |
-| Append to file | `echo "text" >> f.txt` | `"text" \| save --append f.txt` |
-| Parse CSV | complex | `open data.csv` (auto-detects) |
-| Parse JSON | `jq` | `open data.json` (auto-detects) |
-| Count lines | `wc -l` | `length` |
-| Search in files | `grep -r pattern dir/` | `rg` (via `^rg`) or `ls **/*.rs \| where (open $in.name \| str contains "TODO")` |
-| Replace in strings | `sed 's/a/b/g'` | `str replace --all 'a' 'b'` |
-| Parse date | `date -d "..."` | `"2024-01-01" \| into datetime` |
-| Get help | `man cmd` | `help cmd` or `help commands \| find substring` |
+| Task                   | Bash                   | Nushell                                                                          |
+| ---------------------- | ---------------------- | -------------------------------------------------------------------------------- |
+| List files             | `ls -la`               | `ls` (already structured)                                                        |
+| Long listing           | `ls -la`               | `ls -l` or `ls --long`                                                           |
+| Find files recursively | `find . -name '*.rs'`  | `ls **/*.rs`                                                                     |
+| Filter by condition    | `grep pattern`         | `where name =~ "pattern"` or `find "text"`                                       |
+| Sort                   | `sort`                 | `sort-by size`                                                                   |
+| Take first N           | `head -5`              | `first 5`                                                                        |
+| Take last N            | `tail -3`              | `last 3`                                                                         |
+| Skip N                 | `tail -n +5`           | `skip 4`                                                                         |
+| Read file              | `cat file.txt`         | `open file.txt` or `open --raw file.txt`                                         |
+| Write file             | `echo "text" > f.txt`  | `"text" \| save f.txt`                                                           |
+| Append to file         | `echo "text" >> f.txt` | `"text" \| save --append f.txt`                                                  |
+| Parse CSV              | complex                | `open data.csv` (auto-detects)                                                   |
+| Parse JSON             | `jq`                   | `open data.json` (auto-detects)                                                  |
+| Count lines            | `wc -l`                | `length`                                                                         |
+| Search in files        | `grep -r pattern dir/` | `rg` (via `^rg`) or `ls **/*.rs \| where (open $in.name \| str contains "TODO")` |
+| Replace in strings     | `sed 's/a/b/g'`        | `str replace --all 'a' 'b'`                                                      |
+| Parse date             | `date -d "..."`        | `"2024-01-01" \| into datetime`                                                  |
+| Get help               | `man cmd`              | `help cmd` or `help commands \| find substring`                                  |
 
 ## Pipelines
 
