@@ -1,3 +1,8 @@
+---
+name: fish
+description: Fish shell syntax reference — variables, command substitution, string manipulation, control flow, functions, and Bash-to-Fish equivalents
+---
+
 # Fish Shell Skill
 
 Use this skill whenever the user's shell is Fish. All shell commands provided to the user must use Fish syntax, not Bash/POSIX syntax.

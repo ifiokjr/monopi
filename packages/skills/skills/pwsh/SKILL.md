@@ -1,3 +1,8 @@
+---
+name: pwsh
+description: PowerShell syntax reference — cmdlets, objects, pipelines, filtering, comparison operators, and Bash-to-PowerShell command equivalents
+---
+
 # PowerShell Skill
 
 Use this skill whenever the user's shell is PowerShell (pwsh). All commands must use PowerShell syntax — cmdlets, not Bash/POSIX syntax. PowerShell deals in **objects**, not plain text.

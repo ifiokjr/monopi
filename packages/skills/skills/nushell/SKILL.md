@@ -1,3 +1,8 @@
+---
+name: nushell
+description: Nushell syntax reference for shell commands — variables, pipelines, tables, custom commands, control flow, Bash-to-Nu equivalents, and common gotchas
+---
+
 # Nushell Skill
 
 Use this skill whenever the user's shell is Nushell (nu). All shell commands provided to the user must use Nushell syntax, not Bash/POSIX syntax.
