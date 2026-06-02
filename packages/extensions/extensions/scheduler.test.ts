@@ -3273,3 +3273,281 @@ describe("schedulePersistTasks debounce", () => {
 		expect(runtime.tasksSaveTimer).toBe(firstTimer);
 	});
 });
+
+describe("dispatchMode (background/foreground)", () => {
+	let pi: ReturnType<typeof createMockPi>;
+	let ctx: ReturnType<typeof createMockCtx>;
+
+	beforeEach(() => {
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date("2025-01-15T12:00:00Z"));
+		pi = createMockPi();
+		ctx = createMockCtx();
+	});
+
+	afterEach(() => {
+		vi.useRealTimers();
+		vi.restoreAllMocks();
+	});
+
+	describe("buildBackgroundPrompt", () => {
+		it("wraps the original prompt with subagent instructions", () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			const result = runtime.buildBackgroundPrompt("check CI status", "task-123");
+
+			expect(result).toContain("[Scheduled background task task-123]");
+			expect(result).toContain("subagent");
+			expect(result).toContain("check CI status");
+			expect(result).toContain("Do NOT interrupt the current conversation context");
+			expect(result).toContain("SINGLE mode");
+		});
+
+		it("preserves the original prompt verbatim in the wrapper", () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			const original = "Run tests and check for failures in the auth module";
+			const result = runtime.buildBackgroundPrompt(original, "abc");
+
+			expect(result).toContain(original);
+		});
+	});
+
+	describe("taskMode with dispatchMode", () => {
+		it("appends [bg] for background tasks", () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			runtime.setRuntimeContext(ctx as any);
+			const task = runtime.addRecurringIntervalTask("test", 60_000, {
+				dispatchMode: "background",
+			});
+
+			expect(runtime.taskMode(task)).toContain("[bg]");
+		});
+
+		it("does not append [bg] for foreground tasks (default)", () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			runtime.setRuntimeContext(ctx as any);
+			const task = runtime.addRecurringIntervalTask("test", 60_000);
+
+			expect(runtime.taskMode(task)).not.toContain("[bg]");
+		});
+
+		it("does not append [bg] for explicit foreground tasks", () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			runtime.setRuntimeContext(ctx as any);
+			const task = runtime.addRecurringIntervalTask("test", 60_000, {
+				dispatchMode: "foreground",
+			});
+
+			expect(runtime.taskMode(task)).not.toContain("[bg]");
+		});
+	});
+
+	describe("addRecurringIntervalTask with dispatchMode", () => {
+		it("stores background dispatchMode on the task", () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			runtime.setRuntimeContext(ctx as any);
+			const task = runtime.addRecurringIntervalTask("check CI", 60_000, {
+				dispatchMode: "background",
+			});
+
+			expect(task.dispatchMode).toBe("background");
+		});
+
+		it("stores foreground dispatchMode on the task", () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			runtime.setRuntimeContext(ctx as any);
+			const task = runtime.addRecurringIntervalTask("check CI", 60_000, {
+				dispatchMode: "foreground",
+			});
+
+			expect(task.dispatchMode).toBe("foreground");
+		});
+
+		it("defaults dispatchMode to undefined when not specified", () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			runtime.setRuntimeContext(ctx as any);
+			const task = runtime.addRecurringIntervalTask("check CI", 60_000);
+
+			expect(task.dispatchMode).toBeUndefined();
+		});
+	});
+
+	describe("addRecurringCronTask with dispatchMode", () => {
+		it("stores background dispatchMode on the task", () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			runtime.setRuntimeContext(ctx as any);
+			const task = runtime.addRecurringCronTask("check build", "*/5 * * * *", {
+				dispatchMode: "background",
+			});
+
+			expect(task).toBeDefined();
+			expect(task!.dispatchMode).toBe("background");
+		});
+
+		it("defaults dispatchMode to undefined when not specified", () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			runtime.setRuntimeContext(ctx as any);
+			const task = runtime.addRecurringCronTask("check build", "*/5 * * * *");
+
+			expect(task).toBeDefined();
+			expect(task!.dispatchMode).toBeUndefined();
+		});
+	});
+
+	describe("addOneShotTask with dispatchMode", () => {
+		it("stores background dispatchMode on the task", () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			runtime.setRuntimeContext(ctx as any);
+			const task = runtime.addOneShotTask("remind me", 60_000, {
+				dispatchMode: "background",
+			});
+
+			expect(task.dispatchMode).toBe("background");
+		});
+
+		it("defaults dispatchMode to undefined when not specified", () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			runtime.setRuntimeContext(ctx as any);
+			const task = runtime.addOneShotTask("remind me", 60_000);
+
+			expect(task.dispatchMode).toBeUndefined();
+		});
+	});
+
+	describe("dispatchTask behavior with dispatchMode", () => {
+		it("wraps prompt with background instructions when dispatchMode is background", async () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			runtime.setRuntimeContext(ctx as any);
+			runtime.addOneShotTask("check CI", 0, {
+				dispatchMode: "background",
+			});
+
+			// Advance past the task's nextRunAt
+			vi.advanceTimersByTime(100);
+			await runtime.tickScheduler();
+
+			expect(pi._messages.length).toBeGreaterThan(0);
+			const dispatched = pi._messages.find((msg: any) => msg.customType === "pi-scheduler:dispatched");
+			expect(dispatched).toBeDefined();
+			expect(dispatched.content).toContain("[Scheduled background task");
+			expect(dispatched.content).toContain("check CI");
+			expect(dispatched.content).toContain("subagent");
+			expect(dispatched.details.dispatchMode).toBe("background");
+		});
+
+		it("sends raw prompt when dispatchMode is foreground (default)", async () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			runtime.setRuntimeContext(ctx as any);
+			runtime.addOneShotTask("check CI", 0);
+
+			vi.advanceTimersByTime(100);
+			await runtime.tickScheduler();
+
+			expect(pi._messages.length).toBeGreaterThan(0);
+			const dispatched = pi._messages.find((msg: any) => msg.customType === "pi-scheduler:dispatched");
+			expect(dispatched).toBeDefined();
+			expect(dispatched.content).toBe("check CI");
+			expect(dispatched.details.dispatchMode).toBe("foreground");
+		});
+
+		it("sends raw prompt when dispatchMode is explicitly foreground", async () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			runtime.setRuntimeContext(ctx as any);
+			runtime.addOneShotTask("check CI", 0, {
+				dispatchMode: "foreground",
+			});
+
+			vi.advanceTimersByTime(100);
+			await runtime.tickScheduler();
+
+			expect(pi._messages.length).toBeGreaterThan(0);
+			const dispatched = pi._messages.find((msg: any) => msg.customType === "pi-scheduler:dispatched");
+			expect(dispatched).toBeDefined();
+			expect(dispatched.content).toBe("check CI");
+			expect(dispatched.details.dispatchMode).toBe("foreground");
+		});
+	});
+
+	describe("formatTaskList with dispatchMode", () => {
+		it("includes [bg] indicator for background tasks in task list", () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			runtime.setRuntimeContext(ctx as any);
+			runtime.addRecurringIntervalTask("check CI", 60_000, {
+				dispatchMode: "background",
+			});
+
+			const list = runtime.formatTaskList();
+			expect(list).toContain("[bg]");
+		});
+
+		it("does not include [bg] for foreground tasks in task list", () => {
+			const runtime = new SchedulerRuntime(pi as any);
+			runtime.setRuntimeContext(ctx as any);
+			runtime.addRecurringIntervalTask("check CI", 60_000);
+
+			const list = runtime.formatTaskList();
+			expect(list).not.toContain("[bg]");
+		});
+	});
+
+	describe("schedule_prompt tool with dispatchMode", () => {
+		let tool: any;
+
+		beforeEach(() => {
+			schedulerExtension(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ctx);
+			tool = pi._tools.get("schedule_prompt");
+		});
+
+		it("passes dispatchMode to addOneShotTask via tool handler", async () => {
+			const result = await tool.execute("_call", {
+				action: "add",
+				kind: "once",
+				prompt: "check deployment",
+				duration: "30m",
+				dispatchMode: "background",
+			});
+
+			expect(result.content[0].text).toContain("Reminder scheduled");
+			// Verify dispatchMode is stored in details
+			expect(result.details.task.dispatchMode).toBe("background");
+		});
+
+		it("passes dispatchMode to recurring interval task via tool handler", async () => {
+			const result = await tool.execute("_call", {
+				action: "add",
+				kind: "recurring",
+				prompt: "check CI",
+				duration: "5m",
+				dispatchMode: "background",
+			});
+
+			expect(result.content[0].text).toContain("Recurring task scheduled");
+			expect(result.details.task.dispatchMode).toBe("background");
+		});
+
+		it("passes dispatchMode to recurring cron task via tool handler", async () => {
+			const result = await tool.execute("_call", {
+				action: "add",
+				kind: "recurring",
+				prompt: "check build",
+				cron: "*/5 * * * *",
+				dispatchMode: "background",
+			});
+
+			expect(result.content[0].text).toContain("Recurring cron task scheduled");
+			expect(result.details.task.dispatchMode).toBe("background");
+		});
+
+		it("defaults dispatchMode to undefined when not specified via tool", async () => {
+			const result = await tool.execute("_call", {
+				action: "add",
+				kind: "once",
+				prompt: "check deployment",
+				duration: "30m",
+			});
+
+			expect(result.content[0].text).toContain("Reminder scheduled");
+			expect(result.details.task.dispatchMode).toBeUndefined();
+		});
+	});
+});
