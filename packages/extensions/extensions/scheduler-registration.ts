@@ -2,7 +2,7 @@ import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-age
 
 import { Type } from "@sinclair/typebox";
 
-import type { ScheduleScope, TaskKind } from "./scheduler-shared.js";
+import type { ScheduleScope, ScheduleTaskDispatchMode, TaskKind } from "./scheduler-shared.js";
 import type { SchedulerRuntime } from "./scheduler.js";
 
 import {
@@ -89,6 +89,11 @@ const SchedulePromptToolParams = Type.Object({
 	scope: Type.Optional(
 		Type.Union([Type.Literal("instance"), Type.Literal("workspace")], {
 			description: "Task ownership scope. Use workspace for monitors that should survive instance changes.",
+		}),
+	),
+	dispatchMode: Type.Optional(
+		Type.Union([Type.Literal("foreground"), Type.Literal("background")], {
+			description: "Dispatch mode. 'background' runs the task as a subagent without interrupting the current conversation. 'foreground' is the default and injects the prompt directly.",
 		}),
 	),
 });
@@ -488,6 +493,7 @@ export function registerTools(pi: ExtensionAPI, runtime: SchedulerRuntime) {
 				cron?: string;
 				expires?: string;
 				scope?: ScheduleScope;
+				dispatchMode?: ScheduleTaskDispatchMode;
 				id?: string;
 				continueUntilComplete?: boolean;
 				completionSignal?: string;
@@ -548,6 +554,7 @@ export function registerTools(pi: ExtensionAPI, runtime: SchedulerRuntime) {
 			"Set expires for recurring tasks when the monitor should stop automatically; defaults to 1 day and is capped at 1 day.",
 			"Set continueUntilComplete=true when the user explicitly wants retries until the task is done.",
 			"Default scope is instance. Use scope='workspace' only for monitors that should be adoptable across pi instances in the same workspace.",
+			"Use dispatchMode='background' for monitoring tasks (CI checks, build status) that should not interrupt the user's current work. Default is 'foreground'.",
 			"Scheduled tasks run only while pi is active and idle. Persisted overdue or foreign-owned tasks are restored for manual review instead of auto-running at startup.",
 		],
 		promptSnippet:
@@ -855,6 +862,7 @@ function handleToolAdd(
 		cron?: string;
 		expires?: string;
 		scope?: ScheduleScope;
+		dispatchMode?: ScheduleTaskDispatchMode;
 		continueUntilComplete?: boolean;
 		completionSignal?: string;
 		retryInterval?: string;
@@ -941,6 +949,7 @@ function handleToolAdd(
 	if (validated.plan.kind === "once") {
 		const task = runtime.addOneShotTask(prompt, validated.plan.durationMs, {
 			scope: params.scope,
+			dispatchMode: params.dispatchMode,
 			...completion.options,
 		});
 		return {
@@ -962,6 +971,7 @@ function handleToolAdd(
 		const task = runtime.addRecurringCronTask(prompt, validated.plan.cronExpression, {
 			expiresInMs: recurringExpiry.expiresInMs,
 			scope: params.scope,
+			dispatchMode: params.dispatchMode,
 			...completion.options,
 		});
 		if (!task) {
@@ -995,6 +1005,7 @@ function handleToolAdd(
 	const task = runtime.addRecurringIntervalTask(prompt, validated.plan.durationMs, {
 		expiresInMs: recurringExpiry.expiresInMs,
 		scope: params.scope,
+		dispatchMode: params.dispatchMode,
 		...completion.options,
 	});
 	return {

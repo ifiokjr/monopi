@@ -25,7 +25,7 @@ import { randomUUID } from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-import type { ResumeReason, SchedulerLease, ScheduleScope, ScheduleTask } from "./scheduler-shared.js";
+import type { ResumeReason, SchedulerLease, ScheduleScope, ScheduleTask, ScheduleTaskDispatchMode } from "./scheduler-shared.js";
 
 import {
 	computeNextCronRunAt,
@@ -80,6 +80,7 @@ export type {
 	SchedulerLease,
 	ScheduleScope,
 	ScheduleTask,
+	ScheduleTaskDispatchMode,
 	TaskKind,
 	TaskStatus,
 } from "./scheduler-shared.js";
@@ -470,7 +471,7 @@ export class SchedulerRuntime {
 	addRecurringIntervalTask(
 		prompt: string,
 		intervalMs: number,
-		options: { scope?: ScheduleScope; expiresInMs?: number } & CompletionOptions = {},
+		options: { scope?: ScheduleScope; expiresInMs?: number; dispatchMode?: ScheduleTaskDispatchMode } & CompletionOptions = {},
 	): ScheduleTask {
 		const id = this.createId();
 		const createdAt = Date.now();
@@ -498,6 +499,7 @@ export class SchedulerRuntime {
 			retryIntervalMs: options.retryIntervalMs,
 			runCount: 0,
 			scope: options.scope ?? "instance",
+			dispatchMode: options.dispatchMode,
 		};
 		this.assignCreator(task);
 		this.assignOwner(task, task.scope ?? "instance");
@@ -511,7 +513,7 @@ export class SchedulerRuntime {
 	addRecurringCronTask(
 		prompt: string,
 		cronExpression: string,
-		options: { scope?: ScheduleScope; expiresInMs?: number } & CompletionOptions = {},
+		options: { scope?: ScheduleScope; expiresInMs?: number; dispatchMode?: ScheduleTaskDispatchMode } & CompletionOptions = {},
 	): ScheduleTask | undefined {
 		const normalizedCron = normalizeCronExpression(cronExpression);
 		if (!normalizedCron) {
@@ -544,6 +546,7 @@ export class SchedulerRuntime {
 			retryIntervalMs: options.retryIntervalMs,
 			runCount: 0,
 			scope: options.scope ?? "instance",
+			dispatchMode: options.dispatchMode,
 		};
 		this.assignCreator(task);
 		this.assignOwner(task, task.scope ?? "instance");
@@ -557,7 +560,7 @@ export class SchedulerRuntime {
 	addOneShotTask(
 		prompt: string,
 		delayMs: number,
-		options: { scope?: ScheduleScope } & CompletionOptions = {},
+		options: { scope?: ScheduleScope; dispatchMode?: ScheduleTaskDispatchMode } & CompletionOptions = {},
 	): ScheduleTask {
 		const id = this.createId();
 		const createdAt = Date.now();
@@ -577,6 +580,7 @@ export class SchedulerRuntime {
 			retryIntervalMs: options.retryIntervalMs,
 			runCount: 0,
 			scope: options.scope ?? "instance",
+			dispatchMode: options.dispatchMode,
 		};
 		this.assignCreator(task);
 		this.assignOwner(task, task.scope ?? "instance");
@@ -1263,11 +1267,16 @@ export class SchedulerRuntime {
 		}
 
 		try {
+			const isBackground = task.dispatchMode === "background";
+			const content = isBackground
+				? this.buildBackgroundPrompt(task.prompt, task.id)
+				: task.prompt;
 			this.pi.sendMessage(
 				{
-					content: task.prompt,
+					content,
 					customType: SCHEDULER_DISPATCHED_MESSAGE_TYPE,
 					details: {
+						dispatchMode: isBackground ? "background" : "foreground",
 						runCount: task.runCount + 1,
 						taskId: task.id,
 						taskMode: this.taskMode(task),
@@ -1310,6 +1319,24 @@ export class SchedulerRuntime {
 		this.scheduleRecurringNextRun(task, now);
 		this.persistTasks();
 		this.updateStatus();
+	}
+
+	/**
+	 * Build a prompt wrapper for background tasks. The wrapper instructs the
+	 * agent to run the actual task prompt as a subagent so the main conversation
+	 * context is never interrupted. Only noteworthy results (failures, errors)
+	 * should be surfaced to the user.
+	 */
+	buildBackgroundPrompt(originalPrompt: string, taskId: string): string {
+		return [
+			`[Scheduled background task ${taskId}]`,
+			"",
+			"Run the following task as a subagent (use the `subagent` tool with SINGLE mode). ",
+			"Do NOT interrupt the current conversation context. Execute silently and only report ",
+			"back if the task produces noteworthy results (failures, errors, or actionable findings).\n",
+			"Task prompt:",
+			originalPrompt,
+		].join("\n");
 	}
 
 	handleAgentEnd(event: { messages?: { role?: string; content?: unknown }[] }) {
@@ -1493,7 +1520,11 @@ export class SchedulerRuntime {
 				: task.cronExpression
 					? `cron ${task.cronExpression}`
 					: `every ${formatDurationShort(task.intervalMs ?? DEFAULT_LOOP_INTERVAL)}`;
-		return task.continueUntilComplete ? `${base} until-complete` : base;
+		let result = task.continueUntilComplete ? `${base} until-complete` : base;
+		if (task.dispatchMode === "background") {
+			result += " [bg]";
+		}
+		return result;
 	}
 
 	private taskOptionLabel(task: ScheduleTask): string {

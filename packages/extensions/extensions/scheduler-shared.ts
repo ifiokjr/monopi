@@ -23,6 +23,7 @@ export type TaskKind = "recurring" | "once";
 export type TaskStatus = "pending" | "success" | "error";
 export type ScheduleScope = "instance" | "workspace";
 export type ResumeReason = "overdue" | "foreign_owner" | "stale_owner" | "legacy_unowned" | "released";
+export type ScheduleTaskDispatchMode = "foreground" | "background";
 
 export interface ScheduleTask {
 	id: string;
@@ -52,6 +53,7 @@ export interface ScheduleTask {
 	lastOutcomeSnippet?: string;
 	creatorInstanceId?: string;
 	creatorSessionId?: string | null;
+	dispatchMode?: ScheduleTaskDispatchMode;
 }
 
 export interface SchedulerLease {
@@ -79,9 +81,9 @@ export interface ReminderParseResult {
 }
 
 export type SchedulePromptAddPlan =
-	| { kind: "once"; durationMs: number; note?: string }
-	| { kind: "recurring"; mode: "interval"; durationMs: number; note?: string }
-	| { kind: "recurring"; mode: "cron"; cronExpression: string; note?: string };
+	| { kind: "once"; durationMs: number; note?: string; dispatchMode?: ScheduleTaskDispatchMode }
+	| { kind: "recurring"; mode: "interval"; durationMs: number; note?: string; dispatchMode?: ScheduleTaskDispatchMode }
+	| { kind: "recurring"; mode: "cron"; cronExpression: string; note?: string; dispatchMode?: ScheduleTaskDispatchMode };
 
 export function getSchedulerStorageRoot(): string {
 	return path.join(getAgentDir(), "scheduler");
