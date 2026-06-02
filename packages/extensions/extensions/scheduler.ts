@@ -25,7 +25,13 @@ import { randomUUID } from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-import type { ResumeReason, SchedulerLease, ScheduleScope, ScheduleTask, ScheduleTaskDispatchMode } from "./scheduler-shared.js";
+import type {
+	ResumeReason,
+	SchedulerLease,
+	ScheduleScope,
+	ScheduleTask,
+	ScheduleTaskDispatchMode,
+} from "./scheduler-shared.js";
 
 import {
 	computeNextCronRunAt,
@@ -471,7 +477,11 @@ export class SchedulerRuntime {
 	addRecurringIntervalTask(
 		prompt: string,
 		intervalMs: number,
-		options: { scope?: ScheduleScope; expiresInMs?: number; dispatchMode?: ScheduleTaskDispatchMode } & CompletionOptions = {},
+		options: {
+			scope?: ScheduleScope;
+			expiresInMs?: number;
+			dispatchMode?: ScheduleTaskDispatchMode;
+		} & CompletionOptions = {},
 	): ScheduleTask {
 		const id = this.createId();
 		const createdAt = Date.now();
@@ -513,7 +523,11 @@ export class SchedulerRuntime {
 	addRecurringCronTask(
 		prompt: string,
 		cronExpression: string,
-		options: { scope?: ScheduleScope; expiresInMs?: number; dispatchMode?: ScheduleTaskDispatchMode } & CompletionOptions = {},
+		options: {
+			scope?: ScheduleScope;
+			expiresInMs?: number;
+			dispatchMode?: ScheduleTaskDispatchMode;
+		} & CompletionOptions = {},
 	): ScheduleTask | undefined {
 		const normalizedCron = normalizeCronExpression(cronExpression);
 		if (!normalizedCron) {
@@ -1268,9 +1282,7 @@ export class SchedulerRuntime {
 
 		try {
 			const isBackground = task.dispatchMode === "background";
-			const content = isBackground
-				? this.buildBackgroundPrompt(task.prompt, task.id)
-				: task.prompt;
+			const content = isBackground ? this.buildBackgroundPrompt(task.prompt, task.id) : task.prompt;
 			this.pi.sendMessage(
 				{
 					content,

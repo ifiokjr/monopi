@@ -3426,9 +3426,7 @@ describe("dispatchMode (background/foreground)", () => {
 			await runtime.tickScheduler();
 
 			expect(pi._messages.length).toBeGreaterThan(0);
-			const dispatched = pi._messages.find(
-				(msg: any) => msg.customType === "pi-scheduler:dispatched",
-			);
+			const dispatched = pi._messages.find((msg: any) => msg.customType === "pi-scheduler:dispatched");
 			expect(dispatched).toBeDefined();
 			expect(dispatched.content).toContain("[Scheduled background task");
 			expect(dispatched.content).toContain("check CI");
@@ -3445,9 +3443,7 @@ describe("dispatchMode (background/foreground)", () => {
 			await runtime.tickScheduler();
 
 			expect(pi._messages.length).toBeGreaterThan(0);
-			const dispatched = pi._messages.find(
-				(msg: any) => msg.customType === "pi-scheduler:dispatched",
-			);
+			const dispatched = pi._messages.find((msg: any) => msg.customType === "pi-scheduler:dispatched");
 			expect(dispatched).toBeDefined();
 			expect(dispatched.content).toBe("check CI");
 			expect(dispatched.details.dispatchMode).toBe("foreground");
@@ -3464,9 +3460,7 @@ describe("dispatchMode (background/foreground)", () => {
 			await runtime.tickScheduler();
 
 			expect(pi._messages.length).toBeGreaterThan(0);
-			const dispatched = pi._messages.find(
-				(msg: any) => msg.customType === "pi-scheduler:dispatched",
-			);
+			const dispatched = pi._messages.find((msg: any) => msg.customType === "pi-scheduler:dispatched");
 			expect(dispatched).toBeDefined();
 			expect(dispatched.content).toBe("check CI");
 			expect(dispatched.details.dispatchMode).toBe("foreground");

@@ -93,7 +93,8 @@ const SchedulePromptToolParams = Type.Object({
 	),
 	dispatchMode: Type.Optional(
 		Type.Union([Type.Literal("foreground"), Type.Literal("background")], {
-			description: "Dispatch mode. 'background' runs the task as a subagent without interrupting the current conversation. 'foreground' is the default and injects the prompt directly.",
+			description:
+				"Dispatch mode. 'background' runs the task as a subagent without interrupting the current conversation. 'foreground' is the default and injects the prompt directly.",
 		}),
 	),
 });
