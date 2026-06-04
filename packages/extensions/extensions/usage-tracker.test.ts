@@ -1750,10 +1750,7 @@ describe("usage-tracker extension", () => {
 			);
 
 			await runWithTimers(() => pi._commands.get("usage").handler("", ctx));
-			expect(ctx.ui.custom).toHaveBeenCalledWith(
-				expect.any(Function),
-				expect.objectContaining({ overlay: true }),
-			);
+			expect(ctx.ui.custom).toHaveBeenCalledWith(expect.any(Function), expect.objectContaining({ overlay: true }));
 
 			const rendererFactory = (ctx.ui.custom as ReturnType<typeof vi.fn>).mock.calls[0][0] as (...args: unknown[]) => {
 				render: (width: number) => string[];
@@ -1827,10 +1824,7 @@ describe("usage-tracker extension", () => {
 					expect.stringContaining("OpenAI"),
 				]),
 			);
-			expect(ctx.ui.custom).toHaveBeenCalledWith(
-				expect.any(Function),
-				expect.objectContaining({ overlay: true }),
-			);
+			expect(ctx.ui.custom).toHaveBeenCalledWith(expect.any(Function), expect.objectContaining({ overlay: true }));
 
 			const rendererFactory = (ctx.ui.custom as ReturnType<typeof vi.fn>).mock.calls[0][0] as (...args: unknown[]) => {
 				render: (width: number) => string[];
@@ -1858,10 +1852,7 @@ describe("usage-tracker extension", () => {
 			await runWithTimers(() => pi._commands.get("usage").handler("claude", ctx));
 
 			expect(ctx.ui.select).not.toHaveBeenCalled();
-			expect(ctx.ui.custom).toHaveBeenCalledWith(
-				expect.any(Function),
-				expect.objectContaining({ overlay: true }),
-			);
+			expect(ctx.ui.custom).toHaveBeenCalledWith(expect.any(Function), expect.objectContaining({ overlay: true }));
 		});
 
 		it("surfaces recently viewed providers in the picker", async () => {

@@ -27,9 +27,9 @@ Key usage-tracker surfaces:
 <!-- {/extensionsUsageTrackerCommandsDocs} -->
 */
 
+import type { OverlayHandle } from "@earendil-works/pi-tui";
 import type { AssistantMessage } from "@mariozechner/pi-ai";
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
-import type { OverlayHandle } from "@earendil-works/pi-tui";
 
 import { getAgentDir } from "@mariozechner/pi-coding-agent";
 import { Type } from "@sinclair/typebox";
@@ -814,11 +814,11 @@ export default function usageTracker(pi: ExtensionAPI) {
 				},
 			)
 			.then(() => {
-					usageOverlayHandle = null;
-				})
-				.catch(() => {
-						usageOverlayHandle = null;
-					});
+				usageOverlayHandle = null;
+			})
+			.catch(() => {
+				usageOverlayHandle = null;
+			});
 	}
 
 	function recordUsageSample(sample: UsageSample, options: { persist?: boolean } = {}): void {
