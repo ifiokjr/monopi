@@ -2,8 +2,4 @@
 default: patch
 ---
 
-# Remove session resume hint messages
-
-## Fixed
-
-- Stopped the auto session name extension from emitting `[session-resume-hint]` messages during session switch and shutdown events.
+Removed the auto session name extension's session switch and shutdown hint messages now that pi provides session resume guidance internally.
