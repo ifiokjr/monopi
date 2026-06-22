@@ -696,9 +696,9 @@ describe("diagnostics extension", () => {
 		diagnosticsExtension(harness.pi as never);
 
 		harness.emit("session_start", { type: "session_start" }, harness.ctx);
-		harness.emit("session_switch", { type: "session_switch" }, harness.ctx);
+		harness.emit("session_before_switch", { type: "session_before_switch" }, harness.ctx);
 		harness.emit("session_tree", { type: "session_tree" }, harness.ctx);
-		harness.emit("session_fork", { type: "session_fork" }, harness.ctx);
+		harness.emit("session_before_fork", { type: "session_before_fork" }, harness.ctx);
 
 		const command = harness.commands.get("diagnostics");
 		expect(command.getArgumentCompletions("o")).toEqual(

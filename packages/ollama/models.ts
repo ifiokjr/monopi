@@ -1,4 +1,4 @@
-import type { Api, Model, OAuthCredentials } from "@mariozechner/pi-ai";
+import type { Api, Model, OAuthCredentials, ThinkingLevelMap } from "@earendil-works/pi-ai";
 
 import type { OllamaRuntimeConfig } from "./config.js";
 
@@ -21,6 +21,7 @@ export interface OllamaProviderModel {
 	contextWindow: number;
 	maxTokens: number;
 	compat?: Model<Api>["compat"];
+	thinkingLevelMap?: ThinkingLevelMap;
 	source?: OllamaModelSource;
 	localAvailability?: OllamaLocalAvailability;
 	family?: string;
@@ -55,15 +56,16 @@ const OLLAMA_CLOUD_ZAI_REASONING_MAX_TOKENS = 131_072;
 
 const OLLAMA_OPENAI_COMPAT: NonNullable<OllamaProviderModel["compat"]> = {
 	maxTokensField: "max_tokens",
-	reasoningEffortMap: {
-		high: "high",
-		low: "low",
-		medium: "medium",
-		minimal: "low",
-		xhigh: "high",
-	},
 	supportsDeveloperRole: false,
 	supportsReasoningEffort: true,
+};
+
+const OLLAMA_REASONING_THINKING_LEVEL_MAP: ThinkingLevelMap = {
+	minimal: "low",
+	low: "low",
+	medium: "medium",
+	high: "high",
+	xhigh: "high",
 };
 
 const OLLAMA_CLOUD_ZAI_COMPAT: Partial<NonNullable<OllamaProviderModel["compat"]>> = {
@@ -72,320 +74,7 @@ const OLLAMA_CLOUD_ZAI_COMPAT: Partial<NonNullable<OllamaProviderModel["compat"]
 	zaiToolStream: true,
 };
 
-const FALLBACK_OLLAMA_CLOUD_MODELS: OllamaProviderModel[] = [
-	toOllamaModel({
-		contextWindow: 163_840,
-		id: "cogito-2.1:671b",
-		input: ["text"],
-		maxTokens: 20_480,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 163_840,
-		id: "deepseek-v3.1:671b",
-		input: ["text"],
-		maxTokens: 20_480,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 163_840,
-		id: "deepseek-v3.2",
-		input: ["text"],
-		maxTokens: 20_480,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 1_048_576,
-		id: "deepseek-v4-flash",
-		input: ["text"],
-		maxTokens: 65_536,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 1_048_576,
-		id: "deepseek-v4-pro",
-		input: ["text"],
-		maxTokens: 65_536,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "devstral-2:123b",
-		input: ["text"],
-		maxTokens: 32_768,
-		reasoning: false,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "devstral-small-2:24b",
-		input: ["text", "image"],
-		maxTokens: 32_768,
-		reasoning: false,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 1_048_576,
-		id: "gemini-3-flash-preview",
-		input: ["text"],
-		maxTokens: 65_536,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 131_072,
-		id: "gemma3:12b",
-		input: ["text", "image"],
-		maxTokens: 16_384,
-		reasoning: false,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 131_072,
-		id: "gemma3:27b",
-		input: ["text", "image"],
-		maxTokens: 16_384,
-		reasoning: false,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 131_072,
-		id: "gemma3:4b",
-		input: ["text", "image"],
-		maxTokens: 16_384,
-		reasoning: false,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "gemma4:31b",
-		input: ["text", "image"],
-		maxTokens: 32_768,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 202_752,
-		id: "glm-4.6",
-		input: ["text"],
-		maxTokens: 25_344,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 202_752,
-		id: "glm-4.7",
-		input: ["text"],
-		maxTokens: 25_344,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 202_752,
-		id: "glm-5",
-		input: ["text"],
-		maxTokens: 25_344,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 202_752,
-		id: "glm-5.1",
-		input: ["text"],
-		maxTokens: 25_344,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 131_072,
-		id: "gpt-oss:120b",
-		input: ["text"],
-		maxTokens: 16_384,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 131_072,
-		id: "gpt-oss:20b",
-		input: ["text"],
-		maxTokens: 16_384,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "kimi-k2-thinking",
-		input: ["text"],
-		maxTokens: 32_768,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "kimi-k2.5",
-		input: ["text", "image"],
-		maxTokens: 32_768,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "kimi-k2.6",
-		input: ["text", "image"],
-		maxTokens: 32_768,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "kimi-k2:1t",
-		input: ["text"],
-		maxTokens: 32_768,
-		reasoning: false,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 204_800,
-		id: "minimax-m2",
-		input: ["text"],
-		maxTokens: 25_600,
-		reasoning: false,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 204_800,
-		id: "minimax-m2.1",
-		input: ["text"],
-		maxTokens: 25_600,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 204_800,
-		id: "minimax-m2.5",
-		input: ["text"],
-		maxTokens: 25_600,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 204_800,
-		id: "minimax-m2.7",
-		input: ["text"],
-		maxTokens: 25_600,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "ministral-3:14b",
-		input: ["text", "image"],
-		maxTokens: 32_768,
-		reasoning: false,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "ministral-3:3b",
-		input: ["text", "image"],
-		maxTokens: 32_768,
-		reasoning: false,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "ministral-3:8b",
-		input: ["text", "image"],
-		maxTokens: 32_768,
-		reasoning: false,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "mistral-large-3:675b",
-		input: ["text", "image"],
-		maxTokens: 32_768,
-		reasoning: false,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 1_048_576,
-		id: "nemotron-3-nano:30b",
-		input: ["text"],
-		maxTokens: 65_536,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "nemotron-3-super",
-		input: ["text"],
-		maxTokens: 32_768,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "qwen3-coder-next",
-		input: ["text"],
-		maxTokens: 32_768,
-		reasoning: false,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "qwen3-coder:480b",
-		input: ["text"],
-		maxTokens: 32_768,
-		reasoning: false,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "qwen3-next:80b",
-		input: ["text"],
-		maxTokens: 32_768,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "qwen3-vl:235b",
-		input: ["text", "image"],
-		maxTokens: 32_768,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "qwen3-vl:235b-instruct",
-		input: ["text", "image"],
-		maxTokens: 32_768,
-		reasoning: false,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 262_144,
-		id: "qwen3.5:397b",
-		input: ["text", "image"],
-		maxTokens: 32_768,
-		reasoning: true,
-		source: "cloud",
-	}),
-	toOllamaModel({
-		contextWindow: 32_768,
-		id: "rnj-1:8b",
-		input: ["text"],
-		maxTokens: 16_384,
-		reasoning: false,
-		source: "cloud",
-	}),
-];
+const FALLBACK_OLLAMA_CLOUD_MODELS: OllamaProviderModel[] = [];
 
 export function getFallbackOllamaCloudModels(): OllamaProviderModel[] {
 	return FALLBACK_OLLAMA_CLOUD_MODELS.map(cloneModel);
@@ -547,6 +236,9 @@ export function toOllamaModel(
 		quantization: sanitizeOptionalString(model.quantization),
 		reasoning: model.reasoning ?? false,
 		source: model.source,
+		thinkingLevelMap: model.reasoning
+			? (model.thinkingLevelMap ?? OLLAMA_REASONING_THINKING_LEVEL_MAP)
+			: model.thinkingLevelMap,
 	};
 }
 

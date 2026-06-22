@@ -92,7 +92,7 @@ export function main(argv = process.argv, { execute = execFileSync, log = consol
 	const pi = findPi(execute);
 	if (!pi) {
 		error("Error: 'pi' command not found. Install pi-coding-agent first:");
-		error("  npm install -g @mariozechner/pi-coding-agent");
+		error("  npm install -g @earendil-works/pi-coding-agent");
 		return 1;
 	}
 

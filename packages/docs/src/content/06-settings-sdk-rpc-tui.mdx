@@ -112,7 +112,7 @@ Nested objects are merged; project overrides global.
 ### Quick Start
 
 ```typescript
-import { AuthStorage, createAgentSession, ModelRegistry, SessionManager } from "@mariozechner/pi-coding-agent";
+import { AuthStorage, createAgentSession, ModelRegistry, SessionManager } from "@earendil-works/pi-coding-agent";
 
 const authStorage = new AuthStorage();
 const modelRegistry = new ModelRegistry(authStorage);
@@ -241,7 +241,7 @@ Extension `ctx.ui.select/confirm/input/editor` calls become `extension_ui_reques
 
 ## 4. TUI Component System
 
-From the `@mariozechner/pi-tui` package.
+From the `@earendil-works/pi-tui` package.
 
 ### Component Interface
 
@@ -271,7 +271,7 @@ interface Component {
 ### Keyboard Input
 
 ```typescript
-import { matchesKey, Key } from "@mariozechner/pi-tui";
+import { matchesKey, Key } from "@earendil-works/pi-tui";
 
 if (matchesKey(data, Key.up)) { ... }
 if (matchesKey(data, Key.enter)) { ... }

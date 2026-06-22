@@ -16,11 +16,11 @@ The scheduler distinguishes between instance-scoped tasks and workspace-scoped t
 <!-- {/extensionsSchedulerOwnershipDocs} -->
 */
 
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import type { ScrollSelectOption } from "@ifi/pi-shared-qna";
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
 
+import { Text } from "@earendil-works/pi-tui";
 import { openScrollableSelect } from "@ifi/pi-shared-qna";
-import { Text } from "@mariozechner/pi-tui";
 import { randomUUID } from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";

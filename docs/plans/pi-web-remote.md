@@ -320,7 +320,7 @@ All four packages join the lockstep versioning in `knope.toml`.
   - `"type": "module"`
   - `"bin": { "pi-web": "dist/bin/pi-web.js" }`
   - Dependencies: `hono`, `@hono/node-server`, `ws`, `qrcode-terminal`
-  - Peer dependency: `@mariozechner/pi-coding-agent`
+  - Peer dependency: `@earendil-works/pi-coding-agent`
 - [ ] `tsconfig.json` extending root
 - [ ] Build/typecheck scripts matching `packages/core/` pattern
 - [ ] Add to `knope.toml` `versioned_files`
@@ -460,7 +460,7 @@ wscat -c ws://localhost:3100/ws
   - Raw .ts (pi loads via jiti)
   - `"pi": { "extensions": ["./index.ts"] }`
   - Dependency: `@ifi/pi-web-server` (workspace)
-  - Peer dependencies: `@mariozechner/pi-coding-agent`, `@sinclair/typebox`
+  - Peer dependencies: `@earendil-works/pi-coding-agent`, `typebox`
 - [ ] Add to `knope.toml` `versioned_files`
 
 ### 2.2 — Extension Implementation
@@ -811,11 +811,11 @@ pi
 ```
 @ifi/pi-web-remote (pi extension: /remote command)
   ├── @ifi/pi-web-server (starts embedded server)
-  └── @mariozechner/pi-coding-agent (peer dep)
+  └── @earendil-works/pi-coding-agent (peer dep)
 
 @ifi/pi-web-server (embeddable server)
   ├── @ifi/pi-web-ui (bundled static assets)
-  └── @mariozechner/pi-coding-agent (peer dep: SDK)
+  └── @earendil-works/pi-coding-agent (peer dep: SDK)
 
 @ifi/pi-web-client (standalone client library)
   └── (no dependencies — platform-agnostic)

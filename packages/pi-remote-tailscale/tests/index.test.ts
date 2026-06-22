@@ -183,7 +183,7 @@ describe("pi-remote-tailscale extension", () => {
 		await harness.emitAsync("session_start", { type: "session_start" }, harness.ctx);
 		await vi.runAllTimersAsync();
 		await harness.emitAsync("session_start", { type: "session_start" }, harness.ctx);
-		await harness.emitAsync("session_switch", { type: "session_switch" }, harness.ctx);
+		await harness.emitAsync("session_before_switch", { type: "session_before_switch" }, harness.ctx);
 
 		expect(serverModule.startRemoteSessionServer).toHaveBeenCalledTimes(1);
 		expect(harness.notifications.at(0)?.msg).toBe(

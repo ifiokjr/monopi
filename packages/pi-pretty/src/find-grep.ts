@@ -1,7 +1,7 @@
-import type { AgentToolResult, ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { AgentToolResult, ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
-import { createFindTool, createGrepTool } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
+import { createFindTool, createGrepTool } from "@earendil-works/pi-coding-agent";
+import { Type } from "typebox";
 
 import { getFileIcon } from "./icons.js";
 import { FG_BLUE, FG_DIM, FG_MUTED, fillToolBackground, RST } from "./theme.js";

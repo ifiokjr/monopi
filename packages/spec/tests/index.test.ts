@@ -18,7 +18,7 @@ vi.mock("../extension/git.js", () => ({
 	createGitClient: () => gitClientMock,
 }));
 
-vi.mock("@mariozechner/pi-tui", () => ({
+vi.mock("@earendil-works/pi-tui", () => ({
 	Text: class {
 		constructor(public text: string) {}
 	},

@@ -20,7 +20,7 @@ vi.mock("@ifi/oh-pi-core", () => ({
 	expandHomeDir: skillsMocks.expandHomeDir,
 }));
 
-vi.mock("@mariozechner/pi-coding-agent", () => ({
+vi.mock("@earendil-works/pi-coding-agent", () => ({
 	DefaultPackageManager: class {
 		resolve = skillsMocks.packageResolve;
 	},

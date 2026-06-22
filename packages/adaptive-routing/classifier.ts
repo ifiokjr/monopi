@@ -1,7 +1,7 @@
-import type { Api, AssistantMessage, Model } from "@mariozechner/pi-ai";
-import type { ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { Api, AssistantMessage, Model } from "@earendil-works/pi-ai";
+import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 
-import { completeSimple } from "@mariozechner/pi-ai";
+import { completeSimple } from "@earendil-works/pi-ai";
 
 import type {
 	AdaptiveRoutingConfig,
@@ -217,10 +217,6 @@ async function resolveApiKey(
 			getApiKey?: (provider: string) => Promise<string | undefined>;
 		};
 	};
-	if (typeof registry.getApiKey === "function") {
-		return registry.getApiKey(model);
-	}
-
 	if (typeof registry.getApiKeyForProvider === "function") {
 		return registry.getApiKeyForProvider(model.provider);
 	}

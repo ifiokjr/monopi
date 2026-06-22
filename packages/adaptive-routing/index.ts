@@ -1,5 +1,5 @@
 /* C8 ignore file */
-import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 import type {
 	AdaptiveRoutingMode,

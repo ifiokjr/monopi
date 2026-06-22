@@ -31,7 +31,7 @@ vi.mock("node:os", async (importOriginal) => {
 	};
 });
 
-vi.mock("@mariozechner/pi-coding-agent", () => ({}));
+vi.mock("@earendil-works/pi-coding-agent", () => ({}));
 
 import { resetSafeModeStateForTests } from "./runtime-mode";
 import watchdogExtension from "./watchdog";
@@ -117,7 +117,7 @@ describe("watchdog session churn", () => {
 
 		for (let i = 0; i < 50; i++) {
 			await pi._emit("session_start", {}, ctx);
-			await pi._emit("session_switch", {}, ctx);
+			await pi._emit("session_before_switch", {}, ctx);
 		}
 
 		expect(setIntervalSpy).toHaveBeenCalledTimes(1);

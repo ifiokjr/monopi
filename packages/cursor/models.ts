@@ -1,5 +1,5 @@
 import type { JsonValue } from "@bufbuild/protobuf";
-import type { OAuthCredentials } from "@mariozechner/pi-ai";
+import type { OAuthCredentials } from "@earendil-works/pi-ai";
 
 import { create, fromBinary, toBinary } from "@bufbuild/protobuf";
 

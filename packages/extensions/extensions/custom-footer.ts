@@ -12,10 +12,10 @@
  * The footer auto-refreshes every 30 seconds and on git branch changes.
  */
 
-import type { AssistantMessage } from "@mariozechner/pi-ai";
-import type { ExtensionAPI, ExtensionContext, ReadonlyFooterDataProvider } from "@mariozechner/pi-coding-agent";
+import type { AssistantMessage } from "@earendil-works/pi-ai";
+import type { ExtensionAPI, ExtensionContext, ReadonlyFooterDataProvider } from "@earendil-works/pi-coding-agent";
 
-import { truncateToWidth } from "@mariozechner/pi-tui";
+import { truncateToWidth } from "@earendil-works/pi-tui";
 import path from "node:path";
 
 import type { RepoWorktreeContext, RepoWorktreeSnapshot } from "./worktree-shared";
@@ -380,7 +380,7 @@ export default function (pi: ExtensionAPI) {
 		});
 	});
 
-	pi.on("session_switch", (event, ctx) => {
+	pi.on("session_before_switch", (event, ctx) => {
 		activeCtx = ctx;
 		scheduleUsageTotalsRefresh(ctx);
 		scheduleWorktreeContextRefresh(ctx.cwd ?? process.cwd(), {
@@ -397,7 +397,7 @@ export default function (pi: ExtensionAPI) {
 		scheduleUsageTotalsRefresh(ctx);
 	});
 
-	pi.on("session_fork", (_event, ctx) => {
+	pi.on("session_before_fork", (_event, ctx) => {
 		activeCtx = ctx;
 		scheduleUsageTotalsRefresh(ctx);
 	});

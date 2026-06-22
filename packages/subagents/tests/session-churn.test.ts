@@ -38,11 +38,11 @@ vi.mock("node:fs", () => ({
 	unlinkSync: vi.fn(),
 }));
 
-vi.mock("@mariozechner/pi-coding-agent", () => ({
+vi.mock("@earendil-works/pi-coding-agent", () => ({
 	getAgentDir: () => "/tmp/pi-agent",
 	VERSION: "test",
 }));
-vi.mock("@mariozechner/pi-tui", () => ({
+vi.mock("@earendil-works/pi-tui", () => ({
 	Text: class {},
 }));
 
@@ -337,7 +337,7 @@ describe("subagent session churn", () => {
 					asyncDir: `/tmp/${id}`,
 				});
 			}
-			await pi._emit("session_switch", {}, ctx);
+			await pi._emit("session_before_switch", {}, ctx);
 			await vi.advanceTimersByTimeAsync(250);
 		}
 

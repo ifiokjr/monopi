@@ -6,7 +6,7 @@ import {
 	resetApiProviders,
 	streamSimple,
 	streamSimpleOpenAICompletions,
-} from "@mariozechner/pi-ai";
+} from "@earendil-works/pi-ai";
 import http from "node:http";
 import { afterEach, describe, expect, it } from "vitest";
 
@@ -45,10 +45,7 @@ async function createReasoningAwareChatBackend(): Promise<{
 			requests.push(payload);
 
 			const shouldReturnVisibleText =
-				typeof payload.max_tokens === "number" &&
-				payload.max_tokens >= 32_000 &&
-				payload.reasoning_effort === undefined &&
-				typeof payload.enable_thinking === "boolean";
+				payload.reasoning_effort === undefined && typeof payload.enable_thinking === "boolean";
 
 			res.writeHead(200, {
 				"Cache-Control": "no-cache",
@@ -143,7 +140,7 @@ afterEach(() => {
 });
 
 describe("ollama glm cloud streaming", () => {
-	it("uses z.ai thinking flags and a larger default token budget when reasoning is enabled", async () => {
+	it("uses z.ai thinking flags when reasoning is enabled", async () => {
 		const backend = await createReasoningAwareChatBackend();
 
 		try {
@@ -171,13 +168,11 @@ describe("ollama glm cloud streaming", () => {
 			expect(extractText(result.content as Array<{ type: string; text?: string }>)).toBe("OK");
 			expect(payloads[0]).toMatchObject({
 				enable_thinking: true,
-				max_tokens: 32_000,
 				model: "glm-5.1",
 			});
 			expect(payloads[0]?.reasoning_effort).toBeUndefined();
 			expect(backend.requests[0]).toMatchObject({
 				enable_thinking: true,
-				max_tokens: 32_000,
 			});
 		} finally {
 			await backend.close();
@@ -211,13 +206,11 @@ describe("ollama glm cloud streaming", () => {
 			expect(extractText(result.content as Array<{ type: string; text?: string }>)).toBe("OK");
 			expect(payloads[0]).toMatchObject({
 				enable_thinking: false,
-				max_tokens: 32_000,
 				model: "glm-5.1",
 			});
 			expect(payloads[0]?.reasoning_effort).toBeUndefined();
 			expect(backend.requests[0]).toMatchObject({
 				enable_thinking: false,
-				max_tokens: 32_000,
 			});
 		} finally {
 			await backend.close();
@@ -270,7 +263,6 @@ describe("ollama glm cloud streaming", () => {
 			expect(extractText(result.content as Array<{ type: string; text?: string }>)).toBe("OK");
 			expect(backend.requests[0]).toMatchObject({
 				model: "glm-5.1",
-				max_tokens: 32_000,
 				enable_thinking: false,
 			});
 		} finally {

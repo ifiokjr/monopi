@@ -27,14 +27,14 @@ Key usage-tracker surfaces:
 <!-- {/extensionsUsageTrackerCommandsDocs} -->
 */
 
+import type { AssistantMessage } from "@earendil-works/pi-ai";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import type { OverlayHandle } from "@earendil-works/pi-tui";
-import type { AssistantMessage } from "@mariozechner/pi-ai";
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
 
-import { getAgentDir } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
+import { getAgentDir } from "@earendil-works/pi-coding-agent";
 import { existsSync, mkdirSync, promises as fsp, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { Type } from "typebox";
 
 import type {
 	HistoricalCostPoint,
@@ -1793,7 +1793,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 		mountWidget(ctx);
 	});
 
-	pi.on("session_switch", (_event, ctx) => {
+	pi.on("session_before_switch", (_event, ctx) => {
 		activeCtx = ctx;
 		schedulePersistedStateLoad();
 		refreshStartupState(ctx);

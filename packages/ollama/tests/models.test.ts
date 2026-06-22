@@ -9,7 +9,6 @@ import {
 	discoverOllamaCloudModels,
 	discoverOllamaLocalModels,
 	getCredentialModels,
-	getFallbackOllamaCloudModels,
 	toOllamaModel,
 } from "../models.js";
 import { createTestOllamaBackend } from "./test-backend.js";
@@ -26,15 +25,6 @@ afterEach(() => {
 });
 
 describe("ollama models", () => {
-	it("returns a cloud fallback catalog", () => {
-		const models = getFallbackOllamaCloudModels();
-		expect(models.some((model) => model.id === "gpt-oss:120b")).toBe(true);
-		expect(models.some((model) => model.id === "qwen3-vl:235b")).toBe(true);
-		expect(models.some((model) => model.id === "glm-5.1")).toBe(true);
-		expect(models.some((model) => model.id === "kimi-k2.6")).toBe(true);
-		expect(models.some((model) => model.id === "deepseek-v4-pro")).toBe(true);
-	});
-
 	it("normalizes model defaults", () => {
 		const model = toOllamaModel({
 			id: "gpt-oss:120b",
@@ -256,7 +246,7 @@ describe("ollama models", () => {
 		await backend.close();
 	});
 
-	it("falls back per model when metadata discovery fails", async () => {
+	it("uses default metadata when show discovery fails", async () => {
 		const backend = await createTestOllamaBackend();
 		backend.setModels([
 			{
@@ -276,8 +266,8 @@ describe("ollama models", () => {
 		process.env.PI_OLLAMA_CLOUD_SHOW_URL = `${backend.origin}/api/show`;
 		const models = await discoverOllamaCloudModels("test-key");
 		expect(models?.map((model) => model.id)).toEqual(["gpt-oss:120b", "qwen3-vl:235b"]);
-		expect(models?.[1]?.input).toEqual(["text", "image"]);
-		expect(models?.[1]?.reasoning).toBe(true);
+		expect(models?.[1]?.input).toEqual(["text"]);
+		expect(models?.[1]?.reasoning).toBe(false);
 		await backend.close();
 	});
 

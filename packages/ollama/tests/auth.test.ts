@@ -34,7 +34,9 @@ describe("ollama cloud auth", () => {
 			onAuth(params) {
 				openedUrl = params.url;
 			},
+			onDeviceCode: vi.fn(),
 			onPrompt: vi.fn(async () => "test-key"),
+			onSelect: vi.fn(async () => undefined),
 		});
 
 		expect(openedUrl).toBe(backend.keysUrl);

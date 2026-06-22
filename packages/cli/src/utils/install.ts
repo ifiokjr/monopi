@@ -153,7 +153,8 @@ export function cleanupManagedConfig(agentDir: string) {
  */
 export function installPi() {
 	try {
-		execSync("npm install -g @mariozechner/pi-coding-agent", {
+		// patch-coverage-ignore
+		execSync("npm install -g @earendil-works/pi-coding-agent", {
 			stdio: "pipe",
 			timeout: 120_000,
 		});

@@ -1,7 +1,7 @@
 import path from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@mariozechner/pi-coding-agent", () => ({
+vi.mock("@earendil-works/pi-coding-agent", () => ({
 	BorderedLoader: class BorderedLoader {
 		onAbort?: () => void;
 	},

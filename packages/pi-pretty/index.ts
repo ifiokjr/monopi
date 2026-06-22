@@ -2,7 +2,7 @@
  * Pi-pretty — Pretty terminal output for pi built-in tools.
  */
 
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 import { enhanceBashTool } from "./src/bash.js";
 import { enhanceFindTool, enhanceGrepTool, enhanceMultiGrepTool } from "./src/find-grep.js";

@@ -2,7 +2,7 @@
  * Core execution logic for running subagents
  */
 
-import type { Message } from "@mariozechner/pi-ai";
+import type { Message } from "@earendil-works/pi-ai";
 
 import { spawn } from "node:child_process";
 import * as fs from "node:fs";

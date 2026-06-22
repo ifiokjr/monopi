@@ -1,5 +1,5 @@
 /* C8 ignore file */
-import { getAgentDir } from "@mariozechner/pi-coding-agent";
+import { getAgentDir } from "@earendil-works/pi-coding-agent";
 import { join } from "node:path";
 
 import type { NormalizedConfigResult } from "./config-loader.js";

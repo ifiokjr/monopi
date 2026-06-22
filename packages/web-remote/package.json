@@ -31,8 +31,8 @@
 		"@ifi/pi-web-server": "0.5.1"
 	},
 	"peerDependencies": {
-		"@mariozechner/pi-coding-agent": ">=0.56.1",
-		"@sinclair/typebox": "*"
+		"@earendil-works/pi-coding-agent": ">=0.78.1",
+		"typebox": "^1.1.24"
 	},
 	"pi": {
 		"extensions": [

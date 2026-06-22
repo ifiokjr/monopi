@@ -1,8 +1,8 @@
-import type { AgentToolResult } from "@mariozechner/pi-agent-core";
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { AgentToolResult } from "@earendil-works/pi-agent-core";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
-import { keyHint } from "@mariozechner/pi-coding-agent";
-import { Text } from "@mariozechner/pi-tui";
+import { keyHint } from "@earendil-works/pi-coding-agent";
+import { Text } from "@earendil-works/pi-tui";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -228,7 +228,7 @@ export default function (pi: ExtensionAPI) {
 		startupRefreshTimer.unref?.();
 	});
 
-	pi.on("session_switch", async (_event, ctx) => {
+	pi.on("session_before_switch", async (_event, ctx) => {
 		refreshState(ctx);
 	});
 
@@ -236,7 +236,7 @@ export default function (pi: ExtensionAPI) {
 		refreshState(ctx);
 	});
 
-	pi.on("session_fork", async (_event, ctx) => {
+	pi.on("session_before_fork", async (_event, ctx) => {
 		refreshState(ctx);
 	});
 

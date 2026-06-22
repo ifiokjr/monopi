@@ -1,6 +1,6 @@
-import type { Theme } from "@mariozechner/pi-coding-agent";
+import type { Theme } from "@earendil-works/pi-coding-agent";
 
-import { matchesKey, truncateToWidth, visibleWidth } from "@mariozechner/pi-tui";
+import { matchesKey, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
 import type { AgentSource } from "./agents.js";
 

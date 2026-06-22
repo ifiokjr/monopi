@@ -592,7 +592,7 @@ function findPi(): string {
 	}
 
 	throw new Error(
-		"'pi' command not found. Install pi-coding-agent first: npm install -g @mariozechner/pi-coding-agent",
+		"'pi' command not found. Install pi-coding-agent first: npm install -g @earendil-works/pi-coding-agent",
 	);
 }
 

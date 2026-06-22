@@ -2,11 +2,11 @@
  * Rendering functions for subagent results
  */
 
-import type { AgentToolResult } from "@mariozechner/pi-agent-core";
-import type { ExtensionContext } from "@mariozechner/pi-coding-agent";
-import type { Widget } from "@mariozechner/pi-tui";
+import type { AgentToolResult } from "@earendil-works/pi-agent-core";
+import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
+import type { Widget } from "@earendil-works/pi-tui";
 
-import { getMarkdownTheme } from "@mariozechner/pi-coding-agent";
+import { getMarkdownTheme } from "@earendil-works/pi-coding-agent";
 import {
 	Container,
 	Markdown,
@@ -15,7 +15,7 @@ import {
 	truncateToWidth,
 	visibleWidth,
 	wrapTextWithAnsi,
-} from "@mariozechner/pi-tui";
+} from "@earendil-works/pi-tui";
 
 import type { AsyncJobState, Details } from "./types.js";
 

@@ -220,7 +220,7 @@ src/ layer (19 modules, ~1,732 lines)    subagents/ layer (10 modules, ~2,421 li
      │                                          │   sendMessage, ...)
      ▼                                          ▼
 ┌─────────────────────────────────────────────────────┐
-│          @mariozechner/pi-coding-agent               │
+│          @earendil-works/pi-coding-agent               │
 │                (runtime host)                         │
 └─────────────────────────────────────────────────────┘
 ```

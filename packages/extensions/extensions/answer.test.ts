@@ -1,7 +1,7 @@
-import { completeSimple } from "@mariozechner/pi-ai";
+import { completeSimple } from "@earendil-works/pi-ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@mariozechner/pi-ai", () => ({
+vi.mock("@earendil-works/pi-ai", () => ({
 	completeSimple: vi.fn(),
 	getEnvApiKey: vi.fn(),
 }));
@@ -18,7 +18,7 @@ vi.mock("@ifi/pi-shared-qna", () => ({
 	requirePiTuiModule: vi.fn(),
 }));
 
-vi.mock("@mariozechner/pi-coding-agent", () => ({
+vi.mock("@earendil-works/pi-coding-agent", () => ({
 	BorderedLoader: class BorderedLoader {
 		public onAbort?: () => void;
 		constructor(

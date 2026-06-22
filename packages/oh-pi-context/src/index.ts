@@ -1,6 +1,6 @@
-import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
-import { Container, Text } from "@mariozechner/pi-tui";
+import { Container, Text } from "@earendil-works/pi-tui";
 
 import { getStats, indexEntry, purgeAll, searchKB } from "./store.js";
 

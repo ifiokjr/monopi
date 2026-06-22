@@ -1,5 +1,5 @@
-import type { AgentToolResult } from "@mariozechner/pi-agent-core";
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { AgentToolResult } from "@earendil-works/pi-agent-core";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 import { runSync } from "@ifi/pi-extension-subagents/execution.ts";
 import { getFinalOutput } from "@ifi/pi-extension-subagents/utils.ts";

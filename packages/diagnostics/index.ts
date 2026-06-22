@@ -1,6 +1,6 @@
-import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext, Theme } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
 
-import { Text, truncateToWidth } from "@mariozechner/pi-tui";
+import { Text, truncateToWidth } from "@earendil-works/pi-tui";
 
 import { formatDuration, formatTimestamp, summarizeContent, summarizeText } from "./diagnostics-shared.js";
 
@@ -887,7 +887,7 @@ export default function diagnosticsExtension(pi: ExtensionAPI): void {
 		restoreSessionState(ctx);
 	});
 
-	pi.on("session_switch", (_event, ctx) => {
+	pi.on("session_before_switch", (_event, ctx) => {
 		restoreSessionState(ctx);
 	});
 
@@ -895,7 +895,7 @@ export default function diagnosticsExtension(pi: ExtensionAPI): void {
 		restoreSessionState(ctx);
 	});
 
-	pi.on("session_fork", (_event, ctx) => {
+	pi.on("session_before_fork", (_event, ctx) => {
 		restoreSessionState(ctx);
 	});
 

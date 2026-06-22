@@ -7,7 +7,7 @@ const { getAgentDir } = vi.hoisted(() => ({
 	getAgentDir: vi.fn(() => "/mock-home/.pi/agent"),
 }));
 
-vi.mock("@mariozechner/pi-coding-agent", () => ({ getAgentDir }));
+vi.mock("@earendil-works/pi-coding-agent", () => ({ getAgentDir }));
 vi.mock("@ifi/oh-pi-core", async () => {
 	return await import("../../core/src/model-intelligence.ts");
 });

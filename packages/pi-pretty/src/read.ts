@@ -1,7 +1,7 @@
-import type { AgentToolResult, ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { AgentToolResult, ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import type { BundledLanguage } from "shiki";
 
-import { createReadTool } from "@mariozechner/pi-coding-agent";
+import { createReadTool } from "@earendil-works/pi-coding-agent";
 import { codeToANSI } from "@shikijs/cli";
 import { basename, extname } from "node:path";
 

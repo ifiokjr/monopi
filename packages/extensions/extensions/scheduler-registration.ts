@@ -1,6 +1,6 @@
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
-import { Type } from "@sinclair/typebox";
+import { Type } from "typebox";
 
 import type { ScheduleScope, ScheduleTaskDispatchMode, TaskKind } from "./scheduler-shared.js";
 import type { SchedulerRuntime } from "./scheduler.js";
@@ -1060,8 +1060,8 @@ export function registerEvents(pi: ExtensionAPI, runtime: SchedulerRuntime) {
 		scheduleStartupOwnership(ctx);
 	});
 
-	pi.on("session_switch", refreshRuntimeContext);
-	pi.on("session_fork", refreshRuntimeContext);
+	pi.on("session_before_switch", refreshRuntimeContext);
+	pi.on("session_before_fork", refreshRuntimeContext);
 	pi.on("session_tree", refreshRuntimeContext);
 	pi.on("session_branch", refreshRuntimeContext);
 

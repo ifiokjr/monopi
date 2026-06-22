@@ -1,4 +1,4 @@
-import { getAgentDir } from "@mariozechner/pi-coding-agent";
+import { getAgentDir } from "@earendil-works/pi-coding-agent";
 import * as path from "node:path";
 
 export const MAX_TASKS = 50;

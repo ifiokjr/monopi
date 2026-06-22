@@ -1,4 +1,4 @@
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 /**
  * Oh-pi Auto Update Extension
@@ -7,7 +7,7 @@ import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
  * If a newer version is found, shows a toast notification with upgrade instructions.
  * The check runs in a `setTimeout` to avoid blocking session startup.
  */
-import { getAgentDir } from "@mariozechner/pi-coding-agent";
+import { getAgentDir } from "@earendil-works/pi-coding-agent";
 import { execFile } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";

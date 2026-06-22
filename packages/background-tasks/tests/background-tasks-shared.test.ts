@@ -1,7 +1,7 @@
 import { delimiter, join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("@mariozechner/pi-coding-agent", () => ({
+vi.mock("@earendil-works/pi-coding-agent", () => ({
 	getAgentDir: () => "/mock-home/.pi/agent",
 }));
 

@@ -1,4 +1,4 @@
-import type { AuthCredential, ExtensionAPI, ExtensionCommandContext } from "@mariozechner/pi-coding-agent";
+import type { AuthCredential, ExtensionAPI, ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
 
 import {
 	type Api,
@@ -7,7 +7,7 @@ import {
 	type Model,
 	type SimpleStreamOptions,
 	streamSimpleOpenAICompletions,
-} from "@mariozechner/pi-ai";
+} from "@earendil-works/pi-ai";
 
 import {
 	type CloudModelsGetter,

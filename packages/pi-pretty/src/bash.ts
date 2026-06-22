@@ -1,6 +1,6 @@
-import type { AgentToolResult, ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { AgentToolResult, ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
-import { createBashTool } from "@mariozechner/pi-coding-agent";
+import { createBashTool } from "@earendil-works/pi-coding-agent";
 
 import { FG_GREEN, FG_RED, FG_YELLOW, fillToolBackground, resolveBaseBackground } from "./theme.js";
 

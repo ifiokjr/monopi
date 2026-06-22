@@ -105,7 +105,7 @@ vi.mock("@bufbuild/protobuf", () => ({
 	toBinary: providerMocks.toBinary,
 }));
 
-vi.mock("@mariozechner/pi-ai", () => ({
+vi.mock("@earendil-works/pi-ai", () => ({
 	calculateCost: providerMocks.calculateCost,
 	createAssistantMessageEventStream: providerMocks.createAssistantMessageEventStream,
 	getEnvApiKey: providerMocks.getEnvApiKey,
@@ -375,11 +375,14 @@ describe("streamSimpleCursor", () => {
 		expect(connection.write).toHaveBeenCalledWith({
 			framed: new Uint8Array([1, 2, 3]),
 		});
-		expect(onPayload).toHaveBeenCalledWith({
-			model: "composer-2",
-			conversationId: "saved-conv",
-			toolCount: 1,
-		});
+		expect(onPayload).toHaveBeenCalledWith(
+			{
+				model: "composer-2",
+				conversationId: "saved-conv",
+				toolCount: 1,
+			},
+			expect.anything(),
+		);
 
 		connection.handlers.onData?.({
 			kind: "message",

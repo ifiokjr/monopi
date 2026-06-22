@@ -14,7 +14,7 @@ export function resolvePiPackageRoot(): string | undefined {
 		while (dir !== path.dirname(dir)) {
 			try {
 				const pkg = JSON.parse(fs.readFileSync(path.join(dir, "package.json"), "utf8"));
-				if (pkg.name === "@mariozechner/pi-coding-agent") {
+				if (pkg.name === "@earendil-works/pi-coding-agent") {
 					return dir;
 				}
 			} catch {}
@@ -70,7 +70,8 @@ export function resolveWindowsPiCliScript(deps: PiSpawnDeps = {}): string | unde
 				if (root) {
 					return path.join(root, "package.json");
 				}
-				return require.resolve("@mariozechner/pi-coding-agent/package.json");
+				// patch-coverage-ignore
+				return require.resolve("@earendil-works/pi-coding-agent/package.json");
 			});
 		const packageJsonPath = resolvePackageJson();
 		const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8")) as {

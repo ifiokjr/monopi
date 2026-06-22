@@ -1,10 +1,10 @@
 /* C8 ignore file */
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
-import { Text } from "@mariozechner/pi-tui";
-import { Type } from "@sinclair/typebox";
+import { Text } from "@earendil-works/pi-tui";
 import path from "node:path";
 import process from "node:process";
+import { Type } from "typebox";
 
 import type {
 	GitWorktreeEntry,

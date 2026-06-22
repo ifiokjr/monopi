@@ -1,6 +1,6 @@
-import type { Theme } from "@mariozechner/pi-coding-agent";
+import type { Theme } from "@earendil-works/pi-coding-agent";
 
-import { matchesKey, truncateToWidth } from "@mariozechner/pi-tui";
+import { matchesKey, truncateToWidth } from "@earendil-works/pi-tui";
 
 import type { ChainConfig, ChainStepConfig } from "./agents.js";
 

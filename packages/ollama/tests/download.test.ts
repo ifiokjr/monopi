@@ -76,16 +76,19 @@ describe("ollama local downloads", () => {
 		const { default: ollamaProviderExtension } = await import("../index.js");
 		const harness = createExtensionHarness();
 		await ollamaProviderExtension(harness.pi as never);
+		await harness.emitAsync("session_start", { type: "session_start" }, harness.ctx as never);
 
 		await waitFor(
-			() => ((harness.providers.get("ollama")?.models as Array<{ id: string }> | undefined)?.length ?? 0) === 2,
+			() =>
+				((harness.providers.get("ollama")?.models as Array<{ id: string; contextWindow: number }> | undefined)?.[0]
+					?.contextWindow ?? 0) === 202_752,
 		);
 
 		const models = harness.providers.get("ollama")?.models as
 			| Array<{ id: string; contextWindow: number; localAvailability?: string }>
 			| undefined;
 		expect(models?.map((model) => model.id)).toEqual(["glm-5.1", "kimi-k2.5"]);
-		expect(models?.[0]?.contextWindow).toBe(202752);
+		expect(models?.[0]?.contextWindow).toBe(202_752);
 		expect(models?.every((model) => model.localAvailability === "downloadable")).toBe(true);
 	});
 

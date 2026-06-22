@@ -12,9 +12,9 @@
  *   { "asyncByDefault": true }
  */
 
-import type { ExtensionAPI, ExtensionContext, ToolDefinition } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext, ToolDefinition } from "@earendil-works/pi-coding-agent";
 
-import { Text } from "@mariozechner/pi-tui";
+import { Text } from "@earendil-works/pi-tui";
 import { randomUUID } from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
@@ -1463,7 +1463,7 @@ MANAGEMENT (use action field — omit agent/task/chain/tasks):
 	pi.on("session_start", (_event, ctx) => {
 		resetSessionState(ctx, { deferArtifactCleanup: true });
 	});
-	pi.on("session_switch", (_event, ctx) => {
+	pi.on("session_before_switch", (_event, ctx) => {
 		resetSessionState(ctx);
 	});
 	pi.on("session_branch", (_event, ctx) => {

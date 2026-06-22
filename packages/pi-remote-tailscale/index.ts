@@ -1,5 +1,5 @@
+import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import type { AgentSessionLike } from "@ifi/pi-web-server";
-import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@mariozechner/pi-coding-agent";
 
 import { createDiscoveryService } from "./src/discovery.js";
 import { createQrRenderer } from "./src/qr.js";
@@ -253,7 +253,7 @@ export default function remoteTailscaleExtension(pi: ExtensionAPI) {
 		}
 	});
 
-	pi.on("session_switch", async (_event: unknown, ctx: ExtensionContext) => {
+	pi.on("session_before_switch", async (_event: unknown, ctx: ExtensionContext) => {
 		activeCtx = ctx;
 		syncWidget(ctx);
 	});

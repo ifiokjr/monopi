@@ -1,7 +1,7 @@
-import type { ExtensionAPI, ExtensionCommandContext } from "@mariozechner/pi-coding-agent";
-import type { Component, KeybindingsManager, TUI } from "@mariozechner/pi-tui";
+import type { ExtensionAPI, ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
+import type { Component, KeybindingsManager, TUI } from "@earendil-works/pi-tui";
 
-import { truncateToWidth } from "@mariozechner/pi-tui";
+import { truncateToWidth } from "@earendil-works/pi-tui";
 
 import type { ExternalEditorLaunchResult } from "./external-editor-shared";
 

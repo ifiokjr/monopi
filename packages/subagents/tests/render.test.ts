@@ -7,11 +7,11 @@ const renderMocks = vi.hoisted(() => ({
 	getLastActivity: vi.fn(() => "recent activity"),
 }));
 
-vi.mock("@mariozechner/pi-coding-agent", () => ({
+vi.mock("@earendil-works/pi-coding-agent", () => ({
 	getMarkdownTheme: () => ({ theme: "markdown" }),
 }));
 
-vi.mock("@mariozechner/pi-tui", () => ({
+vi.mock("@earendil-works/pi-tui", () => ({
 	Container: class {
 		children: unknown[] = [];
 		addChild(child: unknown) {

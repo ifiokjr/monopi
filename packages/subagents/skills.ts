@@ -2,10 +2,10 @@
  * Skill resolution and caching for subagent extension
  */
 
-import type { ResolvedResource, Skill } from "@mariozechner/pi-coding-agent";
+import type { ResolvedResource, Skill } from "@earendil-works/pi-coding-agent";
 
+import { DefaultPackageManager, loadSkills, SettingsManager } from "@earendil-works/pi-coding-agent";
 import { expandHomeDir } from "@ifi/oh-pi-core";
-import { DefaultPackageManager, loadSkills, SettingsManager } from "@mariozechner/pi-coding-agent";
 import { execSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
