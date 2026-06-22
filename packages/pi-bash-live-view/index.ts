@@ -1,7 +1,7 @@
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
-import { createBashTool } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
+import { createBashTool } from "@earendil-works/pi-coding-agent";
+import { Type } from "typebox";
 
 import { executePtyCommand, toAgentToolResult, toUserBashResult } from "./src/pty-execute.js";
 import { PtySessionManager } from "./src/pty-session.js";
@@ -65,9 +65,9 @@ export default function bashLiveViewExtension(pi: ExtensionAPI): void {
 	};
 
 	pi.on("session_start", syncContext);
-	pi.on("session_switch", syncContext);
+	pi.on("session_before_switch", syncContext);
 	pi.on("session_tree", syncContext);
-	pi.on("session_fork", syncContext);
+	pi.on("session_before_fork", syncContext);
 	pi.on("before_agent_start", syncContext);
 	pi.on("session_shutdown", () => {
 		sessionManager.dispose();

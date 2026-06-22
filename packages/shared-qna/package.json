@@ -33,6 +33,6 @@
 		"./package.json": "./package.json"
 	},
 	"peerDependencies": {
-		"@mariozechner/pi-tui": "*"
+		"@earendil-works/pi-tui": "*"
 	}
 }

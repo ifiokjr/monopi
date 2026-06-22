@@ -11,7 +11,7 @@ The watchdog samples CPU, memory, and event-loop lag on an interval, records rec
 
 <!-- {/extensionsWatchdogAlertBehaviorDocs} -->
 */
-import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 import * as fs from "node:fs";
 import { cpus, homedir } from "node:os";
@@ -916,7 +916,7 @@ export default function watchdogExtension(pi: ExtensionAPI) {
 		scheduleStartupConfigLoad();
 	});
 
-	pi.on("session_switch", (_event, ctx) => {
+	pi.on("session_before_switch", (_event, ctx) => {
 		activeCtx = ctx;
 		loadConfigNow();
 		resetCounters();

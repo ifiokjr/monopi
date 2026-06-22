@@ -9,7 +9,7 @@
  *
  * Supports Kitty (OSC 99) and generic terminal (OSC 777) notification protocols.
  */
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 export const INTERACTIVE_GIT_WARNING_PREFIX = "Interactive git command blocked";
 const DIRTY_REPO_CHECK_DELAY_MS = 250;

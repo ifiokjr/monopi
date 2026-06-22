@@ -2,7 +2,7 @@
  * General utility functions for the subagent extension
  */
 
-import type { Message } from "@mariozechner/pi-ai";
+import type { Message } from "@earendil-works/pi-ai";
 
 import * as fs from "node:fs";
 import * as os from "node:os";

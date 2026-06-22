@@ -61,7 +61,6 @@ This package is intentionally separate from `@ifi/oh-pi` for now.
 - Cloud Ollama always discovers the public catalog first, then merges any authenticated metadata so login cannot shrink the visible model list.
 - Ollama's documented API-key flow is still used for actual cloud access.
 - Local model discovery is dynamic and installation-specific, so there is no static local fallback catalog.
-- Cloud model discovery falls back to a bundled cloud catalog when live discovery is unavailable.
 - Costs are currently left at zero because Ollama does not expose stable per-token pricing for local or cloud use in a way that pi can rely on here.
 
 ## Test hooks

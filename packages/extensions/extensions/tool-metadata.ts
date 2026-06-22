@@ -1,4 +1,4 @@
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 interface ContextUsageSnapshot {
 	tokens: number | null;
@@ -359,6 +359,6 @@ export default function toolMetadataExtension(pi: ExtensionAPI): void {
 		pending.clear();
 	};
 
-	pi.on("session_switch", clearPending);
+	pi.on("session_before_switch", clearPending);
 	pi.on("session_shutdown", clearPending);
 }

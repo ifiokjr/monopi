@@ -1,4 +1,4 @@
-import type { Api, Model, OAuthCredentials } from "@mariozechner/pi-ai";
+import type { Api, Model, OAuthCredentials } from "@earendil-works/pi-ai";
 
 import type { SupportedProviderDefinition } from "./config.js";
 

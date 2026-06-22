@@ -1,6 +1,6 @@
-import type { AgentToolResult, ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { AgentToolResult, ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
-import { createLsTool } from "@mariozechner/pi-coding-agent";
+import { createLsTool } from "@earendil-works/pi-coding-agent";
 
 import { getDirectoryIcon, getFileIcon } from "./icons.js";
 import { FG_DIM, FG_MUTED, fillToolBackground } from "./theme.js";

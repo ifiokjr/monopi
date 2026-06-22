@@ -14,7 +14,7 @@
  * 2. Restart pi or run /reload
  */
 
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 // ---- Shell detection ----
 

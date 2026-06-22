@@ -1,4 +1,4 @@
-import { getAgentDir } from "@mariozechner/pi-coding-agent";
+import { getAgentDir } from "@earendil-works/pi-coding-agent";
 import path from "node:path";
 
 export function resolveAgentDir(): string {

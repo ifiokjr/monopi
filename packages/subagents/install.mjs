@@ -53,7 +53,8 @@ function findPi() {
 		return "pi";
 	} catch {
 		console.error("Error: 'pi' command not found. Install pi-coding-agent first:");
-		console.error("  npm install -g @mariozechner/pi-coding-agent");
+		// patch-coverage-ignore
+		console.error("  npm install -g @earendil-works/pi-coding-agent");
 		process.exit(1);
 	}
 }

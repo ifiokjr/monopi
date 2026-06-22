@@ -3,11 +3,11 @@ import type {
 	ExtensionCommandContext,
 	ExtensionContext,
 	ProviderConfig,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 /* C8 ignore file */
 
-import { AuthStorage } from "@mariozechner/pi-coding-agent";
-import { Container, fuzzyFilter, Input, Spacer, TruncatedText } from "@mariozechner/pi-tui";
+import { AuthStorage } from "@earendil-works/pi-coding-agent";
+import { Container, fuzzyFilter, Input, Spacer, TruncatedText } from "@earendil-works/pi-tui";
 
 import type { ProviderCatalogCredentials, ProviderCatalogModel } from "./catalog.js";
 import type { SupportedProviderDefinition } from "./config.js";
@@ -609,6 +609,9 @@ async function loginProviderFromCommand(
 			onAuth(params) {
 				ctx.ui.notify(`${params.instructions}\n${params.url}`, "info");
 			},
+			onDeviceCode() {
+				ctx.ui.notify("Complete device authentication on the provider's page.", "info");
+			},
 			onProgress(message) {
 				if (message) {
 					ctx.ui.notify(message, "info");
@@ -616,6 +619,9 @@ async function loginProviderFromCommand(
 			},
 			async onPrompt(params) {
 				return await promptProviderInput(ctx, `Log in to ${provider.name}`, `${params.message}\n${provider.authUrl}`);
+			},
+			async onSelect() {
+				return undefined;
 			},
 		});
 		ctx.modelRegistry.authStorage.set(provider.id, {

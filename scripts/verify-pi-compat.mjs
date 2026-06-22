@@ -3,18 +3,17 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-export const MIN_VERSION = "0.56.1";
-export const CURRENT_VERSION = "0.64.0";
+export const MIN_VERSION = "0.78.1";
+export const CURRENT_VERSION = "0.79.10";
 export const PI_PACKAGES = [
-	"@mariozechner/pi-agent-core",
-	"@mariozechner/pi-ai",
-	"@mariozechner/pi-coding-agent",
-	"@mariozechner/pi-tui",
+	"@earendil-works/pi-agent-core",
+	"@earendil-works/pi-ai",
+	"@earendil-works/pi-coding-agent",
+	"@earendil-works/pi-tui",
 ];
 export const SMOKE_TESTS = [
 	"packages/extensions/extensions/smoke.test.ts",
 	"packages/diagnostics/tests/smoke.test.ts",
-	"packages/ant-colony/tests/smoke.test.ts",
 	"packages/subagents/tests/smoke.test.ts",
 	"packages/spec/tests/smoke.test.ts",
 	"packages/cursor/tests/smoke.test.ts",

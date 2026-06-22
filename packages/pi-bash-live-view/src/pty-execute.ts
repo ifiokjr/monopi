@@ -1,4 +1,4 @@
-import type { AgentToolResult, AgentToolUpdateCallback } from "@mariozechner/pi-coding-agent";
+import type { AgentToolResult, AgentToolUpdateCallback } from "@earendil-works/pi-coding-agent";
 
 import { type ManagedPtySession, PtySessionManager } from "./pty-session.js";
 import { createTerminalEmulator, type TerminalEmulator } from "./terminal-emulator.js";

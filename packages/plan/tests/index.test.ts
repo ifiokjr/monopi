@@ -67,7 +67,7 @@ describe("plan extension", () => {
 		];
 
 		planExtension(harness.pi as never);
-		await harness.emitAsync("session_switch", { type: "session_switch" }, harness.ctx);
+		await harness.emitAsync("session_before_switch", { type: "session_before_switch" }, harness.ctx);
 		const setPlan = harness.tools.get("set_plan");
 
 		const empty = await setPlan.execute("tool-2", { plan: "   " }, new AbortController().signal, () => {}, harness.ctx);
@@ -115,7 +115,7 @@ describe("plan extension", () => {
 		];
 
 		planExtension(harness.pi as never);
-		await harness.emitAsync("session_switch", { type: "session_switch" }, harness.ctx);
+		await harness.emitAsync("session_before_switch", { type: "session_before_switch" }, harness.ctx);
 		const [entry] = await harness.emitAsync("before_agent_start");
 
 		expect(entry).toEqual({

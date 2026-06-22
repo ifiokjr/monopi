@@ -4,9 +4,9 @@
 
 ## Why use this?
 
-Multiple first-party oh-pi packages need the pi TUI library (`@mariozechner/pi-tui`). This package centralizes the loading strategy so each package doesn't duplicate the same fallback-resolution code.
+Multiple first-party oh-pi packages need the pi TUI library (`@earendil-works/pi-tui`). This package centralizes the loading strategy so each package doesn't duplicate the same fallback-resolution code.
 
-If you're writing a pi extension that uses the TUI, depend on this package instead of importing `@mariozechner/pi-tui` directly — it handles resolution edge cases automatically.
+If you're writing a pi extension that uses the TUI, depend on this package instead of importing `@earendil-works/pi-tui` directly — it handles resolution edge cases automatically.
 
 ## Installation
 
@@ -20,14 +20,14 @@ pnpm add @ifi/pi-shared-qna
 
 ### `getPiTuiFallbackPaths(options?)`
 
-Returns ordered Bun-global fallback paths for `@mariozechner/pi-tui`.
+Returns ordered Bun-global fallback paths for `@earendil-works/pi-tui`.
 
 ```ts
 import { getPiTuiFallbackPaths } from "@ifi/pi-shared-qna";
 
 const paths = getPiTuiFallbackPaths();
 // [
-//   "~/.bun/install/global/node_modules/@mariozechner/pi-tui"
+//   "~/.bun/install/global/node_modules/@earendil-works/pi-tui"
 // ]
 ```
 
@@ -35,7 +35,7 @@ Prefers explicit `BUN_INSTALL` root when set, avoids duplicates.
 
 ### `requirePiTuiModule(options?)`
 
-Loads `@mariozechner/pi-tui` with shared fallback strategy.
+Loads `@earendil-works/pi-tui` with shared fallback strategy.
 
 ```ts
 import { requirePiTuiModule } from "@ifi/pi-shared-qna";
@@ -47,11 +47,11 @@ const piTui = await requirePiTuiModule();
 
 ## How it works
 
-1. Try normal package resolution (`import "@mariozechner/pi-tui"`)
+1. Try normal package resolution (`import "@earendil-works/pi-tui"`)
 2. If that fails, walk Bun-global fallback paths
 3. If all fail, throw error listing every checked location
 
 ## Related
 
-- [`@mariozechner/pi-tui`](https://www.npmjs.com/package/@mariozechner/pi-tui) — the pi TUI library itself
+- [`@earendil-works/pi-tui`](https://www.npmjs.com/package/@earendil-works/pi-tui) — the pi TUI library itself
 - [`@ifi/oh-pi-extensions`](../extensions) — uses this for TUI-based widgets

@@ -6,14 +6,14 @@ import type {
 	ExtensionCommandContext,
 	ExtensionContext,
 	Theme,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 
-import { StringEnum } from "@mariozechner/pi-ai";
-import { getShellConfig } from "@mariozechner/pi-coding-agent";
-import { matchesKey, Text, truncateToWidth, visibleWidth } from "@mariozechner/pi-tui";
-import { Type } from "@sinclair/typebox";
+import { StringEnum } from "@earendil-works/pi-ai";
+import { getShellConfig } from "@earendil-works/pi-coding-agent";
+import { matchesKey, Text, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 import { spawn } from "node:child_process";
 import { appendFileSync, existsSync, readFileSync, writeFileSync } from "node:fs";
+import { Type } from "typebox";
 
 import type {
 	BackgroundTaskEventDetails,
@@ -949,7 +949,7 @@ export default function backgroundTasksExtension(pi: ExtensionAPI): void {
 		syncWidget(ctx);
 	});
 
-	pi.on("session_switch", (_event, ctx) => {
+	pi.on("session_before_switch", (_event, ctx) => {
 		activeCtx = ctx;
 		syncWidget(ctx);
 	});
@@ -959,7 +959,7 @@ export default function backgroundTasksExtension(pi: ExtensionAPI): void {
 		syncWidget(ctx);
 	});
 
-	pi.on("session_fork", (_event, ctx) => {
+	pi.on("session_before_fork", (_event, ctx) => {
 		activeCtx = ctx;
 		syncWidget(ctx);
 	});

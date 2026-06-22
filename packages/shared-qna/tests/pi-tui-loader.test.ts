@@ -9,8 +9,8 @@ describe("getPiTuiFallbackPaths", () => {
 			bunInstallDir: "/custom-bun",
 		});
 		expect(paths).toEqual([
-			"/custom-bun/install/global/node_modules/@mariozechner/pi-tui",
-			"/Users/tester/.bun/install/global/node_modules/@mariozechner/pi-tui",
+			"/custom-bun/install/global/node_modules/@earendil-works/pi-tui",
+			"/Users/tester/.bun/install/global/node_modules/@earendil-works/pi-tui",
 		]);
 	});
 
@@ -19,7 +19,7 @@ describe("getPiTuiFallbackPaths", () => {
 			homeDir: "/Users/tester",
 			bunInstallDir: "/Users/tester/.bun",
 		});
-		expect(paths).toEqual(["/Users/tester/.bun/install/global/node_modules/@mariozechner/pi-tui"]);
+		expect(paths).toEqual(["/Users/tester/.bun/install/global/node_modules/@earendil-works/pi-tui"]);
 	});
 });
 
@@ -32,8 +32,8 @@ describe("requirePiTuiModule", () => {
 				return { source: specifier };
 			},
 		});
-		expect(resolved).toEqual({ source: "@mariozechner/pi-tui" });
-		expect(calls).toEqual(["@mariozechner/pi-tui"]);
+		expect(resolved).toEqual({ source: "@earendil-works/pi-tui" });
+		expect(calls).toEqual(["@earendil-works/pi-tui"]);
 	});
 
 	it("falls back to Bun global paths on module-not-found", () => {
@@ -43,7 +43,7 @@ describe("requirePiTuiModule", () => {
 			bunInstallDir: "/custom-bun",
 			requireFn(specifier) {
 				calls.push(specifier);
-				if (specifier === "@mariozechner/pi-tui") {
+				if (specifier === "@earendil-works/pi-tui") {
 					const error = new Error("missing");
 					(error as Error & { code?: string }).code = "MODULE_NOT_FOUND";
 					throw error;
@@ -57,10 +57,10 @@ describe("requirePiTuiModule", () => {
 			},
 		});
 		expect(resolved).toEqual({
-			source: "/custom-bun/install/global/node_modules/@mariozechner/pi-tui",
+			source: "/custom-bun/install/global/node_modules/@earendil-works/pi-tui",
 		});
-		expect(calls[0]).toBe("@mariozechner/pi-tui");
-		expect(calls[1]).toBe("/custom-bun/install/global/node_modules/@mariozechner/pi-tui");
+		expect(calls[0]).toBe("@earendil-works/pi-tui");
+		expect(calls[1]).toBe("/custom-bun/install/global/node_modules/@earendil-works/pi-tui");
 	});
 
 	it("throws a helpful error when no location resolves", () => {
@@ -73,6 +73,6 @@ describe("requirePiTuiModule", () => {
 					throw error;
 				},
 			}),
-		).toThrow(/Unable to load @mariozechner\/pi-tui/);
+		).toThrow(/Unable to load @earendil-works\/pi-tui/);
 	});
 });

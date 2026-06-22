@@ -53,7 +53,7 @@ This helper combines the resolved pi agent directory, a package namespace, the m
 
 <!-- {@sharedQnaPiTuiLoaderOverview} -->
 
-`@ifi/pi-shared-qna` centralizes `@mariozechner/pi-tui` loading so first-party packages reuse one fallback strategy instead of embedding Bun-global lookup logic in multiple runtime modules.
+`@ifi/pi-shared-qna` centralizes `@earendil-works/pi-tui` loading so first-party packages reuse one fallback strategy instead of embedding Bun-global lookup logic in multiple runtime modules.
 
 The shared loader tries the normal package resolution path first, then falls back to Bun global install locations when a project is running outside a conventional dependency layout.
 
@@ -61,15 +61,15 @@ The shared loader tries the normal package resolution path first, then falls bac
 
 <!-- {@sharedQnaGetPiTuiFallbackPathsDocs} -->
 
-Return the ordered list of Bun global fallback paths to try for `@mariozechner/pi-tui`.
+Return the ordered list of Bun global fallback paths to try for `@earendil-works/pi-tui`.
 
-The list prefers an explicit `BUN_INSTALL` root when provided and always includes the default `~/.bun/install/global/node_modules/@mariozechner/pi-tui` fallback without duplicates.
+The list prefers an explicit `BUN_INSTALL` root when provided and always includes the default `~/.bun/install/global/node_modules/@earendil-works/pi-tui` fallback without duplicates.
 
 <!-- {/sharedQnaGetPiTuiFallbackPathsDocs} -->
 
 <!-- {@sharedQnaRequirePiTuiModuleDocs} -->
 
-Load `@mariozechner/pi-tui` with a shared fallback strategy.
+Load `@earendil-works/pi-tui` with a shared fallback strategy.
 
 The loader first tries the normal package import path, then walks the Bun-global fallback list, and finally throws a helpful error that names every checked location when none of them resolve.
 

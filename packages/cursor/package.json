@@ -38,11 +38,11 @@
 		"@bufbuild/protobuf": "^2.12.0"
 	},
 	"peerDependencies": {
-		"@mariozechner/pi-agent-core": ">=0.56.1",
-		"@mariozechner/pi-ai": ">=0.56.1",
-		"@mariozechner/pi-coding-agent": ">=0.56.1",
-		"@mariozechner/pi-tui": ">=0.56.1",
-		"@sinclair/typebox": "*"
+		"@earendil-works/pi-agent-core": ">=0.78.1",
+		"@earendil-works/pi-ai": ">=0.78.1",
+		"@earendil-works/pi-coding-agent": ">=0.78.1",
+		"@earendil-works/pi-tui": ">=0.78.1",
+		"typebox": "^1.1.24"
 	},
 	"pi": {
 		"extensions": [

@@ -34,15 +34,17 @@ const mocks = vi.hoisted(() => {
 	};
 });
 
-vi.mock("@mariozechner/pi-coding-agent", async () => {
-	const actual = await vi.importActual<typeof import("@mariozechner/pi-coding-agent")>("@mariozechner/pi-coding-agent");
+vi.mock("@earendil-works/pi-coding-agent", async () => {
+	const actual = await vi.importActual<typeof import("@earendil-works/pi-coding-agent")>(
+		"@earendil-works/pi-coding-agent",
+	);
 	return {
 		...actual,
 		createBashTool: mocks.createBashTool,
 	};
 });
 
-vi.mock("@sinclair/typebox", () => ({
+vi.mock("typebox", () => ({
 	Type: {
 		Object: (schema: unknown) => schema,
 		String: (options?: Record<string, unknown>) => ({

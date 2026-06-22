@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@mariozechner/pi-ai", () => ({
+vi.mock("@earendil-works/pi-ai", () => ({
 	getEnvApiKey: vi.fn((provider: string) => (provider === "openai" ? "env-openai-key" : undefined)),
 }));
 
-vi.mock("@mariozechner/pi-tui", () => ({
+vi.mock("@earendil-works/pi-tui", () => ({
 	Container: class Container {
 		children: any[] = [];
 		addChild(child: any) {
@@ -57,7 +57,7 @@ const mockSession = {
 	},
 };
 
-vi.mock("@mariozechner/pi-coding-agent", () => ({
+vi.mock("@earendil-works/pi-coding-agent", () => ({
 	buildSessionContext: vi.fn(() => ({ messages: [] })),
 	createAgentSession: vi.fn(() =>
 		Promise.resolve({

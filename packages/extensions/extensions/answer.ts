@@ -13,13 +13,13 @@
  * - Uses `completeSimple` for LLM-powered question extraction
  */
 
+import type { UserMessage } from "@earendil-works/pi-ai";
+import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import type { QnAQuestion, QnAResult, QnATemplate } from "@ifi/pi-shared-qna";
-import type { UserMessage } from "@mariozechner/pi-ai";
-import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@mariozechner/pi-coding-agent";
 
+import { completeSimple } from "@earendil-works/pi-ai";
+import { BorderedLoader } from "@earendil-works/pi-coding-agent";
 import { QnATuiComponent } from "@ifi/pi-shared-qna";
-import { completeSimple } from "@mariozechner/pi-ai";
-import { BorderedLoader } from "@mariozechner/pi-coding-agent";
 
 // ── Constants ──────────────────────────────────────────────────────────────
 

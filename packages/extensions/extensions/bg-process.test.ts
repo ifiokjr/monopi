@@ -21,13 +21,13 @@ vi.mock("node:child_process", () => ({
 	spawn: spawnMock,
 }));
 
-vi.mock("@mariozechner/pi-coding-agent", () => ({
+vi.mock("@earendil-works/pi-coding-agent", () => ({
 	createBashTool: createBashToolMock,
 	getAgentDir: () => "/mock-home/.pi/agent",
 	getShellConfig: getShellConfigMock,
 }));
 
-vi.mock("@mariozechner/pi-ai", () => ({
+vi.mock("@earendil-works/pi-ai", () => ({
 	StringEnum: (values: readonly string[], options?: Record<string, unknown>) => ({
 		type: "string",
 		enum: [...values],
@@ -37,7 +37,7 @@ vi.mock("@mariozechner/pi-ai", () => ({
 
 vi.mock("@ifi/pi-background-tasks", async (importOriginal) => await importOriginal());
 
-vi.mock("@sinclair/typebox", () => ({
+vi.mock("typebox", () => ({
 	Type: {
 		Object: (schema: unknown) => schema,
 		String: (options?: Record<string, unknown>) => ({

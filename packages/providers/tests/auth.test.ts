@@ -49,7 +49,9 @@ describe("multi-provider api-key auth", () => {
 			onAuth(params) {
 				openedUrl = params.url;
 			},
+			onDeviceCode: vi.fn(),
 			onPrompt: vi.fn(async () => "moonshot-key"),
+			onSelect: vi.fn(async () => undefined),
 		});
 
 		expect(openedUrl).toBe(provider.authUrl);

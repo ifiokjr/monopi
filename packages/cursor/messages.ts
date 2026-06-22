@@ -1,5 +1,5 @@
 import type { JsonValue } from "@bufbuild/protobuf";
-import type { Context, Message, ToolResultMessage } from "@mariozechner/pi-ai";
+import type { Context, Message, ToolResultMessage } from "@earendil-works/pi-ai";
 
 import { create, fromBinary, fromJson, toBinary, toJson } from "@bufbuild/protobuf";
 import { ValueSchema } from "@bufbuild/protobuf/wkt";

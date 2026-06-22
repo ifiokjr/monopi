@@ -9,7 +9,7 @@ import {
 	type Model,
 	type SimpleStreamOptions,
 	type ToolCall,
-} from "@mariozechner/pi-ai";
+} from "@earendil-works/pi-ai";
 import { randomUUID } from "node:crypto";
 
 import { CURSOR_RUN_PATH } from "./config.js";
@@ -142,11 +142,14 @@ export const streamSimpleCursor = (
 				tools: context.tools,
 				conversationState: stateRecord,
 			});
-			options?.onPayload?.({
-				model: model.id,
-				conversationId,
-				toolCount: payload.mcpTools.length,
-			});
+			options?.onPayload?.(
+				{
+					model: model.id,
+					conversationId,
+					toolCount: payload.mcpTools.length,
+				},
+				model,
+			);
 			const connection = new CursorStreamingConnection({
 				accessToken: apiKey,
 				rpcPath: CURSOR_RUN_PATH,

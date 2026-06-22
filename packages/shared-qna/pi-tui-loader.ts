@@ -1,7 +1,7 @@
 /**
 <!-- {=sharedQnaPiTuiLoaderOverview} -->
 
-`@ifi/pi-shared-qna` centralizes `@mariozechner/pi-tui` loading so first-party packages reuse one fallback strategy instead of embedding Bun-global lookup logic in multiple runtime modules.
+`@ifi/pi-shared-qna` centralizes `@earendil-works/pi-tui` loading so first-party packages reuse one fallback strategy instead of embedding Bun-global lookup logic in multiple runtime modules.
 
 The shared loader tries the normal package resolution path first, then falls back to Bun global install locations when a project is running outside a conventional dependency layout.
 
@@ -22,9 +22,9 @@ export interface PiTuiLoaderOptions {
 /**
 <!-- {=sharedQnaGetPiTuiFallbackPathsDocs} -->
 
-Return the ordered list of Bun global fallback paths to try for `@mariozechner/pi-tui`.
+Return the ordered list of Bun global fallback paths to try for `@earendil-works/pi-tui`.
 
-The list prefers an explicit `BUN_INSTALL` root when provided and always includes the default `~/.bun/install/global/node_modules/@mariozechner/pi-tui` fallback without duplicates.
+The list prefers an explicit `BUN_INSTALL` root when provided and always includes the default `~/.bun/install/global/node_modules/@earendil-works/pi-tui` fallback without duplicates.
 
 <!-- {/sharedQnaGetPiTuiFallbackPathsDocs} -->
 */
@@ -35,13 +35,13 @@ export function getPiTuiFallbackPaths(options: Omit<PiTuiLoaderOptions, "require
 		roots.add(options.bunInstallDir);
 	}
 	roots.add(path.join(homeDir, ".bun"));
-	return [...roots].map((root) => path.join(root, "install", "global", "node_modules", "@mariozechner", "pi-tui"));
+	return [...roots].map((root) => path.join(root, "install", "global", "node_modules", "@earendil-works", "pi-tui"));
 }
 
 /**
 <!-- {=sharedQnaRequirePiTuiModuleDocs} -->
 
-Load `@mariozechner/pi-tui` with a shared fallback strategy.
+Load `@earendil-works/pi-tui` with a shared fallback strategy.
 
 The loader first tries the normal package import path, then walks the Bun-global fallback list, and finally throws a helpful error that names every checked location when none of them resolve.
 
@@ -50,7 +50,7 @@ The loader first tries the normal package import path, then walks the Bun-global
 export function requirePiTuiModule(options: PiTuiLoaderOptions = {}): unknown {
 	const requireFn = options.requireFn ?? createRequire(import.meta.url);
 	try {
-		return requireFn("@mariozechner/pi-tui");
+		return requireFn("@earendil-works/pi-tui");
 	} catch (error) {
 		const code = (error as { code?: string }).code;
 		if (code !== "MODULE_NOT_FOUND") {
@@ -70,7 +70,7 @@ export function requirePiTuiModule(options: PiTuiLoaderOptions = {}): unknown {
 		}
 
 		throw new Error(
-			`Unable to load @mariozechner/pi-tui. Checked the local dependency and Bun global fallbacks: ${fallbackPaths.join(
+			`Unable to load @earendil-works/pi-tui. Checked the local dependency and Bun global fallbacks: ${fallbackPaths.join(
 				", ",
 			)}`,
 			{ cause: error },

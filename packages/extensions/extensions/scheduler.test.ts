@@ -31,12 +31,12 @@ vi.mock("node:os", async (importOriginal) => {
 	return { ...actual, homedir: () => "/mock-home" };
 });
 
-vi.mock("@mariozechner/pi-coding-agent", () => ({
+vi.mock("@earendil-works/pi-coding-agent", () => ({
 	getAgentDir: () => "/mock-home/.pi/agent",
 }));
-vi.mock("@mariozechner/pi-ai", () => ({}));
+vi.mock("@earendil-works/pi-ai", () => ({}));
 
-vi.mock("@sinclair/typebox", () => ({
+vi.mock("typebox", () => ({
 	Type: {
 		Object: (schema: any) => schema,
 		String: (opts?: any) => ({ type: "string", ...opts }),
@@ -1749,8 +1749,8 @@ describe("schedulerExtension registration", () => {
 	it("registers event handlers", () => {
 		schedulerExtension(pi as any);
 		expect(pi._handlers.has("session_start")).toBe(true);
-		expect(pi._handlers.has("session_switch")).toBe(true);
-		expect(pi._handlers.has("session_fork")).toBe(true);
+		expect(pi._handlers.has("session_before_switch")).toBe(true);
+		expect(pi._handlers.has("session_before_fork")).toBe(true);
 		expect(pi._handlers.has("session_tree")).toBe(true);
 		expect(pi._handlers.has("session_shutdown")).toBe(true);
 	});
@@ -2556,14 +2556,14 @@ describe("event wiring", () => {
 		const ctx = createMockCtx();
 		pi._emit("session_start", { type: "session_start" }, ctx);
 		const ctx2 = createMockCtx({ cwd: "/other-project" });
-		pi._emit("session_switch", { type: "session_switch" }, ctx2);
+		pi._emit("session_before_switch", { type: "session_before_switch" }, ctx2);
 		// Should not throw
 	});
 
 	it("updates status on session_fork", () => {
 		const ctx = createMockCtx();
 		pi._emit("session_start", { type: "session_start" }, ctx);
-		pi._emit("session_fork", { type: "session_fork" }, ctx);
+		pi._emit("session_before_fork", { type: "session_before_fork" }, ctx);
 	});
 
 	it("updates status on session_tree", () => {
@@ -2585,7 +2585,7 @@ describe("event wiring", () => {
 		});
 		pi._emit("session_start", { type: "session_start" }, ctx);
 		pi._emit("session_start", { type: "session_start" }, otherCtx);
-		pi._emit("session_switch", { type: "session_switch" }, ctx);
+		pi._emit("session_before_switch", { type: "session_before_switch" }, ctx);
 		await pi._commands.get("remind")?.handler("in 1m check build", ctx);
 
 		pi._emit("session_shutdown", { type: "session_shutdown" }, otherCtx);

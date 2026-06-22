@@ -18,7 +18,7 @@
  * Adapted from https://github.com/dbachelder/pi-btw by Dan Bachelder (MIT).
  */
 
-import { type AssistantMessage, type Message, type ThinkingLevel as AiThinkingLevel } from "@mariozechner/pi-ai";
+import { type AssistantMessage, type Message, type ThinkingLevel as AiThinkingLevel } from "@earendil-works/pi-ai";
 import {
 	buildSessionContext,
 	createAgentSession,
@@ -31,7 +31,7 @@ import {
 	type ExtensionCommandContext,
 	type ExtensionContext,
 	type ResourceLoader,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 import {
 	Container,
 	Input,
@@ -42,7 +42,7 @@ import {
 	type KeybindingsManager,
 	type OverlayHandle,
 	type TUI,
-} from "@mariozechner/pi-tui";
+} from "@earendil-works/pi-tui";
 
 const BTW_MESSAGE_TYPE = "btw-note";
 const BTW_ENTRY_TYPE = "btw-thread-entry";

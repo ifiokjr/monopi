@@ -31,7 +31,7 @@ vi.mock("node:os", async (importOriginal) => {
 	};
 });
 
-vi.mock("@mariozechner/pi-coding-agent", () => ({}));
+vi.mock("@earendil-works/pi-coding-agent", () => ({}));
 
 import { getSafeModeState, resetSafeModeStateForTests } from "./runtime-mode";
 import watchdogExtension, {

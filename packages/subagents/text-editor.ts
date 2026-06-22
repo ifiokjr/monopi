@@ -1,4 +1,4 @@
-import { matchesKey } from "@mariozechner/pi-tui";
+import { matchesKey } from "@earendil-works/pi-tui";
 
 export interface TextEditorState {
 	buffer: string;

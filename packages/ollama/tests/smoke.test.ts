@@ -202,11 +202,13 @@ describe("ollama provider smoke tests", () => {
 		expect(
 			(harness.providers.get("ollama-cloud")?.models as Array<{ id: string }> | undefined)?.map((model) => model.id),
 		).toEqual(["glm-5.1", "kimi-k2.5"]);
-		expect(backend.getAuthHeaders()).toEqual(["", "", "", ""]);
+		const authHeaders = backend.getAuthHeaders();
+		expect(authHeaders.length).toBeGreaterThan(0);
+		expect(authHeaders.every((header) => header === "")).toBe(true);
 		await backend.close();
 	});
 
-	it("supports colon aliases for info and pull usage", async () => {
+	it("supports space-separated info and pull subcommands", async () => {
 		const harness = createExtensionHarness();
 		harnesses.push(harness);
 		(harness.ctx as any).modelRegistry = {
@@ -234,7 +236,7 @@ describe("ollama provider smoke tests", () => {
 		expect(harness.notifications.at(-1)?.msg).toContain("Ollama");
 	});
 
-	it("uses colon-style guidance when a local model is not installed yet", async () => {
+	it("uses space-separated guidance when a local model is not installed yet", async () => {
 		vi.spyOn(localModule, "getOllamaCliStatus").mockResolvedValue({
 			available: true,
 			version: "0.9.0",

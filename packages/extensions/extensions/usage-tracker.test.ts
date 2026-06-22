@@ -36,14 +36,14 @@ vi.mock("node:os", async (importOriginal) => {
 	return { ...actual, homedir: () => "/mock-home" };
 });
 
-vi.mock("@mariozechner/pi-coding-agent", () => ({
+vi.mock("@earendil-works/pi-coding-agent", () => ({
 	CustomEditor: class {},
 	getAgentDir: () => "/mock-home/.pi/agent",
 }));
 
-vi.mock("@mariozechner/pi-ai", () => ({}));
+vi.mock("@earendil-works/pi-ai", () => ({}));
 
-vi.mock("@sinclair/typebox", () => ({
+vi.mock("typebox", () => ({
 	Type: {
 		Object: (schema: any) => schema,
 		String: (opts?: any) => ({ type: "string", ...opts }),
@@ -348,7 +348,7 @@ describe("usage-tracker extension", () => {
 		it("registers all expected event handlers", () => {
 			usageTracker(pi as any);
 			expect(pi._handlers.has("session_start")).toBe(true);
-			expect(pi._handlers.has("session_switch")).toBe(true);
+			expect(pi._handlers.has("session_before_switch")).toBe(true);
 			expect(pi._handlers.has("turn_end")).toBe(true);
 			expect(pi._handlers.has("model_select")).toBe(true);
 		});
@@ -666,7 +666,7 @@ describe("usage-tracker extension", () => {
 			);
 
 			const emptyCtx = createMockCtx([]);
-			pi._emit("session_switch", { type: "session_switch", reason: "new" }, emptyCtx);
+			pi._emit("session_before_switch", { type: "session_before_switch", reason: "new" }, emptyCtx);
 
 			const tool = pi._tools.get("usage_report");
 			const result = await runWithTimers(() =>
@@ -1534,7 +1534,7 @@ describe("usage-tracker extension", () => {
 				),
 			]);
 			nextCtx.model = { id: "gpt-4o", provider: "openai" } as any;
-			pi._emit("session_switch", { type: "session_switch" }, nextCtx);
+			pi._emit("session_before_switch", { type: "session_before_switch" }, nextCtx);
 
 			const rendered = component?.render(200).join("\n") ?? "";
 			expect(rendered).toContain("$0.030");

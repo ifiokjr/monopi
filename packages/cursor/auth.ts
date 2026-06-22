@@ -1,4 +1,4 @@
-import type { OAuthCredentials, OAuthLoginCallbacks, OAuthProviderInterface } from "@mariozechner/pi-ai";
+import type { OAuthCredentials, OAuthLoginCallbacks, OAuthProviderInterface } from "@earendil-works/pi-ai";
 
 import type { CursorCredentials } from "./models.js";
 
