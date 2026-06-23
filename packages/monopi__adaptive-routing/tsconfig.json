@@ -1,0 +1,11 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"noEmit": true,
+		"paths": {
+			"*": ["./*"],
+			"@monopi/core": ["../monopi__core/src/index.ts"]
+		}
+	},
+	"include": ["**/*.ts"]
+}

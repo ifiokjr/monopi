@@ -1,0 +1,28 @@
+{
+	"name": "@monopi/analytics-extension",
+	"version": "0.5.1",
+	"description": "Pi extension for analytics tracking with SQLite persistence",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ifiokjr/monopi.git",
+		"directory": "packages/monopi__analytics-extension"
+	},
+	"type": "module",
+	"main": "./index.ts",
+	"dependencies": {
+		"@monopi/analytics-db": "0.5.1"
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-agent-core": ">=0.78.1",
+		"@earendil-works/pi-ai": ">=0.78.1",
+		"@earendil-works/pi-coding-agent": ">=0.78.1",
+		"@earendil-works/pi-tui": ">=0.78.1",
+		"typebox": "^1.1.24"
+	},
+	"pi": {
+		"extensions": [
+			"./index.ts"
+		]
+	}
+}

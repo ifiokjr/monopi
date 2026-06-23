@@ -1,17 +1,17 @@
 <div align="center">
 
-<img src="./logo.svg" width="180" alt="oh-pi logo"/>
+<img src="./logo.svg" width="180" alt="monopi logo"/>
 
-# 🐜 oh-pi
+# 🐜 monopi
 
 **One command to supercharge [pi-coding-agent](https://github.com/badlogic/pi-mono).**
 
 Like oh-my-zsh for pi.
 
-[![CI](https://github.com/ifiokjr/oh-pi/actions/workflows/ci.yml/badge.svg)](https://github.com/ifiokjr/oh-pi/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/ifiokjr/oh-pi/graph/badge.svg?branch=main)](https://codecov.io/gh/ifiokjr/oh-pi) [![license](https://img.shields.io/github/license/ifiokjr/oh-pi)](./LICENSE) [![node](https://img.shields.io/node/v/@ifi/oh-pi)](https://nodejs.org)
+[![CI](https://github.com/ifiokjr/monopi/actions/workflows/ci.yml/badge.svg)](https://github.com/ifiokjr/monopi/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/ifiokjr/monopi/graph/badge.svg?branch=main)](https://codecov.io/gh/ifiokjr/monopi) [![license](https://img.shields.io/github/license/ifiokjr/monopi)](./LICENSE) [![node](https://img.shields.io/node/v/@monopi/monopi)](https://nodejs.org)
 
 ```bash
-npx @ifi/oh-pi
+npx @monopi/monopi
 ```
 
 </div>
@@ -21,11 +21,11 @@ npx @ifi/oh-pi
 ## 30-Second Start
 
 ```bash
-npx @ifi/oh-pi       # install the default oh-pi bundle
+npx @monopi/monopi       # install the default monopi bundle
 pi                    # start coding
 ```
 
-oh-pi installs the full bundle into pi in one command. See [Installer Options](#installer-options) for project-scoped installs and version pinning.
+monopi installs the full bundle into pi in one command. See [Installer Options](#installer-options) for project-scoped installs and version pinning.
 
 ## Start Here
 
@@ -33,7 +33,7 @@ oh-pi installs the full bundle into pi in one command. See [Installer Options](#
 
 Use this reading path depending on what you are trying to do:
 
-- **I just want to use oh-pi** → start in the root `README.md`, then jump into `docs/feature-catalog.md` for package-by-package detail
+- **I just want to use monopi** → start in the root `README.md`, then jump into `docs/feature-catalog.md` for package-by-package detail
 - **I want to try the latest local changes** → run `pnpm install`, `pnpm pi:local`, restart `pi`, then exercise the feature in a real session
 - **I want to contribute** → read `CONTRIBUTING.md`, then the package README for the area you are changing
 - **I want to understand ownership** → use `docs/feature-catalog.md` to see which package owns which runtime feature, content pack, or library surface
@@ -45,20 +45,17 @@ Use this reading path depending on what you are trying to do:
 <!-- {=repoArchitectureAtAGlanceDocs} -->
 
 ```text
-oh-pi repo
+monopi repo
 ├── installer
-│   └── @ifi/oh-pi
+│   └── @monopi/monopi
 ├── default runtime packages
 │   ├── extensions
 │   ├── background-tasks
 │   ├── diagnostics
 │   ├── subagents
-│   ├── plan
-│   ├── spec
 │   └── web-remote
 ├── content packs
 │   ├── themes
-│   ├── prompts
 │   ├── skills
 │   └── agents
 ├── opt-in extras
@@ -76,6 +73,7 @@ oh-pi repo
     ├── shared-qna
     ├── web-client
     ├── web-server
+    ├── db
     ├── analytics-db
     ├── analytics-dashboard
     └── docs
@@ -85,81 +83,65 @@ oh-pi repo
 
 ### Fork-based Git install
 
-If you keep a personal fork with custom oh-pi changes, you can also install the repo root directly as a pi package:
+If you keep a personal fork with custom monopi changes, you can also install the repo root directly as a pi package:
 
 ```bash
-pi install https://github.com/<you>/oh-pi@<tag-or-commit>
+pi install https://github.com/<you>/monopi@<tag-or-commit>
 ```
 
 That git-install path is meant for personal fork distribution across machines. It aggregates the repo's shareable runtime packages directly from the clone so you do not have to mirror local workspace paths. Published npm installs remain the better default for stable releases.
 
 ## Packages
 
-This is a monorepo. Install everything at once with `npx @ifi/oh-pi`, or pick individual packages.
+This is a monorepo. Install everything at once with `npx @monopi/monopi`, or pick individual packages.
 
-| Package                                                             | Role                                                                       | Install                                             |
-| ------------------------------------------------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------- |
-| [`@ifi/oh-pi`](./packages/oh-pi)                                    | Meta-installer for the default oh-pi bundle                                | `npx @ifi/oh-pi`                                    |
-| [`@ifi/oh-pi-cli`](./packages/cli)                                  | Interactive TUI configurator                                               | `npx @ifi/oh-pi-cli`                                |
-| [`@ifi/oh-pi-core`](./packages/core)                                | Shared types, registries, icons, i18n, and path helpers                    | (library, not installed directly)                   |
-| [`@ifi/oh-pi-extensions`](./packages/extensions)                    | Core extension pack with 13 session features                               | `pi install npm:@ifi/oh-pi-extensions`              |
-| [`@ifi/pi-background-tasks`](./packages/background-tasks)           | Reactive background shell tasks with `/bg`, `Ctrl+Shift+B`, and `bg_task`  | `pi install npm:@ifi/pi-background-tasks`           |
-| [`@ifi/pi-diagnostics`](./packages/diagnostics)                     | Prompt completion timing extension                                         | `pi install npm:@ifi/pi-diagnostics`                |
-| [`@ifi/pi-extension-subagents`](./packages/subagents)               | Full-featured subagent delegation runtime                                  | `pi install npm:@ifi/pi-extension-subagents`        |
-| [`@ifi/pi-plan`](./packages/plan)                                   | Branch-aware planning mode extension                                       | `pi install npm:@ifi/pi-plan`                       |
-| [`@ifi/pi-spec`](./packages/spec)                                   | Native spec-driven workflow with `/spec`                                   | `pi install npm:@ifi/pi-spec`                       |
-| [`@ifi/pi-web-remote`](./packages/web-remote)                       | `/remote` session sharing extension                                        | `pi install npm:@ifi/pi-web-remote`                 |
-| [`@ifi/pi-extension-adaptive-routing`](./packages/adaptive-routing) | Optional adaptive + delegated routing                                      | `pi install npm:@ifi/pi-extension-adaptive-routing` |
-| [`@ifi/pi-provider-catalog`](./packages/providers)                  | Experimental OpenCode-backed provider catalog                              | `pi install npm:@ifi/pi-provider-catalog`           |
-| [`@ifi/pi-provider-cursor`](./packages/cursor)                      | Experimental Cursor OAuth provider                                         | `pi install npm:@ifi/pi-provider-cursor`            |
-| [`@ifi/pi-provider-ollama`](./packages/ollama)                      | Experimental Ollama local + cloud provider                                 | `pi install npm:@ifi/pi-provider-ollama`            |
-| [`@ifi/oh-pi-themes`](./packages/themes)                            | 6 color themes                                                             | `pi install npm:@ifi/oh-pi-themes`                  |
-| [`@ifi/oh-pi-prompts`](./packages/prompts)                          | 10 prompt templates                                                        | `pi install npm:@ifi/oh-pi-prompts`                 |
-| [`@ifi/oh-pi-skills`](./packages/skills)                            | 17 skill packs                                                             | `pi install npm:@ifi/oh-pi-skills`                  |
-| [`@ifi/oh-pi-agents`](./packages/agents)                            | 5 AGENTS.md templates                                                      | (used by CLI/templates)                             |
-| [`@ifi/pi-shared-qna`](./packages/shared-qna)                       | Shared Q&A TUI helpers                                                     | (library, not installed directly)                   |
-| [`@ifi/pi-web-client`](./packages/web-client)                       | Platform-agnostic remote session client library                            | `pnpm add @ifi/pi-web-client`                       |
-| [`@ifi/pi-web-server`](./packages/web-server)                       | Embeddable remote session server                                           | `pnpm add @ifi/pi-web-server`                       |
-| [`@ifi/pi-analytics-extension`](./packages/analytics-extension)     | Analytics tracking extension with SQLite persistence and browser dashboard | `pi install npm:@ifi/pi-analytics-extension`        |
-| [`@ifi/pi-analytics-db`](./packages/analytics-db)                   | SQLite schema and Drizzle ORM client for analytics data                    | (library, not installed directly)                   |
-| [`@ifi/pi-analytics-dashboard`](./packages/analytics-dashboard)     | React dashboard for visualizing AI usage (private package)                 | (private, run `pnpm dev` in package)                |
-| [`@ifi/oh-pi-docs`](./packages/docs)                                | Documentation site for oh-pi (private package)                             | (private, run `pnpm dev` in package)                |
+| Package                                                                 | Role                                                                       | Install                                      |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------- |
+| [`@monopi/monopi`](./packages/monopi__monopi)                           | Meta-installer for the default monopi bundle                               | `npx @monopi/monopi`                         |
+| [`@monopi/cli`](./packages/monopi__cli)                                 | Interactive TUI configurator                                               | `npx @monopi/cli`                            |
+| [`@monopi/core`](./packages/monopi__core)                               | Shared types, registries, icons, i18n, and path helpers                    | (library, not installed directly)            |
+| [`@monopi/db`](./packages/monopi__db)                                   | Shared SQLite/Drizzle database for persistence-based extensions            | (library, not installed directly)            |
+| [`@monopi/extension-worktree`](./packages/monopi__extension-worktree)   | Split extension package for worktree management                            | `pi install npm:@monopi/extension-worktree`  |
+| [`@monopi/background-tasks`](./packages/monopi__background-tasks)       | Reactive background shell tasks with `/bg`, `Ctrl+Shift+B`, and `bg_task`  | `pi install npm:@monopi/background-tasks`    |
+| [`@monopi/diagnostics`](./packages/monopi__diagnostics)                 | Prompt completion timing extension                                         | `pi install npm:@monopi/diagnostics`         |
+| [`@monopi/subagents`](./packages/monopi__subagents)                     | Full-featured subagent delegation runtime                                  | `pi install npm:@monopi/subagents`           |
+| [`@monopi/web-remote`](./packages/monopi__web-remote)                   | `/remote` session sharing extension                                        | `pi install npm:@monopi/web-remote`          |
+| [`@monopi/adaptive-routing`](./packages/monopi__adaptive-routing)       | Optional adaptive + delegated routing                                      | `pi install npm:@monopi/adaptive-routing`    |
+| [`@monopi/provider-catalog`](./packages/monopi__provider-catalog)       | Experimental OpenCode-backed provider catalog                              | `pi install npm:@monopi/provider-catalog`    |
+| [`@monopi/provider-cursor`](./packages/monopi__provider-cursor)         | Experimental Cursor OAuth provider                                         | `pi install npm:@monopi/provider-cursor`     |
+| [`@monopi/provider-ollama`](./packages/monopi__provider-ollama)         | Experimental Ollama local + cloud provider                                 | `pi install npm:@monopi/provider-ollama`     |
+| [`@monopi/skills`](./packages/monopi__skills)                           | 3 maintained skill packs                                                   | `pi install npm:@monopi/skills`              |
+| [`@monopi/agents`](./packages/monopi__agents)                           | 5 AGENTS.md templates                                                      | (used by CLI/templates)                      |
+| [`@monopi/shared-qna`](./packages/monopi__shared-qna)                   | Shared Q&A TUI helpers                                                     | (library, not installed directly)            |
+| [`@monopi/web-client`](./packages/monopi__web-client)                   | Platform-agnostic remote session client library                            | `pnpm add @monopi/web-client`                |
+| [`@monopi/web-server`](./packages/monopi__web-server)                   | Embeddable remote session server                                           | `pnpm add @monopi/web-server`                |
+| [`@monopi/analytics-extension`](./packages/monopi__analytics-extension) | Analytics tracking extension with SQLite persistence and browser dashboard | `pi install npm:@monopi/analytics-extension` |
+| [`@monopi/analytics-db`](./packages/monopi__analytics-db)               | SQLite schema and Drizzle ORM client for analytics data                    | (library, not installed directly)            |
+| [`@monopi/analytics-dashboard`](./packages/monopi__analytics-dashboard) | React dashboard for visualizing AI usage (private package)                 | (private, run `pnpm dev` in package)         |
+| [`@monopi/docs`](./packages/monopi__docs)                               | Documentation site for monopi (private package)                            | (private, run `pnpm dev` in package)         |
 
-`@ifi/pi-extension-adaptive-routing`, `@ifi/pi-provider-catalog`, `@ifi/pi-provider-cursor`, `@ifi/pi-provider-ollama`, and `@ifi/pi-analytics-extension` stay opt-in for now and are **not** installed by `npx @ifi/oh-pi`. They are intentionally shipped as separate optional packages.
+`@monopi/adaptive-routing`, `@monopi/provider-catalog`, `@monopi/provider-cursor`, `@monopi/provider-ollama`, and `@monopi/analytics-extension` stay opt-in for now and are **not** installed by `npx @monopi/monopi`. They are intentionally shipped as separate optional packages.
 
 ### Full Feature Catalog
 
-For a package-by-package inventory of everything in the repo — including every extension, runtime package, prompt, skill, theme, AGENTS template, and contributor-facing library — see [docs/feature-catalog.md](./docs/feature-catalog.md).
-
-### Native `/spec` Workflow
-
-```bash
-/spec init
-/spec constitution Security-first, testable, minimal-complexity defaults
-/spec specify Build a native spec workflow package for pi
-/spec clarify
-/spec plan Use TypeScript, Vitest, and direct pi tool access
-/spec tasks
-/spec analyze
-/spec implement
-```
+For a package-by-package inventory of everything in the repo — including every extension, runtime package, skill, theme, AGENTS template, and contributor-facing library — see [docs/feature-catalog.md](./docs/feature-catalog.md).
 
 ### Installer Options
 
 ```bash
-npx @ifi/oh-pi                      # install latest versions (global)
-npx @ifi/oh-pi --version 0.2.13     # pin to a specific version
-npx @ifi/oh-pi --local              # install to project .pi/settings.json
-npx @ifi/oh-pi --remove             # uninstall all oh-pi packages from pi
+npx @monopi/monopi                      # install latest versions (global)
+npx @monopi/monopi --version 0.2.13     # pin to a specific version
+npx @monopi/monopi --local              # install to project .pi/settings.json
+npx @monopi/monopi --remove             # uninstall all monopi packages from pi
 ```
 
 ### Compatibility Policy
 
-oh-pi tracks upstream pi fairly closely and currently treats **pi `0.56.1` or newer** as the minimum supported runtime baseline for packages that integrate directly with the pi SDK.
+monopi tracks upstream pi fairly closely and currently treats **pi `0.56.1` or newer** as the minimum supported runtime baseline for packages that integrate directly with the pi SDK.
 
 Policy:
 
-- new oh-pi releases target the current pi runtime family first
+- new monopi releases target the current pi runtime family first
 - compatibility with older pi builds is best-effort unless explicitly documented otherwise
 - peer dependency ranges on pi-facing packages express the minimum supported baseline more clearly
 - higher-risk runtime integrations should gain smoke coverage before broadening compatibility claims
@@ -258,7 +240,7 @@ Prevents accidental code loss by auto-creating stash checkpoints before the agen
 Replaces the default pi footer with a rich status bar showing real-time metrics:
 
 ```
-◆ claude-sonnet-4 | 12.3k/8.1k $0.42 62% | ⏱3m12s | ⌂ projects/oh-pi | ⎇ main
+◆ claude-sonnet-4 | 12.3k/8.1k $0.42 62% | ⏱3m12s | ⌂ projects/monopi | ⎇ main
 ```
 
 **Shows:** Model name with thinking-level indicator, input/output tokens, accumulated cost, context window %, elapsed time, working directory, git branch, and repo/worktree context when available.
@@ -290,12 +272,6 @@ Enriches tool results with execution metadata so pi can show when a tool started
 
 Replaces the verbose default startup header with a dense one-liner showing model, provider, thinking level, and extension count.
 
-### 🔄 Auto Update (`auto-update`) — **default: on**
-
-Checks npm for newer versions of oh-pi on startup. If an update is available, shows a notification with the new version and install command. Never blocks — fully async.
-
-**How it works:** On `session_start`, runs `npm view oh-pi version` in the background via `pi.exec()`. Compares with the local version using semver.
-
 ### ⌨️ External Editor (`external-editor`) — **default: on**
 
 Adds a discoverable `/external-editor` command and a `Ctrl+Shift+E` shortcut for opening the current draft in `$VISUAL` or `$EDITOR`, then syncing the saved text back into pi.
@@ -306,7 +282,7 @@ Adds a discoverable `/external-editor` command and a `Ctrl+Shift+E` shortcut for
 
 ### 🌲 Worktree (`worktree`) — **default: on**
 
-Adds centralized git worktree awareness for oh-pi. It detects whether the current checkout is the main repo or a linked worktree, shows when the current worktree is pi-owned, and tracks owner + purpose metadata for pi-created worktrees.
+Adds centralized git worktree awareness for monopi. It detects whether the current checkout is the main repo or a linked worktree, shows when the current worktree is pi-owned, and tracks owner + purpose metadata for pi-created worktrees.
 
 **Commands:** `/worktree` | `/worktree status` | `/worktree list` | `/worktree open [branch|path]` | `/worktree create <branch> [purpose]` | `/worktree cleanup <branch|path|id|all>`
 
@@ -334,12 +310,12 @@ Creates a side-conversation widget above the editor so you can ask follow-up que
 
 Manages explicit background tasks for long-lived commands like dev servers, PR watchers, and log followers. Ordinary `bash` commands stay in the foreground so their output remains visible in the current pi session.
 
-**How it works:** Use `bg_task` or `/bg` when you want a command to keep running after the tool returns. Background tasks write output to `/tmp/oh-pi-bg-*.log`, can wake pi up on new output, and can be inspected or stopped later with `bg_status`, `bg_task`, or the `/bg` dashboard.
+**How it works:** Use `bg_task` or `/bg` when you want a command to keep running after the tool returns. Background tasks write output to `/tmp/monopi-bg-*.log`, can wake pi up on new output, and can be inspected or stopped later with `bg_status`, `bg_task`, or the `/bg` dashboard.
 
 ```
 Agent: bg_task spawn "npm run dev"
 → Started bg-1 (pid 12345) in the background.
-  Log: /tmp/oh-pi-bg-bg-1-1709654321.log
+  Log: /tmp/monopi-bg-bg-1-1709654321.log
   ⏳ Pi can notify you when new output arrives or when the task exits.
 ```
 
@@ -350,7 +326,7 @@ Agent: bg_task spawn "npm run dev"
 Adaptive routing now ships as its own package so users can opt into routing behavior explicitly:
 
 ```bash
-pi install npm:@ifi/pi-extension-adaptive-routing
+pi install npm:@monopi/adaptive-routing
 ```
 
 It adds `/route` controls, local routing telemetry, and delegated startup categories that subagents can use for provider assignment when no explicit model override is set.
@@ -432,11 +408,11 @@ Continuously samples runtime health so heavy sessions stay usable.
 
 ### Presets
 
-|               | Theme      | Thinking | Includes                               |
-| ------------- | ---------- | -------- | -------------------------------------- |
-| ⚫ Full Power | oh-pi Dark | high     | Recommended extensions + bg-process    |
-| 🔴 Clean      | Default    | off      | No extensions, just core               |
-| 🚀 Subagents  | oh-pi Dark | medium   | Subagent chains and parallel execution |
+|               | Theme       | Thinking | Includes                               |
+| ------------- | ----------- | -------- | -------------------------------------- |
+| ⚫ Full Power | monopi Dark | high     | Recommended extensions + bg-process    |
+| 🔴 Clean      | Default     | off      | No extensions, just core               |
+| 🚀 Subagents  | monopi Dark | medium   | Subagent chains and parallel execution |
 
 ### Providers
 
@@ -446,59 +422,22 @@ Anthropic · OpenAI · Google Gemini · Groq · OpenRouter · xAI · Mistral
 
 ## Skills
 
-The tables below highlight the most commonly reached-for skills. For the full list of all 19 skills, plus the 5 AGENTS.md templates that ship in this repo, see [docs/feature-catalog.md](./docs/feature-catalog.md).
-
-### 🔧 Tool Skills
-
-| Skill        | What it does                               |
-| ------------ | ------------------------------------------ |
-| `context7`   | Query latest library docs via Context7 API |
-| `web-search` | DuckDuckGo search (free, no key)           |
-| `web-fetch`  | Extract webpage content as plain text      |
-
-### 🎨 UI Design System Skills
-
-| Skill           | Style                                       |
-| --------------- | ------------------------------------------- |
-| `liquid-glass`  | Apple WWDC 2025 translucent glass           |
-| `glassmorphism` | Frosted glass blur + transparency           |
-| `claymorphism`  | Soft 3D clay-like surfaces                  |
-| `neubrutalism`  | Bold borders, offset shadows, high contrast |
-
-### 🔄 Workflow Skills
-
-| Skill                      | What it does                                       |
-| -------------------------- | -------------------------------------------------- |
-| `quick-setup`              | Detect project type, generate .pi/ config          |
-| `debug-helper`             | Error analysis, log interpretation, profiling      |
-| `rust-workspace-bootstrap` | Scaffold Rust workspaces with knope, devenv, CI/CD |
-| `flutter-serverpod-mvp`    | Scaffold full-stack Flutter + Serverpod MVPs       |
+| Skill          | What it does                                          |
+| -------------- | ----------------------------------------------------- |
+| `btw` (`/qq`)  | Run side conversations without interrupting main work |
+| `debug-helper` | Error analysis, log interpretation, and profiling     |
+| `nushell`      | Nushell syntax reference for shell commands           |
 
 ## Themes
 
 | Theme               | Description                  |
 | ------------------- | ---------------------------- |
-| 🌙 oh-pi Dark       | Cyan + purple, high contrast |
+| 🌙 monopi Dark      | Cyan + purple, high contrast |
 | 🌙 Cyberpunk        | Neon magenta + electric cyan |
 | 🌙 Nord             | Arctic blue palette          |
 | 🌙 Catppuccin Mocha | Pastel on dark               |
 | 🌙 Tokyo Night      | Blue + purple twilight       |
 | 🌙 Gruvbox Dark     | Warm retro tones             |
-
-## Prompt Templates
-
-| Command     | Description                              |
-| ----------- | ---------------------------------------- |
-| `/review`   | Code review: bugs, security, performance |
-| `/fix`      | Fix errors with minimal changes          |
-| `/explain`  | Explain code, simple to detailed         |
-| `/refactor` | Refactor preserving behavior             |
-| `/test`     | Generate tests                           |
-| `/commit`   | Conventional Commit message              |
-| `/pr`       | Pull request description                 |
-| `/security` | OWASP security audit                     |
-| `/optimize` | Performance optimization                 |
-| `/document` | Generate documentation                   |
 
 ---
 
@@ -508,19 +447,19 @@ The tables below highlight the most commonly reached-for skills. For the full li
 
 - Node.js ≥ 20
 - pnpm ≥ 10
-- [knope](https://knope.tech) (for releases)
+- MonoChange CLI (`pnpm mc:*` scripts) for releases
 
 ### Setup
 
 ```bash
-git clone https://github.com/ifiokjr/oh-pi.git
-cd oh-pi
+git clone https://github.com/ifiokjr/monopi.git
+cd monopi
 pnpm install
 ```
 
 <!-- {=repoContributorCompiledPackagesDocs} -->
 
-Most runtime packages in this repo ship raw TypeScript and can be loaded directly by pi. A smaller set of contributor-facing packages (`core`, `cli`, `web-client`, `web-server`) emit `dist/` output, so build those when you are working on them directly.
+Most runtime packages in this repo ship raw TypeScript and can be loaded directly by pi. A smaller set of contributor-facing packages (`core`, `cli`, `db`, `web-client`, `web-server`) emit `dist/` output, so build those when you are working on them directly.
 
 <!-- {/repoContributorCompiledPackagesDocs} -->
 
@@ -557,7 +496,7 @@ That keeps the repo-wide floor honest while still requiring new code paths in a 
 
 <!-- {=repoPiLocalSwitcherOverviewDocs} -->
 
-The `pnpm pi:local` workflow points a real pi install at this checkout instead of the published npm packages. It is the normal local development loop for testing unpublished oh-pi changes in a real interactive pi session.
+The `pnpm pi:local` workflow points a real pi install at this checkout instead of the published npm packages. It is the normal local development loop for testing unpublished monopi changes in a real interactive pi session.
 
 <!-- {/repoPiLocalSwitcherOverviewDocs} -->
 
@@ -573,7 +512,7 @@ pi
 
 <!-- {/repoPiLocalQuickstartDocs} -->
 
-That is the normal developer loop for oh-pi feature work.
+That is the normal developer loop for monopi feature work.
 
 #### What `pnpm pi:local` does
 
@@ -581,10 +520,10 @@ That is the normal developer loop for oh-pi feature work.
 
 `pnpm pi:local` runs the repo-local source switcher in `local` mode. It:
 
-- rewrites only the managed oh-pi package sources in your pi settings
+- rewrites only the managed monopi package sources in your pi settings
 - points those package sources at the workspace packages in this checkout
 - preserves package-specific config objects already present in `settings.json`
-- refreshes package manifest paths so newly added extensions/prompts/skills/themes are picked up
+- refreshes package manifest paths so newly added extensions/skills/themes are picked up
 - runs `pi install` for newly added managed packages and `pi update` for packages you already had configured
 - manages the default installer set and the opt-in experimental packages used for local feature development
 - lets you validate unpublished changes from a branch, worktree, or detached checkout before release
@@ -595,21 +534,18 @@ That is the normal developer loop for oh-pi feature work.
 
 Managed local switching covers these packages:
 
-- `@ifi/oh-pi-extensions`
-- `@ifi/pi-background-tasks`
-- `@ifi/pi-diagnostics`
-- `@ifi/pi-extension-subagents`
-- `@ifi/pi-plan`
-- `@ifi/pi-spec`
-- `@ifi/pi-web-remote`
-- `@ifi/oh-pi-themes`
-- `@ifi/oh-pi-prompts`
-- `@ifi/oh-pi-skills`
-- `@ifi/pi-extension-adaptive-routing`
-- `@ifi/pi-provider-catalog`
-- `@ifi/pi-provider-cursor`
-- `@ifi/pi-provider-ollama`
-- `@ifi/pi-analytics-extension`
+- `@monopi/extension-worktree`
+- `@monopi/background-tasks`
+- `@monopi/diagnostics`
+- `@monopi/subagents`
+- `@monopi/web-remote`
+- `@monopi/skills`
+- `@monopi/extension-bg-process`
+- `@monopi/adaptive-routing`
+- `@monopi/provider-catalog`
+- `@monopi/provider-cursor`
+- `@monopi/provider-ollama`
+- `@monopi/analytics-extension`
 
 <!-- {/repoPiLocalManagedPackagesDocs} -->
 
@@ -618,7 +554,7 @@ Managed local switching covers these packages:
 ```bash
 pnpm pi:local                             # point pi at this checkout
 pnpm pi:published                         # switch back to published npm packages
-pnpm pi:switch local -- --path /tmp/oh-pi-branch
+pnpm pi:switch local -- --path /tmp/monopi-branch
 pnpm pi:switch remote -- --version 0.4.4
 pnpm pi:switch local -- --pi-local        # write into the current project's .pi/settings.json
 pnpm pi:switch status                     # show the current managed package sources
@@ -646,21 +582,21 @@ After switching package sources, fully restart `pi`. Do not rely on `/reload` fo
 
 <!-- {=repoPiLocalInstallFreshnessDocs} -->
 
-If you recently pulled, rebased, or switched branches in the checkout you pointed `pi` at, run `pnpm install --frozen-lockfile` there before restarting `pi`. Local source mode loads workspace files directly, so stale `node_modules` can surface missing internal `@ifi/*` package errors.
+If you recently pulled, rebased, or switched branches in the checkout you pointed `pi` at, run `pnpm install --frozen-lockfile` there before restarting `pi`. Local source mode loads workspace files directly, so stale `node_modules` can surface missing internal `@monopi/*` package errors.
 
 <!-- {/repoPiLocalInstallFreshnessDocs} -->
 
-If you are changing one of the compiled contributor packages (`@ifi/oh-pi-core`, `@ifi/oh-pi-cli`, `@ifi/pi-web-client`, or `@ifi/pi-web-server`), also run the relevant build command or `pnpm build` so their emitted `dist/` output stays current.
+If you are changing one of the compiled contributor packages (`@monopi/core`, `@monopi/cli`, `@monopi/web-client`, or `@monopi/web-server`), also run the relevant build command or `pnpm build` so their emitted `dist/` output stays current.
 
 ### Changesets
 
 **Every change must include a changeset.** This is enforced in CI.
 
 ```bash
-knope document-change
+pnpm change
 ```
 
-This creates a file in `.changeset/` describing the change. Because this repo uses lockstep versioning and a single knope `[package]`, changeset frontmatter must use **only** `default` as the key:
+This creates a file in `.changeset/` describing the change. Because this repo uses MonoChange with a lockstep `default` group, changeset frontmatter must use **only** `default` as the key:
 
 ```md
 ---
@@ -668,7 +604,7 @@ default: patch
 ---
 ```
 
-Do not use package names like `@ifi/oh-pi` or `@ifi/oh-pi-extensions` in changeset frontmatter here — knope ignores those entries in this repo.
+Do not use package names like `@monopi/monopi` or `@monopi/extension-worktree` in changeset frontmatter here — MonoChange validates changesets against the configured `default` release group.
 
 Choose the change type:
 
@@ -685,46 +621,42 @@ Releases are done locally in two steps:
 ./scripts/release.sh
 
 # 2. Publish: build and push all packages to npm
-knope publish
+pnpm publish
 ```
 
-The release script runs all CI/security checks (lint, security, typecheck, test, build) before calling `knope release`. Use `--dry-run` to preview without making changes.
+The release script runs all CI/security checks (lint, security, typecheck, test, build) before calling `pnpm release`. Use `--dry-run` to preview without making changes.
 
 ### Project Structure
 
 ```
-oh-pi/
+monopi/
 ├── packages/
-│   ├── core/                   Shared types, registries, icons, i18n, and path helpers (compiled)
-│   ├── cli/                    Interactive TUI configurator (compiled)
-│   ├── extensions/             12 core pi extensions (raw .ts)
-│   ├── background-tasks/       Reactive background shell task package (raw .ts)
-│   ├── diagnostics/            Prompt completion timing extension (raw .ts)
-│   ├── subagents/              Subagent orchestration package (raw .ts)
-│   ├── plan/                   Planning mode extension (raw .ts)
-│   ├── spec/                   Native spec-driven workflow package (raw .ts)
-│   ├── adaptive-routing/       Optional adaptive/delegated routing package (raw .ts)
-│   ├── providers/              Experimental provider catalog package (raw .ts)
-│   ├── cursor/                 Experimental Cursor OAuth provider package (raw .ts)
-│   ├── ollama/                 Experimental Ollama local + cloud provider package (raw .ts)
-│   ├── web-remote/             `/remote` session sharing extension (raw .ts)
-│   ├── web-client/             Remote session client library (compiled)
-│   ├── web-server/             Remote session server library (compiled)
-│   ├── shared-qna/             Shared Q&A TUI helper library (raw .ts)
-│   ├── analytics-db/             SQLite schema and Drizzle ORM client for analytics data
-│   ├── analytics-dashboard/      React dashboard for visualizing AI usage (private app)
-│   ├── analytics-extension/      Analytics tracking extension for pi (raw .ts)
-│   ├── docs/                     Documentation site for oh-pi (private app)
-│   ├── themes/                 6 JSON theme files
-│   ├── prompts/                10 markdown prompt templates
-│   ├── skills/                 17 skill directories
-│   ├── agents/                 5 AGENTS.md templates
-│   └── oh-pi/                  Installer CLI (npx @ifi/oh-pi)
+│   ├── monopi__core/              Shared types, registries, icons, i18n, and path helpers (compiled)
+│   ├── monopi__cli/               Interactive TUI configurator (compiled)
+│   ├── monopi__extension-*/      Split pi extension packages
+│   ├── monopi__background-tasks/  Reactive background shell task package (raw .ts)
+│   ├── monopi__diagnostics/       Prompt completion timing extension (raw .ts)
+│   ├── monopi__subagents/         Subagent orchestration package (raw .ts)
+│   ├── monopi__adaptive-routing/  Optional adaptive/delegated routing package (raw .ts)
+│   ├── monopi__provider-catalog/  Provider catalog package (raw .ts)
+│   ├── monopi__provider-cursor/   Cursor OAuth provider package (raw .ts)
+│   ├── monopi__provider-ollama/   Ollama local + cloud provider package (raw .ts)
+│   ├── monopi__web-remote/        `/remote` session sharing extension (raw .ts)
+│   ├── monopi__web-client/        Remote session client library (compiled)
+│   ├── monopi__web-server/        Remote session server library (compiled)
+│   ├── monopi__shared-qna/        Shared Q&A TUI helper library (raw .ts)
+│   ├── monopi__analytics-db/      SQLite schema and Drizzle ORM client for analytics data
+│   ├── monopi__analytics-dashboard/ React dashboard for visualizing AI usage (private app)
+│   ├── monopi__analytics-extension/ Analytics tracking extension for pi (raw .ts)
+│   ├── monopi__docs/             Documentation site for monopi (private app)
+│   ├── monopi__skills/           Curated skill directories
+│   ├── monopi__agents/           AGENTS.md templates
+│   └── monopi__monopi/          Installer CLI (npx @monopi/monopi)
 ├── docs/                       Full documentation
 ├── benchmarks/                 Performance benchmarks
-├── .changeset/                 Pending changesets (knope)
+├── .changeset/                 Pending MonoChange changesets
 ├── CHANGELOG.md                Release history
-├── knope.toml                  Release automation config
+├── monochange.toml             Release automation config
 └── .oxlintrc.json + .oxfmtrc.json                  Linter + formatter config
 ```
 

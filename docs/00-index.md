@@ -13,7 +13,7 @@
 | 05  | [Skills/Prompts/Themes/Packages](05-skills-prompts-themes-packages.md) | Skill packs, prompt templates, theme customization, package management and distribution        |
 | 06  | [Settings/SDK/RPC/TUI](06-settings-sdk-rpc-tui.md)                     | All settings, SDK programming interface, RPC protocol, TUI component system, custom models     |
 | 07  | [CLI Reference](07-cli-reference.md)                                   | Complete CLI options, directory structure, platform support, key numbers                       |
-| 08  | [oh-pi Feature Catalog](feature-catalog.md)                            | Package-by-package feature inventory, local dev loop, runtime/content package ownership        |
+| 08  | [monopi Feature Catalog](feature-catalog.md)                           | Package-by-package feature inventory, local dev loop, runtime/content package ownership        |
 
 ## Core Concepts Quick Reference
 
@@ -87,7 +87,7 @@ CLI flags > project .pi/settings.json > global ~/.pi/agent/settings.json
 
 Use this reading path depending on what you are trying to do:
 
-- **I just want to use oh-pi** → start in the root `README.md`, then jump into `docs/feature-catalog.md` for package-by-package detail
+- **I just want to use monopi** → start in the root `README.md`, then jump into `docs/feature-catalog.md` for package-by-package detail
 - **I want to try the latest local changes** → run `pnpm install`, `pnpm pi:local`, restart `pi`, then exercise the feature in a real session
 - **I want to contribute** → read `CONTRIBUTING.md`, then the package README for the area you are changing
 - **I want to understand ownership** → use `docs/feature-catalog.md` to see which package owns which runtime feature, content pack, or library surface
@@ -99,20 +99,17 @@ Use this reading path depending on what you are trying to do:
 <!-- {=repoArchitectureAtAGlanceDocs} -->
 
 ```text
-oh-pi repo
+monopi repo
 ├── installer
-│   └── @ifi/oh-pi
+│   └── @monopi/monopi
 ├── default runtime packages
 │   ├── extensions
 │   ├── background-tasks
 │   ├── diagnostics
 │   ├── subagents
-│   ├── plan
-│   ├── spec
 │   └── web-remote
 ├── content packs
 │   ├── themes
-│   ├── prompts
 │   ├── skills
 │   └── agents
 ├── opt-in extras
@@ -130,6 +127,7 @@ oh-pi repo
     ├── shared-qna
     ├── web-client
     ├── web-server
+    ├── db
     ├── analytics-db
     ├── analytics-dashboard
     └── docs
@@ -156,9 +154,9 @@ Suggested path for a new contributor:
 - `docs/plans/adaptive-routing-mode.md` — main adaptive-routing spec
 - `docs/plans/benchmark-informed-adaptive-routing.md` — benchmark platform and strategy-routing future plan
 
-## Value for oh-pi
+## Value for monopi
 
-This documentation provides the knowledge base for oh-pi (one-click pi-coding-agent configuration):
+This documentation provides the knowledge base for monopi (one-click pi-coding-agent configuration):
 
 1. **Full settings reference** — All settings.json fields, enabling interactive configuration
 2. **Directory structure** — Every file under `~/.pi/agent/` and `.pi/` explained

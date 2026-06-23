@@ -1,0 +1,42 @@
+{
+	"name": "@monopi/web-remote",
+	"version": "0.5.1",
+	"description": "Pi extension: /remote command for sharing sessions via web UI.",
+	"keywords": [
+		"browser",
+		"pi",
+		"pi-coding-agent",
+		"pi-package",
+		"remote",
+		"session-sharing",
+		"web"
+	],
+	"homepage": "https://github.com/ifiokjr/monopi/tree/main/packages/monopi__web-remote",
+	"bugs": {
+		"url": "https://github.com/ifiokjr/monopi/issues"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ifiokjr/monopi.git",
+		"directory": "packages/monopi__web-remote"
+	},
+	"files": [
+		"*.ts",
+		"README.md",
+		"!*.test.ts"
+	],
+	"type": "module",
+	"dependencies": {
+		"@monopi/web-server": "0.5.1"
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-coding-agent": ">=0.78.1",
+		"typebox": "^1.1.24"
+	},
+	"pi": {
+		"extensions": [
+			"./index.ts"
+		]
+	}
+}

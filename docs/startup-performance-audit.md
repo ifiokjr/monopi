@@ -1,6 +1,6 @@
 # Startup Performance Audit
 
-This audit summarizes the current first-load and early-interaction hotspots that affect `pi` when the default oh-pi extension stack is loaded.
+This audit summarizes the current first-load and early-interaction hotspots that affect `pi` when the default monopi extension stack is loaded.
 
 ## What now runs on every PR
 
@@ -35,7 +35,7 @@ The benchmark suite currently covers:
 
 ## Ranked hotspot summary
 
-### 1. `packages/extensions/extensions/worktree-shared.ts`
+### 1. `packages/monopi__extension-shared/worktree-shared.ts`
 
 **Why it matters**
 
@@ -73,7 +73,7 @@ That change also removed the footer's 30-second timer from re-triggering worktre
 
 This is the most expensive focused startup-adjacent benchmark today and maps directly to the sort of post-startup hitch that feels like typing lag.
 
-### 2. `packages/extensions/extensions/scheduler.ts`
+### 2. `packages/monopi__extension-scheduler/index.ts`
 
 **Why it matters**
 
@@ -93,7 +93,7 @@ This is the most expensive focused startup-adjacent benchmark today and maps dir
 
 The shared status-bar cache now skips initial no-op `setStatus(key, undefined)` clears for unseen keys. That removes the idle startup status writes that still showed up in the runtime churn report for scheduler and watchdog while preserving real clears after a visible status had been shown.
 
-### 3. `packages/extensions/extensions/custom-footer.ts`
+### 3. `packages/monopi__extension-custom-footer/index.ts`
 
 **Why it matters**
 
@@ -112,7 +112,7 @@ The footer caches totals after startup, but the aggregation path is still O(n) o
 - PR probe completions request a redraw only when the visible PR list actually changes
 - watchdog and scheduler status-bar writes should stay deduplicated so periodic clean-state refreshes do not spam identical `setStatus(...)` calls
 
-### 4. `packages/extensions/extensions/usage-tracker.ts`
+### 4. `packages/monopi__extension-usage-tracker/index.ts`
 
 **Why it matters**
 
@@ -129,7 +129,7 @@ The usage tracker hydrates from session history near startup and also schedules 
 - widget rendering should follow the latest active session context after `session_switch` without requiring a remount
 - deferred startup probe/cache work now skips requesting a widget redraw when the visible widget state stays unchanged, which removes the remaining idle startup no-op rerender from the runtime churn report
 
-### 5. `packages/subagents/*` (runtime)
+### 5. `packages/monopi__subagents/*` (runtime)
 
 **Why it matters**
 
@@ -151,7 +151,7 @@ The new PR-gated suite covers the default extension stack at startup, but colony
 - nest lock contention now sleeps with `Atomics.wait(...)` instead of burning CPU in a tight busy loop while another process holds the lock
 - pre-review typecheck now runs only when completed worker tasks touched TypeScript files under a detectable TS project, and it prefers the local `node_modules/.bin/tsc` binary over `npx`
 
-### 6. `packages/diagnostics/*`
+### 6. `packages/monopi__diagnostics/*`
 
 **Why it matters**
 
@@ -167,7 +167,7 @@ The new runtime suite mounts widgets/footers and advances an idle 65-second wind
 - idle and completed diagnostics states no longer keep a fixed one-second redraw timer alive
 - this should remove the largest isolated always-on widget redraw source from the runtime churn report and reduce multi-instance watchdog noise
 
-### 7. `packages/subagents/*`
+### 7. `packages/monopi__subagents/*`
 
 **Why it matters**
 
@@ -181,7 +181,7 @@ Subagents mostly offload heavy work to subprocesses, but the main process still 
 
 Covered indirectly by the full-stack startup cases. A follow-up focused suite would help quantify watcher/poller overhead under many active jobs.
 
-### 8. `packages/providers/*`
+### 8. `packages/monopi__provider-catalog/*`
 
 **Why it matters**
 
@@ -189,7 +189,7 @@ The provider catalog/bootstrap path was identified as a startup risk in the deep
 
 **Benchmark status**
 
-Not part of the default oh-pi extension manifest today, so it is not included in the new PR-gated startup suite.
+Not part of the default monopi extension manifest today, so it is not included in the new PR-gated startup suite.
 
 ## Editor-side debug visibility
 

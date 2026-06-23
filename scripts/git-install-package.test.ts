@@ -35,16 +35,25 @@ describe("git-install package manifest", () => {
 	it("aggregates the standalone pi packages at the repo root", () => {
 		const rootManifest = readPackageJson("package.json");
 		const extensionPackages = [
-			"packages/extensions/package.json",
-			"packages/background-tasks/package.json",
-			"packages/diagnostics/package.json",
-			"packages/subagents/package.json",
-			"packages/plan/package.json",
-			"packages/spec/package.json",
-			"packages/web-remote/package.json",
-			"packages/cursor/package.json",
-			"packages/ollama/package.json",
-			"packages/analytics-extension/package.json",
+			"packages/monopi__extension-answer/package.json",
+			"packages/monopi__extension-watchdog/package.json",
+			"packages/monopi__extension-btw/package.json",
+			"packages/monopi__extension-compact-header/package.json",
+			"packages/monopi__extension-custom-footer/package.json",
+			"packages/monopi__extension-external-editor/package.json",
+			"packages/monopi__extension-git-guard/package.json",
+			"packages/monopi__extension-scheduler/package.json",
+			"packages/monopi__extension-shell-format/package.json",
+			"packages/monopi__extension-tool-metadata/package.json",
+			"packages/monopi__extension-usage-tracker/package.json",
+			"packages/monopi__extension-worktree/package.json",
+			"packages/monopi__background-tasks/package.json",
+			"packages/monopi__diagnostics/package.json",
+			"packages/monopi__subagents/package.json",
+			"packages/monopi__web-remote/package.json",
+			"packages/monopi__provider-cursor/package.json",
+			"packages/monopi__provider-ollama/package.json",
+			"packages/monopi__analytics-extension/package.json",
 		];
 		const expectedExtensionEntries = extensionPackages.flatMap((packageJsonPath) => {
 			const manifest = readPackageJson(packageJsonPath);
@@ -53,9 +62,8 @@ describe("git-install package manifest", () => {
 
 		expect(rootManifest.workspaces).toEqual(["packages/*"]);
 		expect(rootManifest.pi?.extensions).toEqual(expectedExtensionEntries);
-		expect(rootManifest.pi?.prompts).toEqual(["./packages/prompts/prompts"]);
-		expect(rootManifest.pi?.skills).toEqual(["./packages/skills/skills"]);
-		expect(rootManifest.pi?.themes).toEqual(["./packages/themes/themes"]);
+		expect(rootManifest.pi?.skills).toEqual(["./packages/monopi__skills/skills"]);
+		expect(rootManifest.pi?.themes).toBeUndefined();
 
 		for (const extensionEntry of rootManifest.pi?.extensions ?? []) {
 			expect(extensionEntry.endsWith(".ts")).toBe(true);

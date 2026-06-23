@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { SWITCHER_PACKAGES } from "../packages/oh-pi/bin/package-list.mts";
+import { SWITCHER_PACKAGES } from "../packages/monopi__monopi/bin/package-list.mts";
 import {
 	buildPiExecutableCandidates,
 	dedupeManagedPackageEntries,
@@ -67,7 +67,7 @@ function createWorkspaceRepo(
 	const packageDirs = new Map<string, string>();
 
 	for (const [index, packageName] of SWITCHER_PACKAGES.entries()) {
-		const dirName = `${index}-${packageName.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "")}`;
+		const dirName = `monopi__${packageName.split("/")[1]}`;
 		packageDirs.set(
 			packageName,
 			writeWorkspacePackage(repoDir, dirName, packageName, {
@@ -205,77 +205,77 @@ describe("pi source switcher helpers", () => {
 	});
 
 	it("parses scoped and unscoped npm package names", () => {
-		expect(parseNpmPackageName("npm:@ifi/oh-pi-extensions")).toBe("@ifi/oh-pi-extensions");
-		expect(parseNpmPackageName("npm:@ifi/oh-pi-extensions@0.4.4")).toBe("@ifi/oh-pi-extensions");
+		expect(parseNpmPackageName("npm:@monopi/extension-worktree")).toBe("@monopi/extension-worktree");
+		expect(parseNpmPackageName("npm:@monopi/extension-worktree@0.4.4")).toBe("@monopi/extension-worktree");
 		expect(parseNpmPackageName("npm:chalk@5.0.0")).toBe("chalk");
 		expect(parseNpmPackageName("/tmp/local-package")).toBeUndefined();
 	});
 
 	it("rewrites managed package sources while preserving object settings", () => {
 		const nextEntries = rewriteManagedPackageSources(
-			["npm:@ifi/oh-pi", { source: "npm:@ifi/oh-pi-extensions" }, "npm:@ifi/oh-pi-themes"],
+			["npm:@monopi/monopi", { source: "npm:@monopi/extension-worktree" }, "npm:@monopi/skills"],
 			new Map([
-				["@ifi/oh-pi-extensions", "/repo/packages/extensions"],
-				["@ifi/oh-pi-themes", "/repo/packages/themes"],
-				["@ifi/pi-provider-catalog", "/repo/packages/providers"],
-				["@ifi/pi-provider-cursor", "/repo/packages/cursor"],
+				["@monopi/extension-worktree", "/repo/packages/monopi__extension-worktree"],
+				["@monopi/skills", "/repo/packages/monopi__skills"],
+				["@monopi/provider-catalog", "/repo/packages/monopi__provider-catalog"],
+				["@monopi/provider-cursor", "/repo/packages/monopi__provider-cursor"],
 			]),
 			(source) => parseNpmPackageName(source),
 		);
 
 		expect(nextEntries).toEqual([
-			"npm:@ifi/oh-pi",
-			{ source: "/repo/packages/extensions" },
-			"/repo/packages/themes",
-			"/repo/packages/providers",
-			"/repo/packages/cursor",
+			"npm:@monopi/monopi",
+			{ source: "/repo/packages/monopi__extension-worktree" },
+			"/repo/packages/monopi__skills",
+			"/repo/packages/monopi__provider-catalog",
+			"/repo/packages/monopi__provider-cursor",
 		]);
 	});
 
 	it("dedupes managed package entries while preserving object-style config", () => {
 		const nextEntries = dedupeManagedPackageEntries(
-			["npm:@ifi/oh-pi", "/tmp/old/extensions", "/tmp/new/extensions", "/tmp/old/themes", "/tmp/new/themes"],
+			["npm:@monopi/monopi", "/tmp/old/extensions", "/tmp/new/extensions", "/tmp/old/skills", "/tmp/new/skills"],
 			(source) => {
 				if (source.includes("extensions")) {
-					return "@ifi/oh-pi-extensions";
+					return "@monopi/extension-worktree";
 				}
-				if (source.includes("themes")) {
-					return "@ifi/oh-pi-themes";
+				if (source.includes("skills")) {
+					return "@monopi/skills";
 				}
 				return parseNpmPackageName(source);
 			},
 		);
 
-		expect(nextEntries).toEqual(["npm:@ifi/oh-pi", "/tmp/new/extensions", "/tmp/new/themes"]);
+		expect(nextEntries).toEqual(["npm:@monopi/monopi", "/tmp/new/extensions", "/tmp/new/skills"]);
 	});
 
 	it("resolves workspace package directories from a repo checkout", () => {
 		const repoDir = createTempDir("oh-pi-switcher-");
 		const packagesDir = path.join(repoDir, "packages");
-		mkdirSync(path.join(packagesDir, "extensions"), { recursive: true });
-		mkdirSync(path.join(packagesDir, "themes"), { recursive: true });
+		mkdirSync(path.join(packagesDir, "extension-worktree"), { recursive: true });
+		mkdirSync(path.join(packagesDir, "skills"), { recursive: true });
 		writeFileSync(
-			path.join(packagesDir, "extensions", "package.json"),
-			JSON.stringify({ name: "@ifi/oh-pi-extensions" }),
+			path.join(packagesDir, "extension-worktree", "package.json"),
+			JSON.stringify({ name: "@monopi/extension-worktree" }),
 		);
-		writeFileSync(path.join(packagesDir, "themes", "package.json"), JSON.stringify({ name: "@ifi/oh-pi-themes" }));
+		writeFileSync(path.join(packagesDir, "skills", "package.json"), JSON.stringify({ name: "@monopi/skills" }));
 
-		const sources = resolveWorkspacePackageSources(repoDir, ["@ifi/oh-pi-extensions", "@ifi/oh-pi-themes"]);
-		expect(sources.get("@ifi/oh-pi-extensions")).toBe(path.join(repoDir, "packages", "extensions"));
-		expect(sources.get("@ifi/oh-pi-themes")).toBe(path.join(repoDir, "packages", "themes"));
+		const sources = resolveWorkspacePackageSources(repoDir, ["@monopi/extension-worktree", "@monopi/skills"]);
+		expect(sources.get("@monopi/extension-worktree")).toBe(path.join(repoDir, "packages", "extension-worktree"));
+		expect(sources.get("@monopi/skills")).toBe(path.join(repoDir, "packages", "skills"));
 	});
 
 	it("merges local package manifests into object settings so new extensions are not missed", () => {
 		expect(
 			mergeManagedPackageManifest(
 				{
-					source: "/repo/packages/extensions",
+					source: "/repo/packages/monopi__extension-worktree",
 					extensions: ["extensions/existing.ts"],
 				},
 				{ extensions: ["extensions/existing.ts", "extensions/worktree.ts"] },
 			),
 		).toEqual({
-			source: "/repo/packages/extensions",
+			source: "/repo/packages/monopi__extension-worktree",
 			extensions: ["extensions/existing.ts", "extensions/worktree.ts"],
 		});
 	});
@@ -283,51 +283,51 @@ describe("pi source switcher helpers", () => {
 	it("keeps explicit empty arrays when merging local package manifests", () => {
 		expect(
 			mergeManagedPackageManifest(
-				{ source: "/repo/packages/extensions", extensions: [] },
+				{ source: "/repo/packages/monopi__extension-worktree", extensions: [] },
 				{ extensions: ["extensions/worktree.ts"] },
 			),
-		).toEqual({ source: "/repo/packages/extensions", extensions: [] });
+		).toEqual({ source: "/repo/packages/monopi__extension-worktree", extensions: [] });
 	});
 
 	it("reads workspace pi manifests for managed packages", () => {
 		const repoDir = createTempDir("oh-pi-switcher-manifest-");
-		const packageDir = path.join(repoDir, "packages", "extensions");
+		const packageDir = path.join(repoDir, "packages", "extension-worktree");
 		mkdirSync(packageDir, { recursive: true });
 		writeFileSync(
 			path.join(packageDir, "package.json"),
 			JSON.stringify({
-				name: "@ifi/oh-pi-extensions",
+				name: "@monopi/extension-worktree",
 				pi: {
 					extensions: ["./extensions/custom-footer.ts", "./extensions/worktree.ts"],
 				},
 			}),
 		);
 
-		const manifests = resolveWorkspacePackageManifests(repoDir, ["@ifi/oh-pi-extensions"]);
-		expect(manifests.get("@ifi/oh-pi-extensions")).toEqual({
+		const manifests = resolveWorkspacePackageManifests(repoDir, ["@monopi/extension-worktree"]);
+		expect(manifests.get("@monopi/extension-worktree")).toEqual({
 			extensions: ["extensions/custom-footer.ts", "extensions/worktree.ts"],
 		});
 	});
 
 	it("installs newly added managed packages while updating existing ones", () => {
 		const operations = planPackageSyncOperations(
-			new Map([["@ifi/oh-pi-extensions", "npm:@ifi/oh-pi-extensions"]]),
+			new Map([["@monopi/extension-worktree", "npm:@monopi/extension-worktree"]]),
 			new Map([
-				["@ifi/oh-pi-extensions", "/repo/packages/extensions"],
-				["@ifi/pi-provider-catalog", "/repo/packages/providers"],
+				["@monopi/extension-worktree", "/repo/packages/monopi__extension-worktree"],
+				["@monopi/provider-catalog", "/repo/packages/monopi__provider-catalog"],
 			]),
 		);
 
 		expect(operations).toEqual(
 			expect.arrayContaining([
 				{
-					packageName: "@ifi/oh-pi-extensions",
-					source: "/repo/packages/extensions",
+					packageName: "@monopi/extension-worktree",
+					source: "/repo/packages/monopi__extension-worktree",
 					action: "update",
 				},
 				{
-					packageName: "@ifi/pi-provider-catalog",
-					source: "/repo/packages/providers",
+					packageName: "@monopi/provider-catalog",
+					source: "/repo/packages/monopi__provider-catalog",
 					action: "install",
 				},
 			]),
@@ -336,11 +336,11 @@ describe("pi source switcher helpers", () => {
 
 	it("resolves local path sources back to workspace package names", () => {
 		const repoDir = createTempDir("oh-pi-switcher-source-");
-		const packageDir = path.join(repoDir, "packages", "themes");
+		const packageDir = path.join(repoDir, "packages", "skills");
 		mkdirSync(packageDir, { recursive: true });
-		writeFileSync(path.join(packageDir, "package.json"), JSON.stringify({ name: "@ifi/oh-pi-themes" }));
+		writeFileSync(path.join(packageDir, "package.json"), JSON.stringify({ name: "@monopi/skills" }));
 
-		expect(resolveManagedPackageNameFromSource(packageDir, repoDir)).toBe("@ifi/oh-pi-themes");
+		expect(resolveManagedPackageNameFromSource(packageDir, repoDir)).toBe("@monopi/skills");
 	});
 
 	it("adds common global pnpm and pi bin directories when building pi candidates", () => {
@@ -370,7 +370,7 @@ describe("pi source switcher helpers", () => {
 		writeFileSync(
 			settingsPath,
 			JSON.stringify({
-				packages: ["npm:@ifi/oh-pi-extensions@0.4.3", "npm:@ifi/oh-pi-themes@0.4.3", "npm:chalk@5.0.0"],
+				packages: ["npm:@monopi/extension-worktree@0.4.3", "npm:@monopi/skills@0.4.3", "npm:chalk@5.0.0"],
 			}),
 		);
 
@@ -382,11 +382,11 @@ describe("pi source switcher helpers", () => {
 
 		expect(result.status).toBe(0);
 		expect(result.stderr).toBe("");
-		expect(result.stdout).toContain("oh-pi managed package sources (user settings)");
+		expect(result.stdout).toContain("monopi managed package sources (user settings)");
 		expect(result.stdout).toContain(`Settings: ${settingsPath}`);
-		expect(result.stdout).toContain("npm:@ifi/oh-pi-extensions@0.4.3");
-		expect(result.stdout).toContain("npm:@ifi/oh-pi-themes@0.4.3");
-		expect(result.stdout).toContain("@ifi/pi-provider-cursor");
+		expect(result.stdout).toContain("npm:@monopi/extension-worktree@0.4.3");
+		expect(result.stdout).toContain("npm:@monopi/skills@0.4.3");
+		expect(result.stdout).toContain("@monopi/provider-cursor");
 		expect(result.stdout).toContain("<not configured>");
 	});
 
@@ -398,7 +398,7 @@ describe("pi source switcher helpers", () => {
 			{
 				packages: [
 					{
-						source: "npm:@ifi/oh-pi-extensions",
+						source: "npm:@monopi/extension-worktree",
 						extensions: ["extensions/legacy.ts"],
 					},
 					"npm:chalk@5.0.0",
@@ -411,12 +411,12 @@ describe("pi source switcher helpers", () => {
 
 		const workspacePackages = createWorkspaceRepo({
 			manifests: {
-				"@ifi/oh-pi-extensions": {
+				"@monopi/extension-worktree": {
 					extensions: ["./extensions/custom-footer.ts", "./extensions/worktree.ts"],
 				},
 			},
 		});
-		const repoDir = path.dirname(path.dirname(workspacePackages.get("@ifi/oh-pi-extensions") ?? ""));
+		const repoDir = path.dirname(path.dirname(workspacePackages.get("@monopi/extension-worktree") ?? ""));
 
 		const result = runSwitcher(["local", "--pi-local", "--dry-run", "--path", repoDir], {
 			cwd: projectDir,
@@ -425,14 +425,14 @@ describe("pi source switcher helpers", () => {
 
 		expect(result.status).toBe(0);
 		expect(result.stderr).toBe("");
-		expect(result.stdout).toContain("Switching oh-pi packages to local mode (project settings)");
+		expect(result.stdout).toContain("Switching monopi packages to local mode (project settings)");
 		expect(result.stdout).toContain(`Settings: ${resolvedSettingsPath}`);
 		expect(result.stdout).toContain(`Repo: ${repoDir}`);
-		expect(result.stdout).toContain(workspacePackages.get("@ifi/oh-pi-extensions") ?? "");
+		expect(result.stdout).toContain(workspacePackages.get("@monopi/extension-worktree") ?? "");
 		expect(result.stdout).toContain("Dry run only — settings were not written");
 		expect(result.stdout).toContain("run `pnpm install --frozen-lockfile` before restarting pi");
 		expect(result.stdout).toContain(
-			"pnpm pi:local refreshes compiled runtime dependencies like @ifi/oh-pi-core before switching",
+			"pnpm pi:local refreshes compiled runtime dependencies like @monopi/core before switching",
 		);
 		expect(readFileSync(settingsPath, "utf8")).toBe(`${originalSettings}\n`);
 	});
@@ -446,7 +446,7 @@ describe("pi source switcher helpers", () => {
 				{
 					packages: [
 						{
-							source: "npm:@ifi/oh-pi-extensions@0.4.3",
+							source: "npm:@monopi/extension-worktree@0.4.3",
 							extensions: ["extensions/custom-footer.ts"],
 						},
 						"npm:chalk@5.0.0",
@@ -470,7 +470,7 @@ describe("pi source switcher helpers", () => {
 
 		expect(result.status).toBe(0);
 		expect(result.stderr).toBe("");
-		expect(result.stdout).toContain("Switching oh-pi packages to remote mode (user settings)");
+		expect(result.stdout).toContain("Switching monopi packages to remote mode (user settings)");
 		expect(result.stdout).toContain("Syncing packages with pi...");
 		expect(result.stdout).toContain("✅ Done. Fully restart pi to reload the switched packages.");
 
@@ -480,32 +480,32 @@ describe("pi source switcher helpers", () => {
 		const savedSources = savedSettings.packages
 			.map(getPackageSource)
 			.filter((value): value is string => Boolean(value));
-		const managedSources = savedSources.filter((value) => value.startsWith("npm:@ifi/"));
+		const managedSources = savedSources.filter((value) => value.startsWith("npm:@monopi/"));
 		const extensionEntry = savedSettings.packages.find(
-			(entry) => getPackageSource(entry) === "npm:@ifi/oh-pi-extensions@0.4.4",
+			(entry) => getPackageSource(entry) === "npm:@monopi/extension-worktree@0.4.4",
 		) as { source: string; extensions?: string[] } | undefined;
 
 		expect(managedSources).toHaveLength(SWITCHER_PACKAGES.length);
-		expect(savedSources).toContain("npm:@ifi/pi-provider-cursor@0.4.4");
+		expect(savedSources).toContain("npm:@monopi/provider-cursor@0.4.4");
 		expect(savedSources).toContain("npm:chalk@5.0.0");
 		expect(extensionEntry).toEqual({
-			source: "npm:@ifi/oh-pi-extensions@0.4.4",
+			source: "npm:@monopi/extension-worktree@0.4.4",
 			extensions: ["extensions/custom-footer.ts"],
 		});
 
 		const piLog = readFileSync(logPath, "utf8");
 		expect(piLog).toContain("--version");
-		expect(piLog).toContain("update npm:@ifi/oh-pi-extensions@0.4.4");
-		expect(piLog).toContain("install npm:@ifi/pi-provider-cursor@0.4.4");
+		expect(piLog).toContain("update npm:@monopi/extension-worktree@0.4.4");
+		expect(piLog).toContain("install npm:@monopi/provider-cursor@0.4.4");
 	}, 20_000);
 
 	it("prints a workspace install reminder after switching to local mode", () => {
 		const agentDir = createTempDir("oh-pi-switcher-agent-");
 		const settingsPath = path.join(agentDir, "settings.json");
-		writeFileSync(settingsPath, JSON.stringify({ packages: ["npm:@ifi/oh-pi-extensions@0.4.3"] }, null, 2));
+		writeFileSync(settingsPath, JSON.stringify({ packages: ["npm:@monopi/extension-worktree@0.4.3"] }, null, 2));
 
 		const workspacePackages = createWorkspaceRepo();
-		const repoDir = path.dirname(path.dirname(workspacePackages.get("@ifi/oh-pi-extensions") ?? ""));
+		const repoDir = path.dirname(path.dirname(workspacePackages.get("@monopi/extension-worktree") ?? ""));
 		const logPath = path.join(agentDir, "pi.log");
 		const piBinDir = createFakePiExecutable(logPath);
 
@@ -528,23 +528,23 @@ describe("pi source switcher helpers", () => {
 		expect(result.status).toBe(0);
 		expect(result.stdout).toContain("run `pnpm install --frozen-lockfile` before restarting pi");
 		expect(result.stdout).toContain(
-			"pnpm pi:local refreshes compiled runtime dependencies like @ifi/oh-pi-core before switching",
+			"pnpm pi:local refreshes compiled runtime dependencies like @monopi/core before switching",
 		);
-		expect(savedSources).toContain(workspacePackages.get("@ifi/oh-pi-extensions") ?? "");
+		expect(savedSources).toContain(workspacePackages.get("@monopi/extension-worktree") ?? "");
 	}, 20_000);
 
 	it("rebuilds and refreshes compiled local runtime dependencies before switching to local mode", () => {
 		const agentDir = createTempDir("oh-pi-switcher-agent-");
 		const settingsPath = path.join(agentDir, "settings.json");
-		writeFileSync(settingsPath, JSON.stringify({ packages: ["npm:@ifi/oh-pi-extensions@0.4.3"] }, null, 2));
+		writeFileSync(settingsPath, JSON.stringify({ packages: ["npm:@monopi/extension-worktree@0.4.3"] }, null, 2));
 
 		const workspacePackages = createWorkspaceRepo();
-		const repoDir = path.dirname(path.dirname(workspacePackages.get("@ifi/oh-pi-extensions") ?? ""));
-		const repoNodeModulesCoreDir = path.join(repoDir, "node_modules", "@ifi", "oh-pi-core", "dist");
+		const repoDir = path.dirname(path.dirname(workspacePackages.get("@monopi/extension-worktree") ?? ""));
+		const repoNodeModulesCoreDir = path.join(repoDir, "node_modules", "@monopi", "core", "dist");
 		mkdirSync(repoNodeModulesCoreDir, { recursive: true });
 		writeFileSync(path.join(repoNodeModulesCoreDir, "index.js"), "export const marker = 'stale';\n", "utf8");
 
-		const coreDistDir = path.join(repoDir, "packages", "core", "dist");
+		const coreDistDir = path.join(repoDir, "packages", "monopi__core", "dist");
 		mkdirSync(coreDistDir, { recursive: true });
 		writeFileSync(path.join(coreDistDir, "index.js"), "export const marker = 'before-build';\n", "utf8");
 
@@ -572,7 +572,7 @@ describe("pi source switcher helpers", () => {
 		expect(readFileSync(path.join(coreDistDir, "index.js"), "utf8")).toContain("fresh");
 		expect(readFileSync(path.join(repoNodeModulesCoreDir, "index.js"), "utf8")).toContain("fresh");
 		expect(readFileSync(pnpmLogPath, "utf8")).toContain(
-			`--dir ${repoDir} --filter @ifi/oh-pi-core exec tsdown --config packages/core/tsdown.config.ts`,
+			`--dir ${repoDir} --filter @monopi/core exec tsdown --config packages/monopi__core/tsdown.config.ts`,
 		);
 	}, 20_000);
 
@@ -580,13 +580,13 @@ describe("pi source switcher helpers", () => {
 		const agentDir = createTempDir("oh-pi-switcher-agent-");
 		writeFileSync(
 			path.join(agentDir, "settings.json"),
-			JSON.stringify({ packages: ["npm:@ifi/oh-pi-extensions@0.4.3"] }, null, 2),
+			JSON.stringify({ packages: ["npm:@monopi/extension-worktree@0.4.3"] }, null, 2),
 		);
 
 		const workspacePackages = createWorkspaceRepo();
-		const repoDir = path.dirname(path.dirname(workspacePackages.get("@ifi/oh-pi-extensions") ?? ""));
+		const repoDir = path.dirname(path.dirname(workspacePackages.get("@monopi/extension-worktree") ?? ""));
 		mkdirSync(path.join(repoDir, "node_modules"), { recursive: true });
-		mkdirSync(path.join(repoDir, "packages", "core"), { recursive: true });
+		mkdirSync(path.join(repoDir, "packages", "monopi__core"), { recursive: true });
 
 		const piLogPath = path.join(agentDir, "pi.log");
 		const pnpmLogPath = path.join(agentDir, "pnpm.log");
@@ -605,14 +605,14 @@ describe("pi source switcher helpers", () => {
 				PI_TEST_PNPM_LOG_PATH: pnpmLogPath,
 				PI_TEST_PNPM_FAIL_ON: "tsdown",
 				PI_TEST_PNPM_FAIL_MESSAGE:
-					"ERROR  Error: Build failed with 1 error:\npackages/core/src/index.ts:1:1: example failure\nWARN  Local package.json exists, but node_modules missing, did you mean to install?",
+					"ERROR  Error: Build failed with 1 error:\npackages/monopi__core/src/index.ts:1:1: example failure\nWARN  Local package.json exists, but node_modules missing, did you mean to install?",
 			},
 		});
 
 		expect(result.status).toBe(1);
-		expect(result.stderr).toContain("Failed to rebuild local runtime package @ifi/oh-pi-core.");
+		expect(result.stderr).toContain("Failed to rebuild local runtime package @monopi/core.");
 		expect(result.stderr).toContain("Command output:");
-		expect(result.stderr).toContain("packages/core/src/index.ts:1:1: example failure");
+		expect(result.stderr).toContain("packages/monopi__core/src/index.ts:1:1: example failure");
 		expect(result.stderr).not.toContain("This checkout looks uninstalled or incomplete.");
 	}, 20_000);
 
@@ -620,12 +620,12 @@ describe("pi source switcher helpers", () => {
 		const agentDir = createTempDir("oh-pi-switcher-agent-");
 		writeFileSync(
 			path.join(agentDir, "settings.json"),
-			JSON.stringify({ packages: ["npm:@ifi/oh-pi-extensions@0.4.3"] }, null, 2),
+			JSON.stringify({ packages: ["npm:@monopi/extension-worktree@0.4.3"] }, null, 2),
 		);
 
 		const workspacePackages = createWorkspaceRepo();
-		const repoDir = path.dirname(path.dirname(workspacePackages.get("@ifi/oh-pi-extensions") ?? ""));
-		mkdirSync(path.join(repoDir, "packages", "core"), { recursive: true });
+		const repoDir = path.dirname(path.dirname(workspacePackages.get("@monopi/extension-worktree") ?? ""));
+		mkdirSync(path.join(repoDir, "packages", "monopi__core"), { recursive: true });
 
 		const piLogPath = path.join(agentDir, "pi.log");
 		const pnpmLogPath = path.join(agentDir, "pnpm.log");
@@ -644,7 +644,7 @@ describe("pi source switcher helpers", () => {
 				PI_TEST_PNPM_LOG_PATH: pnpmLogPath,
 				PI_TEST_PNPM_FAIL_ON: "tsdown",
 				PI_TEST_PNPM_FAIL_MESSAGE:
-					"ERROR  Error: Build failed with 1 error:\npackages/core/src/index.ts:1:1: example failure\nWARN  Local package.json exists, but node_modules missing, did you mean to install?",
+					"ERROR  Error: Build failed with 1 error:\npackages/monopi__core/src/index.ts:1:1: example failure\nWARN  Local package.json exists, but node_modules missing, did you mean to install?",
 			},
 		});
 
@@ -654,7 +654,7 @@ describe("pi source switcher helpers", () => {
 
 	it("exits with an error when local mode cannot resolve the full managed workspace set", () => {
 		const repoDir = createTempDir("oh-pi-switcher-incomplete-");
-		writeWorkspacePackage(repoDir, "extensions", "@ifi/oh-pi-extensions");
+		writeWorkspacePackage(repoDir, "monopi__extension-worktree", "@monopi/extension-worktree");
 
 		const result = runSwitcher(["local", "--dry-run", "--path", repoDir], {
 			env: {

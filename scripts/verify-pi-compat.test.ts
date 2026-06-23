@@ -40,7 +40,7 @@ afterEach(() => {
 
 describe("verify pi compatibility script", () => {
 	it("includes the diagnostics smoke test in compatibility runs", () => {
-		expect(SMOKE_TESTS).toContain("packages/diagnostics/tests/smoke.test.ts");
+		expect(SMOKE_TESTS).toContain("packages/monopi__diagnostics/tests/smoke.test.ts");
 	});
 
 	it("installs with workspace linking enabled", () => {
@@ -76,7 +76,7 @@ describe("verify pi compatibility script", () => {
 		expect(execFileSyncMock).toHaveBeenNthCalledWith(
 			2,
 			"pnpm",
-			["--filter", "@ifi/oh-pi-core", "build"],
+			["--filter", "@monopi/core", "build"],
 			expect.objectContaining({ env: process.env, stdio: "inherit" }),
 		);
 		expect(execFileSyncMock).toHaveBeenNthCalledWith(

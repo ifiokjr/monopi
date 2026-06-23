@@ -1,0 +1,1047 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>monopi Extension + Skill Inventory</title>
+		<style>
+			:root {
+				color-scheme: dark;
+				--ink: #f8f4e8;
+				--muted: #b9b09a;
+				--paper: #14120f;
+				--panel: #201c18;
+				--panel-2: #2c261f;
+				--line: #4c4033;
+				--green: #8ee6a3;
+				--coral: #ff866d;
+				--blue: #9ec5ff;
+				--gold: #ffd166;
+				--violet: #d0a8ff;
+				--shadow: 0 22px 60px rgb(0 0 0 / 0.42);
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			body {
+				margin: 0;
+				font:
+					15px/1.55 ui-serif,
+					Georgia,
+					Cambria,
+					"Times New Roman",
+					serif;
+				color: var(--ink);
+				background:
+					radial-gradient(circle at 14% 16%, rgb(255 134 109 / 0.25), transparent 30rem),
+					radial-gradient(circle at 82% 8%, rgb(142 230 163 / 0.16), transparent 28rem),
+					linear-gradient(135deg, #17120f 0%, #0e1113 55%, #17120f 100%);
+				min-height: 100vh;
+			}
+
+			header {
+				padding: 56px clamp(20px, 5vw, 72px) 28px;
+				border-bottom: 1px solid rgb(255 255 255 / 0.08);
+			}
+
+			.eyebrow {
+				margin: 0 0 16px;
+				font:
+					700 12px/1 ui-monospace,
+					SFMono-Regular,
+					Menlo,
+					Consolas,
+					monospace;
+				letter-spacing: 0.18em;
+				text-transform: uppercase;
+				color: var(--green);
+			}
+
+			h1 {
+				max-width: 980px;
+				margin: 0;
+				font-size: clamp(42px, 8vw, 104px);
+				line-height: 0.88;
+				letter-spacing: -0.07em;
+			}
+
+			.subtitle {
+				max-width: 940px;
+				margin: 22px 0 0;
+				font-size: clamp(17px, 2.2vw, 24px);
+				color: var(--muted);
+			}
+
+			.toolbar {
+				position: sticky;
+				top: 0;
+				z-index: 5;
+				display: grid;
+				grid-template-columns: 1fr auto auto auto;
+				gap: 12px;
+				padding: 16px clamp(20px, 5vw, 72px);
+				background: rgb(20 18 15 / 0.86);
+				backdrop-filter: blur(18px);
+				border-bottom: 1px solid rgb(255 255 255 / 0.1);
+			}
+
+			input,
+			select,
+			textarea,
+			button {
+				font: inherit;
+				color: var(--ink);
+				background: var(--panel);
+				border: 1px solid var(--line);
+				border-radius: 14px;
+			}
+
+			input,
+			select,
+			button {
+				min-height: 44px;
+			}
+
+			input {
+				width: 100%;
+				padding: 0 16px;
+			}
+			select {
+				padding: 0 12px;
+			}
+
+			button {
+				padding: 0 16px;
+				cursor: pointer;
+				font-weight: 700;
+				background: linear-gradient(135deg, rgb(255 134 109 / 0.2), rgb(142 230 163 / 0.12));
+			}
+
+			main {
+				padding: 26px clamp(20px, 5vw, 72px) 80px;
+			}
+
+			.summary {
+				display: grid;
+				grid-template-columns: repeat(5, minmax(0, 1fr));
+				gap: 14px;
+				margin-bottom: 24px;
+			}
+
+			.stat {
+				padding: 18px;
+				background: linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.02));
+				border: 1px solid rgb(255 255 255 / 0.09);
+				border-radius: 22px;
+				box-shadow: var(--shadow);
+			}
+
+			.stat strong {
+				display: block;
+				font-size: 30px;
+				line-height: 1;
+			}
+
+			.stat span {
+				display: block;
+				margin-top: 8px;
+				color: var(--muted);
+				font:
+					700 11px/1 ui-monospace,
+					SFMono-Regular,
+					Menlo,
+					Consolas,
+					monospace;
+				letter-spacing: 0.12em;
+				text-transform: uppercase;
+			}
+
+			.section-title {
+				display: flex;
+				align-items: end;
+				justify-content: space-between;
+				gap: 16px;
+				margin: 34px 0 14px;
+			}
+
+			.section-title h2 {
+				margin: 0;
+				font-size: clamp(28px, 5vw, 54px);
+				line-height: 0.95;
+				letter-spacing: -0.05em;
+			}
+
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+				gap: 16px;
+			}
+
+			.card {
+				position: relative;
+				display: grid;
+				gap: 14px;
+				padding: 18px;
+				background: linear-gradient(160deg, rgb(255 255 255 / 0.075), rgb(255 255 255 / 0.025));
+				border: 1px solid rgb(255 255 255 / 0.1);
+				border-radius: 26px;
+				box-shadow: var(--shadow);
+			}
+
+			.card[data-kind="skill"] {
+				border-color: rgb(158 197 255 / 0.25);
+			}
+			.card[data-kind="extension"] {
+				border-color: rgb(255 134 109 / 0.26);
+			}
+
+			.card-head {
+				display: flex;
+				align-items: flex-start;
+				justify-content: space-between;
+				gap: 12px;
+			}
+
+			.card h3 {
+				margin: 0;
+				font-size: 22px;
+				line-height: 1.05;
+				letter-spacing: -0.02em;
+			}
+
+			.path,
+			.meta,
+			.tags {
+				font:
+					12px/1.45 ui-monospace,
+					SFMono-Regular,
+					Menlo,
+					Consolas,
+					monospace;
+				color: var(--muted);
+			}
+
+			.badge {
+				display: inline-flex;
+				align-items: center;
+				min-height: 26px;
+				padding: 0 10px;
+				border-radius: 999px;
+				font:
+					800 11px/1 ui-monospace,
+					SFMono-Regular,
+					Menlo,
+					Consolas,
+					monospace;
+				letter-spacing: 0.1em;
+				text-transform: uppercase;
+				background: rgb(255 255 255 / 0.08);
+			}
+
+			.badge.extension {
+				color: var(--coral);
+			}
+			.badge.skill {
+				color: var(--blue);
+			}
+			.badge.keep {
+				color: var(--green);
+			}
+			.badge.merge {
+				color: var(--gold);
+			}
+			.badge.convert {
+				color: var(--violet);
+			}
+			.badge.retire {
+				color: var(--coral);
+			}
+
+			.description {
+				margin: 0;
+				color: #ded7c6;
+			}
+
+			.recommendation {
+				padding: 12px;
+				background: rgb(0 0 0 / 0.18);
+				border: 1px dashed rgb(255 255 255 / 0.13);
+				border-radius: 18px;
+			}
+
+			.recommendation strong {
+				color: var(--green);
+			}
+
+			.controls {
+				display: grid;
+				grid-template-columns: 160px 1fr;
+				gap: 10px;
+			}
+
+			textarea {
+				width: 100%;
+				min-height: 88px;
+				resize: vertical;
+				padding: 12px;
+			}
+
+			.empty {
+				display: none;
+				padding: 32px;
+				text-align: center;
+				color: var(--muted);
+				border: 1px dashed var(--line);
+				border-radius: 24px;
+			}
+
+			@media (max-width: 860px) {
+				.toolbar {
+					grid-template-columns: 1fr;
+				}
+				.summary {
+					grid-template-columns: repeat(2, minmax(0, 1fr));
+				}
+				.controls {
+					grid-template-columns: 1fr;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<p class="eyebrow">@monopi migration inventory · monostack rewrite</p>
+			<h1>monopi extension + skill review board</h1>
+			<p class="subtitle">
+				Current monopi capabilities grouped as individual extensions and skill packs. Use this document to decide what
+				becomes a first-class <code>@monopi</code> package, what should collapse into skills, and what should retire
+				before the monochange migration.
+			</p>
+		</header>
+
+		<section class="toolbar" aria-label="Inventory filters">
+			<input id="search" type="search" placeholder="Search name, package, command, path, recommendation…" />
+			<select id="kindFilter" aria-label="Kind filter">
+				<option value="all">All kinds</option>
+				<option value="extension">Extensions</option>
+				<option value="skill">Skills</option>
+			</select>
+			<select id="recommendationFilter" aria-label="Recommendation filter">
+				<option value="all">All recommendations</option>
+				<option value="keep">Keep</option>
+				<option value="merge">Merge</option>
+				<option value="convert">Convert to skill</option>
+				<option value="retire">Retire / revisit</option>
+			</select>
+			<button id="exportButton" type="button">Export decisions</button>
+		</section>
+
+		<main>
+			<section class="summary" id="summary"></section>
+
+			<div class="section-title">
+				<h2>Inventory</h2>
+				<p class="meta"><span id="visibleCount"></span> visible · comments and selections autosave locally</p>
+			</div>
+
+			<section class="grid" id="cards"></section>
+			<p class="empty" id="empty">No items match the current filters.</p>
+		</main>
+
+		<script>
+			const inventory = [
+				{
+					kind: "extension",
+					name: "adaptive-routing",
+					packageName: "@monopi/adaptive-routing",
+					futurePackage: "@monopi/adaptive-routing",
+					path: "packages/monopi__adaptive-routing/index.ts",
+					commands: ["/route", "/route status"],
+					description: "Optional adaptive and delegated routing extension for pi.",
+					recommendation: "merge",
+					recommendationNote:
+						"Keep the routing capability, but treat it as a monostack orchestration module rather than a standalone UX surface unless usage proves otherwise.",
+				},
+				{
+					kind: "extension",
+					name: "analytics-extension",
+					packageName: "@monopi/analytics-extension",
+					futurePackage: "@monopi/analytics-extension",
+					path: "packages/monopi__analytics-extension/index.ts",
+					commands: [],
+					description: "Analytics tracking with SQLite persistence.",
+					recommendation: "keep",
+					recommendationNote:
+						"Keep as instrumentation. It is cross-cutting runtime behavior that cannot be expressed as a skill alone.",
+				},
+				{
+					kind: "extension",
+					name: "background-tasks",
+					packageName: "@monopi/background-tasks",
+					futurePackage: "@monopi/background-tasks",
+					path: "packages/monopi__background-tasks/index.ts",
+					commands: ["/bg", "Ctrl+Shift+B"],
+					description: "Reactive background shell tasks with log viewing and agent wakeups on output.",
+					recommendation: "keep",
+					recommendationNote:
+						"Keep as a core extension. This is runtime/tooling infrastructure for monostack development loops.",
+				},
+				{
+					kind: "extension",
+					name: "cursor-provider",
+					packageName: "@monopi/provider-cursor",
+					futurePackage: "@monopi/provider-cursor",
+					path: "packages/monopi__provider-cursor/index.ts",
+					commands: ["/cursor"],
+					description: "Experimental Cursor provider with OAuth login, model discovery, and AgentService streaming.",
+					recommendation: "retire",
+					recommendationNote:
+						"Revisit before carrying forward. Provider integrations should consolidate behind one provider catalog unless Cursor remains strategically important.",
+				},
+				{
+					kind: "extension",
+					name: "diagnostics",
+					packageName: "@monopi/diagnostics",
+					futurePackage: "@monopi/diagnostics",
+					path: "packages/monopi__diagnostics/index.ts",
+					commands: [],
+					description: "Prompt-completion diagnostics with timestamps, durations, per-turn timing, and a live widget.",
+					recommendation: "keep",
+					recommendationNote:
+						"Keep. The rewrite needs observability from day one, especially while splitting capabilities into skills.",
+				},
+				{
+					kind: "extension",
+					name: "answer",
+					packageName: "@monopi/extensions",
+					futurePackage: "@monopi/answer",
+					path: "packages/monopi__extensions/extensions/answer.ts",
+					commands: ["/answer", "/answer auto"],
+					description: "Extract questions from model responses and answer them through a Q&A overlay.",
+					recommendation: "convert",
+					recommendationNote:
+						"Convert most behavior into a skill. Keep only the overlay/runtime hook if the UI remains valuable.",
+				},
+				{
+					kind: "extension",
+					name: "watchdog",
+					packageName: "@monopi/extensions",
+					futurePackage: "@monopi/watchdog",
+					path: "packages/monopi__extensions/extensions/watchdog.ts",
+					commands: ["/watchdog", "/watchdog status", "/safe-mode"],
+					description: "Performance watchdog, startup timings, overlays, alerts, and safe-mode controls.",
+					recommendation: "keep",
+					recommendationNote: "Keep as a runtime extension; it protects the monostack experience from regressions.",
+				},
+				{
+					kind: "extension",
+					packageName: "@monopi/extensions",
+					commands: [],
+					description: "Automatic update behavior for monopi-installed resources.",
+					recommendation: "retire",
+					recommendationNote:
+						"Revisit after monochange and @monopi package boundaries are defined; automatic update behavior may conflict with reproducible monostack installs.",
+				},
+				{
+					kind: "extension",
+					name: "btw",
+					packageName: "@monopi/extensions",
+					futurePackage: "@monopi/btw",
+					path: "packages/monopi__extensions/extensions/btw.ts",
+					commands: ["/btw", "/btw clear", "/btw inject", "/qq"],
+					description: "Side-conversation workflow with BTW/QQ overlays, summarization, and injection.",
+					recommendation: "merge",
+					recommendationNote:
+						"Keep the UX, but merge with the existing btw skill so the guidance and runtime affordance ship together.",
+				},
+				{
+					kind: "extension",
+					name: "compact-header",
+					packageName: "@monopi/extensions",
+					futurePackage: "@monopi/compact-header",
+					path: "packages/monopi__extensions/extensions/compact-header.ts",
+					commands: [],
+					description: "Compact header UI showing command catalog and session context.",
+					recommendation: "merge",
+					recommendationNote:
+						"Keep if the monopi distribution owns a cohesive UI layer; otherwise fold into a general chrome/theme extension.",
+				},
+				{
+					kind: "extension",
+					name: "custom-footer",
+					packageName: "@monopi/extensions",
+					futurePackage: "@monopi/status-footer",
+					path: "packages/monopi__extensions/extensions/custom-footer.ts",
+					commands: ["/status"],
+					description: "Footer and full status overview for model, session, context, workspace, PRs, and extensions.",
+					recommendation: "keep",
+					recommendationNote:
+						"Keep, but rename around status/chrome rather than customization. This is high-value daily UX.",
+				},
+				{
+					kind: "extension",
+					name: "external-editor",
+					packageName: "@monopi/extensions",
+					futurePackage: "@monopi/external-editor",
+					path: "packages/monopi__extensions/extensions/external-editor.ts",
+					commands: ["external editor shortcut"],
+					description: "Open the current draft in $VISUAL/$EDITOR and sync back into pi.",
+					recommendation: "keep",
+					recommendationNote:
+						"Keep. It is a small ergonomic extension and pairs well with monostack editing workflows.",
+				},
+				{
+					kind: "extension",
+					name: "git-guard",
+					packageName: "@monopi/extensions",
+					futurePackage: "@monopi/git-guard",
+					path: "packages/monopi__extensions/extensions/git-guard.ts",
+					commands: [],
+					description: "Git safety guardrails for agent work in repositories.",
+					recommendation: "keep",
+					recommendationNote: "Keep as core. It is a safety primitive, not a skill.",
+				},
+				{
+					kind: "extension",
+					name: "scheduler",
+					packageName: "@monopi/extensions",
+					futurePackage: "@monopi/scheduler",
+					path: "packages/monopi__extensions/extensions/scheduler.ts",
+					commands: ["/loop", "/remind", "/schedule", "/unschedule"],
+					description: "Scheduled prompts, recurring checks, reminders, task adoption, and scheduler tools.",
+					recommendation: "keep",
+					recommendationNote: "Keep. It is runtime orchestration that supports CI/build/deployment monitoring.",
+				},
+				{
+					kind: "extension",
+					name: "shell-format",
+					packageName: "@monopi/extensions",
+					futurePackage: "@monopi/shell-format",
+					path: "packages/monopi__extensions/extensions/shell-format.ts",
+					commands: [],
+					description: "Shell syntax adaptation and companion skill injection for Nushell.",
+					recommendation: "merge",
+					recommendationNote:
+						"Keep the runtime detector, but merge tightly with shell skills so this becomes skill selection infrastructure.",
+				},
+				{
+					kind: "extension",
+					name: "tool-metadata",
+					packageName: "@monopi/extensions",
+					futurePackage: "@monopi/tool-metadata",
+					path: "packages/monopi__extensions/extensions/tool-metadata.ts",
+					commands: [],
+					description: "Displays tool metadata such as completion time and context usage.",
+					recommendation: "keep",
+					recommendationNote: "Keep, likely as part of diagnostics/chrome if package count should shrink.",
+				},
+				{
+					kind: "extension",
+					name: "usage-tracker",
+					packageName: "@monopi/extensions",
+					futurePackage: "@monopi/usage-tracker",
+					path: "packages/monopi__extensions/extensions/usage-tracker.ts",
+					commands: ["/usage", "/usage-toggle", "/usage-refresh"],
+					description: "Provider usage dashboards, rate limit reporting, and usage_report tool.",
+					recommendation: "keep",
+					recommendationNote: "Keep. Provider costs and rate limits are central to agent operations.",
+				},
+				{
+					kind: "extension",
+					name: "worktree",
+					packageName: "@monopi/extensions",
+					futurePackage: "@monopi/worktree",
+					path: "packages/monopi__extensions/extensions/worktree.ts",
+					commands: [],
+					description: "Git worktree management tool for isolated parallel work.",
+					recommendation: "keep",
+					recommendationNote: "Keep as a core monostack development primitive.",
+				},
+				{
+					kind: "extension",
+					name: "context",
+					packageName: "@monopi/context",
+					futurePackage: "@monopi/context",
+					path: "packages/monopi__context/dist/index.js",
+					commands: ["/ctx"],
+					description: "SQLite FTS5 knowledge base, context compression, terse mode, and context-window analytics.",
+					recommendation: "keep",
+					recommendationNote:
+						"Keep and likely elevate. Skill-based systems need excellent context recall and compression.",
+				},
+				{
+					kind: "extension",
+					name: "ollama-provider",
+					packageName: "@monopi/provider-ollama",
+					futurePackage: "@monopi/provider-ollama",
+					path: "packages/monopi__provider-ollama/index.ts",
+					commands: ["/ollama", "/ollama status", "/ollama-cloud"],
+					description: "Experimental Ollama provider with local discovery and cloud login support.",
+					recommendation: "merge",
+					recommendationNote: "Keep local model support, but consolidate provider UX with the catalog package.",
+				},
+				{
+					kind: "extension",
+					name: "bash-live-view",
+					packageName: "@monopi/bash-live-view",
+					futurePackage: "@monopi/bash-live-view",
+					path: "packages/monopi__bash-live-view/index.ts",
+					commands: ["/bash-pty"],
+					description: "PTY-backed live bash rendering with a real-time terminal widget.",
+					recommendation: "keep",
+					recommendationNote: "Keep as a development UX extension; rename if shell support expands beyond bash.",
+				},
+				{
+					kind: "extension",
+					name: "pi-pretty",
+					packageName: "@monopi/pretty",
+					futurePackage: "@monopi/pretty",
+					path: "packages/monopi__pretty/dist/index.js",
+					commands: ["/fff-health", "/fff-rescan", "/multi-grep"],
+					description: "Pretty terminal output, syntax-highlighted reads, colored command output, and tree listings.",
+					recommendation: "keep",
+					recommendationNote: "Keep. It improves every development workflow and should be a default monopi experience.",
+				},
+				{
+					kind: "extension",
+					name: "remote-tailscale",
+					packageName: "@monopi/remote-tailscale",
+					futurePackage: "@monopi/remote-tailscale",
+					path: "packages/monopi__remote-tailscale/index.ts",
+					commands: ["/remote", "/remote widget"],
+					description: "Secure remote session sharing with Tailscale URLs, QR codes, and TUI status widgets.",
+					recommendation: "merge",
+					recommendationNote: "Merge with web-remote behind one remote package with pluggable transports.",
+				},
+				{
+					kind: "extension",
+					name: "plan",
+					packageName: "retired",
+					futurePackage: "retired",
+					path: "retired/plan/index.ts",
+					commands: [],
+					description: "Planning mode with persistent plan files, branch-aware planning, and delegated research tasks.",
+					recommendation: "convert",
+					recommendationNote:
+						"Move most planning guidance into skills; keep a thin extension only for persistent plan state and UI if needed.",
+				},
+				{
+					kind: "extension",
+					name: "provider-catalog",
+					packageName: "@monopi/provider-catalog",
+					futurePackage: "@monopi/provider-catalog",
+					path: "packages/monopi__provider-catalog/index.ts",
+					commands: ["/providers", "/providers login", "/providers status"],
+					description: "Multi-provider package backed by the OpenCode models.dev catalog.",
+					recommendation: "keep",
+					recommendationNote:
+						"Keep as the central provider integration surface; fold Cursor/Ollama management into this where possible.",
+				},
+				{
+					kind: "extension",
+					name: "spec",
+					packageName: "retired",
+					futurePackage: "retired",
+					path: "retired/spec/extension/index.ts",
+					commands: ["/spec", "/spec init", "/spec plan", "/spec tasks"],
+					description: "Native spec-kit workflow with scaffolding and spec-driven prompts.",
+					recommendation: "convert",
+					recommendationNote:
+						"Use skills for methodology and keep only scaffolding/file-generation as an extension or CLI command.",
+				},
+				{
+					kind: "extension",
+					name: "subagents",
+					packageName: "@monopi/subagents",
+					futurePackage: "@monopi/subagents",
+					path: "packages/monopi__subagents/index.ts",
+					commands: [],
+					description: "Subagent orchestration, chains, delegation, and multi-agent workflows.",
+					recommendation: "keep",
+					recommendationNote:
+						"Keep. Skill-based development benefits from high-quality delegation and chained workflows.",
+				},
+				{
+					kind: "extension",
+					name: "subagents-notify",
+					packageName: "@monopi/subagents",
+					futurePackage: "@monopi/subagents",
+					path: "packages/monopi__subagents/notify.ts",
+					commands: [],
+					description: "Notification companion extension for subagent orchestration.",
+					recommendation: "merge",
+					recommendationNote: "Keep only as part of the subagents package; do not make this a separate package.",
+				},
+				{
+					kind: "extension",
+					name: "web-remote",
+					packageName: "@monopi/web-remote",
+					futurePackage: "@monopi/remote-web",
+					path: "packages/monopi__web-remote/index.ts",
+					commands: ["/remote"],
+					description: "Share sessions via a browser-based web UI.",
+					recommendation: "merge",
+					recommendationNote:
+						"Merge with Tailscale remote into a single remote capability with separate server/client libraries.",
+				},
+				{
+					kind: "skill",
+					name: "btw",
+					packageName: "@monopi/skills",
+					futurePackage: "@monopi/skill-btw",
+					path: "packages/monopi__skills/skills/btw/SKILL.md",
+					description: "Side-conversation workflow guidance for /btw and /qq.",
+					recommendation: "merge",
+					recommendationNote:
+						"Merge with the BTW extension package so the runtime command and usage guidance stay together.",
+				},
+				{
+					kind: "skill",
+					name: "claymorphism",
+					packageName: "@monopi/skills",
+					futurePackage: null,
+					path: "retired/skills/claymorphism/SKILL.md",
+					description: "Claymorphism design system guidance for soft, puffy UI components.",
+					recommendation: "keep",
+					recommendationNote:
+						"Keep as a focused design skill. It is exactly the kind of skill-first artifact monopi should emphasize.",
+				},
+				{
+					kind: "skill",
+					name: "context7",
+					packageName: "@monopi/skills",
+					futurePackage: null,
+					path: "retired/skills/context7/SKILL.md",
+					description: "Search and query up-to-date documentation for programming libraries through Context7.",
+					recommendation: "keep",
+					recommendationNote: "Keep. Current docs lookup is a core development workflow.",
+				},
+				{
+					kind: "skill",
+					name: "debug-helper",
+					packageName: "@monopi/skills",
+					futurePackage: "@monopi/skill-debug-helper",
+					path: "packages/monopi__skills/skills/debug-helper/SKILL.md",
+					description: "Debug assistant for error analysis, logs, and performance profiling.",
+					recommendation: "keep",
+					recommendationNote: "Keep and consider making it a flagship monostack skill.",
+				},
+				{
+					kind: "skill",
+					name: "fish",
+					packageName: "@monopi/skills",
+					futurePackage: null,
+					path: "retired/skills/fish/SKILL.md",
+					description: "Fish shell syntax reference and Bash-to-Fish equivalents.",
+					recommendation: "keep",
+					recommendationNote: "Keep as part of a shell skills family.",
+				},
+				{
+					kind: "skill",
+					name: "flutter-serverpod-mvp",
+					packageName: "@monopi/skills",
+					futurePackage: null,
+					path: "retired/skills/flutter-serverpod-mvp/SKILL.md",
+					description: "Scaffold and evolve full-stack Flutter + Serverpod MVPs using devenv, Riverpod, and Hooks.",
+					recommendation: "keep",
+					recommendationNote:
+						"Keep if monopi targets app-building workflows; otherwise mark as optional vertical pack.",
+				},
+				{
+					kind: "skill",
+					name: "glassmorphism",
+					packageName: "@monopi/skills",
+					futurePackage: null,
+					path: "retired/skills/glassmorphism/SKILL.md",
+					description: "Frosted-glass UI component design guidance.",
+					recommendation: "keep",
+					recommendationNote: "Keep as a focused UI design skill.",
+				},
+				{
+					kind: "skill",
+					name: "grill-me",
+					packageName: "@monopi/skills",
+					futurePackage: null,
+					path: "retired/skills/grill-me/SKILL.md",
+					description: "Relentlessly interview the user to stress-test a plan or design.",
+					recommendation: "keep",
+					recommendationNote: "Keep. It is valuable for planning and aligns with skill-first interactions.",
+				},
+				{
+					kind: "skill",
+					name: "improve-codebase-architecture",
+					packageName: "@monopi/skills",
+					futurePackage: null,
+					path: "retired/skills/improve-codebase-architecture/SKILL.md",
+					description: "Find architecture improvements and refactoring opportunities that deepen shallow modules.",
+					recommendation: "keep",
+					recommendationNote: "Keep as a flagship monostack refactoring skill.",
+				},
+				{
+					kind: "skill",
+					name: "liquid-glass",
+					packageName: "@monopi/skills",
+					futurePackage: null,
+					path: "retired/skills/liquid-glass/SKILL.md",
+					description: "Apple Liquid Glass design system guidance.",
+					recommendation: "keep",
+					recommendationNote: "Keep as a focused design skill.",
+				},
+				{
+					kind: "skill",
+					name: "neubrutalism",
+					packageName: "@monopi/skills",
+					futurePackage: null,
+					path: "retired/skills/neubrutalism/SKILL.md",
+					description: "Bold UI guidance with thick borders, offset shadows, saturated colors, and minimal radius.",
+					recommendation: "keep",
+					recommendationNote: "Keep as a focused design skill.",
+				},
+				{
+					kind: "skill",
+					name: "nushell",
+					packageName: "@monopi/skills",
+					futurePackage: "@monopi/skill-nushell",
+					path: "packages/monopi__skills/skills/nushell/SKILL.md",
+					description: "Nushell syntax reference for shell commands, variables, pipelines, tables, and gotchas.",
+					recommendation: "keep",
+					recommendationNote:
+						"Keep as a default shell skill for this environment and as part of a shell skills family.",
+				},
+				{
+					kind: "skill",
+					name: "pwsh",
+					packageName: "@monopi/skills",
+					futurePackage: null,
+					path: "retired/skills/pwsh/SKILL.md",
+					description: "PowerShell syntax reference, object pipelines, filtering, and Bash-to-PowerShell equivalents.",
+					recommendation: "keep",
+					recommendationNote: "Keep as part of a shell skills family.",
+				},
+				{
+					kind: "skill",
+					name: "quick-setup",
+					packageName: "@monopi/skills",
+					futurePackage: null,
+					path: "retired/skills/quick-setup/SKILL.md",
+					description: "Detect project type and generate .pi/ configuration.",
+					recommendation: "merge",
+					recommendationNote:
+						"Merge into the monopi installer/bootstrap story rather than shipping as only a standalone skill.",
+				},
+				{
+					kind: "skill",
+					name: "request-refactor-plan",
+					packageName: "@monopi/skills",
+					futurePackage: null,
+					path: "retired/skills/request-refactor-plan/SKILL.md",
+					description: "Create a detailed refactor plan with tiny commits and file it as a GitHub issue.",
+					recommendation: "keep",
+					recommendationNote:
+						"Keep. It complements the architecture-improvement skill and supports safe incremental work.",
+				},
+				{
+					kind: "skill",
+					name: "rust-workspace-bootstrap",
+					packageName: "@monopi/skills",
+					futurePackage: null,
+					path: "retired/skills/rust-workspace-bootstrap/SKILL.md",
+					description: "Retired Rust workspace bootstrap skill formerly bundled with monopi.",
+					recommendation: "merge",
+					recommendationNote:
+						"Keep the knowledge, but update it for monochange/monostack before publishing under @monopi.",
+				},
+				{
+					kind: "skill",
+					name: "web-fetch",
+					packageName: "@monopi/skills",
+					futurePackage: null,
+					path: "retired/skills/web-fetch/SKILL.md",
+					description: "Fetch a web page and extract readable text content.",
+					recommendation: "retire",
+					recommendationNote:
+						"Revisit. This overlaps with built-in tooling; keep only if it adds behavior not covered by fetch_content.",
+				},
+				{
+					kind: "skill",
+					name: "web-search",
+					packageName: "@monopi/skills",
+					futurePackage: null,
+					path: "retired/skills/web-search/SKILL.md",
+					description: "Web search via DuckDuckGo for current information online.",
+					recommendation: "retire",
+					recommendationNote:
+						"Revisit because the harness already exposes richer web_search tooling; retain only as a lightweight fallback guide.",
+				},
+				{
+					kind: "skill",
+					name: "write-a-skill",
+					packageName: "@monopi/skills",
+					futurePackage: null,
+					path: "retired/skills/write-a-skill/SKILL.md",
+					description: "Create new agent skills with proper structure, progressive disclosure, and bundled resources.",
+					recommendation: "keep",
+					recommendationNote: "Keep and make it foundational for the skill-based rewrite.",
+				},
+			];
+
+			const labels = {
+				keep: "Keep",
+				merge: "Merge",
+				convert: "Convert to skill",
+				retire: "Retire / revisit",
+			};
+
+			const cards = document.querySelector("#cards");
+			const empty = document.querySelector("#empty");
+			const search = document.querySelector("#search");
+			const kindFilter = document.querySelector("#kindFilter");
+			const recommendationFilter = document.querySelector("#recommendationFilter");
+			const summary = document.querySelector("#summary");
+			const visibleCount = document.querySelector("#visibleCount");
+
+			function keyFor(item, field) {
+				return `monopi-inventory:${item.kind}:${item.path}:${field}`;
+			}
+
+			function savedValue(item, field, fallback = "") {
+				return localStorage.getItem(keyFor(item, field)) ?? fallback;
+			}
+
+			function escapeHtml(value) {
+				return String(value)
+					.replaceAll("&", "&amp;")
+					.replaceAll("<", "&lt;")
+					.replaceAll(">", "&gt;")
+					.replaceAll('"', "&quot;");
+			}
+
+			function renderSummary() {
+				const counts = inventory.reduce(
+					(acc, item) => {
+						acc.total++;
+						acc[item.kind]++;
+						acc[savedValue(item, "recommendation", item.recommendation)]++;
+						return acc;
+					},
+					{ total: 0, extension: 0, skill: 0, keep: 0, merge: 0, convert: 0, retire: 0 },
+				);
+
+				summary.innerHTML = [
+					["Total", counts.total],
+					["Extensions", counts.extension],
+					["Skills", counts.skill],
+					["Keep", counts.keep],
+					["Merge / convert / retire", counts.merge + counts.convert + counts.retire],
+				]
+					.map(([label, count]) => `<article class="stat"><strong>${count}</strong><span>${label}</span></article>`)
+					.join("");
+			}
+
+			function itemMatches(item) {
+				const query = search.value.trim().toLowerCase();
+				const recommendation = savedValue(item, "recommendation", item.recommendation);
+				if (kindFilter.value !== "all" && item.kind !== kindFilter.value) return false;
+				if (recommendationFilter.value !== "all" && recommendation !== recommendationFilter.value) return false;
+				if (!query) return true;
+				return [
+					item.kind,
+					item.name,
+					item.packageName,
+					item.futurePackage,
+					item.path,
+					item.description,
+					item.recommendationNote,
+					...(item.commands ?? []),
+				]
+					.join(" ")
+					.toLowerCase()
+					.includes(query);
+			}
+
+			function renderCards() {
+				const visible = inventory.filter(itemMatches);
+				visibleCount.textContent = visible.length;
+				empty.style.display = visible.length ? "none" : "block";
+				cards.innerHTML = visible
+					.map((item) => {
+						const recommendation = savedValue(item, "recommendation", item.recommendation);
+						const comments = savedValue(item, "comments");
+						const commandTags = (item.commands ?? [])
+							.map((command) => `<span class="badge">${escapeHtml(command)}</span>`)
+							.join(" ");
+						return `
+						<article class="card" data-kind="${item.kind}">
+							<div class="card-head">
+								<div>
+									<h3>${escapeHtml(item.name)}</h3>
+									<div class="path">${escapeHtml(item.path)}</div>
+								</div>
+								<span class="badge ${item.kind}">${item.kind}</span>
+							</div>
+							<p class="description">${escapeHtml(item.description)}</p>
+							<div class="meta">Current: ${escapeHtml(item.packageName)}<br />Proposed: ${escapeHtml(item.futurePackage)}</div>
+							${commandTags ? `<div class="tags">${commandTags}</div>` : ""}
+							<div class="recommendation">
+								<span class="badge ${recommendation}">${labels[recommendation]}</span>
+								<p>${escapeHtml(item.recommendationNote)}</p>
+							</div>
+							<div class="controls">
+								<select data-field="recommendation" data-key="${escapeHtml(keyFor(item, "recommendation"))}" aria-label="Recommendation for ${escapeHtml(item.name)}">
+									${Object.entries(labels)
+										.map(
+											([value, label]) =>
+												`<option value="${value}" ${value === recommendation ? "selected" : ""}>${label}</option>`,
+										)
+										.join("")}
+								</select>
+								<textarea data-field="comments" data-key="${escapeHtml(keyFor(item, "comments"))}" placeholder="Comments, migration notes, package-boundary decisions…">${escapeHtml(comments)}</textarea>
+							</div>
+						</article>`;
+					})
+					.join("");
+			}
+
+			function render() {
+				renderSummary();
+				renderCards();
+			}
+
+			document.addEventListener("input", (event) => {
+				const target = event.target;
+				if (target.matches("textarea[data-key]")) {
+					localStorage.setItem(target.dataset.key, target.value);
+					return;
+				}
+
+				if (target.matches("select[data-key]")) {
+					localStorage.setItem(target.dataset.key, target.value);
+					render();
+				}
+			});
+
+			for (const control of [search, kindFilter, recommendationFilter]) {
+				control.addEventListener("input", render);
+			}
+
+			document.querySelector("#exportButton").addEventListener("click", async () => {
+				const decisions = inventory.map((item) => ({
+					kind: item.kind,
+					name: item.name,
+					currentPackage: item.packageName,
+					futurePackage: item.futurePackage,
+					path: item.path,
+					recommendation: savedValue(item, "recommendation", item.recommendation),
+					comments: savedValue(item, "comments"),
+				}));
+				const json = JSON.stringify(decisions, null, 2);
+				await navigator.clipboard.writeText(json);
+				alert("Copied monopi inventory decisions to clipboard as JSON.");
+			});
+
+			render();
+		</script>
+	</body>
+</html>

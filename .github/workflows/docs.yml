@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - packages/docs/**
+      - packages/monopi__docs/**
       - docs/**
   workflow_dispatch:
 permissions:
@@ -31,11 +31,11 @@ jobs:
       - name: 📦 install dependencies
         run: pnpm install --frozen-lockfile
       - name: 📚 build docs site
-        run: pnpm --filter @ifi/oh-pi-docs build
+        run: pnpm --filter @monopi/docs build
       - name: 📤 upload pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: packages/docs/dist
+          path: packages/monopi__docs/dist
   deploy:
     name: 🚀 deploy docs
     environment:

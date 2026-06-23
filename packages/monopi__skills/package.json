@@ -1,0 +1,27 @@
+{
+	"name": "@monopi/skills",
+	"version": "0.5.1",
+	"description": "On-demand skill packs for pi: web-search, debug-helper, shell syntax, and more.",
+	"keywords": [
+		"pi-package"
+	],
+	"homepage": "https://github.com/ifiokjr/monopi/tree/main/packages/monopi__skills",
+	"bugs": {
+		"url": "https://github.com/ifiokjr/monopi/issues"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ifiokjr/monopi.git",
+		"directory": "packages/monopi__skills"
+	},
+	"files": [
+		"skills",
+		"README.md"
+	],
+	"pi": {
+		"skills": [
+			"./skills"
+		]
+	}
+}

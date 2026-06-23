@@ -313,11 +313,11 @@ Reasons:
 - results will churn frequently
 - external contributors may want to participate
 - sandbox runner infrastructure may evolve independently
-- result dashboards and benchmark corpora should not overload the main oh-pi repo
+- result dashboards and benchmark corpora should not overload the main monopi repo
 
 Recommended split:
 
-### Keep in `oh-pi`
+### Keep in `monopi`
 
 - adaptive-routing runtime and config
 - live feature extraction
@@ -337,21 +337,21 @@ Recommended split:
 
 ## 8. Suggested New Components
 
-## 8.1 In `oh-pi`
+## 8.1 In `monopi`
 
 Potential package additions or expansions:
 
-- `packages/adaptive-routing`
+- `packages/monopi__adaptive-routing`
   - prompt quality estimator
   - repo/task feature extraction
   - objective config loader
   - benchmark snapshot consumer
   - strategy scorer
-- `packages/subagents`
+- `packages/monopi__subagents`
   - richer strategy metadata for delegated roles
 - `packages/ant-colony`
   - caste strategy metadata and routing hooks
-- `packages/providers`
+- `packages/monopi__provider-catalog`
   - richer capability metadata and benchmark profile lookup
 
 Potential new packages:

@@ -1,10 +1,10 @@
-# oh-pi Feature Catalog
+# monopi Feature Catalog
 
 A package-by-package inventory of the features currently shipped in this repo.
 
 This document is the long-form companion to the root [README](../README.md). Use it when you want one place that answers:
 
-- what `npx @ifi/oh-pi` installs by default
+- what `npx @monopi/monopi` installs by default
 - which features are opt-in add-ons
 - which commands, tools, shortcuts, and workflows each package adds
 - which content packs ship in the repo
@@ -14,7 +14,7 @@ This document is the long-form companion to the root [README](../README.md). Use
 
 Use this reading path depending on what you are trying to do:
 
-- **I just want to use oh-pi** → start in the root `README.md`, then jump into `docs/feature-catalog.md` for package-by-package detail
+- **I just want to use monopi** → start in the root `README.md`, then jump into `docs/feature-catalog.md` for package-by-package detail
 - **I want to try the latest local changes** → run `pnpm install`, `pnpm pi:local`, restart `pi`, then exercise the feature in a real session
 - **I want to contribute** → read `CONTRIBUTING.md`, then the package README for the area you are changing
 - **I want to understand ownership** → use `docs/feature-catalog.md` to see which package owns which runtime feature, content pack, or library surface
@@ -26,20 +26,17 @@ Use this reading path depending on what you are trying to do:
 <!-- {=repoArchitectureAtAGlanceDocs} -->
 
 ```text
-oh-pi repo
+monopi repo
 ├── installer
-│   └── @ifi/oh-pi
+│   └── @monopi/monopi
 ├── default runtime packages
 │   ├── extensions
 │   ├── background-tasks
 │   ├── diagnostics
 │   ├── subagents
-│   ├── plan
-│   ├── spec
 │   └── web-remote
 ├── content packs
 │   ├── themes
-│   ├── prompts
 │   ├── skills
 │   └── agents
 ├── opt-in extras
@@ -57,6 +54,7 @@ oh-pi repo
     ├── shared-qna
     ├── web-client
     ├── web-server
+    ├── db
     ├── analytics-db
     ├── analytics-dashboard
     └── docs
@@ -78,22 +76,18 @@ Suggested path for a new contributor:
 
 ## Install tiers at a glance
 
-### Installed by `npx @ifi/oh-pi`
+### Installed by `npx @monopi/monopi`
 
 <!-- {=repoDefaultInstallerPackagesDocs} -->
 
-Default runtime/content packages installed by `npx @ifi/oh-pi`:
+Default runtime/content packages installed by `npx @monopi/monopi`:
 
-- `@ifi/oh-pi-extensions`
-- `@ifi/pi-background-tasks`
-- `@ifi/pi-diagnostics`
-- `@ifi/pi-extension-subagents`
-- `@ifi/pi-plan`
-- `@ifi/pi-spec`
-- `@ifi/pi-web-remote`
-- `@ifi/oh-pi-themes`
-- `@ifi/oh-pi-prompts`
-- `@ifi/oh-pi-skills`
+- `@monopi/extension-worktree`
+- `@monopi/background-tasks`
+- `@monopi/diagnostics`
+- `@monopi/subagents`
+- `@monopi/web-remote`
+- `@monopi/skills`
 
 <!-- {/repoDefaultInstallerPackagesDocs} -->
 
@@ -103,55 +97,54 @@ Default runtime/content packages installed by `npx @ifi/oh-pi`:
 
 Opt-in packages that stay separate from the default installer bundle:
 
-- `@ifi/pi-extension-adaptive-routing`
-- `@ifi/pi-provider-catalog`
-- `@ifi/pi-provider-cursor`
-- `@ifi/pi-provider-ollama`
-- `@ifi/pi-analytics-extension`
-- `@ifi/pi-remote-tailscale`
-- `@ifi/pi-bash-live-view`
-- `@ifi/pi-pretty`
+- `@monopi/extension-bg-process`
+- `@monopi/adaptive-routing`
+- `@monopi/provider-catalog`
+- `@monopi/provider-cursor`
+- `@monopi/provider-ollama`
+- `@monopi/analytics-extension`
+- `@monopi/remote-tailscale`
+- `@monopi/bash-live-view`
+- `@monopi/pretty`
 
 <!-- {/repoExperimentalPackagesDocs} -->
 
 ### Contributor-facing/internal packages
 
-These are important parts of the codebase, but they are primarily consumed by other packages or by people extending oh-pi:
+These are important parts of the codebase, but they are primarily consumed by other packages or by people extending monopi:
 
 <!-- {=repoContributorCompiledPackagesDocs} -->
 
-Most runtime packages in this repo ship raw TypeScript and can be loaded directly by pi. A smaller set of contributor-facing packages (`core`, `cli`, `web-client`, `web-server`) emit `dist/` output, so build those when you are working on them directly.
+Most runtime packages in this repo ship raw TypeScript and can be loaded directly by pi. A smaller set of contributor-facing packages (`core`, `cli`, `db`, `web-client`, `web-server`) emit `dist/` output, so build those when you are working on them directly.
 
 <!-- {/repoContributorCompiledPackagesDocs} -->
 
-- [`@ifi/oh-pi-cli`](../packages/cli)
-- [`@ifi/oh-pi-core`](../packages/core)
-- [`@ifi/pi-shared-qna`](../packages/shared-qna)
-- [`@ifi/pi-web-client`](../packages/web-client)
-- [`@ifi/pi-web-server`](../packages/web-server)
-- [`@ifi/oh-pi-agents`](../packages/agents)
+- [`@monopi/cli`](../packages/monopi__cli)
+- [`@monopi/core`](../packages/monopi__core)
+- [`@monopi/shared-qna`](../packages/monopi__shared-qna)
+- [`@monopi/web-client`](../packages/monopi__web-client)
+- [`@monopi/web-server`](../packages/monopi__web-server)
+- [`@monopi/agents`](../packages/monopi__agents)
 
 ## Runtime feature map
 
-| Package                                                              | Installs by default | Primary surfaces                                                                        | What it gives you                                                                                                                        |
-| -------------------------------------------------------------------- | ------------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| [`@ifi/oh-pi-extensions`](../packages/extensions)                    | Yes                 | commands, tools, widgets, footer, tool interception                                     | The core QoL extension pack: git safety, session naming, status UI, scheduling, usage, watchdog, worktrees, side-conversations, and more |
-| [`@ifi/pi-background-tasks`](../packages/background-tasks)           | Yes                 | `bg_task`, `bg_status`, `/bg`, `Ctrl+Shift+B`                                           | Reactive background shell task management with log tails, watches, wakeups, and a richer tracked-task model                              |
-| [`@ifi/pi-diagnostics`](../packages/diagnostics)                     | Yes                 | widget, session messages, `/diagnostics`, `Ctrl+Shift+D`                                | Prompt start/end timestamps, total duration, and per-turn timing                                                                         |
-| [`@ifi/pi-extension-subagents`](../packages/subagents)               | Yes                 | `subagent`, `subagent_status`, `/run`, `/chain`, `/parallel`, `/agents`, `Ctrl+Shift+A` | Rich delegated execution with built-in agents, reusable chains, background runs, and a TUI manager                                       |
-| [`@ifi/pi-plan`](../packages/plan)                                   | Yes                 | `/plan`, `Alt+P`, plan-mode tools                                                       | Branch-aware planning workflow with persistent plan files and delegated research tasks                                                   |
-| [`@ifi/pi-spec`](../packages/spec)                                   | Yes                 | `/spec` and `spec:*` subcommands                                                        | Native spec-first workflow with deterministic `.specify/` and `specs/###-feature-name/` artifacts                                        |
-| [`@ifi/pi-web-remote`](../packages/web-remote)                       | Yes                 | `/remote`                                                                               | Share the current pi session through a remote web UI                                                                                     |
-| [`@ifi/pi-extension-adaptive-routing`](../packages/adaptive-routing) | No                  | `/route*`                                                                               | Adaptive/shadow routing and delegated startup categories for colonies and subagents                                                      |
-| [`@ifi/pi-provider-catalog`](../packages/providers)                  | No                  | `/providers*`                                                                           | Multi-provider catalog and lazy API-key login backed by `models.dev`                                                                     |
-| [`@ifi/pi-provider-cursor`](../packages/cursor)                      | No                  | `/login cursor`, `/cursor*`                                                             | Experimental Cursor OAuth provider with model discovery and direct AgentService streaming                                                |
-| [`@ifi/pi-provider-ollama`](../packages/ollama)                      | No                  | `/login ollama-cloud`, `/ollama*`, `/model`                                             | Experimental Ollama local + cloud provider integration                                                                                   |
-| [`@ifi/pi-analytics-extension`](../packages/analytics-extension)     | No                  | `/analytics`, `/analytics-dashboard`                                                    | Analytics tracking extension with SQLite persistence and browser dashboard                                                               |
-| [`@ifi/pi-remote-tailscale`](../packages/pi-remote-tailscale)        | No                  | `/remote`, `/remote widget`, `/remote stop`                                             | Secure remote session sharing via Tailscale HTTPS with PTY, WebSocket, QR codes, and token auth                                          |
-| [`@ifi/pi-bash-live-view`](../packages/pi-bash-live-view)            | No                  | `/bash-pty`, `bash_live_view` tool with `usePTY`                                        | PTY-backed live terminal viewing with real-time widget and `/xterm/headless` ANSI rendering                                              |
-| [`@ifi/pi-pretty`](../packages/pi-pretty)                            | No                  | wrapped `read`, `bash_pretty`, `ls`, `find`, `grep` tools                               | Syntax highlighting via Shiki, Nerd Font icons, tree-view listings, colored bash summaries, FFF search                                   |
+| Package                                                                  | Installs by default | Primary surfaces                                                                        | What it gives you                                                                                                                        |
+| ------------------------------------------------------------------------ | ------------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| [`@monopi/extension-worktree`](../packages/monopi__extension-worktree)   | Yes                 | commands, tools, widgets, footer, tool interception                                     | The core QoL extension pack: git safety, session naming, status UI, scheduling, usage, watchdog, worktrees, side-conversations, and more |
+| [`@monopi/background-tasks`](../packages/monopi__background-tasks)       | Yes                 | `bg_task`, `bg_status`, `/bg`, `Ctrl+Shift+B`                                           | Reactive background shell task management with log tails, watches, wakeups, and a richer tracked-task model                              |
+| [`@monopi/diagnostics`](../packages/monopi__diagnostics)                 | Yes                 | widget, session messages, `/diagnostics`, `Ctrl+Shift+D`                                | Prompt start/end timestamps, total duration, and per-turn timing                                                                         |
+| [`@monopi/subagents`](../packages/monopi__subagents)                     | Yes                 | `subagent`, `subagent_status`, `/run`, `/chain`, `/parallel`, `/agents`, `Ctrl+Shift+A` | Rich delegated execution with built-in agents, reusable chains, background runs, and a TUI manager                                       |
+| [`@monopi/web-remote`](../packages/monopi__web-remote)                   | Yes                 | `/remote`                                                                               | Share the current pi session through a remote web UI                                                                                     |
+| [`@monopi/adaptive-routing`](../packages/monopi__adaptive-routing)       | No                  | `/route*`                                                                               | Adaptive/shadow routing and delegated startup categories for colonies and subagents                                                      |
+| [`@monopi/provider-catalog`](../packages/monopi__provider-catalog)       | No                  | `/providers*`                                                                           | Multi-provider catalog and lazy API-key login backed by `models.dev`                                                                     |
+| [`@monopi/provider-cursor`](../packages/monopi__provider-cursor)         | No                  | `/login cursor`, `/cursor*`                                                             | Experimental Cursor OAuth provider with model discovery and direct AgentService streaming                                                |
+| [`@monopi/provider-ollama`](../packages/monopi__provider-ollama)         | No                  | `/login ollama-cloud`, `/ollama*`, `/model`                                             | Experimental Ollama local + cloud provider integration                                                                                   |
+| [`@monopi/analytics-extension`](../packages/monopi__analytics-extension) | No                  | `/analytics`, `/analytics-dashboard`                                                    | Analytics tracking extension with SQLite persistence and browser dashboard                                                               |
+| [`@monopi/remote-tailscale`](../packages/monopi__remote-tailscale)       | No                  | `/remote`, `/remote widget`, `/remote stop`                                             | Secure remote session sharing via Tailscale HTTPS with PTY, WebSocket, QR codes, and token auth                                          |
+| [`@monopi/bash-live-view`](../packages/monopi__bash-live-view)           | No                  | `/bash-pty`, `bash_live_view` tool with `usePTY`                                        | PTY-backed live terminal viewing with real-time widget and `/xterm/headless` ANSI rendering                                              |
+| [`@monopi/pretty`](../packages/monopi__pretty)                           | No                  | wrapped `read`, `bash_pretty`, `ls`, `find`, `grep` tools                               | Syntax highlighting via Shiki, Nerd Font icons, tree-view listings, colored bash summaries, FFF search                                   |
 
-## `@ifi/oh-pi-extensions`: core extension pack
+## `@monopi/extension-worktree`: split extension packages
 
 This package is where most of the day-to-day ergonomics live.
 
@@ -163,9 +156,8 @@ This package is where most of the day-to-day ergonomics live.
 | `custom-footer`          | live footer, `/status` overlay                                                      | Shows model, thinking level, token usage, cost, context %, cwd, branch, worktree state, and extension statuses                                |
 | `compact-header`         | startup UI                                                                          | Replaces the default startup banner with a denser one-line header                                                                             |
 | `tool-metadata`          | tool result details                                                                 | Adds start/end timestamps, duration, approximate I/O sizing, and context snapshots to tool results; also sanitizes huge outputs for UI safety |
-| `auto-update`            | startup notification                                                                | Checks npm asynchronously and tells you when a newer oh-pi release is available                                                               |
 | `external-editor`        | `/external-editor`, `Ctrl+Shift+E`                                                  | Opens the current draft in `$VISUAL` or `$EDITOR`, then syncs the saved text back into pi                                                     |
-| `worktree`               | `/worktree`, `/worktree list`, `/worktree create`, `/worktree cleanup`              | Gives oh-pi first-class git worktree awareness and managed pi-owned worktrees under shared storage                                            |
+| `worktree`               | `/worktree`, `/worktree list`, `/worktree create`, `/worktree cleanup`              | Gives monopi first-class git worktree awareness and managed pi-owned worktrees under shared storage                                           |
 | `bg-process`             | `bg_task`, `bg_status`, `/bg`, `Ctrl+Shift+B`                                       | Explicitly manages long-lived background tasks like watchers, servers, and log tails without auto-detaching ordinary bash commands            |
 | `scheduler`              | `/remind`, `/loop`, `/schedule*`, `schedule_prompt` tool                            | Schedules one-time reminders and recurring follow-ups for builds, CI, deploys, PRs, and long-running checks                                   |
 | `usage-tracker`          | widget, `/usage`, `/usage-toggle`, `/usage-refresh`, `Ctrl+Shift+U`, `usage_report` | Tracks provider quotas, rolling cost history, and per-model/session usage                                                                     |
@@ -212,7 +204,7 @@ It includes:
 - blame reporting to understand recent pressure
 - safe-mode toggles to reduce nonessential UI churn when repeated alerts occur
 
-## `@ifi/pi-background-tasks`: reactive background shell tasks
+## `@monopi/background-tasks`: reactive background shell tasks
 
 This package turns explicit long-lived shell tasks into a first-class pi workflow while leaving ordinary `bash` commands in the foreground.
 
@@ -232,9 +224,9 @@ This package turns explicit long-lived shell tasks into a first-class pi workflo
 - richer manual management through `/bg` and the dashboard overlay
 - compatibility with the old `bg_status` flow while offering a more capable `bg_task` tool for the agent
 
-## `@ifi/pi-diagnostics`: prompt timing
+## `@monopi/diagnostics`: prompt timing
 
-`@ifi/pi-diagnostics` adds prompt-level completion timing on top of the lower-level tool timing that `tool-metadata` already records.
+`@monopi/diagnostics` adds prompt-level completion timing on top of the lower-level tool timing that `tool-metadata` already records.
 
 Primary surfaces:
 
@@ -287,8 +279,6 @@ Prefer subagents when you want:
 - agent definitions you can version and tweak directly
 - background execution that you can inspect as a single run
 
-## `@ifi/pi-plan`: plan mode
-
 Plan mode turns planning into a first-class session state instead of an informal prompt style.
 
 ### What it adds
@@ -311,10 +301,6 @@ While active, plan mode exposes tools that are not available the rest of the tim
 - `set_plan` — overwrite the canonical plan file with the latest full plan
 
 Plan mode is best when you want structured planning without jumping directly into implementation.
-
-## `@ifi/pi-spec`: native spec-first workflow
-
-`@ifi/pi-spec` adapts spec-kit ideas to pi as a native TypeScript extension package.
 
 ### Canonical `/spec` subcommands
 
@@ -341,15 +327,13 @@ The public API is not just the command surface. It is also the file layout creat
 
 ### Why it matters
 
-Use `@ifi/pi-spec` when you want:
-
 - requirements before implementation
 - visible workflow state in git
 - deterministic scaffolding
 - project-owned templates you can customize after initialization
 - a spec/plan/tasks flow that feels native inside pi instead of shell-script-driven
 
-## `@ifi/pi-web-remote`: remote session sharing
+## `@monopi/web-remote`: remote session sharing
 
 This package adds `/remote` so a pi session can be shared through a browser-oriented remote UI.
 
@@ -360,11 +344,11 @@ Primary actions:
 - inspect connection status
 - stop remote sharing via `/remote stop`
 
-This package sits on top of the lower-level `@ifi/pi-web-server` and `@ifi/pi-web-client` libraries.
+This package sits on top of the lower-level `@monopi/web-server` and `@monopi/web-client` libraries.
 
 ## Optional routing and provider packages
 
-### `@ifi/pi-extension-adaptive-routing`
+### `@monopi/adaptive-routing`
 
 Purpose:
 
@@ -387,7 +371,7 @@ Primary commands:
 - `/route refresh`
 - `/route feedback`
 
-### `@ifi/pi-provider-catalog`
+### `@monopi/provider-catalog`
 
 Purpose:
 
@@ -404,7 +388,7 @@ Primary commands:
 - `/providers models <provider>`
 - `/providers refresh-models [provider|all]`
 
-### `@ifi/pi-provider-cursor`
+### `@monopi/provider-cursor`
 
 Purpose:
 
@@ -420,7 +404,7 @@ Primary commands:
 - `/cursor refresh-models`
 - `/cursor clear-state`
 
-### `@ifi/pi-provider-ollama`
+### `@monopi/provider-ollama`
 
 Purpose:
 
@@ -439,16 +423,16 @@ Primary commands:
 
 ## Analytics stack
 
-### `@ifi/pi-analytics-extension`
+### `@monopi/analytics-extension`
 
 Purpose:
 
 - Tracks session-level and turn-level analytics (models, tokens, costs, codebases)
-- Persists data to SQLite via `@ifi/pi-analytics-db`
+- Persists data to SQLite via `@monopi/analytics-db`
 - Provides `/analytics` for quick terminal stats
 - Provides `/analytics-dashboard` to open the browser dashboard
 
-### `@ifi/pi-analytics-db`
+### `@monopi/analytics-db`
 
 Purpose:
 
@@ -456,74 +440,28 @@ Purpose:
 - Stores sessions, turns, models, providers, codebases, and time-bucketed aggregations
 - Includes migrations and typed query helpers
 
-### `@ifi/pi-analytics-dashboard`
+### `@monopi/analytics-dashboard`
 
 Purpose:
 
 - React 19 + Vite 8 SPA for visualizing AI usage
 - Pages: Overview, Models, Codebases, Insights (emotions, words, misspellings)
 - Mock data mode for development, real API mode via Express server
-- Private package — run `pnpm dev` inside `packages/analytics-dashboard/`
+- Private package — run `pnpm dev` inside `packages/monopi__analytics-dashboard/`
 
 ## Content packs
 
-## `@ifi/oh-pi-prompts`
+## `@monopi/skills`
 
-The prompt template pack ships 10 ready-made slash commands.
+The skills pack currently ships 3 maintained skills.
 
-| Prompt      | Purpose                                                                                                     |
-| ----------- | ----------------------------------------------------------------------------------------------------------- |
-| `/review`   | Review code for bugs, security issues, missing error handling, performance issues, and readability problems |
-| `/fix`      | Fix a bug with minimal changes and explain the root cause                                                   |
-| `/explain`  | Explain code or a concept from one-line summary through trade-offs and edge cases                           |
-| `/refactor` | Refactor while preserving behavior                                                                          |
-| `/test`     | Generate tests using the project's existing framework                                                       |
-| `/commit`   | Generate a Conventional Commit message from staged changes                                                  |
-| `/document` | Generate or update technical documentation                                                                  |
-| `/optimize` | Analyze and improve performance without premature micro-optimization                                        |
-| `/security` | Run an OWASP-style security audit                                                                           |
-| `/pr`       | Draft a pull request description                                                                            |
+| Skill          | What it is for                                                 |
+| -------------- | -------------------------------------------------------------- |
+| `btw` (`/qq`)  | Use the `/btw` or `/qq` side-conversation workflow effectively |
+| `debug-helper` | Analyze errors, logs, crashes, and performance issues          |
+| `nushell`      | Nushell syntax reference for shell commands                    |
 
-## `@ifi/oh-pi-skills`
-
-The skills pack currently ships 19 skills.
-
-| Skill                           | What it is for                                                                        |
-| ------------------------------- | ------------------------------------------------------------------------------------- |
-| `btw`                           | Use the `/btw` or `/qq` side-conversation workflow effectively                        |
-| `claymorphism`                  | Build soft, puffy clay-like interfaces                                                |
-| `context7`                      | Query up-to-date library and framework docs through Context7                          |
-| `debug-helper`                  | Analyze errors, logs, crashes, and performance issues                                 |
-| `fish`                          | Fish shell syntax reference                                                           |
-| `flutter-serverpod-mvp`         | Scaffold and evolve Flutter + Serverpod MVPs                                          |
-| `glassmorphism`                 | Build frosted-glass style interfaces                                                  |
-| `grill-me`                      | Stress-test a plan or design through adversarial questioning                          |
-| `improve-codebase-architecture` | Find architecture improvements that deepen modules and improve testability            |
-| `liquid-glass`                  | Build Apple Liquid Glass-inspired interfaces                                          |
-| `neubrutalism`                  | Build bold, thick-bordered, offset-shadow interfaces                                  |
-| `nushell`                       | Nushell syntax reference for shell commands                                           |
-| `pwsh`                          | PowerShell syntax reference                                                           |
-| `quick-setup`                   | Detect project type and generate `.pi/` config                                        |
-| `request-refactor-plan`         | Interview the user, create a tiny-commit refactor plan, and file it as a GitHub issue |
-| `rust-workspace-bootstrap`      | Scaffold a production Rust workspace with knope, devenv, and CI/release workflows     |
-| `web-fetch`                     | Fetch a web page and extract readable content                                         |
-| `web-search`                    | Search the web via DuckDuckGo                                                         |
-| `write-a-skill`                 | Author new pi-compatible skills correctly                                             |
-
-## `@ifi/oh-pi-themes`
-
-The theme pack currently ships 6 themes.
-
-| Theme              | Style                              |
-| ------------------ | ---------------------------------- |
-| `oh-p-dark`        | First-party cyan/purple dark theme |
-| `cyberpunk`        | Neon magenta + electric cyan       |
-| `nord`             | Arctic blue palette                |
-| `catppuccin-mocha` | Pastel-on-dark palette             |
-| `tokyo-night`      | Blue/purple twilight palette       |
-| `gruvbox-dark`     | Warm retro dark palette            |
-
-## `@ifi/oh-pi-agents`
+## `@monopi/agents`
 
 The AGENTS template pack currently ships 5 templates.
 
@@ -536,35 +474,33 @@ The AGENTS template pack currently ships 5 templates.
 
 ## Contributor-facing packages and libraries
 
-| Package                                                          | Role                                                                                                   |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| [`@ifi/oh-pi`](../packages/oh-pi)                                | Meta-installer that registers the default bundle with pi                                               |
-| [`@ifi/oh-pi-cli`](../packages/cli)                              | Interactive setup/configuration TUI with provider/model/routing/package selection flows                |
-| [`@ifi/oh-pi-core`](../packages/core)                            | Shared registries, icons, i18n helpers, and path helpers for the pi agent directory and shared storage |
-| [`@ifi/pi-shared-qna`](../packages/shared-qna)                   | Reusable TUI Q&A helpers and shared `pi-tui` loading logic                                             |
-| [`@ifi/pi-web-client`](../packages/web-client)                   | Platform-agnostic TypeScript client for custom remote session UIs                                      |
-| [`@ifi/pi-web-server`](../packages/web-server)                   | Embeddable HTTP + WebSocket remote session server                                                      |
-| [`@ifi/pi-analytics-db`](../packages/analytics-db)               | SQLite schema and Drizzle ORM client for analytics data                                                |
-| [`@ifi/pi-analytics-dashboard`](../packages/analytics-dashboard) | React dashboard for visualizing AI usage (private package)                                             |
-| [`@ifi/oh-pi-docs`](../packages/docs)                            | Documentation site for oh-pi (private package)                                                         |
+| Package                                                                  | Role                                                                                                   |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| [`@monopi/monopi`](../packages/monopi__monopi)                           | Meta-installer that registers the default bundle with pi                                               |
+| [`@monopi/cli`](../packages/monopi__cli)                                 | Interactive setup/configuration TUI with provider/model/routing/package selection flows                |
+| [`@monopi/core`](../packages/monopi__core)                               | Shared registries, icons, i18n helpers, and path helpers for the pi agent directory and shared storage |
+| [`@monopi/shared-qna`](../packages/monopi__shared-qna)                   | Reusable TUI Q&A helpers and shared `pi-tui` loading logic                                             |
+| [`@monopi/web-client`](../packages/monopi__web-client)                   | Platform-agnostic TypeScript client for custom remote session UIs                                      |
+| [`@monopi/web-server`](../packages/monopi__web-server)                   | Embeddable HTTP + WebSocket remote session server                                                      |
+| [`@monopi/analytics-db`](../packages/monopi__analytics-db)               | SQLite schema and Drizzle ORM client for analytics data                                                |
+| [`@monopi/analytics-dashboard`](../packages/monopi__analytics-dashboard) | React dashboard for visualizing AI usage (private package)                                             |
+| [`@monopi/docs`](../packages/monopi__docs)                               | Documentation site for monopi (private package)                                                        |
 
 ## Which feature should I reach for?
 
-- **Safer day-to-day pi sessions** → `@ifi/oh-pi-extensions`
-- **Long-lived watchers, servers, and log tails** → `@ifi/pi-background-tasks`
-- **Timing and completion visibility** → `@ifi/pi-diagnostics`
-- **Large parallel work** → `@ifi/pi-extension-subagents` (chains, parallel fan-out)
-- **Named specialists and reusable pipelines** → `@ifi/pi-extension-subagents`
-- **Structured planning without implementing yet** → `@ifi/pi-plan`
-- **Spec-first product development** → `@ifi/pi-spec`
-- **Secure remote session sharing via Tailscale HTTPS with PTY/WebSocket** → `@ifi/pi-remote-tailscale`
-- **PTY-backed live terminal viewing with real-time ANSI widget** → `@ifi/pi-bash-live-view`
-- **Syntax highlighting, Nerd Font icons, tree-view listings, and colored output** → `@ifi/pi-pretty`
-- **Remote access from a browser UI** → `@ifi/pi-web-remote`
-- **Automatic or explainable model routing** → `@ifi/pi-extension-adaptive-routing`
-- **Extra API-key providers** → `@ifi/pi-provider-catalog`
-- **Cursor integration** → `@ifi/pi-provider-cursor`
-- **Usage analytics and browser dashboard for your AI sessions** → `@ifi/pi-analytics-extension`
-- **Ollama local/cloud integration** → `@ifi/pi-provider-ollama`
+- **Safer day-to-day pi sessions** → `@monopi/extension-worktree`
+- **Long-lived watchers, servers, and log tails** → `@monopi/background-tasks`
+- **Timing and completion visibility** → `@monopi/diagnostics`
+- **Large parallel work** → `@monopi/subagents` (chains, parallel fan-out)
+- **Named specialists and reusable pipelines** → `@monopi/subagents`
+- **Secure remote session sharing via Tailscale HTTPS with PTY/WebSocket** → `@monopi/remote-tailscale`
+- **PTY-backed live terminal viewing with real-time ANSI widget** → `@monopi/bash-live-view`
+- **Syntax highlighting, Nerd Font icons, tree-view listings, and colored output** → `@monopi/pretty`
+- **Remote access from a browser UI** → `@monopi/web-remote`
+- **Automatic or explainable model routing** → `@monopi/adaptive-routing`
+- **Extra API-key providers** → `@monopi/provider-catalog`
+- **Cursor integration** → `@monopi/provider-cursor`
+- **Usage analytics and browser dashboard for your AI sessions** → `@monopi/analytics-extension`
+- **Ollama local/cloud integration** → `@monopi/provider-ollama`
 
 For the local development loop that points a real pi install at this checkout, see the root [README running locally section](../README.md#running-locally--local-development).

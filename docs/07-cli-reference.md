@@ -114,7 +114,7 @@ What it does:
 - Verifies `/colony-status`, `/colony-stop`, and `/colony-resume` completion wiring
 - Avoids interactive/TUI startup and shell-specific behavior
 
-Note: `oh-pi` itself does not provide shell completion generation; this harness validates in-product command completion callbacks.
+Note: `monopi` itself does not provide shell completion generation; this harness validates in-product command completion callbacks.
 
 ---
 

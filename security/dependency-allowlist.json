@@ -69,6 +69,10 @@
 		"node-pty",
 		"qrcode-terminal",
 		"@shikijs/cli",
-		"@ff-labs/fff-node"
+		"@ff-labs/fff-node",
+		"@earendil-works/pi-agent-core",
+		"@earendil-works/pi-ai",
+		"@earendil-works/pi-coding-agent",
+		"@earendil-works/pi-tui"
 	]
 }

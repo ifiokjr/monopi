@@ -1,0 +1,56 @@
+{
+	"name": "@monopi/remote-tailscale",
+	"version": "0.5.1",
+	"description": "Pi extension for secure remote session sharing with Tailscale URLs, QR codes, and TUI status widgets.",
+	"keywords": [
+		"pi",
+		"pi-coding-agent",
+		"pi-package",
+		"qr-code",
+		"remote",
+		"tailscale",
+		"websocket"
+	],
+	"homepage": "https://github.com/ifiokjr/monopi/tree/main/packages/monopi__remote-tailscale",
+	"bugs": {
+		"url": "https://github.com/ifiokjr/monopi/issues"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ifiokjr/monopi.git",
+		"directory": "packages/monopi__remote-tailscale"
+	},
+	"files": [
+		"index.ts",
+		"src",
+		"README.md",
+		"!**/*.test.ts",
+		"!tests/**"
+	],
+	"type": "module",
+	"scripts": {
+		"build": "pnpm run typecheck && pnpm run test:package",
+		"typecheck": "tsgo --project ./tsconfig.json --noEmit",
+		"test:package": "vitest run --config ./vitest.config.ts"
+	},
+	"dependencies": {
+		"@monopi/web-server": "0.5.1"
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-agent-core": ">=0.78.1",
+		"@earendil-works/pi-ai": ">=0.78.1",
+		"@earendil-works/pi-coding-agent": ">=0.78.1",
+		"@earendil-works/pi-tui": ">=0.78.1",
+		"typebox": "^1.1.24"
+	},
+	"optionalDependencies": {
+		"node-pty": "^1.0.0",
+		"qrcode-terminal": "^0.12.0"
+	},
+	"pi": {
+		"extensions": [
+			"./index.ts"
+		]
+	}
+}

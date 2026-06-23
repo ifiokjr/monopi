@@ -1,22 +1,22 @@
-# oh-pi Product Design Document
+# monopi Product Design Document
 
 > An interactive TUI tool for one-click pi-coding-agent configuration.
 
 ## 1. Product Positioning
 
-**oh-pi** is the "out-of-the-box configurator" for pi-coding-agent. Users run `npx @ifi/oh-pi` and complete via interactive TUI:
+**monopi** is the "out-of-the-box configurator" for pi-coding-agent. Users run `npx @monopi/monopi` and complete via interactive TUI:
 
 - API setup (multi-provider one-stop configuration)
 - Preset extension/skill/theme installation
 - Personalization preferences
 - One-click generation of complete `~/.pi/agent/` configuration
 
-Analogy: oh-my-zsh is to zsh as oh-pi is to pi.
+Analogy: oh-my-zsh is to zsh as monopi is to pi.
 
 ## 2. Interaction Flow
 
 ```
-npx @ifi/oh-pi
+npx @monopi/monopi
   │
   ├─ 1. Welcome & Environment Detection
   │     • Detect pi installation and version
@@ -199,10 +199,10 @@ MCP: All preset MCP servers
 | `context-packer`     | pi-shit   | Pack context for other LLMs                             |
 | `session-analyzer`   | pi-shit   | Session analysis and optimization                       |
 | `youtube-transcript` | pi-shit   | YouTube video transcription                             |
-| `quick-setup`        | oh-pi     | Quick project init (detect stack, generate .pi/ config) |
-| `debug-helper`       | oh-pi     | Debug assistant (error analysis, log interpretation)    |
-| `doc-generator`      | oh-pi     | Documentation generation (README, API docs, CHANGELOG)  |
-| `test-writer`        | oh-pi     | Test generation (unit/integration, framework detection) |
+| `quick-setup`        | monopi    | Quick project init (detect stack, generate .pi/ config) |
+| `debug-helper`       | monopi    | Debug assistant (error analysis, log interpretation)    |
+| `doc-generator`      | monopi    | Documentation generation (README, API docs, CHANGELOG)  |
+| `test-writer`        | monopi    | Test generation (unit/integration, framework detection) |
 
 ### 4.3 Prompt Templates
 
@@ -237,7 +237,7 @@ MCP: All preset MCP servers
 
 ### 4.5 MCP Server Presets
 
-Pi doesn't ship built-in MCP, but Extensions can bridge it. oh-pi provides an MCP bridge extension + preset server configs:
+Pi doesn't ship built-in MCP, but Extensions can bridge it. monopi provides an MCP bridge extension + preset server configs:
 
 | MCP Server                                         | Description              | Install |
 | -------------------------------------------------- | ------------------------ | ------- |
@@ -365,10 +365,10 @@ Authorized security researcher with full access to local/CTF/lab environments.
 ### 5.1 Project Structure
 
 ```
-oh-pi/
+monopi/
 ├── package.json
 ├── bin/
-│   └── oh-pi.ts                    # CLI entry point
+│   └── monopi.ts                    # CLI entry point
 ├── src/
 │   ├── index.ts                   # Main flow
 │   ├── tui/                       # Interactive TUI
@@ -397,7 +397,7 @@ oh-pi/
 
 | Component          | Choice               | Rationale                                  |
 | ------------------ | -------------------- | ------------------------------------------ |
-| Execution          | `npx @ifi/oh-pi`     | Zero-install, run-and-go                   |
+| Execution          | `npx @monopi/monopi` | Zero-install, run-and-go                   |
 | TUI Framework      | `@inquirer/prompts`  | Mature, lightweight, rich interaction      |
 | Styling            | `chalk`              | Already a pi dependency, no extra overhead |
 | File I/O           | Node.js built-in     | No extra dependencies                      |
@@ -408,8 +408,8 @@ oh-pi/
 
 ### 6.1 Dual Distribution
 
-1. **npx @ifi/oh-pi** — Installer tool (installs all oh-pi packages)
-2. **pi install npm:oh-pi** — Pi Package (extensions/skills/themes/templates)
+1. **npx @monopi/monopi** — Installer tool (installs all monopi packages)
+2. **pi install npm:monopi** — Pi Package (extensions/skills/themes/templates)
 
 Users can use just the configurator, just the Pi Package, or both.
 
@@ -417,8 +417,8 @@ Users can use just the configurator, just the Pi Package, or both.
 
 ```json
 {
-	"name": "oh-pi",
-	"bin": { "oh-pi": "./bin/oh-pi.js" },
+	"name": "monopi",
+	"bin": { "monopi": "./bin/monopi.js" },
 	"keywords": ["pi-package", "pi-coding-agent", "configuration", "setup"],
 	"pi": {
 		"extensions": ["./pi-package/extensions"],
@@ -454,8 +454,8 @@ Users can use just the configurator, just the Pi Package, or both.
 
 ### Phase 3 — Ecosystem
 
-- [ ] `oh-pi update` to update preset resources
-- [ ] `oh-pi doctor` to diagnose config issues
-- [ ] `oh-pi export/import` for config portability
+- [ ] `monopi update` to update preset resources
+- [ ] `monopi doctor` to diagnose config issues
+- [ ] `monopi export/import` for config portability
 - [ ] Community preset contribution mechanism
 - [ ] Online configuration generator (Web)

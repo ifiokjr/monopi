@@ -3,8 +3,8 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-export const MIN_VERSION = "0.78.1";
-export const CURRENT_VERSION = "0.79.10";
+export const MIN_VERSION = "0.56.1";
+export const CURRENT_VERSION = "0.64.0";
 export const PI_PACKAGES = [
 	"@earendil-works/pi-agent-core",
 	"@earendil-works/pi-ai",
@@ -12,12 +12,15 @@ export const PI_PACKAGES = [
 	"@earendil-works/pi-tui",
 ];
 export const SMOKE_TESTS = [
-	"packages/extensions/extensions/smoke.test.ts",
-	"packages/diagnostics/tests/smoke.test.ts",
-	"packages/subagents/tests/smoke.test.ts",
-	"packages/spec/tests/smoke.test.ts",
-	"packages/cursor/tests/smoke.test.ts",
-	"packages/ollama/tests/smoke.test.ts",
+	"scripts/pi-package-manifest.test.ts",
+	"packages/monopi__extension-btw/tests/btw.test.ts",
+	"packages/monopi__extension-scheduler/tests/scheduler.test.ts",
+	"packages/monopi__extension-worktree/tests/worktree.test.ts",
+	"packages/monopi__diagnostics/tests/smoke.test.ts",
+	"packages/ant-colony/tests/smoke.test.ts",
+	"packages/monopi__subagents/tests/smoke.test.ts",
+	"packages/monopi__provider-cursor/tests/smoke.test.ts",
+	"packages/monopi__provider-ollama/tests/smoke.test.ts",
 ];
 export const WORKSPACE_INSTALL_ARGS = ["install", "--no-frozen-lockfile", "--link-workspace-packages"];
 
@@ -98,7 +101,7 @@ export function main(argv = process.argv.slice(2)) {
 		run("pnpm", WORKSPACE_INSTALL_ARGS);
 		console.log("\nInstalled pi package versions:");
 		readInstalledVersions();
-		run("pnpm", ["--filter", "@ifi/oh-pi-core", "build"]);
+		run("pnpm", ["--filter", "@monopi/core", "build"]);
 		run("pnpm", ["exec", "vitest", "run", ...SMOKE_TESTS]);
 	} finally {
 		if (restore) {
