@@ -2,7 +2,7 @@
 default: major
 ---
 
-# Migrate to @earendil-works/pi-* namespace and simplify Ollama provider
+# Migrate Pi namespace and Ollama provider
 
 ## Breaking Changes
 
@@ -19,7 +19,7 @@ default: major
 - `adaptive-routing`: removed dead `ModelRegistry.getApiKey(model)` branch (method removed upstream); now uses `getApiKeyForProvider` / `authStorage.getApiKey`.
 - `cursor`: `StreamOptions.onPayload` now takes `(payload, model)`; call site and test updated to pass the model argument.
 - `background-tasks`, `diagnostics`, `pi-bash-live-view`, `pi-remote-tailscale`, `subagents`, `plan`, `extensions` (scheduler, usage-tracker, watchdog, custom-footer, tool-metadata): `session_switch`/`session_fork` event handlers and test emissions migrated to the new `session_before_switch`/`session_before_fork` names.
-- `shared-qna`: Bun global fallback path segment updated from `@mariozechner/pi-tui` to `@earendil-works/pi-tui`.
+- `shared-qna`: Bun global fallback path segment updated from `@earendil-works/pi-tui` to `@earendil-works/pi-tui`.
 
 ## Verification
 

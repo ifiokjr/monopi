@@ -17,7 +17,7 @@ export interface BenchmarkTargetReport {
 
 const ROOT = process.cwd();
 const PACKAGE_PATH = path.join(ROOT, "package.json");
-const EXTENSION_PACKAGE_PREFIX = "packages/extensions/extensions/";
+const EXTENSION_PACKAGE_PREFIX = "packages/monopi__extensions/extensions/";
 const ALL_FOCUSED_BENCHMARK_IDS = [
 	"scheduler-runtime-context-with-store",
 	"custom-footer-usage-scan-large-history",
@@ -32,8 +32,8 @@ const GLOBAL_PATH_PREFIXES = [
 	"vitest.config.ts",
 	"biome.json",
 	"test-utils/",
-	"packages/core/",
-	"packages/providers/",
+	"packages/monopi__core/",
+	"packages/monopi__provider-catalog/",
 	"benchmarks/",
 	".github/workflows/ci.yml",
 ] as const;
@@ -41,9 +41,9 @@ const FOCUSED_BENCHMARK_RULES = [
 	{
 		benchmarkIds: ["scheduler-runtime-context-with-store"],
 		prefixes: [
-			"packages/extensions/extensions/scheduler.ts",
-			"packages/extensions/extensions/scheduler-shared.ts",
-			"packages/extensions/extensions/scheduler-registration.ts",
+			"packages/monopi__extensions/extensions/scheduler.ts",
+			"packages/monopi__extensions/extensions/scheduler-shared.ts",
+			"packages/monopi__extensions/extensions/scheduler-registration.ts",
 		],
 	},
 	{
@@ -53,24 +53,24 @@ const FOCUSED_BENCHMARK_RULES = [
 			"worktree-context-temp-repo",
 		],
 		prefixes: [
-			"packages/extensions/extensions/custom-footer.ts",
-			"packages/extensions/extensions/custom-footer.test.ts",
+			"packages/monopi__extensions/extensions/custom-footer.ts",
+			"packages/monopi__extensions/extensions/custom-footer.test.ts",
 		],
 	},
 	{
 		benchmarkIds: ["usage-tracker-session-start-near-threshold"],
 		prefixes: [
-			"packages/extensions/extensions/usage-tracker.ts",
-			"packages/extensions/extensions/usage-tracker.test.ts",
+			"packages/monopi__extensions/extensions/usage-tracker.ts",
+			"packages/monopi__extensions/extensions/usage-tracker.test.ts",
 		],
 	},
 	{
 		benchmarkIds: ["worktree-context-temp-repo", "worktree-snapshot-temp-repo", "custom-footer-first-render"],
 		prefixes: [
-			"packages/extensions/extensions/worktree.ts",
-			"packages/extensions/extensions/worktree.test.ts",
-			"packages/extensions/extensions/worktree-shared.ts",
-			"packages/extensions/extensions/worktree-shared.test.ts",
+			"packages/monopi__extensions/extensions/worktree.ts",
+			"packages/monopi__extensions/extensions/worktree.test.ts",
+			"packages/monopi__extensions/extensions/worktree-shared.ts",
+			"packages/monopi__extensions/extensions/worktree-shared.test.ts",
 		],
 	},
 ] as const;

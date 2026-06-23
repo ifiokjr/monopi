@@ -1,0 +1,51 @@
+{
+	"name": "@monopi/provider-catalog",
+	"version": "0.5.1",
+	"description": "Experimental multi-provider package for pi backed by the OpenCode models.dev catalog.",
+	"keywords": [
+		"experimental",
+		"models.dev",
+		"opencode",
+		"pi",
+		"pi-coding-agent",
+		"pi-package",
+		"provider"
+	],
+	"homepage": "https://github.com/ifiokjr/monopi/tree/main/packages/monopi__provider-catalog",
+	"bugs": {
+		"url": "https://github.com/ifiokjr/monopi/issues"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ifiokjr/monopi.git",
+		"directory": "packages/monopi__provider-catalog"
+	},
+	"files": [
+		"*.ts",
+		"README.md",
+		"!**/*.test.ts",
+		"!tests/**"
+	],
+	"type": "module",
+	"scripts": {
+		"build": "pnpm run typecheck && pnpm run test:worktree",
+		"typecheck": "tsgo --project ./tsconfig.json --noEmit",
+		"test:worktree": "vitest run --config ./vitest.worktree.config.ts"
+	},
+	"dependencies": {
+		"@monopi/shared-qna": "0.5.1"
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-agent-core": ">=0.78.1",
+		"@earendil-works/pi-ai": ">=0.78.1",
+		"@earendil-works/pi-coding-agent": ">=0.78.1",
+		"@earendil-works/pi-tui": ">=0.78.1",
+		"typebox": "^1.1.24"
+	},
+	"pi": {
+		"extensions": [
+			"./index.ts"
+		]
+	}
+}

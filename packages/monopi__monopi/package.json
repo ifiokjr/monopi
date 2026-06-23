@@ -1,0 +1,32 @@
+{
+	"name": "@monopi/monopi",
+	"version": "0.5.1",
+	"description": "One-click setup for pi-coding-agent — extensions, themes, skills, and agents. Like oh-my-zsh for pi.",
+	"keywords": [
+		"configuration",
+		"pi-coding-agent",
+		"pi-package",
+		"setup",
+		"tui"
+	],
+	"homepage": "https://github.com/ifiokjr/monopi/tree/main/packages/monopi__monopi",
+	"bugs": {
+		"url": "https://github.com/ifiokjr/monopi/issues"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ifiokjr/monopi.git",
+		"directory": "packages/monopi__monopi"
+	},
+	"bin": {
+		"monopi": "bin/monopi.mjs"
+	},
+	"files": [
+		"bin",
+		"README.md"
+	],
+	"dependencies": {
+		"@monopi/cli": "0.5.1"
+	}
+}

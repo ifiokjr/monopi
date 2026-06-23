@@ -24,10 +24,10 @@ That means routing is **not yet aware of**:
 
 Current resolution lives in:
 
-- `packages/subagents/model-routing.ts`
-- `packages/subagents/index.ts`
-- `packages/subagents/chain-execution.ts`
-- `packages/subagents/async-execution.ts`
+- `packages/monopi__subagents/model-routing.ts`
+- `packages/monopi__subagents/index.ts`
+- `packages/monopi__subagents/chain-execution.ts`
+- `packages/monopi__subagents/async-execution.ts`
 
 Today it resolves in this order:
 
@@ -54,10 +54,10 @@ Today each caste / worker class resolves against delegated categories, but selec
 
 Useful pieces already exist in:
 
-- `packages/adaptive-routing/index.ts`
-- `packages/adaptive-routing/engine.ts`
-- `packages/adaptive-routing/normalize.ts`
-- `packages/extensions/extensions/usage-tracker.ts`
+- `packages/monopi__adaptive-routing/index.ts`
+- `packages/monopi__adaptive-routing/engine.ts`
+- `packages/monopi__adaptive-routing/normalize.ts`
+- `packages/monopi__extensions/extensions/usage-tracker.ts`
 
 Those pieces already prove that pi can:
 

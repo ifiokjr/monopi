@@ -33,7 +33,7 @@ function verifyExtensionEntrypoints(pkg, manifest, packedFiles) {
 	}
 }
 
-const packRoot = fs.mkdtempSync(path.join(os.tmpdir(), "oh-pi-pack-"));
+const packRoot = fs.mkdtempSync(path.join(os.tmpdir(), "monopi-pack-"));
 
 try {
 	for (const pkg of publishedPackages) {

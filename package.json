@@ -4,10 +4,10 @@
 		"packages/*"
 	],
 	"scripts": {
-		"build": "pnpm --filter @ifi/oh-pi-core build && pnpm -r --filter=!@ifi/oh-pi-core run build",
-		"build:fast": "pnpm --filter @ifi/oh-pi-core run build:fast && pnpm -r --filter=!@ifi/oh-pi-core run build:fast",
-		"typecheck": "pnpm --filter @ifi/oh-pi-core build && pnpm -r --filter @ifi/oh-pi-core --filter @ifi/oh-pi-cli --filter @ifi/pi-spec --filter @ifi/pi-web-client --filter @ifi/pi-web-server run typecheck",
-		"verify:completion": "pnpm exec vitest run packages/subagents/tests/commands.test.ts",
+		"build": "pnpm --filter @monopi/core build && pnpm -r --filter=!@monopi/core run build",
+		"build:fast": "pnpm --filter @monopi/core run build:fast && pnpm -r --filter=!@monopi/core run build:fast",
+		"typecheck": "pnpm --filter @monopi/core build && pnpm -r --filter @monopi/core --filter @monopi/cli --filter @monopi/web-client --filter @monopi/web-server --filter @monopi/db run typecheck",
+		"verify:completion": "pnpm exec vitest run packages/monopi__subagents/tests/commands.test.ts",
 		"security:allowlist": "node ./scripts/security/check-dependency-allowlist.mjs",
 		"security:audit:prod": "node ./scripts/security/run-pnpm-audit.mjs --prod --audit-level=high",
 		"security:audit:dev": "node ./scripts/security/run-pnpm-audit.mjs -D --audit-level=high",
@@ -28,9 +28,9 @@
 		"pi:published": "node --experimental-strip-types ./scripts/pi-source-switch.mts remote",
 		"models:refresh-intelligence": "node ./scripts/generate-model-intelligence-snapshot.mjs",
 		"mdt": "mdt",
-		"docs:dev": "pnpm --filter @ifi/oh-pi-docs dev",
-		"docs:build": "pnpm --filter @ifi/oh-pi-docs build",
-		"docs:sync": "pnpm --filter @ifi/oh-pi-docs docs:sync",
+		"docs:dev": "pnpm --filter @monopi/docs dev",
+		"docs:build": "pnpm --filter @monopi/docs build",
+		"docs:sync": "pnpm --filter @monopi/docs docs:sync",
 		"docs:list": "pnpm mdt list",
 		"docs:update": "pnpm mdt update",
 		"docs:check": "pnpm mdt check",
@@ -39,7 +39,13 @@
 		"lint:type-aware": "oxlint --deny-warnings --type-aware .",
 		"format": "oxfmt --write .",
 		"format:check": "oxfmt --check .",
-		"check": "pnpm format:check && pnpm lint"
+		"check": "pnpm format:check && pnpm lint",
+		"change": "mc change",
+		"release": "mc release",
+		"publish": "mc publish",
+		"mc:validate": "mc step:validate",
+		"mc:check": "mc check",
+		"mc:discover": "mc step:discover --format json"
 	},
 	"devDependencies": {
 		"@earendil-works/pi-agent-core": "0.78.1",
@@ -63,38 +69,32 @@
 	"packageManager": "pnpm@10.33.0",
 	"pi": {
 		"extensions": [
-			"./packages/extensions/extensions/answer.ts",
-			"./packages/extensions/extensions/watchdog.ts",
-			"./packages/extensions/extensions/auto-update.ts",
-			"./packages/extensions/extensions/btw.ts",
-			"./packages/extensions/extensions/compact-header.ts",
-			"./packages/extensions/extensions/custom-footer.ts",
-			"./packages/extensions/extensions/external-editor.ts",
-			"./packages/extensions/extensions/git-guard.ts",
-			"./packages/extensions/extensions/scheduler.ts",
-			"./packages/extensions/extensions/shell-format.ts",
-			"./packages/extensions/extensions/tool-metadata.ts",
-			"./packages/extensions/extensions/usage-tracker.ts",
-			"./packages/extensions/extensions/worktree.ts",
-			"./packages/background-tasks/index.ts",
-			"./packages/diagnostics/index.ts",
-			"./packages/subagents/index.ts",
-			"./packages/subagents/notify.ts",
-			"./packages/plan/index.ts",
-			"./packages/spec/extension/index.ts",
-			"./packages/web-remote/index.ts",
-			"./packages/cursor/index.ts",
-			"./packages/ollama/index.ts",
-			"./packages/analytics-extension/index.ts"
-		],
-		"prompts": [
-			"./packages/prompts/prompts"
+			"./packages/monopi__extensions/extensions/answer.ts",
+			"./packages/monopi__extensions/extensions/watchdog.ts",
+			"./packages/monopi__extensions/extensions/btw.ts",
+			"./packages/monopi__extensions/extensions/compact-header.ts",
+			"./packages/monopi__extensions/extensions/custom-footer.ts",
+			"./packages/monopi__extensions/extensions/external-editor.ts",
+			"./packages/monopi__extensions/extensions/git-guard.ts",
+			"./packages/monopi__extensions/extensions/scheduler.ts",
+			"./packages/monopi__extensions/extensions/shell-format.ts",
+			"./packages/monopi__extensions/extensions/tool-metadata.ts",
+			"./packages/monopi__extensions/extensions/usage-tracker.ts",
+			"./packages/monopi__extensions/extensions/worktree.ts",
+			"./packages/monopi__background-tasks/index.ts",
+			"./packages/monopi__diagnostics/index.ts",
+			"./packages/monopi__subagents/index.ts",
+			"./packages/monopi__subagents/notify.ts",
+			"./packages/monopi__web-remote/index.ts",
+			"./packages/monopi__provider-cursor/index.ts",
+			"./packages/monopi__provider-ollama/index.ts",
+			"./packages/monopi__analytics-extension/index.ts"
 		],
 		"skills": [
-			"./packages/skills/skills"
+			"./packages/monopi__skills/skills"
 		],
 		"themes": [
-			"./packages/themes/themes"
+			"./packages/monopi__themes/themes"
 		]
 	}
 }

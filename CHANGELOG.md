@@ -7,7 +7,7 @@
 - sync knope dependency versioning
 - route oh-pi to interactive cli
 - Keep internal package dependency versions in lockstep
-- fix(installer): route @ifi/oh-pi through the interactive CLI
+- fix(installer): route @monopi/monopi through the interactive CLI
 
 ## 0.5.0 (2026-04-28)
 
@@ -17,19 +17,19 @@
 
 Document the packages that have been created since the last tagged release (`v0.4.4`) so the next release notes explain what each new workspace package provides.
 
-- `@ifi/pi-extension-adaptive-routing` (`packages/adaptive-routing`) adds optional adaptive and delegated model routing for pi, including routing policy support and evaluation tooling for selecting better models per task.
-- `@ifi/pi-background-tasks` (`packages/background-tasks`) adds reactive background shell tasks with `/bg`, log viewing, keyboard access, and agent wakeups when long-running commands emit output.
-- `@ifi/pi-diagnostics` (`packages/diagnostics`) adds prompt-completion diagnostics with timestamps, per-turn durations, live timing widgets, and observability for pi sessions.
-- `@ifi/pi-provider-catalog` (`packages/providers`) adds an experimental multi-provider catalog backed by `models.dev`, including provider/model discovery and lazy API-key login flows.
-- `@ifi/pi-provider-cursor` (`packages/cursor`) adds an experimental Cursor provider with OAuth login, model discovery, and direct AgentService streaming support.
-- `@ifi/pi-provider-ollama` (`packages/ollama`) adds experimental Ollama local and cloud provider support, including local model discovery, Ollama Cloud login, model management, and streaming integration.
-- `@ifi/pi-remote-tailscale` (`packages/pi-remote-tailscale`) adds secure remote session sharing over Tailscale HTTPS with WebSocket transport, PTY support, QR codes, token auth, and TUI status widgets.
-- `@ifi/pi-bash-live-view` (`packages/pi-bash-live-view`) adds PTY-backed live bash execution with a real-time terminal widget, `/bash-pty`, and a `bash_live_view` tool for interactive command output.
-- `@ifi/pi-pretty` (`packages/pi-pretty`) adds prettier terminal output for pi, including Shiki-highlighted file reads, colored bash summaries, tree-view directory listings, icons, and enhanced search/read tools.
-- `@ifi/pi-analytics-extension` (`packages/analytics-extension`) adds analytics tracking for pi sessions with `/analytics` terminal stats, `/analytics-dashboard`, model/token/cost capture, and SQLite persistence.
-- `@ifi/pi-analytics-db` (`packages/analytics-db`) adds the shared SQLite database layer for analytics, including Drizzle ORM schema, migrations, and typed query helpers for sessions, turns, models, providers, codebases, and aggregates.
-- `@ifi/pi-analytics-dashboard` (`packages/analytics-dashboard`) adds a private React and Vite dashboard for visualizing AI usage across overview, model, codebase, and insight pages.
-- `@ifi/oh-pi-docs` (`packages/docs`) adds the private documentation site package for developing and building the oh-pi documentation site.
+- `@monopi/adaptive-routing` (`packages/monopi__adaptive-routing`) adds optional adaptive and delegated model routing for pi, including routing policy support and evaluation tooling for selecting better models per task.
+- `@monopi/background-tasks` (`packages/monopi__background-tasks`) adds reactive background shell tasks with `/bg`, log viewing, keyboard access, and agent wakeups when long-running commands emit output.
+- `@monopi/diagnostics` (`packages/monopi__diagnostics`) adds prompt-completion diagnostics with timestamps, per-turn durations, live timing widgets, and observability for pi sessions.
+- `@monopi/provider-catalog` (`packages/monopi__provider-catalog`) adds an experimental multi-provider catalog backed by `models.dev`, including provider/model discovery and lazy API-key login flows.
+- `@monopi/provider-cursor` (`packages/monopi__provider-cursor`) adds an experimental Cursor provider with OAuth login, model discovery, and direct AgentService streaming support.
+- `@monopi/provider-ollama` (`packages/monopi__provider-ollama`) adds experimental Ollama local and cloud provider support, including local model discovery, Ollama Cloud login, model management, and streaming integration.
+- `@monopi/remote-tailscale` (`packages/monopi__remote-tailscale`) adds secure remote session sharing over Tailscale HTTPS with WebSocket transport, PTY support, QR codes, token auth, and TUI status widgets.
+- `@monopi/bash-live-view` (`packages/monopi__bash-live-view`) adds PTY-backed live bash execution with a real-time terminal widget, `/bash-pty`, and a `bash_live_view` tool for interactive command output.
+- `@monopi/pretty` (`packages/monopi__pretty`) adds prettier terminal output for pi, including Shiki-highlighted file reads, colored bash summaries, tree-view directory listings, icons, and enhanced search/read tools.
+- `@monopi/analytics-extension` (`packages/monopi__analytics-extension`) adds analytics tracking for pi sessions with `/analytics` terminal stats, `/analytics-dashboard`, model/token/cost capture, and SQLite persistence.
+- `@monopi/analytics-db` (`packages/monopi__analytics-db`) adds the shared SQLite database layer for analytics, including Drizzle ORM schema, migrations, and typed query helpers for sessions, turns, models, providers, codebases, and aggregates.
+- `@monopi/analytics-dashboard` (`packages/monopi__analytics-dashboard`) adds a private React and Vite dashboard for visualizing AI usage across overview, model, codebase, and insight pages.
+- `@monopi/docs` (`packages/monopi__docs`) adds the private documentation site package for developing and building the oh-pi documentation site.
 
 ### Features
 
@@ -71,7 +71,7 @@ Document the packages that have been created since the last tagged release (`v0.
 - remove explicit model overrides from ant_colony tool, use adaptive routing (#236)
 - highlight recommended options in QnA overlay (#238)
 - add Ctrl+O context expansion popup for question details (#244)
-- add @ifi/pi-remote-tailscale, @ifi/pi-bash-live-view, @ifi/pi-pretty (#255)
+- add @monopi/remote-tailscale, @monopi/bash-live-view, @monopi/pretty (#255)
 - change usage-tracker overlay shortcut from Ctrl+U to Ctrl+Shift+U (#266)
 - add a routing corpus and evaluation harness (#275)
 - add interactive installer with extension picker, progress bars, and changelog display (#277)
@@ -84,16 +84,16 @@ Document the packages that have been created since the last tagged release (`v0.
 - Remove explicit model override parameters from ant_colony tool. Model selection now uses adaptive routing exclusively — scouts, workers, and soldiers each use the best available model for their task category (quick-discovery, implementation-default, review-critical). Configure via /route settings.
 - Add an `external-editor` oh-pi extension with a `/external-editor` command and `Ctrl+Shift+E` shortcut for opening the current draft in `$VISUAL` or `$EDITOR`, then syncing the saved text back into pi.
 - Extract adaptive routing into its own optional package, add delegated startup provider categories for subagents and ant-colony, and remove hard-coded Anthropic defaults from builtin subagents.
-- Implement `@ifi/pi-bash-live-view` package for PTY-backed live terminal viewing of bash commands. Adds `usePTY` parameter to bash tool, live TUI widget with real-time output, and `/bash-pty` slash command.
-- Implement `@ifi/pi-pretty` package for enhanced terminal output. Adds syntax highlighting via Shiki, file icons via Nerd Fonts, tree-view directory listings, colored bash exit summaries, and enhanced find/grep rendering.
-- Implement `@ifi/pi-remote-tailscale` package for secure remote session sharing via Tailscale HTTPS. Provides PTY-based remote access, WebSocket terminal sharing, QR code display, token auth, discovery service, and optional TUI widget.
+- Implement `@monopi/bash-live-view` package for PTY-backed live terminal viewing of bash commands. Adds `usePTY` parameter to bash tool, live TUI widget with real-time output, and `/bash-pty` slash command.
+- Implement `@monopi/pretty` package for enhanced terminal output. Adds syntax highlighting via Shiki, file icons via Nerd Fonts, tree-view directory listings, colored bash exit summaries, and enhanced find/grep rendering.
+- Implement `@monopi/remote-tailscale` package for secure remote session sharing via Tailscale HTTPS. Provides PTY-based remote access, WebSocket terminal sharing, QR code display, token auth, discovery service, and optional TUI widget.
 - Track which scheduler tasks were created by the current pi instance, surface that origin in the scheduler UI, and add clear-other controls for deleting tasks not created in this instance.
 - Make the repo root a git-installable pi package for personal forks by aggregating the shipped runtime extensions, prompts, skills, and themes, and replace npm-incompatible `workspace:*` dependency specifiers with installable lockstep versions.
 - Add a native worktree extension with centralized pi-owned git worktree metadata, footer/status surfacing, safe cleanup that only targets pi-managed worktrees by default, and allow edits inside pi-managed worktree paths without repeated protected-path prompts.
 - Add a repo-local pi source switcher for toggling oh-pi packages between the current checkout and the published npm packages.
 - Extend the local pi source switcher to manage the experimental provider packages too, and warn users to fully restart pi instead of relying on `/reload` after switching sources.
 - feat: add a diagnostics extension that logs prompt completion timestamps, durations, and per-turn timing details
-- Add an experimental `@ifi/pi-provider-catalog` package that registers a broad set of OpenCode-cataloged API-key providers, refreshes model catalogs from `models.dev` and live provider discovery, and adds `/providers` commands for inspecting and refreshing provider state.
+- Add an experimental `@monopi/provider-catalog` package that registers a broad set of OpenCode-cataloged API-key providers, refreshes model catalogs from `models.dev` and live provider discovery, and adds `/providers` commands for inspecting and refreshing provider state.
 - Add a user/project install scope toggle when installing optional routing packages from the oh-pi routing dashboard.
 - Let the oh-pi routing dashboard install missing optional routing and provider packages directly from the setup flow.
 - Add a dedicated provider and routing dashboard to the oh-pi setup flow so users can review optional routing packages, available providers/models, delegated assignments, and effective routing for the main session, subagents, and ant-colony.
@@ -102,12 +102,12 @@ Document the packages that have been created since the last tagged release (`v0.
 
 #### Add `/answer` extension for interactive Q&A from LLM responses.
 
-- `/answer` extracts questions from the last assistant message and presents them in a QnA overlay powered by `@ifi/pi-shared-qna`
+- `/answer` extracts questions from the last assistant message and presents them in a QnA overlay powered by `@monopi/shared-qna`
 - `/answer:auto` toggles auto-detection: when enabled, questions in the final LLM response automatically trigger the QnA overlay
 - Uses LLM-powered question extraction with structured output (questions, context, and multiple-choice options)
 - Answers are injected back into the session as a follow-up user message
 
-#### - Add the experimental `@ifi/pi-provider-ollama` package so pi can discover local Ollama models, log in to Ollama Cloud via `/login ollama-cloud`, and expose both local and cloud models in `/model`.
+#### - Add the experimental `@monopi/provider-ollama` package so pi can discover local Ollama models, log in to Ollama Cloud via `/login ollama-cloud`, and expose both local and cloud models in `/model`.
 
 - Add unified `/ollama` commands for refreshing local + cloud model catalogs and inspecting discovered model metadata.
 - Extend usage tracking with best-effort Ollama local/cloud status so `/usage` and `usage_report` include Ollama session visibility and any rate-limit headers Ollama exposes.
@@ -116,9 +116,9 @@ Document the packages that have been created since the last tagged release (`v0.
 
 New packages:
 
-- `@ifi/pi-analytics-db`: Drizzle ORM schema + SQLite client for analytics data
-- `@ifi/pi-analytics-dashboard`: React 19 + Vite 8 dashboard with Overview, Models, Codebases, and Insights pages
-- `@ifi/pi-analytics-extension`: Pi extension that captures session/turn data and opens the dashboard
+- `@monopi/analytics-db`: Drizzle ORM schema + SQLite client for analytics data
+- `@monopi/analytics-dashboard`: React 19 + Vite 8 dashboard with Overview, Models, Codebases, and Insights pages
+- `@monopi/analytics-extension`: Pi extension that captures session/turn data and opens the dashboard
 
 Features:
 
@@ -133,9 +133,9 @@ Features:
 
 #### Add a reactive background task extension for shell watchers.
 
-- add the new `@ifi/pi-background-tasks` package with `/bg`, `Ctrl+Shift+B`, a richer multi-pane dashboard, `bg_task`, and compatibility `bash`/`bg_status` tooling
-- move the existing `bg-process` entrypoint in `@ifi/oh-pi-extensions` onto the new shared runtime
-- include the new package in the default `@ifi/oh-pi` installer package list and document it in the repo package listings
+- add the new `@monopi/background-tasks` package with `/bg`, `Ctrl+Shift+B`, a richer multi-pane dashboard, `bg_task`, and compatibility `bash`/`bg_status` tooling
+- move the existing `bg-process` entrypoint in `@monopi/extensions` onto the new shared runtime
+- include the new package in the default `@monopi/monopi` installer package list and document it in the repo package listings
 
 #### BREAKING CHANGE: `npx oh-pi` now launches an interactive installer by default.
 
@@ -153,11 +153,11 @@ To keep the old behaviour pass `--yes`:
 npx oh-pi --yes
 ```
 
-#### Consolidate worktree registry into `@ifi/oh-pi-core` and add `worktree` tool
+#### Consolidate worktree registry into `@monopi/core` and add `worktree` tool
 
-- **Consolidate duplicated worktree implementations**: The worktree registry logic that was duplicated across `packages/extensions/extensions/worktree-shared.ts` and `packages/ant-colony/extensions/ant-colony/worktree-registry.ts` is now consolidated into `@ifi/oh-pi-core`. Both files are now thin re-exports from `@ifi/oh-pi-core`, eliminating code duplication and ensuring a single source of truth for worktree management.
+- **Consolidate duplicated worktree implementations**: The worktree registry logic that was duplicated across `packages/monopi__extensions/extensions/worktree-shared.ts` and `packages/ant-colony/extensions/ant-colony/worktree-registry.ts` is now consolidated into `@monopi/core`. Both files are now thin re-exports from `@monopi/core`, eliminating code duplication and ensuring a single source of truth for worktree management.
 
-- **Add `RepoWorktreeContext` and caching to core**: The lightweight context probe (which uses only `git rev-parse` without `git worktree list --porcelain`) and the async cache-based refresh functions (`getRepoWorktreeContext`, `getCachedRepoWorktreeContext`, `refreshRepoWorktreeContext`, etc.) are now available in `@ifi/oh-pi-core`, matching the full feature set previously only in the extensions package.
+- **Add `RepoWorktreeContext` and caching to core**: The lightweight context probe (which uses only `git rev-parse` without `git worktree list --porcelain`) and the async cache-based refresh functions (`getRepoWorktreeContext`, `getCachedRepoWorktreeContext`, `refreshRepoWorktreeContext`, etc.) are now available in `@monopi/core`, matching the full feature set previously only in the extensions package.
 
 - **Add `worktree` tool**: Register a `worktree` tool alongside the existing `/worktree` command. The AI agent can now programmatically create, list, check status, and clean up pi-owned worktrees without needing to use the slash command. This addresses the problem where the `ant_colony` tool bypassed `/worktree` because commands are TUI-only. The tool supports `create`, `status`, `list`, and `cleanup` actions.
 
@@ -281,19 +281,19 @@ Closes #24.
 - Add initial delegated-model routing research artifacts and runtime selection improvements for subagents and ant-colony, including a reproducible model-intelligence snapshot sourced from public benchmarks and provider catalogs.
 - ci: run push and pull_request workflows for stacked prep branches
 - refactor: apply a repo-wide readability cleanup and stabilize a slow worktree test timeout
-- Fix the `@ifi/pi-bash-live-view` package build by running the normal package test suite during `pnpm build` and keeping coverage behind a dedicated `test:coverage` script.
+- Fix the `@monopi/bash-live-view` package build by running the normal package test suite during `pnpm build` and keeping coverage behind a dedicated `test:coverage` script.
 - Fix the `bg-process` bash tool override to use pi's shell resolution on Windows instead of hardcoding `spawn("bash")`, and write background logs to the platform temp directory.
 - Keep the diagnostics footer in its running state while tools are still executing, even if the previous prompt completion errored.
 - Reduce diagnostics widget render churn while prompts or tools are active and make session-state restoration scan from the newest entries first.
 - - Clarify the git-workflow skill to disable both `GIT_EDITOR` and `GIT_SEQUENCE_EDITOR` (plus `core.editor`/`sequence.editor` overrides) so agent-run Git commands avoid interactive editors in rebase and merge flows.
 - fix the provider catalog to route native Mistral providers through the Mistral conversations API.
 - Fix the Ollama Cloud provider to discover the public model catalog during bootstrap and refreshes even before login, keep that broader public catalog visible even when authenticated discovery is narrower, extend the bundled fallback catalog with `glm-5.1`, and add CLI-aware local download prompts plus local context-window metadata sourced from the cloud catalog.
-- Fix `pnpm pi:local` so it rebuilds `@ifi/oh-pi-core` from the workspace root before syncing local runtime artifacts, avoiding misleading package-local pnpm failures during local source switching.
+- Fix `pnpm pi:local` so it rebuilds `@monopi/core` from the workspace root before syncing local runtime artifacts, avoiding misleading package-local pnpm failures during local source switching.
 - fix: detect the pi executable more reliably when switching oh-pi packages back to published sources
 - Fix provider-catalog build and typecheck regressions in the paged login flow by tightening extension context types, handling optional refresh timestamps safely, and aligning provider tests with the actual extension harness types.
 - Reduce provider-catalog login clutter by switching to a paged `/providers login` flow that shows at most 10 providers at a time, lazily registers selected providers, and keeps persisted or env-configured providers available across sessions.
 - Keep the lockstep release config and publish metadata in sync with every workspace package so `knope release` and publish verification do not leave newly added packages out of version bumps or packaging checks. Also make dedicated extension copies resilient to symlinked runtime bins during setup.
-- - Fix formatting in `packages/extensions/extensions/smoke.test.ts` after removing the `safe-guard` extension so CI lint passes cleanly.
+- - Fix formatting in `packages/monopi__extensions/extensions/smoke.test.ts` after removing the `safe-guard` extension so CI lint passes cleanly.
 - Fix scheduled task dispatching to use `deliverAs: "followUp"` alongside `triggerTurn: true`. This ensures scheduled prompts are properly injected into the agent's message stream and trigger a real LLM turn, matching the behavior of the previous `sendUserMessage` approach.
 - Fix the scheduler so empty instances do not hold or prompt about scheduler ownership when there are no scheduled tasks to review.
 - Improve scheduler reliability by keeping it active across session churn, making manual `Run now` actions immediately runnable, and shortening recurring task expiry defaults to 24 hours with a configurable expiry for recurring monitors.
@@ -348,8 +348,8 @@ Closes #24.
 
 #### Add a devenv skill for using devenv.nix as the task runner and development environment.
 
-- add `packages/skills/skills/devenv/SKILL.md` with activation rules, core commands, and script conventions
-- add `packages/skills/skills/devenv/REFERENCE.md` with the recommended devenv.nix layout, script options, git hooks, processes, and troubleshooting
+- add `packages/monopi__skills/skills/devenv/SKILL.md` with activation rules, core commands, and script conventions
+- add `packages/monopi__skills/skills/devenv/REFERENCE.md` with the recommended devenv.nix layout, script options, git hooks, processes, and troubleshooting
 
 #### Add docs:sync script to derive MDX content from docs/\*.md source files.
 
@@ -357,7 +357,7 @@ Content now uses MDT markers and stays in sync with the repo's MDT documentation
 
 #### Add missing extension packages to the `pi:local` source switcher.
 
-`@ifi/pi-bash-live-view`, `@ifi/pi-pretty`, `@ifi/pi-remote-tailscale`, and `@ifi/pi-analytics-extension` are now included in `SWITCHER_PACKAGES` so that `pnpm pi:local` points them at the local workspace sources along with every other oh-pi extension.
+`@monopi/bash-live-view`, `@monopi/pretty`, `@monopi/remote-tailscale`, and `@monopi/analytics-extension` are now included in `SWITCHER_PACKAGES` so that `pnpm pi:local` points them at the local workspace sources along with every other oh-pi extension.
 
 #### Add repo-wide coverage reporting with Vitest + Codecov, publish a coverage badge in the README,
 
@@ -424,12 +424,12 @@ Tests:
 
 #### Update documentation to include all analytics packages and docs site.
 
-- Added `@ifi/pi-analytics-extension` to architecture diagrams, package lists, and managed local switching
-- Added `@ifi/pi-analytics-db`, `@ifi/pi-analytics-dashboard`, and `@ifi/oh-pi-docs` to contributor-facing documentation
+- Added `@monopi/analytics-extension` to architecture diagrams, package lists, and managed local switching
+- Added `@monopi/analytics-db`, `@monopi/analytics-dashboard`, and `@monopi/docs` to contributor-facing documentation
 - Added dedicated "Analytics stack" section in `docs/feature-catalog.md` with details on extension, DB, and dashboard
 - Updated `README.md` packages table, project structure, and opt-in packages note
 - Updated `docs/agent-rules/engineering.md` and `docs/agent-rules/packaging-and-release.md` package references
-- MDT blocks auto-propagated to `docs/00-index.md`, `docs/feature-catalog.md`, `README.md`, and `packages/oh-pi/README.md`
+- MDT blocks auto-propagated to `docs/00-index.md`, `docs/feature-catalog.md`, `README.md`, and `packages/monopi__monopi/README.md`
 
 #### Improve the repo documentation to better cover the full oh-pi feature surface.
 
@@ -445,7 +445,7 @@ Tests:
 - migrate adaptive-routing config loading to the shared helper and surface warnings for malformed config files and invalid top-level sections
 - teach `git-guard` to block git bash commands that are likely to open interactive editors in agent environments (for example `git rebase --continue` without non-interactive editor overrides)
 
-#### Avoid `bash` tool conflicts between `@ifi/pi-bash-live-view` and `@ifi/pi-pretty`.
+#### Avoid `bash` tool conflicts between `@monopi/bash-live-view` and `@monopi/pretty`.
 
 Both extensions were registering a tool named `bash`, which made them conflict when loaded together via `pnpm pi:local`. They now expose explicit alternative tools instead:
 
@@ -456,17 +456,17 @@ The built-in `bash` tool is left untouched, and regression tests now verify thes
 
 #### Fix tool name conflict between bg-process and background-tasks extensions.
 
-The bg-process extension in the extensions package re-exports the same extension from @ifi/pi-background-tasks, causing "Tool bash conflicts with bg-process" errors. Replaced the redundant bg-process.ts entry in the root pi.extensions config with a direct reference to the background-tasks package, eliminating the double-loading conflict.
+The bg-process extension in the extensions package re-exports the same extension from @monopi/background-tasks, causing "Tool bash conflicts with bg-process" errors. Replaced the redundant bg-process.ts entry in the root pi.extensions config with a direct reference to the background-tasks package, eliminating the double-loading conflict.
 
-#### Remove auto-backgrounding from the `bash` tool override in `@ifi/pi-background-tasks`.
+#### Remove auto-backgrounding from the `bash` tool override in `@monopi/background-tasks`.
 
 The extension no longer intercepts ordinary `bash` calls to promote them into background tasks after a timeout. Instead, the `bash` tool passes through to pi's built-in execution flow so output stays visible in the foreground.
 
 Background task management remains available through `bg_task`, `bg_status`, `/bg`, and `Ctrl+Shift+B` for commands that should explicitly run in the background (e.g. dev servers, file watchers, log tails).
 
-#### Remove conflicting `bash` passthrough tool from `@ifi/pi-background-tasks`.
+#### Remove conflicting `bash` passthrough tool from `@monopi/background-tasks`.
 
-The background-tasks extension was incorrectly registering a `bash` tool as a thin passthrough, which conflicted with the actual `bash` tool registered by other extensions like `@ifi/pi-bash-live-view` and `@ifi/pi-pretty`. The background tasks package should only register `bg_task` and `bg_status` tools.
+The background-tasks extension was incorrectly registering a `bash` tool as a thin passthrough, which conflicted with the actual `bash` tool registered by other extensions like `@monopi/bash-live-view` and `@monopi/pretty`. The background tasks package should only register `bg_task` and `bg_status` tools.
 
 Also updates the runtime benchmark test to gracefully handle filtered extension sets (`OH_PI_BENCH_EXTENSION_FILTER`) so it no longer fails when only a subset of extensions is benchmarked.
 
@@ -682,7 +682,7 @@ Explicit skills now resolve relative to the subagent task directory instead of t
 - improve error reporting and robustness for ant colony and subagent swarms (#56)
 - prevent scheduler startup prompt replay (#59)
 - isolate scheduled tasks by instance
-- add shared pi agent-dir and mirrored storage path utilities to `@ifi/oh-pi-core` for consistent config and storage path resolution.
+- add shared pi agent-dir and mirrored storage path utilities to `@monopi/core` for consistent config and storage path resolution.
 - add a shared extension runtime smoke-test harness and initial smoke coverage for scheduler/btw, ant-colony, and subagents.
 - add MDT-based documentation reuse, CI verification, and synchronized API docs for shared package helpers.
 - add missing package-level READMEs for published packages so npm and pi.dev package pages have package-specific documentation.
@@ -732,7 +732,7 @@ Explicit skills now resolve relative to the subagent task directory instead of t
 
 - add architecture and refactor planning skills (#19)
 
-#### Add four new skills to `@ifi/oh-pi-skills`:
+#### Add four new skills to `@monopi/skills`:
 
 - `grill-me`
 - `improve-codebase-architecture` (with `REFERENCE.md`)
@@ -814,9 +814,9 @@ Explicit skills now resolve relative to the subagent task directory instead of t
 
 Introduces three new packages for controlling a pi session from any browser or mobile device:
 
-- `@ifi/pi-web-server` — Embeddable HTTP + WebSocket server that bridges a pi `AgentSession` to remote clients with token-based auth, auto-tunnel detection (cloudflared/tailscale), and QR code generation.
-- `@ifi/pi-web-remote` — Pi extension that registers the `/remote` command. One command, zero config: starts the server, auto-detects connectivity, and displays a QR code to scan.
-- `@ifi/pi-web-client` — Platform-agnostic TypeScript client library (zero dependencies) that works in browsers, React Native, and Node.js.
+- `@monopi/web-server` — Embeddable HTTP + WebSocket server that bridges a pi `AgentSession` to remote clients with token-based auth, auto-tunnel detection (cloudflared/tailscale), and QR code generation.
+- `@monopi/web-remote` — Pi extension that registers the `/remote` command. One command, zero config: starts the server, auto-detects connectivity, and displays a QR code to scan.
+- `@monopi/web-client` — Platform-agnostic TypeScript client library (zero dependencies) that works in browsers, React Native, and Node.js.
 
 Also includes a headless daemon mode (`pi-web serve`) for long-running always-on instances.
 
@@ -836,7 +836,7 @@ Also includes a headless daemon mode (`pi-web serve`) for long-running always-on
 
 ### Fixes
 
-- Fix remaining unscoped `npx oh-pi` references in `docs/DESIGN.md` to use `npx @ifi/oh-pi`.
+- Fix remaining unscoped `npx oh-pi` references in `docs/DESIGN.md` to use `npx @monopi/monopi`.
 
 ## 0.2.16 (2026-03-14)
 
@@ -853,7 +853,7 @@ Also includes a headless daemon mode (`pi-web serve`) for long-running always-on
 
 - add `plan` to the selectable extension registry alongside `spec`
 - teach the CLI extension writer how to copy the `pi-plan` runtime into `.pi/agent/extensions/plan`
-- vendor the plan runtime's `@ifi/pi-shared-qna` and `@ifi/pi-extension-subagents` dependencies so local installs resolve correctly
+- vendor the plan runtime's `@monopi/shared-qna` and `@monopi/subagents` dependencies so local installs resolve correctly
 - add CLI package dependencies and regression tests covering plan/spec extension resource resolution and local extension copying
 
 ### Fixes
@@ -908,35 +908,35 @@ Based on https://github.com/dbachelder/pi-btw by Dan Bachelder (MIT).
 - GoRouter route-name constants and shell-based routing patterns with auth redirects
 - end-to-end MVP scaffolding checklist from workspace setup to first feature slice
 
-#### Add `bin` installer so `npx @ifi/oh-pi` registers all sub-packages with pi.
+#### Add `bin` installer so `npx @monopi/monopi` registers all sub-packages with pi.
 
 Supports `--version <ver>` to pin a specific version, `--local` for project-scoped installs, and `--remove` to uninstall all oh-pi packages from pi.
 
-#### Add `@ifi/pi-extension-subagents`, a full-featured subagent orchestration package built on top of
+#### Add `@monopi/subagents`, a full-featured subagent orchestration package built on top of
 
 `nicobailon/pi-subagents`.
 
 - vendor the upstream subagent extension runtime, TUI manager, async runner, and bundled builtin agents
-- publish it as `@ifi/pi-extension-subagents` with raw TypeScript sources via the package `pi` field
-- add a small `npx @ifi/pi-extension-subagents` installer/remover wrapper around `pi install/remove`
+- publish it as `@monopi/subagents` with raw TypeScript sources via the package `pi` field
+- add a small `npx @monopi/subagents` installer/remover wrapper around `pi install/remove`
 - cover the packaged helpers and discovery logic with an extensive Vitest suite
-- include the new package in the `@ifi/oh-pi` installer bundle and docs
+- include the new package in the `@monopi/monopi` installer bundle and docs
 
-#### Add a new planning mode package, `@ifi/pi-plan`, plus a shared first-party `@ifi/pi-shared-qna`
+#### Add a new planning mode package, `@monopi/plan`, plus a shared first-party `@monopi/shared-qna`
 
 library in the monorepo.
 
 - vendor the `plan-md` workflow from `sids/pi-extensions` into `packages/plan` and adapt it to the `/plan` command
-- back plan research tasks with the in-repo subagent runtime from `@ifi/pi-extension-subagents`
-- vendor the shared Q&A TUI component into `packages/shared-qna` to avoid third-party pi package dependencies
-- include `@ifi/pi-plan` in the `@ifi/oh-pi` bundle and monorepo docs
+- back plan research tasks with the in-repo subagent runtime from `@monopi/subagents`
+- vendor the shared Q&A TUI component into `packages/monopi__shared-qna` to avoid third-party pi package dependencies
+- include `@monopi/plan` in the `@monopi/monopi` bundle and monorepo docs
 - add Vitest coverage for plan flow, prompts, state, request-user-input, task agents, utilities, and shared Q&A helpers
 
-#### Add `@ifi/pi-spec`, a native spec-driven workflow package for pi built as raw TypeScript instead of
+#### Add `@monopi/spec`, a native spec-driven workflow package for pi built as raw TypeScript instead of
 
 shell-script wrappers.
 
-- publish a new `@ifi/pi-spec` package that registers a single `/spec` command with status, init, constitution, specify, clarify, checklist, plan, tasks, analyze, implement, list, and next flows
+- publish a new `@monopi/spec` package that registers a single `/spec` command with status, init, constitution, specify, clarify, checklist, plan, tasks, analyze, implement, list, and next flows
 - vendor spec-kit-inspired workflow templates into the package and scaffold them into `.specify/` for per-repository customization
 - implement native repo detection, feature numbering, branch naming, git branch creation, checklist summaries, and prompt handoff entirely in TypeScript
 - add comprehensive Vitest coverage for workspace helpers, scaffold creation, prompt generation, and command behavior
@@ -1024,9 +1024,9 @@ Based on pi-scheduler by @manojlds (MIT).
 
 Pi loads each package with its own module root, so extensions nested inside a meta-package's `node_modules/` cannot resolve peer-dep imports (`@mariozechner/pi-coding-agent`, etc.). This caused commands like `/colony` and `/loop` to silently fail to register.
 
-Each sub-package (`@ifi/oh-pi-extensions`, `@ifi/oh-pi-ant-colony`, etc.) is already a fully self-contained pi package with its own `pi` field. Users should install them directly via `pi install npm:@ifi/oh-pi-<name>` so pi can load extensions with correct module resolution.
+Each sub-package (`@monopi/extensions`, `@monopi/monopi-ant-colony`, etc.) is already a fully self-contained pi package with its own `pi` field. Users should install them directly via `pi install npm:@monopi/monopi-<name>` so pi can load extensions with correct module resolution.
 
-The `@ifi/oh-pi` npm package remains as a convenience dependency that pulls all sub-packages, but no longer declares pi resources itself.
+The `@monopi/monopi` npm package remains as a convenience dependency that pulls all sub-packages, but no longer declares pi resources itself.
 
 #### Harden release safety with security gates:
 
@@ -1049,7 +1049,7 @@ The `@ifi/oh-pi` npm package remains as a convenience dependency that pulls all 
 
 - mark `safe-guard` as opt-in in the core extension registry used by setup flows
 - remove `safe-guard` from quick-mode default extension selection in the CLI
-- update the `@ifi/oh-pi` meta-package manifest to exclude `safe-guard` from default loaded extensions
+- update the `@monopi/monopi` meta-package manifest to exclude `safe-guard` from default loaded extensions
 - refresh docs to clarify `safe-guard` is available but not enabled by default
 
 #### Keep `safe-guard` opt-in across the configurator defaults by removing it from the "Full Power"
@@ -1276,15 +1276,15 @@ The scope was incorrectly changed to `@ifiokjr` due to a misdiagnosed npm auth i
 
 The `@ifi` scope didn't exist as an npm organization. All packages are now published under `@ifi/*` which matches the npm username and works without org setup.
 
-- `@ifi/oh-pi` → `@ifi/oh-pi`
-- `@ifi/oh-pi-core` → `@ifi/oh-pi-core`
-- `@ifi/oh-pi-cli` → `@ifi/oh-pi-cli`
-- `@ifi/oh-pi-extensions` → `@ifi/oh-pi-extensions`
-- `@ifi/oh-pi-ant-colony` → `@ifi/oh-pi-ant-colony`
-- `@ifi/oh-pi-themes` → `@ifi/oh-pi-themes`
-- `@ifi/oh-pi-prompts` → `@ifi/oh-pi-prompts`
-- `@ifi/oh-pi-skills` → `@ifi/oh-pi-skills`
-- `@ifi/oh-pi-agents` → `@ifi/oh-pi-agents`
+- `@monopi/monopi` → `@monopi/monopi`
+- `@monopi/core` → `@monopi/core`
+- `@monopi/cli` → `@monopi/cli`
+- `@monopi/extensions` → `@monopi/extensions`
+- `@monopi/monopi-ant-colony` → `@monopi/monopi-ant-colony`
+- `@monopi/themes` → `@monopi/themes`
+- `@monopi/prompts` → `@monopi/prompts`
+- `@monopi/skills` → `@monopi/skills`
+- `@monopi/agents` → `@monopi/agents`
 
 ## 0.2.1 (2026-03-08)
 
@@ -1294,7 +1294,7 @@ The `@ifi` scope didn't exist as an npm organization. All packages are now publi
 - monorepo restructure under @ifi/\* scope
 - detailed changesets, markdown formatting, knope publish workflow
 
-#### `@ifi/oh-pi-agents` — Initial release
+#### `@monopi/agents` — Initial release
 
 5 AGENTS.md templates providing role-specific AI guidelines.
 
@@ -1306,7 +1306,7 @@ The `@ifi` scope didn't exist as an npm organization. All packages are now publi
 
 Each template is a markdown file placed at `~/.pi/agent/AGENTS.md` to guide the AI's behavior.
 
-#### `@ifi/oh-pi-ant-colony` — Initial release
+#### `@monopi/monopi-ant-colony` — Initial release
 
 Multi-agent swarm extension modeled after real ant ecology.
 
@@ -1324,7 +1324,7 @@ Multi-agent swarm extension modeled after real ant ecology.
 - **Turn budgets**: Scout: 8, Worker: 15, Soldier: 8 — prevents runaway execution
 - **Auto-trigger**: LLM deploys colony when ≥3 files need changes or parallel workstreams are possible
 
-#### `@ifi/oh-pi-cli` — Initial release
+#### `@monopi/cli` — Initial release
 
 Interactive TUI configurator that sets up `~/.pi/agent/` in under a minute.
 
@@ -1333,9 +1333,9 @@ Interactive TUI configurator that sets up `~/.pi/agent/` in under a minute.
 - **TUI components**: Built on `@clack/prompts` with styled selection menus for providers, extensions, themes, keybindings, skills, and AGENTS.md templates
 - **File writers**: Generates `auth.json` (0600 permissions), `settings.json`, `keybindings.json`, `AGENTS.md`, and copies extension/theme/prompt/skill files into `~/.pi/agent/`
 - **Backup detection**: Warns when existing configuration exists and offers timestamped backup before overwriting
-- **Binary entry point**: Ships as `oh-pi` CLI via `npx @ifi/oh-pi-cli`
+- **Binary entry point**: Ships as `oh-pi` CLI via `npx @monopi/cli`
 
-#### `@ifi/oh-pi-core` — Initial release
+#### `@monopi/core` — Initial release
 
 Shared foundation library for all oh-pi packages.
 
@@ -1347,7 +1347,7 @@ Shared foundation library for all oh-pi packages.
 - **i18n module**: Bilingual (English/Chinese) translation system with locale detection and `t()` helper function
 - **Preset system**: Pre-configured profiles (Full Power, Clean, Colony Only) mapping to curated extension/theme/thinking-level combinations
 
-#### `@ifi/oh-pi-extensions` — Initial release
+#### `@monopi/extensions` — Initial release
 
 9 pi extensions that hook into the pi SDK event system.
 
@@ -1370,16 +1370,16 @@ Shared foundation library for all oh-pi packages.
 - **Vitest**: 254 tests across 21 test files with fake timers for fast execution
 - **All documentation translated to English**: 8 main docs, supplementary docs, benchmarks, ant-colony README, and 16+ source file comments
 
-#### `@ifi/oh-pi` — Initial release
+#### `@monopi/monopi` — Initial release
 
 Meta-package that bundles all oh-pi packages for one-command installation.
 
-- **Single install**: `pi install npm:@ifi/oh-pi` adds all extensions, themes, prompts, skills, and agents templates
+- **Single install**: `pi install npm:@monopi/monopi` adds all extensions, themes, prompts, skills, and agents templates
 - **Bundled dependencies**: All sub-packages are listed as `bundledDependencies` so pi gets everything in one `npm install`
 - **Pi package manifest**: Declares extension, theme, prompt, and skill paths via the `pi` field so pi auto-discovers all resources
-- **Transitive packages**: Pulls in `@ifi/oh-pi-extensions`, `@ifi/oh-pi-ant-colony`, `@ifi/oh-pi-themes`, `@ifi/oh-pi-prompts`, `@ifi/oh-pi-skills`, and `@ifi/oh-pi-agents`
+- **Transitive packages**: Pulls in `@monopi/extensions`, `@monopi/monopi-ant-colony`, `@monopi/themes`, `@monopi/prompts`, `@monopi/skills`, and `@monopi/agents`
 
-#### `@ifi/oh-pi-prompts` — Initial release
+#### `@monopi/prompts` — Initial release
 
 10 markdown prompt templates for common development tasks.
 
@@ -1394,9 +1394,9 @@ Meta-package that bundles all oh-pi packages for one-command installation.
 - `/optimize` — Performance optimization with profiling guidance
 - `/document` — Generate inline documentation and README sections
 
-Each template is a markdown file that pi loads as a slash command. Install via `pi install npm:@ifi/oh-pi-prompts`.
+Each template is a markdown file that pi loads as a slash command. Install via `pi install npm:@monopi/prompts`.
 
-#### `@ifi/oh-pi-skills` — Initial release
+#### `@monopi/skills` — Initial release
 
 10 skill packs across three categories.
 
@@ -1419,9 +1419,9 @@ Each template is a markdown file that pi loads as a slash command. Install via `
 - `debug-helper` — Error analysis, log interpretation, and profiling
 - `git-workflow` — Branching, commits, PRs, and conflict resolution
 
-Each skill directory contains a `SKILL.md` manifest and supporting files. Install via `pi install npm:@ifi/oh-pi-skills`.
+Each skill directory contains a `SKILL.md` manifest and supporting files. Install via `pi install npm:@monopi/skills`.
 
-#### `@ifi/oh-pi-themes` — Initial release
+#### `@monopi/themes` — Initial release
 
 6 color themes for pi's terminal UI.
 
@@ -1432,7 +1432,7 @@ Each skill directory contains a `SKILL.md` manifest and supporting files. Instal
 - **Tokyo Night** — Blue and purple twilight hues inspired by Tokyo at night
 - **Gruvbox Dark** — Warm retro tones from the classic Gruvbox color scheme
 
-All themes are JSON files compatible with pi's `settings.json` theme configuration. Install via `pi install npm:@ifi/oh-pi-themes`.
+All themes are JSON files compatible with pi's `settings.json` theme configuration. Install via `pi install npm:@monopi/themes`.
 
 ### Fixes
 

@@ -1,12 +1,12 @@
 # Subagent and Colony Adaptive Routing Spec
 
-> Goal: extend oh-pi's existing adaptive-routing ideas into delegated execution (`subagent`) and ant-colony work while preserving pi's minimal, user-owned, extension-first nature.
+> Goal: extend monopi's existing adaptive-routing ideas into delegated execution (`subagent`) and ant-colony work while preserving pi's minimal, user-owned, extension-first nature.
 >
 > Implementation follow-up: `docs/plans/subagent-and-colony-adaptive-routing-implementation.md`
 
 ## 1. Problem Statement
 
-Today, oh-pi has three different execution layers with uneven model-selection ergonomics:
+Today, monopi has three different execution layers with uneven model-selection ergonomics:
 
 1. **Main session routing** can already become model-aware through adaptive routing.
 2. **Subagents** accept explicit per-agent `model` frontmatter and runtime overrides, but have no policy-based routing layer.
@@ -23,7 +23,7 @@ This creates four recurring problems:
 
 This RFC is informed by a hostile review of `code-yeongyu/oh-my-openagent`.
 
-The review found several useful ideas alongside several patterns that should not be imported into oh-pi.
+The review found several useful ideas alongside several patterns that should not be imported into monopi.
 
 ### 2.1 Ideas worth adapting
 
@@ -35,7 +35,7 @@ The review found several useful ideas alongside several patterns that should not
 
 ### 2.2 Ideas explicitly rejected
 
-oh-pi should not copy or emulate these aspects:
+monopi should not copy or emulate these aspects:
 
 - a persona-heavy orchestration religion (`Sisyphus`, `Atlas`, `Prometheus`, etc.)
 - hook proliferation that patches core behavior from dozens of directions
@@ -478,4 +478,4 @@ Proceed with a **narrow, policy-first implementation**:
 - clean-room ideas only
 - reuse adaptive-routing primitives wherever possible
 
-This captures the strongest ideas from `oh-my-openagent` while preserving what makes pi and oh-pi valuable: minimalism, explicitness, and user control.
+This captures the strongest ideas from `oh-my-openagent` while preserving what makes pi and monopi valuable: minimalism, explicitness, and user control.

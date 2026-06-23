@@ -59,33 +59,29 @@ All packages live under `packages/` and share the same version.
 
 ```text
 packages/
-  core/                   → @ifi/oh-pi-core (compiled library: types, registry, i18n)
-  cli/                    → @ifi/oh-pi-cli (compiled binary: TUI configurator)
-  extensions/             → @ifi/oh-pi-extensions (raw .ts extensions)
-  adaptive-routing/       → @ifi/pi-extension-adaptive-routing (optional raw .ts routing package)
-  themes/                 → @ifi/oh-pi-themes (JSON theme files)
-  prompts/                → @ifi/oh-pi-prompts (markdown prompt templates)
-  skills/                 → @ifi/oh-pi-skills (skill directories)
-  agents/                 → @ifi/oh-pi-agents (AGENTS.md templates)
-  subagents/              → @ifi/pi-extension-subagents (raw .ts subagent orchestration package)
-  shared-qna/             → @ifi/pi-shared-qna (shared TUI helper library)
-  plan/                   → @ifi/pi-plan (raw .ts planning mode extension)
-  spec/                   → @ifi/pi-spec (raw .ts spec-driven workflow package)
-  cursor/                 → @ifi/pi-provider-cursor (raw .ts experimental Cursor provider package)
-  ollama/                 → @ifi/pi-provider-ollama (raw .ts experimental Ollama local + cloud provider package)
-  analytics-db/           → @ifi/pi-analytics-db (SQLite schema and Drizzle ORM client for analytics data)
-  analytics-dashboard/    → @ifi/pi-analytics-dashboard (private React dashboard for visualizing AI usage)
-  analytics-extension/    → @ifi/pi-analytics-extension (raw .ts analytics tracking extension for pi)
-  docs/                   → @ifi/oh-pi-docs (private documentation site for oh-pi)
-  oh-pi/                  → @ifi/oh-pi (installer CLI: `npx @ifi/oh-pi`)
+  core/                   → @monopi/core (compiled library: types, registry, i18n)
+  cli/                    → @monopi/cli (compiled binary: TUI configurator)
+  extensions/             → @monopi/extensions (raw .ts extensions)
+  adaptive-routing/       → @monopi/adaptive-routing (optional raw .ts routing package)
+  themes/                 → @monopi/themes (JSON theme files)
+  skills/                 → @monopi/skills (skill directories)
+  agents/                 → @monopi/agents (AGENTS.md templates)
+  subagents/              → @monopi/subagents (raw .ts subagent orchestration package)
+  shared-qna/             → @monopi/shared-qna (shared TUI helper library)
+  cursor/                 → @monopi/provider-cursor (raw .ts experimental Cursor provider package)
+  ollama/                 → @monopi/provider-ollama (raw .ts experimental Ollama local + cloud provider package)
+  analytics-db/           → @monopi/analytics-db (SQLite schema and Drizzle ORM client for analytics data)
+  analytics-dashboard/    → @monopi/analytics-dashboard (private React dashboard for visualizing AI usage)
+  analytics-extension/    → @monopi/analytics-extension (raw .ts analytics tracking extension for pi)
+  docs/                   → @monopi/docs (private documentation site for monopi)
+  monopi/                  → @monopi/monopi (installer CLI: `npx @monopi/monopi`)
 ```
 
 ## Package conventions
 
 - Pi extensions ship raw `.ts` files; pi loads them via `jiti`.
 - `core` and `cli` are compiled and emit `dist/` via `tsc`.
-- CLI code imports from `@ifi/oh-pi-core`, not via relative paths.
+- CLI code imports from `@monopi/core`, not via relative paths.
 - Extensions import from pi SDK packages.
-- `@ifi/pi-spec` keeps state in `.specify/` and feature artifacts in `specs/###-feature-name/`.
 - `noDefaultExport: off` is intentional because extensions use default exports as their API pattern.
 - Ant colony runs use isolated git worktrees by default, with shared-cwd fallback when worktrees are unavailable.

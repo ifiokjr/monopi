@@ -1,6 +1,6 @@
 <!-- {@ohPiCoreAgentPathsOverview} -->
 
-`@ifi/oh-pi-core` exposes a small set of path helpers for packages that need to resolve the pi agent directory, extension config locations, and shared workspace-scoped storage paths without hardcoding `~/.pi/agent` throughout the codebase.
+`@monopi/core` exposes a small set of path helpers for packages that need to resolve the pi agent directory, extension config locations, and shared workspace-scoped storage paths without hardcoding `~/.pi/agent` throughout the codebase.
 
 Use these helpers when a package needs to:
 
@@ -53,7 +53,7 @@ This helper combines the resolved pi agent directory, a package namespace, the m
 
 <!-- {@sharedQnaPiTuiLoaderOverview} -->
 
-`@ifi/pi-shared-qna` centralizes `@earendil-works/pi-tui` loading so first-party packages reuse one fallback strategy instead of embedding Bun-global lookup logic in multiple runtime modules.
+`@monopi/shared-qna` centralizes `@earendil-works/pi-tui` loading so first-party packages reuse one fallback strategy instead of embedding Bun-global lookup logic in multiple runtime modules.
 
 The shared loader tries the normal package resolution path first, then falls back to Bun global install locations when a project is running outside a conventional dependency layout.
 
@@ -74,18 +74,6 @@ Load `@earendil-works/pi-tui` with a shared fallback strategy.
 The loader first tries the normal package import path, then walks the Bun-global fallback list, and finally throws a helpful error that names every checked location when none of them resolve.
 
 <!-- {/sharedQnaRequirePiTuiModuleDocs} -->
-
-<!-- {@piSpecSubcommandsDocs} -->
-
-Canonical `/spec` subcommands exposed by the extension. Keep README command lists and exported type metadata in sync with this source of truth: `status`, `help`, `init`, `constitution`, `specify`, `clarify`, `checklist`, `plan`, `tasks`, `analyze`, `implement`, `list`, and `next`.
-
-<!-- {/piSpecSubcommandsDocs} -->
-
-<!-- {@piSpecWorkflowStepsDocs} -->
-
-Workflow steps that hand work back into pi for feature execution. These ordered steps are `constitution`, `specify`, `clarify`, `checklist`, `plan`, `tasks`, `analyze`, and `implement`. Keep contributor-facing docs aligned with the same sequence.
-
-<!-- {/piSpecWorkflowStepsDocs} -->
 
 <!-- {@subagentsProjectAgentStorageOverview} -->
 
@@ -224,7 +212,7 @@ The watchdog samples CPU, memory, and event-loop lag on an interval, records rec
 
 Use this reading path depending on what you are trying to do:
 
-- **I just want to use oh-pi** → start in the root `README.md`, then jump into `docs/feature-catalog.md` for package-by-package detail
+- **I just want to use monopi** → start in the root `README.md`, then jump into `docs/feature-catalog.md` for package-by-package detail
 - **I want to try the latest local changes** → run `pnpm install`, `pnpm pi:local`, restart `pi`, then exercise the feature in a real session
 - **I want to contribute** → read `CONTRIBUTING.md`, then the package README for the area you are changing
 - **I want to understand ownership** → use `docs/feature-catalog.md` to see which package owns which runtime feature, content pack, or library surface
@@ -234,20 +222,17 @@ Use this reading path depending on what you are trying to do:
 <!-- {@repoArchitectureAtAGlanceDocs} -->
 
 ```text
-oh-pi repo
+monopi repo
 ├── installer
-│   └── @ifi/oh-pi
+│   └── @monopi/monopi
 ├── default runtime packages
 │   ├── extensions
 │   ├── background-tasks
 │   ├── diagnostics
 │   ├── subagents
-│   ├── plan
-│   ├── spec
 │   └── web-remote
 ├── content packs
 │   ├── themes
-│   ├── prompts
 │   ├── skills
 │   └── agents
 ├── opt-in extras
@@ -265,6 +250,7 @@ oh-pi repo
     ├── shared-qna
     ├── web-client
     ├── web-server
+    ├── db
     ├── analytics-db
     ├── analytics-dashboard
     └── docs
@@ -274,18 +260,15 @@ oh-pi repo
 
 <!-- {@repoDefaultInstallerPackagesDocs} -->
 
-Default runtime/content packages installed by `npx @ifi/oh-pi`:
+Default runtime/content packages installed by `npx @monopi/monopi`:
 
-- `@ifi/oh-pi-extensions`
-- `@ifi/pi-background-tasks`
-- `@ifi/pi-diagnostics`
-- `@ifi/pi-extension-subagents`
-- `@ifi/pi-plan`
-- `@ifi/pi-spec`
-- `@ifi/pi-web-remote`
-- `@ifi/oh-pi-themes`
-- `@ifi/oh-pi-prompts`
-- `@ifi/oh-pi-skills`
+- `@monopi/extensions`
+- `@monopi/background-tasks`
+- `@monopi/diagnostics`
+- `@monopi/subagents`
+- `@monopi/web-remote`
+- `@monopi/themes`
+- `@monopi/skills`
 
 <!-- {/repoDefaultInstallerPackagesDocs} -->
 
@@ -293,26 +276,26 @@ Default runtime/content packages installed by `npx @ifi/oh-pi`:
 
 Opt-in packages that stay separate from the default installer bundle:
 
-- `@ifi/pi-extension-adaptive-routing`
-- `@ifi/pi-provider-catalog`
-- `@ifi/pi-provider-cursor`
-- `@ifi/pi-provider-ollama`
-- `@ifi/pi-analytics-extension`
-- `@ifi/pi-remote-tailscale`
-- `@ifi/pi-bash-live-view`
-- `@ifi/pi-pretty`
+- `@monopi/adaptive-routing`
+- `@monopi/provider-catalog`
+- `@monopi/provider-cursor`
+- `@monopi/provider-ollama`
+- `@monopi/analytics-extension`
+- `@monopi/remote-tailscale`
+- `@monopi/bash-live-view`
+- `@monopi/pretty`
 
 <!-- {/repoExperimentalPackagesDocs} -->
 
 <!-- {@repoContributorCompiledPackagesDocs} -->
 
-Most runtime packages in this repo ship raw TypeScript and can be loaded directly by pi. A smaller set of contributor-facing packages (`core`, `cli`, `web-client`, `web-server`) emit `dist/` output, so build those when you are working on them directly.
+Most runtime packages in this repo ship raw TypeScript and can be loaded directly by pi. A smaller set of contributor-facing packages (`core`, `cli`, `db`, `web-client`, `web-server`) emit `dist/` output, so build those when you are working on them directly.
 
 <!-- {/repoContributorCompiledPackagesDocs} -->
 
 <!-- {@repoPiLocalSwitcherOverviewDocs} -->
 
-The `pnpm pi:local` workflow points a real pi install at this checkout instead of the published npm packages. It is the normal local development loop for testing unpublished oh-pi changes in a real interactive pi session.
+The `pnpm pi:local` workflow points a real pi install at this checkout instead of the published npm packages. It is the normal local development loop for testing unpublished monopi changes in a real interactive pi session.
 
 <!-- {/repoPiLocalSwitcherOverviewDocs} -->
 
@@ -330,10 +313,10 @@ pi
 
 `pnpm pi:local` runs the repo-local source switcher in `local` mode. It:
 
-- rewrites only the managed oh-pi package sources in your pi settings
+- rewrites only the managed monopi package sources in your pi settings
 - points those package sources at the workspace packages in this checkout
 - preserves package-specific config objects already present in `settings.json`
-- refreshes package manifest paths so newly added extensions/prompts/skills/themes are picked up
+- refreshes package manifest paths so newly added extensions/skills/themes are picked up
 - runs `pi install` for newly added managed packages and `pi update` for packages you already had configured
 - manages the default installer set and the opt-in experimental packages used for local feature development
 - lets you validate unpublished changes from a branch, worktree, or detached checkout before release
@@ -344,21 +327,18 @@ pi
 
 Managed local switching covers these packages:
 
-- `@ifi/oh-pi-extensions`
-- `@ifi/pi-background-tasks`
-- `@ifi/pi-diagnostics`
-- `@ifi/pi-extension-subagents`
-- `@ifi/pi-plan`
-- `@ifi/pi-spec`
-- `@ifi/pi-web-remote`
-- `@ifi/oh-pi-themes`
-- `@ifi/oh-pi-prompts`
-- `@ifi/oh-pi-skills`
-- `@ifi/pi-extension-adaptive-routing`
-- `@ifi/pi-provider-catalog`
-- `@ifi/pi-provider-cursor`
-- `@ifi/pi-provider-ollama`
-- `@ifi/pi-analytics-extension`
+- `@monopi/extensions`
+- `@monopi/background-tasks`
+- `@monopi/diagnostics`
+- `@monopi/subagents`
+- `@monopi/web-remote`
+- `@monopi/themes`
+- `@monopi/skills`
+- `@monopi/adaptive-routing`
+- `@monopi/provider-catalog`
+- `@monopi/provider-cursor`
+- `@monopi/provider-ollama`
+- `@monopi/analytics-extension`
 
 <!-- {/repoPiLocalManagedPackagesDocs} -->
 
@@ -370,7 +350,7 @@ After switching package sources, fully restart `pi`. Do not rely on `/reload` fo
 
 <!-- {@repoPiLocalInstallFreshnessDocs} -->
 
-If you recently pulled, rebased, or switched branches in the checkout you pointed `pi` at, run `pnpm install --frozen-lockfile` there before restarting `pi`. Local source mode loads workspace files directly, so stale `node_modules` can surface missing internal `@ifi/*` package errors.
+If you recently pulled, rebased, or switched branches in the checkout you pointed `pi` at, run `pnpm install --frozen-lockfile` there before restarting `pi`. Local source mode loads workspace files directly, so stale `node_modules` can surface missing internal `@monopi/*` package errors.
 
 <!-- {/repoPiLocalInstallFreshnessDocs} -->
 

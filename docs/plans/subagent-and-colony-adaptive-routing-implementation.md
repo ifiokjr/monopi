@@ -7,7 +7,7 @@
 
 ## Summary
 
-Implement delegated adaptive routing in small waves by extending existing oh-pi primitives instead of introducing a new orchestration framework.
+Implement delegated adaptive routing in small waves by extending existing monopi primitives instead of introducing a new orchestration framework.
 
 The implementation should:
 
@@ -24,16 +24,16 @@ The implementation should:
 **Language**: TypeScript (strict mode)\
 **Primary packages**:
 
-- `packages/adaptive-routing` — adaptive routing package
-- `packages/extensions` — safety/runtime extensions
-- `packages/subagents` — agent definitions, execution, management UI, schemas
+- `packages/monopi__adaptive-routing` — adaptive routing package
+- `packages/monopi__extensions` — safety/runtime extensions
+- `packages/monopi__subagents` — agent definitions, execution, management UI, schemas
 - `packages/ant-colony` — caste configs, spawning, budget planning, UI
 
 **Testing**: Vitest\
 **Build tool**: pnpm workspace\
 **Existing routing primitives**:
 
-- `packages/adaptive-routing/*`
+- `packages/monopi__adaptive-routing/*`
 - `docs/plans/adaptive-routing-mode.md`
 
 ## Design Constraints
@@ -70,9 +70,9 @@ This plan is complete when:
 
 **Likely files**:
 
-- `packages/extensions/extensions/*` (new helper or focused guard extension wiring)
-- `packages/extensions/README.md`
-- related tests under `packages/extensions/extensions/*.test.ts`
+- `packages/monopi__extensions/extensions/*` (new helper or focused guard extension wiring)
+- `packages/monopi__extensions/README.md`
+- related tests under `packages/monopi__extensions/extensions/*.test.ts`
 
 **Acceptance**:
 
@@ -93,17 +93,17 @@ This plan is complete when:
 
 **Likely files**:
 
-- `packages/subagents/agents.ts`
-- `packages/subagents/agent-serializer.ts`
-- `packages/subagents/agent-management.ts`
-- `packages/subagents/agent-manager-detail.ts`
-- `packages/subagents/agent-manager-edit.ts`
-- `packages/subagents/README.md`
-- `packages/subagents/schemas.ts`
+- `packages/monopi__subagents/agents.ts`
+- `packages/monopi__subagents/agent-serializer.ts`
+- `packages/monopi__subagents/agent-management.ts`
+- `packages/monopi__subagents/agent-manager-detail.ts`
+- `packages/monopi__subagents/agent-manager-edit.ts`
+- `packages/monopi__subagents/README.md`
+- `packages/monopi__subagents/schemas.ts`
 - tests:
-  - `packages/subagents/tests/agents.test.ts`
-  - `packages/subagents/tests/agent-serializer.test.ts`
-  - `packages/subagents/tests/session-churn.test.ts` only if event payloads change
+  - `packages/monopi__subagents/tests/agents.test.ts`
+  - `packages/monopi__subagents/tests/agent-serializer.test.ts`
+  - `packages/monopi__subagents/tests/session-churn.test.ts` only if event payloads change
 
 **Acceptance**:
 
@@ -129,14 +129,14 @@ This plan is complete when:
 
 **Likely files**:
 
-- `packages/subagents/execution.ts`
-- `packages/subagents/index.ts`
-- `packages/subagents/types.ts`
-- `packages/subagents/settings.ts` if chain inheritance changes are needed
-- `packages/adaptive-routing/*` shared helpers/config/types
+- `packages/monopi__subagents/execution.ts`
+- `packages/monopi__subagents/index.ts`
+- `packages/monopi__subagents/types.ts`
+- `packages/monopi__subagents/settings.ts` if chain inheritance changes are needed
+- `packages/monopi__adaptive-routing/*` shared helpers/config/types
 - tests:
-  - `packages/subagents/tests/*`
-  - `packages/adaptive-routing/*.test.ts`
+  - `packages/monopi__subagents/tests/*`
+  - `packages/monopi__adaptive-routing/*.test.ts`
 
 **Acceptance**:
 
@@ -187,11 +187,11 @@ This plan is complete when:
 
 **Likely files**:
 
-- `packages/subagents/agent-manager-detail.ts`
-- `packages/subagents/agent-management.ts`
-- `packages/subagents/render.ts`
+- `packages/monopi__subagents/agent-manager-detail.ts`
+- `packages/monopi__subagents/agent-management.ts`
+- `packages/monopi__subagents/render.ts`
 - colony UI/status rendering files
-- docs in `packages/subagents/README.md`, `packages/ant-colony/README.md`, `packages/extensions/README.md`
+- docs in `packages/monopi__subagents/README.md`, `packages/ant-colony/README.md`, `packages/monopi__extensions/README.md`
 
 **Acceptance**:
 

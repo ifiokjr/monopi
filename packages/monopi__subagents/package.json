@@ -1,0 +1,53 @@
+{
+	"name": "@monopi/subagents",
+	"version": "0.5.1",
+	"description": "Full-featured subagent orchestration extension for pi, built on top of nicobailon/pi-subagents.",
+	"keywords": [
+		"chains",
+		"delegation",
+		"multi-agent",
+		"pi",
+		"pi-coding-agent",
+		"pi-package",
+		"subagents"
+	],
+	"homepage": "https://github.com/ifiokjr/monopi/tree/main/packages/monopi__subagents",
+	"bugs": {
+		"url": "https://github.com/ifiokjr/monopi/issues"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ifiokjr/monopi.git",
+		"directory": "packages/monopi__subagents"
+	},
+	"bin": {
+		"pi-extension-subagents": "install.mjs"
+	},
+	"files": [
+		"*.ts",
+		"*.mjs",
+		"agents",
+		"README.md",
+		"banner.png",
+		"!*.test.ts",
+		"!test/**"
+	],
+	"type": "module",
+	"dependencies": {
+		"@monopi/core": "0.5.1"
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-agent-core": ">=0.78.1",
+		"@earendil-works/pi-ai": ">=0.78.1",
+		"@earendil-works/pi-coding-agent": ">=0.78.1",
+		"@earendil-works/pi-tui": ">=0.78.1",
+		"typebox": "^1.1.24"
+	},
+	"pi": {
+		"extensions": [
+			"./index.ts",
+			"./notify.ts"
+		]
+	}
+}

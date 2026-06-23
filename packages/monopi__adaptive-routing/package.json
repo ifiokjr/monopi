@@ -1,0 +1,50 @@
+{
+	"name": "@monopi/adaptive-routing",
+	"version": "0.5.1",
+	"description": "Optional adaptive and delegated routing extension for pi.",
+	"keywords": [
+		"adaptive-routing",
+		"pi",
+		"pi-coding-agent",
+		"pi-package",
+		"routing"
+	],
+	"homepage": "https://github.com/ifiokjr/monopi/tree/main/packages/monopi__adaptive-routing",
+	"bugs": {
+		"url": "https://github.com/ifiokjr/monopi/issues"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ifiokjr/monopi.git",
+		"directory": "packages/monopi__adaptive-routing"
+	},
+	"files": [
+		"*.ts",
+		"*.json",
+		"README.md",
+		"!**/*.test.ts"
+	],
+	"type": "module",
+	"scripts": {
+		"build": "pnpm run typecheck && pnpm run test:worktree",
+		"typecheck": "tsgo --project ./tsconfig.json --noEmit",
+		"test:worktree": "vitest run --config ./vitest.worktree.config.ts",
+		"evaluate:corpus": "pnpm tsx ./evaluate-corpus.ts"
+	},
+	"dependencies": {
+		"@monopi/core": "0.5.1"
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-agent-core": ">=0.78.1",
+		"@earendil-works/pi-ai": ">=0.78.1",
+		"@earendil-works/pi-coding-agent": ">=0.78.1",
+		"@earendil-works/pi-tui": ">=0.78.1",
+		"typebox": "^1.1.24"
+	},
+	"pi": {
+		"extensions": [
+			"./index.ts"
+		]
+	}
+}

@@ -4,7 +4,7 @@
 <!-- {=repoPiLocalSwitcherOverviewDocs} -->
 
 The `pnpm pi:local` workflow points a real pi install at this checkout instead of the published npm
-packages. It is the normal local development loop for testing unpublished oh-pi changes in a real
+packages. It is the normal local development loop for testing unpublished monopi changes in a real
 interactive pi session.
 
 <!-- {/repoPiLocalSwitcherOverviewDocs} -->
@@ -13,10 +13,10 @@ interactive pi session.
 
 `pnpm pi:local` runs the repo-local source switcher in `local` mode. It:
 
-- rewrites only the managed oh-pi package sources in your pi settings
+- rewrites only the managed monopi package sources in your pi settings
 - points those package sources at the workspace packages in this checkout
 - preserves package-specific config objects already present in `settings.json`
-- refreshes package manifest paths so newly added extensions/prompts/skills/themes are picked up
+- refreshes package manifest paths so newly added extensions/skills/themes are picked up
 - runs `pi install` for newly added managed packages and `pi update` for packages you already had configured
 - manages the default installer set and the opt-in experimental packages used for local feature development
 - lets you validate unpublished changes from a branch, worktree, or detached checkout before release
@@ -27,25 +27,21 @@ interactive pi session.
 
 Managed local switching covers these packages:
 
-- `@ifi/oh-pi-extensions`
-- `@ifi/pi-background-tasks`
-- `@ifi/oh-pi-ant-colony`
-- `@ifi/pi-diagnostics`
-- `@ifi/pi-extension-subagents`
-- `@ifi/pi-plan`
-- `@ifi/pi-spec`
-- `@ifi/pi-web-remote`
-- `@ifi/oh-pi-themes`
-- `@ifi/oh-pi-prompts`
-- `@ifi/oh-pi-skills`
-- `@ifi/pi-extension-adaptive-routing`
-- `@ifi/pi-provider-catalog`
-- `@ifi/pi-provider-cursor`
-- `@ifi/pi-provider-ollama`
-- `@ifi/pi-bash-live-view`
-- `@ifi/pi-pretty`
-- `@ifi/pi-remote-tailscale`
-- `@ifi/pi-analytics-extension`
+- `@monopi/extensions`
+- `@monopi/background-tasks`
+- `@monopi/diagnostics`
+- `@monopi/subagents`
+- `@monopi/web-remote`
+- `@monopi/themes`
+- `@monopi/skills`
+- `@monopi/adaptive-routing`
+- `@monopi/provider-catalog`
+- `@monopi/provider-cursor`
+- `@monopi/provider-ollama`
+- `@monopi/bash-live-view`
+- `@monopi/pretty`
+- `@monopi/remote-tailscale`
+- `@monopi/analytics-extension`
 
 <!-- {/repoPiLocalManagedPackagesDocs} -->
 
@@ -64,7 +60,7 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 
-import { SWITCHER_PACKAGES } from "../packages/oh-pi/bin/package-list.mts";
+import { SWITCHER_PACKAGES } from "../packages/monopi__monopi/bin/package-list.mts";
 
 const IS_WINDOWS = process.platform === "win32";
 
@@ -541,7 +537,7 @@ export function resolvePiCommand(
 function printHelp() {
 	console.log(
 		`
-oh-pi source switcher — toggle pi between local workspace packages and published npm packages
+monopi source switcher — toggle pi between local workspace packages and published npm packages
 
 Usage:
   pnpm pi:switch local [--path <repo>] [--pi-local] [--dry-run]
@@ -557,7 +553,7 @@ Options:
 
 Examples:
   pnpm pi:local
-  pnpm pi:local -- --path /tmp/oh-pi-branch
+  pnpm pi:local -- --path /tmp/monopi-branch
   pnpm pi:published
   pnpm pi:switch remote -- --version 0.4.4
   pnpm pi:switch local -- --pi-local
@@ -671,7 +667,7 @@ function printChangeSummary(
 	piLocal: boolean,
 ) {
 	const scope = piLocal ? "project" : "user";
-	console.log(`\nSwitching oh-pi packages to ${mode} mode (${scope} settings)`);
+	console.log(`\nSwitching monopi packages to ${mode} mode (${scope} settings)`);
 	console.log(`Settings: ${settingsPath}`);
 	if (mode === "local") {
 		console.log(`Repo: ${repoPath}`);
@@ -691,7 +687,7 @@ function printLocalInstallHint(repoPath: string) {
 		`Reminder: if you recently pulled, rebased, or switched branches in ${repoPath}, run \`pnpm install --frozen-lockfile\` before restarting pi.`,
 	);
 	console.log(
-		"Local source mode loads workspace files directly, and pnpm pi:local refreshes compiled runtime dependencies like @ifi/oh-pi-core before switching.",
+		"Local source mode loads workspace files directly, and pnpm pi:local refreshes compiled runtime dependencies like @monopi/core before switching.",
 	);
 }
 
@@ -757,14 +753,14 @@ function getLocalRuntimeSyncTargets(repoPath: string): LocalRuntimeSyncTarget[] 
 				"--dir",
 				repoPath,
 				"--filter",
-				"@ifi/oh-pi-core",
+				"@monopi/core",
 				"exec",
 				"tsdown",
 				"--config",
-				path.join("packages", "core", "tsdown.config.ts"),
+				path.join("packages", "monopi__core", "tsdown.config.ts"),
 			],
-			packageDir: path.join(repoPath, "packages", "core"),
-			packageName: "@ifi/oh-pi-core",
+			packageDir: path.join(repoPath, "packages", "monopi__core"),
+			packageName: "@monopi/core",
 			relativeOutputDir: "dist",
 		},
 	];
@@ -789,7 +785,7 @@ function syncLocalRuntimeArtifacts(repoPath: string): void {
 
 function printStatus(currentSources: ReadonlyMap<string, string>, settingsPath: string, piLocal: boolean) {
 	const scope = piLocal ? "project" : "user";
-	console.log(`\noh-pi managed package sources (${scope} settings)`);
+	console.log(`\nmonopi managed package sources (${scope} settings)`);
 	console.log(`Settings: ${settingsPath}`);
 	console.log("");
 	for (const packageName of SWITCHER_PACKAGES) {

@@ -1,0 +1,98 @@
+import { EXTENSIONS, getLocale, selectLanguage } from "@monopi/core";
+
+import type { WizardBaseConfig } from "./tui/config-wizard.js";
+import type { OhPConfigWithRouting } from "./types.js";
+import type { EnvInfo } from "./utils/detect.js";
+
+import { runConfigWizard } from "./tui/config-wizard.js";
+import { confirmApply } from "./tui/confirm-apply.js";
+import { runInstaller } from "./tui/installer.js";
+import { selectMode } from "./tui/mode-select.js";
+import { selectPreset } from "./tui/preset-select.js";
+import { setupProviders } from "./tui/provider-setup.js";
+import { setupAdaptiveRouting } from "./tui/routing-setup.js";
+import { welcome } from "./tui/welcome.js";
+import { detectEnv } from "./utils/detect.js";
+
+export interface RunOptions {
+	yes?: boolean;
+}
+
+/**
+ * Main entry point — orchestrates the full monopi setup flow:
+ * detect environment → select language → welcome → choose mode → configure → apply.
+ */
+export async function run(options: RunOptions = {}) {
+	if (!options.yes && process.stdin.isTTY) {
+		// New interactive installer (default in TTY environments — breaking change)
+		await runInstaller();
+		return;
+	}
+	// Non-interactive legacy wizard path (used with --yes or in CI/tests)
+	const env = await detectEnv();
+	await selectLanguage();
+	welcome(env);
+
+	const mode = await selectMode(env);
+	let config: OhPConfigWithRouting;
+
+	if (mode === "quick") {
+		config = await quickFlow(env);
+	} else if (mode === "preset") {
+		config = await presetFlow(env);
+	} else {
+		config = await customFlow(env);
+	}
+
+	config.locale = getLocale();
+	await confirmApply(config, env);
+}
+
+/**
+ * Quick mode — only ask for provider setup, use sensible defaults for everything else.
+ * @param env - Detected environment info
+ * @returns Generated config with recommended defaults
+ */
+async function quickFlow(env: EnvInfo): Promise<OhPConfigWithRouting> {
+	const providerSetup = await setupProviders(env);
+	const adaptiveRouting = await setupAdaptiveRouting([
+		...(env.existingProviders ?? []).map((name) => ({ apiKey: "none", name })),
+		...providerSetup.providers,
+	]);
+	return {
+		...providerSetup,
+		adaptiveRouting,
+		extensions: ["git-guard", "custom-footer", "diagnostics", "compact-header", "worktree"],
+		agents: "general-developer",
+		keybindings: "default",
+		theme: "dark",
+		thinking: "medium",
+	};
+}
+
+/**
+ * Preset mode — user picks a role-based preset, then configures providers.
+ * @param env - Detected environment info
+ * @returns Generated config based on selected preset
+ */
+async function presetFlow(env: EnvInfo): Promise<OhPConfigWithRouting> {
+	const preset = await selectPreset();
+	return runConfigWizard(env, preset);
+}
+
+/**
+ * Custom mode — user picks theme, keybindings, extensions, agents, and advanced options.
+ * @param env - Detected environment info
+ * @returns Fully customized config
+ */
+function customFlow(env: EnvInfo): Promise<OhPConfigWithRouting> {
+	const defaultExtensions = EXTENSIONS.filter((e) => e.default).map((e) => e.name);
+	const initial: WizardBaseConfig = {
+		agents: "general-developer",
+		extensions: defaultExtensions,
+		keybindings: "default",
+		theme: "dark",
+		thinking: "medium",
+	};
+	return runConfigWizard(env, initial);
+}

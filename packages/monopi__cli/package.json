@@ -1,0 +1,56 @@
+{
+	"name": "@monopi/cli",
+	"version": "0.5.1",
+	"description": "Interactive TUI configurator for pi-coding-agent.",
+	"keywords": [
+		"cli",
+		"configuration",
+		"installer",
+		"monopi",
+		"pi",
+		"pi-coding-agent",
+		"tui"
+	],
+	"homepage": "https://github.com/ifiokjr/monopi/tree/main/packages/monopi__cli",
+	"bugs": {
+		"url": "https://github.com/ifiokjr/monopi/issues"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ifiokjr/monopi.git",
+		"directory": "packages/monopi__cli"
+	},
+	"bin": {
+		"monopi": "dist/bin/monopi.js"
+	},
+	"files": [
+		"dist",
+		"README.md"
+	],
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"scripts": {
+		"clean": "node -e \"import('node:fs').then(fs => fs.rmSync('dist',{ recursive: true, force: true }))\"",
+		"build": "tsdown --config tsdown.config.ts",
+		"build:fast": "pnpm clean && tsgo --project tsconfig.json",
+		"typecheck": "tsgo --project tsconfig.json --noEmit",
+		"test": "vitest run",
+		"start": "node dist/bin/monopi.js"
+	},
+	"dependencies": {
+		"@clack/prompts": "^1.2.0",
+		"@monopi/agents": "0.5.1",
+		"@monopi/core": "0.5.1",
+		"@monopi/extensions": "0.5.1",
+		"@monopi/shared-qna": "0.5.1",
+		"@monopi/skills": "0.5.1",
+		"@monopi/subagents": "0.5.1",
+		"@monopi/themes": "0.5.1",
+		"chalk": "^5.6.2"
+	},
+	"engines": {
+		"node": ">=20.0.0"
+	}
+}

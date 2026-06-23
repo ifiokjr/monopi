@@ -6,26 +6,27 @@ settings:
 
 overrides:
   file-type: 21.3.2
-  undici: '>=7.28.0 <8'
+  undici: 7.28.0
   yauzl@<3.2.1: '>=3.2.1'
   file-type@>=20.0.0 <=21.3.2: '>=21.3.2'
   fast-xml-parser: '>=5.7.0'
   fast-xml-builder@<=1.1.6: '>=1.1.7'
   fast-uri@<=3.1.1: '>=3.1.2'
   ip-address@<=10.1.0: '>=10.1.1'
-  hono: '>=4.12.25'
+  hono@<4.12.25: '>=4.12.25'
   brace-expansion@^2.0.2: 2.0.3
   brace-expansion@^5.0.2: 5.0.5
   yaml: 2.8.3
   picomatch: 4.0.4
-  vite: '>=8.0.16'
+  vite: 8.0.16
+  hono@>=4.0.0 <4.12.25: '>=4.12.25'
   '@hono/node-server@<1.19.13': '>=1.19.13'
   basic-ftp@<=5.3.0: '>=5.3.1'
-  protobufjs: '>=7.6.1 <8'
+  protobufjs: 7.6.1
   esbuild@<=0.24.2: '>=0.25.0'
   drizzle-orm@<0.45.2: '>=0.45.2'
-  ws: '>=8.21.0'
-  shell-quote: '>=1.8.4'
+  shell-quote: 1.8.4
+  ws: 8.21.0
 
 importers:
 
@@ -72,9 +73,9 @@ importers:
         version: 4.21.0
       vitest:
         specifier: ^4.1.5
-        version: 4.1.5(@opentelemetry/api@1.9.0)(@types/node@22.19.17)(@vitest/browser-playwright@4.1.5)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
+        version: 4.1.5(@types/node@22.19.17)(@vitest/browser-playwright@4.1.5)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
 
-  packages/adaptive-routing:
+  packages/monopi__adaptive-routing:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.78.1'
@@ -88,20 +89,20 @@ importers:
       '@earendil-works/pi-tui':
         specifier: '>=0.78.1'
         version: 0.78.1
-      '@ifi/oh-pi-core':
+      '@monopi/core':
         specifier: 0.5.1
-        version: link:../core
+        version: link:../monopi__core
       typebox:
         specifier: ^1.1.24
         version: 1.3.0
 
-  packages/agents: {}
+  packages/monopi__agents: {}
 
-  packages/analytics-dashboard:
+  packages/monopi__analytics-dashboard:
     dependencies:
-      '@ifi/pi-analytics-db':
+      '@monopi/analytics-db':
         specifier: 0.5.1
-        version: link:../analytics-db
+        version: link:../monopi__analytics-db
       '@tanstack/react-query':
         specifier: ^5.74.0
         version: 5.100.5(react@19.2.5)
@@ -200,20 +201,20 @@ importers:
         specifier: ^4.19.0
         version: 4.21.0
       vite:
-        specifier: '>=8.0.16'
+        specifier: 8.0.16
         version: 8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3)
       vitest:
         specifier: ^4.1.4
-        version: 4.1.5(@opentelemetry/api@1.9.0)(@types/node@25.6.0)(@vitest/browser-playwright@4.1.8)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
+        version: 4.1.5(@types/node@25.6.0)(@vitest/browser-playwright@4.1.8)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
 
-  packages/analytics-db:
+  packages/monopi__analytics-db:
     dependencies:
       better-sqlite3:
         specifier: ^12.0.0
         version: 12.9.0
       drizzle-orm:
         specifier: '>=0.45.2'
-        version: 0.45.2(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@12.9.0)
+        version: 0.45.2(@types/better-sqlite3@7.6.13)(better-sqlite3@12.9.0)
     devDependencies:
       '@types/better-sqlite3':
         specifier: ^7.6.13
@@ -222,7 +223,7 @@ importers:
         specifier: ^0.31.10
         version: 0.31.10
 
-  packages/analytics-extension:
+  packages/monopi__analytics-extension:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.78.1'
@@ -236,14 +237,14 @@ importers:
       '@earendil-works/pi-tui':
         specifier: '>=0.78.1'
         version: 0.78.1
-      '@ifi/pi-analytics-db':
+      '@monopi/analytics-db':
         specifier: 0.5.1
-        version: link:../analytics-db
+        version: link:../monopi__analytics-db
       typebox:
         specifier: ^1.1.24
         version: 1.3.0
 
-  packages/background-tasks:
+  packages/monopi__background-tasks:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.78.1'
@@ -261,46 +262,90 @@ importers:
         specifier: ^1.1.24
         version: 1.3.0
 
-  packages/cli:
+  packages/monopi__bash-live-view:
+    dependencies:
+      '@earendil-works/pi-agent-core':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-ai':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-coding-agent':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-tui':
+        specifier: '>=0.78.1'
+        version: 0.78.1
+      '@xterm/headless':
+        specifier: ^6.0.0
+        version: 6.0.0
+      node-pty:
+        specifier: ^1.0.0
+        version: 1.1.0
+      typebox:
+        specifier: ^1.1.24
+        version: 1.3.0
+
+  packages/monopi__cli:
     dependencies:
       '@clack/prompts':
         specifier: ^1.2.0
         version: 1.2.0
-      '@ifi/oh-pi-agents':
+      '@monopi/agents':
         specifier: 0.5.1
-        version: link:../agents
-      '@ifi/oh-pi-core':
+        version: link:../monopi__agents
+      '@monopi/core':
         specifier: 0.5.1
-        version: link:../core
-      '@ifi/oh-pi-extensions':
+        version: link:../monopi__core
+      '@monopi/extensions':
         specifier: 0.5.1
-        version: link:../extensions
-      '@ifi/oh-pi-prompts':
+        version: link:../monopi__extensions
+      '@monopi/shared-qna':
         specifier: 0.5.1
-        version: link:../prompts
-      '@ifi/oh-pi-skills':
+        version: link:../monopi__shared-qna
+      '@monopi/skills':
         specifier: 0.5.1
-        version: link:../skills
-      '@ifi/oh-pi-themes':
+        version: link:../monopi__skills
+      '@monopi/subagents':
         specifier: 0.5.1
-        version: link:../themes
-      '@ifi/pi-extension-subagents':
+        version: link:../monopi__subagents
+      '@monopi/themes':
         specifier: 0.5.1
-        version: link:../subagents
-      '@ifi/pi-plan':
-        specifier: 0.5.1
-        version: link:../plan
-      '@ifi/pi-shared-qna':
-        specifier: 0.5.1
-        version: link:../shared-qna
-      '@ifi/pi-spec':
-        specifier: 0.5.1
-        version: link:../spec
+        version: link:../monopi__themes
       chalk:
         specifier: ^5.6.2
         version: 5.6.2
 
-  packages/core:
+  packages/monopi__context:
+    dependencies:
+      '@earendil-works/pi-agent-core':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-ai':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-coding-agent':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-tui':
+        specifier: '>=0.78.1'
+        version: 0.78.1
+      typebox:
+        specifier: ^1.1.24
+        version: 1.3.0
+    devDependencies:
+      '@types/better-sqlite3':
+        specifier: ^7.6.13
+        version: 7.6.13
+      '@types/node':
+        specifier: ^25.6.0
+        version: 25.6.0
+    optionalDependencies:
+      better-sqlite3:
+        specifier: ^12.6.2
+        version: 12.9.0
+
+  packages/monopi__core:
     dependencies:
       '@clack/prompts':
         specifier: ^1.2.0
@@ -309,28 +354,26 @@ importers:
         specifier: ^5.4.0
         version: 5.6.2
 
-  packages/cursor:
+  packages/monopi__db:
     dependencies:
-      '@bufbuild/protobuf':
-        specifier: ^2.12.0
-        version: 2.12.0
-      '@earendil-works/pi-agent-core':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-ai':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.78.1'
         version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-tui':
-        specifier: '>=0.78.1'
-        version: 0.78.1
-      typebox:
-        specifier: ^1.1.24
-        version: 1.3.0
+      better-sqlite3:
+        specifier: ^12.0.0
+        version: 12.9.0
+      drizzle-orm:
+        specifier: '>=0.45.2'
+        version: 0.45.2(@types/better-sqlite3@7.6.13)(better-sqlite3@12.9.0)
+    devDependencies:
+      '@types/better-sqlite3':
+        specifier: ^7.6.13
+        version: 7.6.13
+      drizzle-kit:
+        specifier: ^0.31.10
+        version: 0.31.10
 
-  packages/diagnostics:
+  packages/monopi__diagnostics:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.78.1'
@@ -348,7 +391,7 @@ importers:
         specifier: ^1.1.24
         version: 1.3.0
 
-  packages/docs:
+  packages/monopi__docs:
     dependencies:
       clsx:
         specifier: ^2.1.1
@@ -391,10 +434,10 @@ importers:
         specifier: ^4.2.4
         version: 4.2.4
       vite:
-        specifier: '>=8.0.16'
+        specifier: 8.0.16
         version: 8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3)
 
-  packages/extensions:
+  packages/monopi__extensions:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.78.1'
@@ -408,15 +451,15 @@ importers:
       '@earendil-works/pi-tui':
         specifier: '>=0.78.1'
         version: 0.78.1
-      '@ifi/oh-pi-core':
+      '@monopi/background-tasks':
         specifier: 0.5.1
-        version: link:../core
-      '@ifi/pi-background-tasks':
+        version: link:../monopi__background-tasks
+      '@monopi/core':
         specifier: 0.5.1
-        version: link:../background-tasks
-      '@ifi/pi-shared-qna':
+        version: link:../monopi__core
+      '@monopi/shared-qna':
         specifier: 0.5.1
-        version: link:../shared-qna
+        version: link:../monopi__shared-qna
       croner:
         specifier: ^10.0.1
         version: 10.0.1
@@ -424,84 +467,13 @@ importers:
         specifier: ^1.1.24
         version: 1.3.0
 
-  packages/oh-pi:
+  packages/monopi__monopi:
     dependencies:
-      '@ifi/oh-pi-cli':
+      '@monopi/cli':
         specifier: 0.5.1
-        version: link:../cli
+        version: link:../monopi__cli
 
-  packages/oh-pi-context:
-    dependencies:
-      '@earendil-works/pi-agent-core':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-ai':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-coding-agent':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-tui':
-        specifier: '>=0.78.1'
-        version: 0.78.1
-      typebox:
-        specifier: ^1.1.24
-        version: 1.3.0
-    devDependencies:
-      '@types/better-sqlite3':
-        specifier: ^7.6.13
-        version: 7.6.13
-      '@types/node':
-        specifier: ^25.6.0
-        version: 25.6.0
-    optionalDependencies:
-      better-sqlite3:
-        specifier: ^12.6.2
-        version: 12.9.0
-
-  packages/ollama:
-    dependencies:
-      '@earendil-works/pi-agent-core':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-ai':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-coding-agent':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-tui':
-        specifier: '>=0.78.1'
-        version: 0.78.1
-      typebox:
-        specifier: ^1.1.24
-        version: 1.3.0
-
-  packages/pi-bash-live-view:
-    dependencies:
-      '@earendil-works/pi-agent-core':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-ai':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-coding-agent':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-tui':
-        specifier: '>=0.78.1'
-        version: 0.78.1
-      '@xterm/headless':
-        specifier: ^6.0.0
-        version: 6.0.0
-      node-pty:
-        specifier: ^1.0.0
-        version: 1.1.0
-      typebox:
-        specifier: ^1.1.24
-        version: 1.3.0
-
-  packages/pi-pretty:
+  packages/monopi__pretty:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.78.1'
@@ -524,7 +496,7 @@ importers:
         specifier: ^0.6.4
         version: 0.6.4
 
-  packages/pi-remote-tailscale:
+  packages/monopi__provider-catalog:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.78.1'
@@ -538,9 +510,69 @@ importers:
       '@earendil-works/pi-tui':
         specifier: '>=0.78.1'
         version: 0.78.1
-      '@ifi/pi-web-server':
+      '@monopi/shared-qna':
         specifier: 0.5.1
-        version: link:../web-server
+        version: link:../monopi__shared-qna
+      typebox:
+        specifier: ^1.1.24
+        version: 1.3.0
+
+  packages/monopi__provider-cursor:
+    dependencies:
+      '@bufbuild/protobuf':
+        specifier: ^2.12.0
+        version: 2.12.0
+      '@earendil-works/pi-agent-core':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-ai':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-coding-agent':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-tui':
+        specifier: '>=0.78.1'
+        version: 0.78.1
+      typebox:
+        specifier: ^1.1.24
+        version: 1.3.0
+
+  packages/monopi__provider-ollama:
+    dependencies:
+      '@earendil-works/pi-agent-core':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-ai':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-coding-agent':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-tui':
+        specifier: '>=0.78.1'
+        version: 0.78.1
+      typebox:
+        specifier: ^1.1.24
+        version: 1.3.0
+
+  packages/monopi__remote-tailscale:
+    dependencies:
+      '@earendil-works/pi-agent-core':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-ai':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-coding-agent':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-tui':
+        specifier: '>=0.78.1'
+        version: 0.78.1
+      '@monopi/web-server':
+        specifier: 0.5.1
+        version: link:../monopi__web-server
       typebox:
         specifier: ^1.1.24
         version: 1.3.0
@@ -552,62 +584,15 @@ importers:
         specifier: ^0.12.0
         version: 0.12.0
 
-  packages/plan:
-    dependencies:
-      '@earendil-works/pi-agent-core':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-ai':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-coding-agent':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-tui':
-        specifier: '>=0.78.1'
-        version: 0.78.1
-      '@ifi/pi-extension-subagents':
-        specifier: 0.5.1
-        version: link:../subagents
-      '@ifi/pi-shared-qna':
-        specifier: 0.5.1
-        version: link:../shared-qna
-      typebox:
-        specifier: ^1.1.24
-        version: 1.3.0
-
-  packages/prompts: {}
-
-  packages/providers:
-    dependencies:
-      '@earendil-works/pi-agent-core':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-ai':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-coding-agent':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-tui':
-        specifier: '>=0.78.1'
-        version: 0.78.1
-      '@ifi/pi-shared-qna':
-        specifier: 0.5.1
-        version: link:../shared-qna
-      typebox:
-        specifier: ^1.1.24
-        version: 1.3.0
-
-  packages/shared-qna:
+  packages/monopi__shared-qna:
     dependencies:
       '@earendil-works/pi-tui':
         specifier: '*'
-        version: 0.74.0
+        version: 0.78.1
 
-  packages/skills: {}
+  packages/monopi__skills: {}
 
-  packages/spec:
+  packages/monopi__subagents:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.78.1'
@@ -621,48 +606,30 @@ importers:
       '@earendil-works/pi-tui':
         specifier: '>=0.78.1'
         version: 0.78.1
-      typebox:
-        specifier: ^1.1.24
-        version: 1.3.0
-
-  packages/subagents:
-    dependencies:
-      '@earendil-works/pi-agent-core':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-ai':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-coding-agent':
-        specifier: '>=0.78.1'
-        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@earendil-works/pi-tui':
-        specifier: '>=0.78.1'
-        version: 0.78.1
-      '@ifi/oh-pi-core':
+      '@monopi/core':
         specifier: 0.5.1
-        version: link:../core
+        version: link:../monopi__core
       typebox:
         specifier: ^1.1.24
         version: 1.3.0
 
-  packages/themes: {}
+  packages/monopi__themes: {}
 
-  packages/web-client: {}
+  packages/monopi__web-client: {}
 
-  packages/web-remote:
+  packages/monopi__web-remote:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.78.1'
         version: 0.78.1(ws@8.21.0)(zod@3.25.76)
-      '@ifi/pi-web-server':
+      '@monopi/web-server':
         specifier: 0.5.1
-        version: link:../web-server
+        version: link:../monopi__web-server
       typebox:
         specifier: ^1.1.24
         version: 1.3.0
 
-  packages/web-server:
+  packages/monopi__web-server:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.78.1'
@@ -674,7 +641,7 @@ importers:
         specifier: '>=4.12.25'
         version: 4.12.26
       ws:
-        specifier: '>=8.21.0'
+        specifier: 8.21.0
         version: 8.21.0
     devDependencies:
       '@types/ws':
@@ -719,40 +686,40 @@ packages:
     resolution: {integrity: sha512-u+NT61JZEkRFtpL0CAw1N1dwxnaLgwVXQl/zjJxTGgLyS/jTIdg2SdoEoCTHxgDyCnqa1HEi9QOoE9/pYRNpOQ==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/core@3.974.22':
-    resolution: {integrity: sha512-YofH63shc6YRdXjz80BJkpJW+Bkn0Cuu2dn4Rv7s9G2Idt58tgtzQEWxrR2xVljlVfIBeUjPuULnSVYLke3sUQ==}
+  '@aws-sdk/core@3.974.23':
+    resolution: {integrity: sha512-MiWR/uWjxjFXGzrE0Ghc5lWxUxzHsUWFhV+OX7M4cR9SrmrnZs6TXavnCWnzzdwJeFri34xQo81rvGNzK3c4BQ==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/credential-provider-env@3.972.48':
-    resolution: {integrity: sha512-h6FEC95fbexUd6zxm4PdgS82bTcI2PRtUb2ZwMipb/Xr8bPwtf0G8rBo2jp7NA24Mbx2JA8/WingiYpA9RCCyw==}
+  '@aws-sdk/credential-provider-env@3.972.49':
+    resolution: {integrity: sha512-liB3yQNHCM9k/gu/w36XHMKPluT7HTlnGUhRbBGSISDQkcr/Sy1zsZabiuvQj8WG5yW573u9RehrBvvnIQ9OEQ==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/credential-provider-http@3.972.50':
-    resolution: {integrity: sha512-lJO3OLpjvz5m/RSBQmsG/CEUGsvCy5ruxKwPQaOCqxqCMuyYT2BZwQUTDZVVwqQ9LrZKuK24JSa6r31hL/tvkg==}
+  '@aws-sdk/credential-provider-http@3.972.51':
+    resolution: {integrity: sha512-XET0H2oofciJ5lMRWNIvRjAP7Q3wv2XT+JtJJEdhPWUMwe3TvQ9qcxonpu7vXmNngncvFpi4E2It+Tamas/naA==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/credential-provider-ini@3.972.55':
-    resolution: {integrity: sha512-TBoF4buBGYhXjdZAryayY2TrkQj2B2KfE/msG4V53XCt+w0EhEwM2JRjx8p2grJ2C6gtH5++SAwEvGMRdi0yyw==}
+  '@aws-sdk/credential-provider-ini@3.972.56':
+    resolution: {integrity: sha512-IAmc61hbgQiHht9U3x0tnRwz0lzdwOwD/i9voRgdJrKamF+JtmrBOsW9GwB7mfFonNWOWL4qARWYrF8veEMe3w==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/credential-provider-login@3.972.54':
-    resolution: {integrity: sha512-hBWI3wZTdTGiuMfmPts6AWbAjFfRniOQnqx68tc2cQvRKWawFbN9wkLOVPWM1FAOyowZU73mC6Fi+rHSHNyLFw==}
+  '@aws-sdk/credential-provider-login@3.972.55':
+    resolution: {integrity: sha512-hBBkANo3cDn+h2qxxzER4a+J8JCO9o9Z/YYmU7iky6AcaarX5RRdRcHNC6SLdwY0vAXQygn6soUbDqPn3GghaA==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/credential-provider-node@3.972.57':
-    resolution: {integrity: sha512-u6dClpzNdWf1HGWz4wwhdXi1wiOofCLniM9S4BQQGlLAN9TW7VB+ld5V533GdKrYMaFeBGFqKnj0JCYvynLqwQ==}
+  '@aws-sdk/credential-provider-node@3.972.58':
+    resolution: {integrity: sha512-OyCLVmSI7pZO8hxwNVX6pXhTVlJqRBTp+ijdEfJSUj0RyjHnF602OfAarOzGq6wkGodeFkYBt8MmJ6A6ycRgWw==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/credential-provider-process@3.972.48':
-    resolution: {integrity: sha512-w6VZwojPt12WnEkAUy6Nu4K6sWCbBmR7QX390b0nE6vRvkXbrYr9Lq9VySGkfjiMjpUA87op+J4EgvRmtWIDoQ==}
+  '@aws-sdk/credential-provider-process@3.972.49':
+    resolution: {integrity: sha512-C8h36lBuC/RnBSsjlO+dn6xZm3KbAl5vpJaVPAfQnMmz2/OISmKOc8XZcqMQgO2ADwBYNRMM6Kf3vz9G/TulMQ==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/credential-provider-sso@3.972.54':
-    resolution: {integrity: sha512-23uZpIpF2SIFDCa1fcWa202tK4gGeyvX6GIIAjiB8WBsvsVRBMnJ/7dCxHzxf7eZT7GToJg837LDIBnZsl/VUg==}
+  '@aws-sdk/credential-provider-sso@3.972.55':
+    resolution: {integrity: sha512-1FkOz74Ea5QGS9jtIoXp55T/IkSS3spv+nLTT07fRY/+T5xmEOqaYBVIaEmX4zTNvbV6g2lrtlaVKWEoNyJt3w==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/credential-provider-web-identity@3.972.54':
-    resolution: {integrity: sha512-0Iv5QttS6wcATlodYKgvQj6B9Db51rx7NU9fqu0PoLeS4BIgdYMc/QK4smwLwpm5RFrs02V/eLyEFp3FklvlNQ==}
+  '@aws-sdk/credential-provider-web-identity@3.972.55':
+    resolution: {integrity: sha512-g2BoECD1q01kTPByi56+VLVvdWDzMkKIcr77qixpqH0okw2t0U5CoPv+6S8v/D1Y2Wa6QKKtn6XAtDzP+Kfpvg==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/eventstream-handler-node@3.972.22':
@@ -763,12 +730,12 @@ packages:
     resolution: {integrity: sha512-OHpk8YoZi3yexPq8aFt1vN1IxA2zLKvsIR5GpWYylX/ve6kQmY7wxHNSFy/D3t2apMZ16rs76Co4dJWcDyIk3A==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/middleware-websocket@3.972.30':
-    resolution: {integrity: sha512-kH6N4f/Fzi9r/dYap8EQ+Zk4NOz8pl4AtWKhzAoG2C1/4YkIHok9APp/e+75woreWQq264n+LkrJsJVZ0Q+M1Q==}
+  '@aws-sdk/middleware-websocket@3.972.31':
+    resolution: {integrity: sha512-ps1rumU1LybSFHaW9dTDgkhCMJLVaedEY78kKSzUDDY+b9974/g6aiaYYA0U9WV0oL4CJCJrVWG+EZ/qr4or7g==}
     engines: {node: '>= 14.0.0'}
 
-  '@aws-sdk/nested-clients@3.997.22':
-    resolution: {integrity: sha512-4IwtcYSxEIVw5hcp8ogq0CMbFNZFw7jJUetpfFUhFFeqsa1K8j2Ihg2hnxLyOp3stMZnXda6VzOmPi1AFZQXcg==}
+  '@aws-sdk/nested-clients@3.997.23':
+    resolution: {integrity: sha512-gO93ZPsI2bxeFZD42f1/qjDw6FAZkNZcKRO94LIiT03fzOmcJ9e/tunxjVjA1Rl69ClmVJzz8H3G9CdKef10PA==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/signature-v4-multi-region@3.996.35':
@@ -779,20 +746,24 @@ packages:
     resolution: {integrity: sha512-k0y/GcuesuSfWyUM0WamrGyeZmltRYaPbHO82UDA6mZ/doB+FOHKutikPAtSXMn/hDz970cF+iRuuiYO9VEbAA==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/token-providers@3.1071.0':
-    resolution: {integrity: sha512-4LDW2Qob6LoLFuqYSYZq2AyTE9koSE9+i+n5UZcm10GpmQOK0zRD9L4uYlzItiTKksIWgC/qMFChAi3RvKYtMg==}
+  '@aws-sdk/token-providers@3.1074.0':
+    resolution: {integrity: sha512-pv80IzgGW4RnXWtft692chZOM9i6PhebVsLCcnaM4dBEPZva2fE6FXAHs76G7Rc7s3yGyX/68G0nZMrUy+Vmpg==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/types@3.973.13':
     resolution: {integrity: sha512-pEHZqRkAlHfnfAU9tK+WpKv/gBNjGJrHMgA3A0iYRGyswBS2t0pfez+lWlwktb3Bqa0ovh7w/QJTFwp3fDxLNg==}
     engines: {node: '>=20.0.0'}
 
+  '@aws-sdk/types@3.973.8':
+    resolution: {integrity: sha512-gjlAdtHMbtR9X5iIhVUvbVcy55KnznpC6bkDUWW9z915bi0ckdUr5cjf16Kp6xq0bP5HBD2xzgbL9F9Quv5vUw==}
+    engines: {node: '>=20.0.0'}
+
   '@aws-sdk/util-locate-window@3.965.5':
     resolution: {integrity: sha512-WhlJNNINQB+9qtLtZJcpQdgZw3SCDCpXdUJP7cToGwHbCWCnRckGlc6Bx/OhWwIYFNAn+FIydY8SZ0QmVu3xTQ==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/xml-builder@3.972.30':
-    resolution: {integrity: sha512-StElZPEoBquWwNqw1AcfpzEyZqJvFxouG+mpDNYlcH6ZOrqd2CuIryv+8LV8gNHZUOyKyJF3Dq9vxaXEmDR9TQ==}
+  '@aws-sdk/xml-builder@3.972.31':
+    resolution: {integrity: sha512-SzE4Pgyl+hDF+BuyuzxUSpwnuUu9lJuO1YGgteG89/4Qv0+2IQiVQqdbPV32IozLvXWQChPQcdkk/sKvb1QHiQ==}
     engines: {node: '>=20.0.0'}
 
   '@aws/lambda-invoke-store@0.2.4':
@@ -913,10 +884,6 @@ packages:
     resolution: {integrity: sha512-Syjf6Ib8UoY5t9ZdKjp0BRrQZuFkFBc8j2KEU9zG/ZnmYPcAxYeioofdv2Q3MEXnHEX2U8sKQptkSnJIdMsd0g==}
     engines: {node: '>=22.19.0'}
     hasBin: true
-
-  '@earendil-works/pi-tui@0.74.0':
-    resolution: {integrity: sha512-1aIfXZp7D/z+1VlZX8BZcs6pgO8rjmil7kwyhctNDsWvce3Yfl8GVgu4eq+I0Mjhr8Cj+ipBiv9CLIzdoyCOIQ==}
-    engines: {node: '>=20.0.0'}
 
   '@earendil-works/pi-tui@0.78.1':
     resolution: {integrity: sha512-07GVQo/38a0yvIPlWDr3RJn1B8gk3ZuIX9h2oIQ+Biyu3JN0KppWmgWHfaWRydQgse5JtC++KDw5MWaIRnV0mw==}
@@ -1466,13 +1433,6 @@ packages:
       '@emnapi/core': ^1.7.1
       '@emnapi/runtime': ^1.7.1
 
-  '@nodable/entities@2.1.0':
-    resolution: {integrity: sha512-nyT7T3nbMyBI/lvr6L5TyWbFJAI9FTgVRakNoBqCD+PmID8DzFrrNdLLtHMwMszOtqZa8PAOV24ZqDnQrhQINA==}
-
-  '@opentelemetry/api@1.9.0':
-    resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
-    engines: {node: '>=8.0.0'}
-
   '@oxc-project/types@0.127.0':
     resolution: {integrity: sha512-aIYXQBo4lCbO4z0R3FHeucQHpF46l2LbMdxRvqvuRuW2OxdnSkcng5B8+K12spgLDj93rtN3+J2Vac/TIO+ciQ==}
 
@@ -1822,6 +1782,9 @@ packages:
 
   '@protobufjs/float@1.0.2':
     resolution: {integrity: sha512-Ddb+kVXlXst9d+R9PfTIxh1EdNkgoRe5tOX6t01f1lYWOvJnSPDBlG241QLzcyPdoNTsblLUdujGSE4RzrTZGQ==}
+
+  '@protobufjs/inquire@1.1.2':
+    resolution: {integrity: sha512-pa0vFRuws4wkvaXKK1uXZMAwAX4/t8ANaJo45iw/oQHNQ9q5xUzwgFmVJGXiga2BeN+zpX7Vf9vmsiIa2J+MUw==}
 
   '@protobufjs/path@1.1.2':
     resolution: {integrity: sha512-6JOcJ5Tm08dOHAbdR3GrvP+yUUfkjG5ePsHYczMFLq3ZmMkAD98cDgcT2iA1lJ9NVwFd4tH/iSSoe44YWkltEA==}
@@ -2248,6 +2211,10 @@ packages:
     resolution: {integrity: sha512-7xHpmPY4rt0IOmeAA8EfjgEH8isT+587TCdy9H6a7d4OMi5CQ0oEHhWllunvPu4j4Cq0vTFwdxXN/kABWPjdyA==}
     engines: {node: '>=18.0.0'}
 
+  '@smithy/types@4.14.1':
+    resolution: {integrity: sha512-59b5HtSVrVR/eYNei3BUj3DCPKD/G7EtDDe7OEJE7i7FtQFugYo6MxbotS8mVJkLNVf8gYaAlEBwwtJ9HzhWSg==}
+    engines: {node: '>=18.0.0'}
+
   '@smithy/types@4.15.0':
     resolution: {integrity: sha512-Z5TAOxygoFvybJV3igo5SloFflSokHx2hu1eFA+DxDTcn+FtKxUSui+rbTRG1pAafMA888Z3MVvCWUuvCrTXjg==}
     engines: {node: '>=18.0.0'}
@@ -2355,7 +2322,7 @@ packages:
   '@tailwindcss/vite@4.2.4':
     resolution: {integrity: sha512-pCvohwOCspk3ZFn6eJzrrX3g4n2JY73H6MmYC87XfGPyTty4YsCjYTMArRZm/zOI8dIt3+EcrLHAFPe5A4bgtw==}
     peerDependencies:
-      vite: '>=8.0.16'
+      vite: 8.0.16
 
   '@tanstack/query-core@5.100.5':
     resolution: {integrity: sha512-t20KrhKkf0HXzqQkPbJ5erhFesup68BAbwFgYmTrS7bxMF7O5MdmL8jUkik4thsG7Hg00fblz30h6yF1d5TxGg==}
@@ -2475,9 +2442,6 @@ packages:
   '@types/mdx@2.0.13':
     resolution: {integrity: sha512-+OWZQfAYyio6YkJb3HLxDrvnx6SWWDbC0zVPfBRzUk0/nqoDyf6dNxQi3eArPe8rJ473nobTMQ/8Zk+LxJ+Yuw==}
 
-  '@types/mime-types@2.1.4':
-    resolution: {integrity: sha512-lfU4b34HOri+kAY5UheuFMWPDOI+OPceBSHZKp69gEyTL/mmJ4cnU6Y/rlme3UL3GyOn6Y42hyIEw0/q8sWx5w==}
-
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
@@ -2575,7 +2539,7 @@ packages:
     peerDependencies:
       '@rolldown/plugin-babel': ^0.1.7 || ^0.2.0
       babel-plugin-react-compiler: ^1.0.0
-      vite: '>=8.0.16'
+      vite: 8.0.16
     peerDependenciesMeta:
       '@rolldown/plugin-babel':
         optional: true
@@ -2620,7 +2584,7 @@ packages:
     resolution: {integrity: sha512-/x2EmFC4mT4NNzqvC3fmesuV97w5FC903KPmey4gsnJiMQ3Be1IlDKVaDaG8iqaLFHqJ2FVEkxZk5VmeLjIItw==}
     peerDependencies:
       msw: ^2.4.9
-      vite: '>=8.0.16'
+      vite: 8.0.16
     peerDependenciesMeta:
       msw:
         optional: true
@@ -2631,7 +2595,7 @@ packages:
     resolution: {integrity: sha512-LEiN/xe4OSIbKe9HQIp5OC24agGD9J5CnmMgsLohVVoOPWL9a2sBoR6VBx43jQZb7Kr1l4RCuyCJzcAa0+dojw==}
     peerDependencies:
       msw: ^2.4.9
-      vite: '>=8.0.16'
+      vite: 8.0.16
     peerDependenciesMeta:
       msw:
         optional: true
@@ -3327,13 +3291,6 @@ packages:
   fast-wrap-ansi@0.1.6:
     resolution: {integrity: sha512-HlUwET7a5gqjURj70D5jl7aC3Zmy4weA1SHUfM0JFI0Ptq987NH2TwbBFLoERhfwk+E+eaq4EK3jXoT+R3yp3w==}
 
-  fast-xml-builder@1.2.0:
-    resolution: {integrity: sha512-00aAWieqff+ZJhsXA4g1g7M8k+7AYoMUUHF+/zFb5U6Uv/P0Vl4QZo84/IcufzYalLuEj9928bXN9PbbFzMF0Q==}
-
-  fast-xml-parser@5.7.3:
-    resolution: {integrity: sha512-C0AaNuC+mscy6vrAQKAc/rMq+zAPHodfHGZu4sGVehvAQt/JLG1O5zEcYcXSY5zSqr4YVgxsB+pHXTq0i7eDlg==}
-    hasBin: true
-
   fdir@6.5.0:
     resolution: {integrity: sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==}
     engines: {node: '>=12.0.0'}
@@ -3399,10 +3356,6 @@ packages:
   get-caller-file@2.0.5:
     resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
     engines: {node: 6.* || 8.* || >= 10.*}
-
-  get-east-asian-width@1.5.0:
-    resolution: {integrity: sha512-CQ+bEO+Tva/qlmw24dCejulK5pMzVnUOFOijVogd3KQs07HnRIgp8TGipvCCRT06xeYEbpbgwaCxglFyiuIcmA==}
-    engines: {node: '>=18'}
 
   get-east-asian-width@1.6.0:
     resolution: {integrity: sha512-QRbvDIbx6YklUe6RxeTeleMR0yv3cYH6PsPZHcnVn7xv7zO1BHN8r0XETu8n6Ye3Q+ahtSarc3WgtNWmehIBfA==}
@@ -3622,9 +3575,6 @@ packages:
 
   jws@4.0.1:
     resolution: {integrity: sha512-EKI/M/yqPncGUUh44xz0PxSidXFr/+r0pA70+gIYhjv+et7yxM+s29Y+VGDkovRofQem0fs7Uvf4+YmAdyRduA==}
-
-  koffi@2.16.1:
-    resolution: {integrity: sha512-0Ie6CfD026dNfWSosDw9dPxPzO9Rlyo0N8m5r05S8YjytIpuilzMFDMY4IDy/8xQsTwpuVinhncD+S8n3bcYZQ==}
 
   lightningcss-android-arm64@1.32.0:
     resolution: {integrity: sha512-YK7/ClTt4kAK0vo6w3X+Pnm0D2cf2vPHbhOXdoNti1Ga0al1P4TBZhwjATvjNwLEBCnKvjJc2jQgHXH0NEwlAg==}
@@ -4031,7 +3981,7 @@ packages:
     resolution: {integrity: sha512-zd23dbWTjiJ6sSAX6s0HrCZi41JwTA1bQVs0wLQPZ2/5o2gxOJA5wh7yOAUgwYybfhDXyhwlpeQf7Mlgx8EOCA==}
     hasBin: true
     peerDependencies:
-      ws: '>=8.21.0'
+      ws: 8.21.0
       zod: ^3.25 || ^4.0
     peerDependenciesMeta:
       ws:
@@ -4079,10 +4029,6 @@ packages:
 
   partial-json@0.1.7:
     resolution: {integrity: sha512-Njv/59hHaokb/hRUjce3Hdv12wd60MtM9Z5Olmn+nehe0QDAsRtRbJPvJ0Z91TusF0SuZRIvnM+S4l6EIP8leA==}
-
-  path-expression-matcher@1.5.0:
-    resolution: {integrity: sha512-cbrerZV+6rvdQrrD+iGMcZFEiiSrbv9Tfdkvnusy6y0x0GKBXREFg/Y65GhIfm0tnLntThhzCnfKwp1WRjeCyQ==}
-    engines: {node: '>=14.0.0'}
 
   path-key@3.1.1:
     resolution: {integrity: sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==}
@@ -4149,8 +4095,8 @@ packages:
   property-information@7.1.0:
     resolution: {integrity: sha512-TwEZ+X+yCJmYfL7TPUOcvBZ4QfoT5YenQiJuX//0th53DE6w0xxLEtfK3iyryQFddXuvkIk51EEgrJQ0WJkOmQ==}
 
-  protobufjs@7.6.4:
-    resolution: {integrity: sha512-RJJPTTpvFfHcWLkIa2JFWK4XvtSzS0yEWDmunqHXli1h3JlkbcQZXDZdcWxv+JK3Xsl5/UFDPZ0iGm7DAengYw==}
+  protobufjs@7.6.1:
+    resolution: {integrity: sha512-4K0myLaWL5EteuSAro91EGFgcfVgxb64Jx+7oDAY6GOkXD4M69yuSEljNcInGVCA5sOPxmZ/EqDLj2x0Q0+Ygg==}
     engines: {node: '>=12.0.0'}
 
   proxy-addr@2.0.7:
@@ -4478,9 +4424,6 @@ packages:
     resolution: {integrity: sha512-4gB8na07fecVVkOI6Rs4e7T6NOTki5EmL7TUduTs6bu3EdnSycntVJ4re8kgZA+wx9IueI2Y11bfbgwtzuE0KQ==}
     engines: {node: '>=0.10.0'}
 
-  strnum@2.2.3:
-    resolution: {integrity: sha512-oKx6RUCuHfT3oyVjtnrmn19H1SiCqgJSg+54XqURKp5aCMbrXrhLjRN9TjuwMjiYstZ0MzDrHqkGZ5dFTKd+zg==}
-
   style-to-js@1.1.21:
     resolution: {integrity: sha512-RjQetxJrrUJLQPHbLku6U/ocGtzyjbJMP9lCNK7Ag0CNh690nSH8woqWH9u16nMjYBAok+i7JO1NP2pOy8IsPQ==}
 
@@ -4755,7 +4698,7 @@ packages:
       '@vitest/ui': 4.1.5
       happy-dom: '*'
       jsdom: '*'
-      vite: '>=8.0.16'
+      vite: 8.0.16
     peerDependenciesMeta:
       '@edge-runtime/vm':
         optional: true
@@ -4838,10 +4781,6 @@ packages:
     resolution: {integrity: sha512-EvGK8EJ3DhaHfbRlETOWAS5pO9MZITeauHKJyb8wyajUfQUenkIg2MvLDTZ4T/TgIcm3HU0TFBgWWboAZ30UHg==}
     engines: {node: '>=18'}
 
-  xml-naming@0.1.0:
-    resolution: {integrity: sha512-k8KO9hrMyNk6tUWqUfkTEZbezRRpONVOzUTnc97VnCvyj6Tf9lyUR9EDAIeiVLv56jsMcoXEwjW8Kv5yPY52lw==}
-    engines: {node: '>=16.0.0'}
-
   xmlchars@2.2.0:
     resolution: {integrity: sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==}
 
@@ -4912,7 +4851,7 @@ snapshots:
   '@aws-crypto/crc32@5.2.0':
     dependencies:
       '@aws-crypto/util': 5.2.0
-      '@aws-sdk/types': 3.973.13
+      '@aws-sdk/types': 3.973.8
       tslib: 2.8.1
 
   '@aws-crypto/sha256-browser@5.2.0':
@@ -4920,7 +4859,7 @@ snapshots:
       '@aws-crypto/sha256-js': 5.2.0
       '@aws-crypto/supports-web-crypto': 5.2.0
       '@aws-crypto/util': 5.2.0
-      '@aws-sdk/types': 3.973.13
+      '@aws-sdk/types': 3.973.8
       '@aws-sdk/util-locate-window': 3.965.5
       '@smithy/util-utf8': 2.3.0
       tslib: 2.8.1
@@ -4928,7 +4867,7 @@ snapshots:
   '@aws-crypto/sha256-js@5.2.0':
     dependencies:
       '@aws-crypto/util': 5.2.0
-      '@aws-sdk/types': 3.973.13
+      '@aws-sdk/types': 3.973.8
       tslib: 2.8.1
 
   '@aws-crypto/supports-web-crypto@5.2.0':
@@ -4937,7 +4876,7 @@ snapshots:
 
   '@aws-crypto/util@5.2.0':
     dependencies:
-      '@aws-sdk/types': 3.973.13
+      '@aws-sdk/types': 3.973.8
       '@smithy/util-utf8': 2.3.0
       tslib: 2.8.1
 
@@ -4945,23 +4884,23 @@ snapshots:
     dependencies:
       '@aws-crypto/sha256-browser': 5.2.0
       '@aws-crypto/sha256-js': 5.2.0
-      '@aws-sdk/core': 3.974.22
-      '@aws-sdk/credential-provider-node': 3.972.57
+      '@aws-sdk/core': 3.974.23
+      '@aws-sdk/credential-provider-node': 3.972.58
       '@aws-sdk/eventstream-handler-node': 3.972.22
       '@aws-sdk/middleware-eventstream': 3.972.18
-      '@aws-sdk/middleware-websocket': 3.972.30
+      '@aws-sdk/middleware-websocket': 3.972.31
       '@aws-sdk/token-providers': 3.1048.0
-      '@aws-sdk/types': 3.973.13
+      '@aws-sdk/types': 3.973.8
       '@smithy/core': 3.26.0
       '@smithy/fetch-http-handler': 5.5.2
-      '@smithy/node-http-handler': 4.8.2
-      '@smithy/types': 4.15.0
+      '@smithy/node-http-handler': 4.7.3
+      '@smithy/types': 4.14.1
       tslib: 2.8.1
 
-  '@aws-sdk/core@3.974.22':
+  '@aws-sdk/core@3.974.23':
     dependencies:
       '@aws-sdk/types': 3.973.13
-      '@aws-sdk/xml-builder': 3.972.30
+      '@aws-sdk/xml-builder': 3.972.31
       '@aws/lambda-invoke-store': 0.2.4
       '@smithy/core': 3.26.0
       '@smithy/signature-v4': 5.5.2
@@ -4969,17 +4908,17 @@ snapshots:
       bowser: 2.14.1
       tslib: 2.8.1
 
-  '@aws-sdk/credential-provider-env@3.972.48':
+  '@aws-sdk/credential-provider-env@3.972.49':
     dependencies:
-      '@aws-sdk/core': 3.974.22
+      '@aws-sdk/core': 3.974.23
       '@aws-sdk/types': 3.973.13
       '@smithy/core': 3.26.0
       '@smithy/types': 4.15.0
       tslib: 2.8.1
 
-  '@aws-sdk/credential-provider-http@3.972.50':
+  '@aws-sdk/credential-provider-http@3.972.51':
     dependencies:
-      '@aws-sdk/core': 3.974.22
+      '@aws-sdk/core': 3.974.23
       '@aws-sdk/types': 3.973.13
       '@smithy/core': 3.26.0
       '@smithy/fetch-http-handler': 5.5.2
@@ -4987,67 +4926,67 @@ snapshots:
       '@smithy/types': 4.15.0
       tslib: 2.8.1
 
-  '@aws-sdk/credential-provider-ini@3.972.55':
+  '@aws-sdk/credential-provider-ini@3.972.56':
     dependencies:
-      '@aws-sdk/core': 3.974.22
-      '@aws-sdk/credential-provider-env': 3.972.48
-      '@aws-sdk/credential-provider-http': 3.972.50
-      '@aws-sdk/credential-provider-login': 3.972.54
-      '@aws-sdk/credential-provider-process': 3.972.48
-      '@aws-sdk/credential-provider-sso': 3.972.54
-      '@aws-sdk/credential-provider-web-identity': 3.972.54
-      '@aws-sdk/nested-clients': 3.997.22
+      '@aws-sdk/core': 3.974.23
+      '@aws-sdk/credential-provider-env': 3.972.49
+      '@aws-sdk/credential-provider-http': 3.972.51
+      '@aws-sdk/credential-provider-login': 3.972.55
+      '@aws-sdk/credential-provider-process': 3.972.49
+      '@aws-sdk/credential-provider-sso': 3.972.55
+      '@aws-sdk/credential-provider-web-identity': 3.972.55
+      '@aws-sdk/nested-clients': 3.997.23
       '@aws-sdk/types': 3.973.13
       '@smithy/core': 3.26.0
       '@smithy/credential-provider-imds': 4.4.2
       '@smithy/types': 4.15.0
       tslib: 2.8.1
 
-  '@aws-sdk/credential-provider-login@3.972.54':
+  '@aws-sdk/credential-provider-login@3.972.55':
     dependencies:
-      '@aws-sdk/core': 3.974.22
-      '@aws-sdk/nested-clients': 3.997.22
+      '@aws-sdk/core': 3.974.23
+      '@aws-sdk/nested-clients': 3.997.23
       '@aws-sdk/types': 3.973.13
       '@smithy/core': 3.26.0
       '@smithy/types': 4.15.0
       tslib: 2.8.1
 
-  '@aws-sdk/credential-provider-node@3.972.57':
+  '@aws-sdk/credential-provider-node@3.972.58':
     dependencies:
-      '@aws-sdk/credential-provider-env': 3.972.48
-      '@aws-sdk/credential-provider-http': 3.972.50
-      '@aws-sdk/credential-provider-ini': 3.972.55
-      '@aws-sdk/credential-provider-process': 3.972.48
-      '@aws-sdk/credential-provider-sso': 3.972.54
-      '@aws-sdk/credential-provider-web-identity': 3.972.54
+      '@aws-sdk/credential-provider-env': 3.972.49
+      '@aws-sdk/credential-provider-http': 3.972.51
+      '@aws-sdk/credential-provider-ini': 3.972.56
+      '@aws-sdk/credential-provider-process': 3.972.49
+      '@aws-sdk/credential-provider-sso': 3.972.55
+      '@aws-sdk/credential-provider-web-identity': 3.972.55
       '@aws-sdk/types': 3.973.13
       '@smithy/core': 3.26.0
       '@smithy/credential-provider-imds': 4.4.2
       '@smithy/types': 4.15.0
       tslib: 2.8.1
 
-  '@aws-sdk/credential-provider-process@3.972.48':
+  '@aws-sdk/credential-provider-process@3.972.49':
     dependencies:
-      '@aws-sdk/core': 3.974.22
+      '@aws-sdk/core': 3.974.23
       '@aws-sdk/types': 3.973.13
       '@smithy/core': 3.26.0
       '@smithy/types': 4.15.0
       tslib: 2.8.1
 
-  '@aws-sdk/credential-provider-sso@3.972.54':
+  '@aws-sdk/credential-provider-sso@3.972.55':
     dependencies:
-      '@aws-sdk/core': 3.974.22
-      '@aws-sdk/nested-clients': 3.997.22
-      '@aws-sdk/token-providers': 3.1071.0
+      '@aws-sdk/core': 3.974.23
+      '@aws-sdk/nested-clients': 3.997.23
+      '@aws-sdk/token-providers': 3.1074.0
       '@aws-sdk/types': 3.973.13
       '@smithy/core': 3.26.0
       '@smithy/types': 4.15.0
       tslib: 2.8.1
 
-  '@aws-sdk/credential-provider-web-identity@3.972.54':
+  '@aws-sdk/credential-provider-web-identity@3.972.55':
     dependencies:
-      '@aws-sdk/core': 3.974.22
-      '@aws-sdk/nested-clients': 3.997.22
+      '@aws-sdk/core': 3.974.23
+      '@aws-sdk/nested-clients': 3.997.23
       '@aws-sdk/types': 3.973.13
       '@smithy/core': 3.26.0
       '@smithy/types': 4.15.0
@@ -5067,9 +5006,9 @@ snapshots:
       '@smithy/types': 4.15.0
       tslib: 2.8.1
 
-  '@aws-sdk/middleware-websocket@3.972.30':
+  '@aws-sdk/middleware-websocket@3.972.31':
     dependencies:
-      '@aws-sdk/core': 3.974.22
+      '@aws-sdk/core': 3.974.23
       '@aws-sdk/types': 3.973.13
       '@smithy/core': 3.26.0
       '@smithy/fetch-http-handler': 5.5.2
@@ -5077,11 +5016,11 @@ snapshots:
       '@smithy/types': 4.15.0
       tslib: 2.8.1
 
-  '@aws-sdk/nested-clients@3.997.22':
+  '@aws-sdk/nested-clients@3.997.23':
     dependencies:
       '@aws-crypto/sha256-browser': 5.2.0
       '@aws-crypto/sha256-js': 5.2.0
-      '@aws-sdk/core': 3.974.22
+      '@aws-sdk/core': 3.974.23
       '@aws-sdk/signature-v4-multi-region': 3.996.35
       '@aws-sdk/types': 3.973.13
       '@smithy/core': 3.26.0
@@ -5099,17 +5038,17 @@ snapshots:
 
   '@aws-sdk/token-providers@3.1048.0':
     dependencies:
-      '@aws-sdk/core': 3.974.22
-      '@aws-sdk/nested-clients': 3.997.22
-      '@aws-sdk/types': 3.973.13
+      '@aws-sdk/core': 3.974.23
+      '@aws-sdk/nested-clients': 3.997.23
+      '@aws-sdk/types': 3.973.8
       '@smithy/core': 3.26.0
-      '@smithy/types': 4.15.0
+      '@smithy/types': 4.14.1
       tslib: 2.8.1
 
-  '@aws-sdk/token-providers@3.1071.0':
+  '@aws-sdk/token-providers@3.1074.0':
     dependencies:
-      '@aws-sdk/core': 3.974.22
-      '@aws-sdk/nested-clients': 3.997.22
+      '@aws-sdk/core': 3.974.23
+      '@aws-sdk/nested-clients': 3.997.23
       '@aws-sdk/types': 3.973.13
       '@smithy/core': 3.26.0
       '@smithy/types': 4.15.0
@@ -5120,14 +5059,18 @@ snapshots:
       '@smithy/types': 4.15.0
       tslib: 2.8.1
 
+  '@aws-sdk/types@3.973.8':
+    dependencies:
+      '@smithy/types': 4.14.1
+      tslib: 2.8.1
+
   '@aws-sdk/util-locate-window@3.965.5':
     dependencies:
       tslib: 2.8.1
 
-  '@aws-sdk/xml-builder@3.972.30':
+  '@aws-sdk/xml-builder@3.972.31':
     dependencies:
       '@smithy/types': 4.15.0
-      fast-xml-parser: 5.7.3
       tslib: 2.8.1
 
   '@aws/lambda-invoke-store@0.2.4': {}
@@ -5281,16 +5224,6 @@ snapshots:
       - utf-8-validate
       - ws
       - zod
-
-  '@earendil-works/pi-tui@0.74.0':
-    dependencies:
-      '@types/mime-types': 2.1.4
-      chalk: 5.6.2
-      get-east-asian-width: 1.5.0
-      marked: 15.0.12
-      mime-types: 3.0.2
-    optionalDependencies:
-      koffi: 2.16.1
 
   '@earendil-works/pi-tui@0.78.1':
     dependencies:
@@ -5521,7 +5454,7 @@ snapshots:
     dependencies:
       google-auth-library: 10.6.2
       p-retry: 4.6.2
-      protobufjs: 7.6.4
+      protobufjs: 7.6.1
       ws: 8.21.0
     transitivePeerDependencies:
       - bufferutil
@@ -5684,11 +5617,6 @@ snapshots:
       '@emnapi/core': 1.10.0
       '@emnapi/runtime': 1.10.0
       '@tybys/wasm-util': 0.10.1
-    optional: true
-
-  '@nodable/entities@2.1.0': {}
-
-  '@opentelemetry/api@1.9.0':
     optional: true
 
   '@oxc-project/types@0.127.0': {}
@@ -5870,6 +5798,8 @@ snapshots:
       '@protobufjs/aspromise': 1.1.2
 
   '@protobufjs/float@1.0.2': {}
+
+  '@protobufjs/inquire@1.1.2': {}
 
   '@protobufjs/path@1.1.2': {}
 
@@ -6157,6 +6087,10 @@ snapshots:
       '@smithy/types': 4.15.0
       tslib: 2.8.1
 
+  '@smithy/types@4.14.1':
+    dependencies:
+      tslib: 2.8.1
+
   '@smithy/types@4.15.0':
     dependencies:
       tslib: 2.8.1
@@ -6374,8 +6308,6 @@ snapshots:
 
   '@types/mdx@2.0.13': {}
 
-  '@types/mime-types@2.1.4': {}
-
   '@types/ms@2.1.0': {}
 
   '@types/node@22.19.17':
@@ -6461,7 +6393,7 @@ snapshots:
       '@vitest/mocker': 4.1.5(vite@8.0.16(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
       playwright: 1.59.1
       tinyrainbow: 3.1.0
-      vitest: 4.1.5(@opentelemetry/api@1.9.0)(@types/node@22.19.17)(@vitest/browser-playwright@4.1.5)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
+      vitest: 4.1.5(@types/node@22.19.17)(@vitest/browser-playwright@4.1.5)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
     transitivePeerDependencies:
       - bufferutil
       - msw
@@ -6475,7 +6407,7 @@ snapshots:
       '@vitest/mocker': 4.1.8(vite@8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
       playwright: 1.59.1
       tinyrainbow: 3.1.0
-      vitest: 4.1.5(@opentelemetry/api@1.9.0)(@types/node@25.6.0)(@vitest/browser-playwright@4.1.8)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
+      vitest: 4.1.5(@types/node@25.6.0)(@vitest/browser-playwright@4.1.8)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
     transitivePeerDependencies:
       - bufferutil
       - msw
@@ -6491,7 +6423,7 @@ snapshots:
       pngjs: 7.0.0
       sirv: 3.0.2
       tinyrainbow: 3.1.0
-      vitest: 4.1.5(@opentelemetry/api@1.9.0)(@types/node@22.19.17)(@vitest/browser-playwright@4.1.5)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
+      vitest: 4.1.5(@types/node@22.19.17)(@vitest/browser-playwright@4.1.5)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
       ws: 8.21.0
     transitivePeerDependencies:
       - bufferutil
@@ -6509,7 +6441,7 @@ snapshots:
       pngjs: 7.0.0
       sirv: 3.0.2
       tinyrainbow: 3.1.0
-      vitest: 4.1.5(@opentelemetry/api@1.9.0)(@types/node@25.6.0)(@vitest/browser-playwright@4.1.8)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
+      vitest: 4.1.5(@types/node@25.6.0)(@vitest/browser-playwright@4.1.8)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
       ws: 8.21.0
     transitivePeerDependencies:
       - bufferutil
@@ -6529,7 +6461,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.1.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.5(@opentelemetry/api@1.9.0)(@types/node@22.19.17)(@vitest/browser-playwright@4.1.5)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
+      vitest: 4.1.5(@types/node@22.19.17)(@vitest/browser-playwright@4.1.5)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
     optionalDependencies:
       '@vitest/browser': 4.1.5(vite@8.0.16(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.5)
 
@@ -6545,7 +6477,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.1.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.5(@opentelemetry/api@1.9.0)(@types/node@25.6.0)(@vitest/browser-playwright@4.1.8)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
+      vitest: 4.1.5(@types/node@25.6.0)(@vitest/browser-playwright@4.1.8)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
     optionalDependencies:
       '@vitest/browser': 4.1.8(vite@8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.5)
 
@@ -6964,9 +6896,8 @@ snapshots:
       esbuild: 0.25.12
       tsx: 4.21.0
 
-  drizzle-orm@0.45.2(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@12.9.0):
+  drizzle-orm@0.45.2(@types/better-sqlite3@7.6.13)(better-sqlite3@12.9.0):
     optionalDependencies:
-      '@opentelemetry/api': 1.9.0
       '@types/better-sqlite3': 7.6.13
       better-sqlite3: 12.9.0
 
@@ -7181,18 +7112,6 @@ snapshots:
     dependencies:
       fast-string-width: 1.1.0
 
-  fast-xml-builder@1.2.0:
-    dependencies:
-      path-expression-matcher: 1.5.0
-      xml-naming: 0.1.0
-
-  fast-xml-parser@5.7.3:
-    dependencies:
-      '@nodable/entities': 2.1.0
-      fast-xml-builder: 1.2.0
-      path-expression-matcher: 1.5.0
-      strnum: 2.2.3
-
   fdir@6.5.0(picomatch@4.0.4):
     optionalDependencies:
       picomatch: 4.0.4
@@ -7267,8 +7186,6 @@ snapshots:
       - supports-color
 
   get-caller-file@2.0.5: {}
-
-  get-east-asian-width@1.5.0: {}
 
   get-east-asian-width@1.6.0: {}
 
@@ -7542,9 +7459,6 @@ snapshots:
     dependencies:
       jwa: 2.0.1
       safe-buffer: 5.2.1
-
-  koffi@2.16.1:
-    optional: true
 
   lightningcss-android-arm64@1.32.0:
     optional: true
@@ -8245,8 +8159,6 @@ snapshots:
 
   partial-json@0.1.7: {}
 
-  path-expression-matcher@1.5.0: {}
-
   path-key@3.1.1: {}
 
   path-scurry@2.0.2:
@@ -8321,7 +8233,7 @@ snapshots:
 
   property-information@7.1.0: {}
 
-  protobufjs@7.6.4:
+  protobufjs@7.6.1:
     dependencies:
       '@protobufjs/aspromise': 1.1.2
       '@protobufjs/base64': 1.1.2
@@ -8329,6 +8241,7 @@ snapshots:
       '@protobufjs/eventemitter': 1.1.1
       '@protobufjs/fetch': 1.1.1
       '@protobufjs/float': 1.0.2
+      '@protobufjs/inquire': 1.1.2
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.1
@@ -8793,8 +8706,6 @@ snapshots:
 
   strip-json-comments@2.0.1: {}
 
-  strnum@2.2.3: {}
-
   style-to-js@1.1.21:
     dependencies:
       style-to-object: 1.0.14
@@ -9049,7 +8960,7 @@ snapshots:
       tsx: 4.21.0
       yaml: 2.8.3
 
-  vitest@4.1.5(@opentelemetry/api@1.9.0)(@types/node@22.19.17)(@vitest/browser-playwright@4.1.5)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3)):
+  vitest@4.1.5(@types/node@22.19.17)(@vitest/browser-playwright@4.1.5)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3)):
     dependencies:
       '@vitest/expect': 4.1.5
       '@vitest/mocker': 4.1.5(vite@8.0.16(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
@@ -9072,7 +8983,6 @@ snapshots:
       vite: 8.0.16(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@opentelemetry/api': 1.9.0
       '@types/node': 22.19.17
       '@vitest/browser-playwright': 4.1.5(playwright@1.59.1)(vite@8.0.16(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.5)
       '@vitest/coverage-v8': 4.1.5(@vitest/browser@4.1.5)(vitest@4.1.5)
@@ -9080,7 +8990,7 @@ snapshots:
     transitivePeerDependencies:
       - msw
 
-  vitest@4.1.5(@opentelemetry/api@1.9.0)(@types/node@25.6.0)(@vitest/browser-playwright@4.1.8)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3)):
+  vitest@4.1.5(@types/node@25.6.0)(@vitest/browser-playwright@4.1.8)(@vitest/coverage-v8@4.1.5)(jsdom@26.1.0)(vite@8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3)):
     dependencies:
       '@vitest/expect': 4.1.5
       '@vitest/mocker': 4.1.5(vite@8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))
@@ -9103,7 +9013,6 @@ snapshots:
       vite: 8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@opentelemetry/api': 1.9.0
       '@types/node': 25.6.0
       '@vitest/browser-playwright': 4.1.8(playwright@1.59.1)(vite@8.0.16(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.5)
       '@vitest/coverage-v8': 4.1.5(@vitest/browser@4.1.8)(vitest@4.1.5)
@@ -9150,8 +9059,6 @@ snapshots:
   ws@8.21.0: {}
 
   xml-name-validator@5.0.0: {}
-
-  xml-naming@0.1.0: {}
 
   xmlchars@2.2.0: {}
 

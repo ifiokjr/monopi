@@ -1,4 +1,4 @@
-# Plan: Remote Web Management of Pi (`@ifi/pi-web`)
+# Plan: Remote Web Management of Pi (`@monopi/web-server`)
 
 ## Overview
 
@@ -61,7 +61,7 @@ Same idea. QR code appears. Scan it. Run it in tmux or as a system service. Toke
 The client library works in browsers, React Native, and Node.js — same API everywhere:
 
 ```typescript
-import { PiWebClient } from "@ifi/pi-web-client";
+import { PiWebClient } from "@monopi/web-client";
 
 const client = new PiWebClient({
 	url: "wss://abc123.trycloudflare.com/ws",
@@ -296,14 +296,14 @@ The user doesn't choose. `/remote` picks whichever is available.
 
 ## New Packages
 
-| Package                | Name                 | Type             | Ships                               |
-| ---------------------- | -------------------- | ---------------- | ----------------------------------- |
-| `packages/web-server/` | `@ifi/pi-web-server` | Compiled (dist/) | Embedded HTTP + WebSocket server    |
-| `packages/web-remote/` | `@ifi/pi-web-remote` | Raw .ts          | Pi extension: `/remote` command     |
-| `packages/web-client/` | `@ifi/pi-web-client` | Compiled (dist/) | Platform-agnostic TypeScript client |
-| `packages/web-ui/`     | `@ifi/pi-web-ui`     | Bundled (dist/)  | React SPA (served by web-server)    |
+| Package                        | Name                 | Type             | Ships                               |
+| ------------------------------ | -------------------- | ---------------- | ----------------------------------- |
+| `packages/monopi__web-server/` | `@monopi/web-server` | Compiled (dist/) | Embedded HTTP + WebSocket server    |
+| `packages/monopi__web-remote/` | `@monopi/web-remote` | Raw .ts          | Pi extension: `/remote` command     |
+| `packages/monopi__web-client/` | `@monopi/web-client` | Compiled (dist/) | Platform-agnostic TypeScript client |
+| `packages/monopi__web-client/` | `@monopi/web-client` | Bundled (dist/)  | React SPA (served by web-server)    |
 
-All four packages join the lockstep versioning in `knope.toml`.
+All four packages join the lockstep versioning in `monochange.toml`.
 
 **Note:** `web-remote` replaces the old `web-extension` concept. It serves double duty — it's both a pi extension (registers `/remote`) AND loads the web server. For headless daemon mode, `web-server` runs standalone without the extension.
 
@@ -313,17 +313,17 @@ All four packages join the lockstep versioning in `knope.toml`.
 
 **Goal:** An embeddable HTTP + WebSocket server that bridges a pi `AgentSession` to remote clients with token-based auth.
 
-### 1.1 — Scaffold `packages/web-server/`
+### 1.1 — Scaffold `packages/monopi__web-server/`
 
 - [ ] Create `package.json`:
-  - `"name": "@ifi/pi-web-server"`
+  - `"name": "@monopi/web-server"`
   - `"type": "module"`
   - `"bin": { "pi-web": "dist/bin/pi-web.js" }`
   - Dependencies: `hono`, `@hono/node-server`, `ws`, `qrcode-terminal`
   - Peer dependency: `@earendil-works/pi-coding-agent`
 - [ ] `tsconfig.json` extending root
-- [ ] Build/typecheck scripts matching `packages/core/` pattern
-- [ ] Add to `knope.toml` `versioned_files`
+- [ ] Build/typecheck scripts matching `packages/monopi__core/` pattern
+- [ ] Add to `monochange.toml` `versioned_files`
 - [ ] Add test globs to root `vitest.config.ts` and `biome.json`
 
 ### 1.2 — Token Generation & Management
@@ -453,15 +453,15 @@ wscat -c ws://localhost:3100/ws
 
 **Goal:** A pi extension that registers the `/remote` command. One command, zero config. Starts the server, detects connectivity, shows a QR code.
 
-### 2.1 — Scaffold `packages/web-remote/`
+### 2.1 — Scaffold `packages/monopi__web-remote/`
 
 - [ ] Create `package.json`:
-  - `"name": "@ifi/pi-web-remote"`
+  - `"name": "@monopi/web-remote"`
   - Raw .ts (pi loads via jiti)
   - `"pi": { "extensions": ["./index.ts"] }`
-  - Dependency: `@ifi/pi-web-server` (workspace)
-  - Peer dependencies: `@earendil-works/pi-coding-agent`, `typebox`
-- [ ] Add to `knope.toml` `versioned_files`
+  - Dependency: `@monopi/web-server` (workspace)
+  - Peer dependencies: `@earendil-works/pi-coding-agent`, `@sinclair/typebox`
+- [ ] Add to `monochange.toml` `versioned_files`
 
 ### 2.2 — Extension Implementation
 
@@ -509,15 +509,15 @@ pi
 
 **Goal:** A typed, platform-agnostic TypeScript client that works in browsers, React Native, and Node.js.
 
-### 3.1 — Scaffold `packages/web-client/`
+### 3.1 — Scaffold `packages/monopi__web-client/`
 
 - [ ] Create `package.json`:
-  - `"name": "@ifi/pi-web-client"`
+  - `"name": "@monopi/web-client"`
   - `"type": "module"`, compiled to dist/
   - **Zero runtime dependencies** — uses native `WebSocket` API
   - Exports ESM + CJS for maximum compatibility
 - [ ] `tsconfig.json` with `"lib": ["ES2022"]` — no DOM types
-- [ ] Add to `knope.toml` `versioned_files`
+- [ ] Add to `monochange.toml` `versioned_files`
 
 ### 3.2 — Client Core
 
@@ -613,7 +613,7 @@ pi
 
 ```typescript
 // Works identically in browser, React Native, or Node.js
-import { PiWebClient } from "@ifi/pi-web-client";
+import { PiWebClient } from "@monopi/web-client";
 
 const client = new PiWebClient({
 	url: "ws://192.168.1.42:3100/ws",
@@ -637,14 +637,14 @@ await client.prompt("What files are here?");
 
 **Goal:** A React SPA served by the web server. Chat interface with tool output, model switching, and extension dialogs.
 
-### 4.1 — Scaffold `packages/web-ui/`
+### 4.1 — Scaffold `packages/monopi__web-client/`
 
 - [ ] Create `package.json`:
-  - `"name": "@ifi/pi-web-ui"`
-  - Dependencies: `react`, `react-dom`, `@ifi/pi-web-client`
+  - `"name": "@monopi/web-client"`
+  - Dependencies: `react`, `react-dom`, `@monopi/web-client`
   - Dev dependencies: `vite`, `@vitejs/plugin-react`, `tailwindcss`
 - [ ] Vite config: builds to `dist/`, `web-server` serves statically
-- [ ] Add to `knope.toml` `versioned_files`
+- [ ] Add to `monochange.toml` `versioned_files`
 
 ### 4.2 — Connection Screen
 
@@ -757,49 +757,49 @@ pi
 
 - [ ] Example React Native app in `examples/react-native/`
 - [ ] Demonstrates: connect, chat, tool output, extension dialogs
-- [ ] Uses `@ifi/pi-web-client` directly
+- [ ] Uses `@monopi/web-client` directly
 
 ---
 
 ## Build & CI Integration
 
-### `knope.toml` — Add to `versioned_files`
+### `monochange.toml` — Add to `versioned_files`
 
 ```toml
-"packages/web-server/package.json",
-"packages/web-remote/package.json",
-"packages/web-client/package.json",
-"packages/web-ui/package.json",
+"packages/monopi__web-server/package.json",
+"packages/monopi__web-remote/package.json",
+"packages/monopi__web-client/package.json",
+"packages/monopi__web-client/package.json",
 ```
 
 ### Root `package.json` — Update build script
 
 ```json
-"build": "pnpm -r --filter @ifi/oh-pi-core --filter @ifi/oh-pi-cli --filter @ifi/pi-web-server --filter @ifi/pi-web-client --filter @ifi/pi-web-ui run build"
+"build": "pnpm -r --filter @monopi/core --filter @monopi/cli --filter @monopi/web-server --filter @monopi/web-client --filter @monopi/web-client run build"
 ```
 
 ### Root `vitest.config.ts` — Add test globs
 
 ```typescript
-"packages/web-server/tests/**/*.test.ts",
-"packages/web-client/tests/**/*.test.ts",
-"packages/web-remote/tests/**/*.test.ts",
+"packages/monopi__web-server/tests/**/*.test.ts",
+"packages/monopi__web-client/tests/**/*.test.ts",
+"packages/monopi__web-remote/tests/**/*.test.ts",
 ```
 
 ### `biome.json` — Add source globs
 
 ```json
-"packages/web-server/src/**/*.ts",
-"packages/web-client/src/**/*.ts",
-"packages/web-remote/**/*.ts",
-"packages/web-ui/src/**/*.ts",
-"packages/web-ui/src/**/*.tsx"
+"packages/monopi__web-server/src/**/*.ts",
+"packages/monopi__web-client/src/**/*.ts",
+"packages/monopi__web-remote/**/*.ts",
+"packages/monopi__web-client/src/**/*.ts",
+"packages/monopi__web-client/src/**/*.tsx"
 ```
 
-### `packages/oh-pi/bin/oh-pi.mjs` — Add to PACKAGES
+### `packages/monopi__monopi/bin/monopi.mjs` — Add to PACKAGES
 
 ```javascript
-"@ifi/pi-web-remote",   // /remote command extension
+"@monopi/web-remote",   // /remote command extension
 // web-server is a dependency of web-remote, installed automatically
 // web-client and web-ui are bundled into web-server
 ```
@@ -809,19 +809,19 @@ pi
 ## Dependency Map
 
 ```
-@ifi/pi-web-remote (pi extension: /remote command)
-  ├── @ifi/pi-web-server (starts embedded server)
+@monopi/web-remote (pi extension: /remote command)
+  ├── @monopi/web-server (starts embedded server)
   └── @earendil-works/pi-coding-agent (peer dep)
 
-@ifi/pi-web-server (embeddable server)
-  ├── @ifi/pi-web-ui (bundled static assets)
+@monopi/web-server (embeddable server)
+  ├── @monopi/web-client (bundled static assets)
   └── @earendil-works/pi-coding-agent (peer dep: SDK)
 
-@ifi/pi-web-client (standalone client library)
+@monopi/web-client (standalone client library)
   └── (no dependencies — platform-agnostic)
 
-@ifi/pi-web-ui (React SPA)
-  └── @ifi/pi-web-client
+@monopi/web-client (React SPA)
+  └── @monopi/web-client
 ```
 
 ---

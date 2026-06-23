@@ -196,6 +196,7 @@ describe("check-patch-coverage", () => {
 
 	it("normalizes coverage paths and delegates git diff lookup", () => {
 		expect(normalizeCoveragePath(`./packages${path.sep}demo.ts`)).toBe("packages/demo.ts");
+		expect(normalizeCoveragePath(`${process.cwd()}${path.sep}packages${path.sep}demo.ts`)).toBe("packages/demo.ts");
 
 		childProcessMocks.execFileSync.mockReturnValueOnce("diff output");
 		expect(getGitDiff("base", "head")).toBe("diff output");

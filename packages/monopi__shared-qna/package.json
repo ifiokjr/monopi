@@ -1,0 +1,38 @@
+{
+	"name": "@monopi/shared-qna",
+	"version": "0.5.1",
+	"description": "Shared TUI question-and-answer component for pi extensions.",
+	"keywords": [
+		"components",
+		"extension-library",
+		"pi",
+		"pi-coding-agent",
+		"qna",
+		"tui"
+	],
+	"homepage": "https://github.com/ifiokjr/monopi/tree/main/packages/monopi__shared-qna",
+	"bugs": {
+		"url": "https://github.com/ifiokjr/monopi/issues"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ifiokjr/monopi.git",
+		"directory": "packages/monopi__shared-qna"
+	},
+	"files": [
+		"*.ts",
+		"README.md",
+		"!**/*.test.ts",
+		"!tests/**"
+	],
+	"type": "module",
+	"exports": {
+		".": "./index.ts",
+		"./pi-tui-loader": "./pi-tui-loader.ts",
+		"./package.json": "./package.json"
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-tui": "*"
+	}
+}

@@ -7,6 +7,11 @@ const RETIRED_AUDIT_PATTERNS = [
 	"Use the bulk advisory endpoint instead",
 ];
 
+const ALLOWED_NO_PATCH_ADVISORIES = [
+	// Upstream advisory currently declares `patched_versions: <0.0.0`.
+	"GHSA-jfgx-wxx8-mp94",
+];
+
 function writeIfPresent(stream, value) {
 	if (!value) {
 		return;
@@ -48,6 +53,15 @@ if (isRetiredAuditEndpointError(combinedOutput)) {
 	console.warn(
 		"⚠️ Dependency allowlist checks and GitHub Dependency Review still run in CI while this fallback is active.",
 	);
+	process.exit(0);
+}
+
+const onlyAllowedNoPatchHighAdvisories =
+	/Severity: .*1 high/.test(combinedOutput) &&
+	ALLOWED_NO_PATCH_ADVISORIES.every((advisory) => combinedOutput.includes(advisory));
+
+if (onlyAllowedNoPatchHighAdvisories) {
+	console.warn("⚠️ Ignoring allowlisted upstream high advisory with no patched version.");
 	process.exit(0);
 }
 

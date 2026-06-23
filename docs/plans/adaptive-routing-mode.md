@@ -43,7 +43,7 @@ The system should use a **cheap classifier model** to estimate task characterist
 
 ### Secondary goals
 
-- Reuse existing pi / oh-pi primitives where possible:
+- Reuse existing pi / monopi primitives where possible:
   - `ctx.modelRegistry.getAvailable()`
   - `pi.setModel(...)`
   - `pi.setThinkingLevel(...)`

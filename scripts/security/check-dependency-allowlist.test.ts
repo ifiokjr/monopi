@@ -35,14 +35,14 @@ describe("check-dependency-allowlist", () => {
 		});
 		writeJson(path.join(repoDir, "package.json"), { private: true });
 		writeJson(path.join(repoDir, "packages", "internal-a", "package.json"), {
-			name: "@ifi/internal-a",
+			name: "@monopi/internal-a",
 			version: "0.1.0",
 		});
 		writeJson(path.join(repoDir, "packages", "internal-b", "package.json"), {
-			name: "@ifi/internal-b",
+			name: "@monopi/internal-b",
 			version: "0.1.0",
 			dependencies: {
-				"@ifi/internal-a": "0.1.0",
+				"@monopi/internal-a": "0.1.0",
 				chalk: "^5.0.0",
 			},
 		});

@@ -1,0 +1,27 @@
+{
+	"name": "@monopi/agents",
+	"version": "0.5.1",
+	"description": "AGENTS.md templates for pi: general-developer, fullstack, security-researcher, and more.",
+	"keywords": [
+		"agent-templates",
+		"agents",
+		"agents-md",
+		"pi",
+		"pi-coding-agent",
+		"prompts"
+	],
+	"homepage": "https://github.com/ifiokjr/monopi/tree/main/packages/monopi__agents",
+	"bugs": {
+		"url": "https://github.com/ifiokjr/monopi/issues"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ifiokjr/monopi.git",
+		"directory": "packages/monopi__agents"
+	},
+	"files": [
+		"agents",
+		"README.md"
+	]
+}

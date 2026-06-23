@@ -23,9 +23,9 @@ interface StartupBenchmarkSuite {
 	cleanup: () => Promise<void>;
 }
 
-type SchedulerExports = typeof import("../../packages/extensions/extensions/scheduler.js");
-type WorktreeExports = typeof import("../../packages/extensions/extensions/worktree-shared.js");
-type CustomFooterExports = typeof import("../../packages/extensions/extensions/custom-footer.js");
+type SchedulerExports = typeof import("../../packages/monopi__extensions/extensions/scheduler.js");
+type WorktreeExports = typeof import("../../packages/monopi__extensions/extensions/worktree-shared.js");
+type CustomFooterExports = typeof import("../../packages/monopi__extensions/extensions/custom-footer.js");
 
 const ROOT_PACKAGE_PATH = path.resolve(process.cwd(), "package.json");
 const TEMP_ROOT_CLEANUP_RETRY_DELAYS_MS = [0, 25, 50, 100] as const;
@@ -213,11 +213,14 @@ export async function createStartupBenchmarkSuite(): Promise<StartupBenchmarkSui
 		? manifestEntries.filter((entry) => extensionFilter.has(entry.id))
 		: manifestEntries;
 
-	const schedulerModule = (await import("../../packages/extensions/extensions/scheduler.js")) as SchedulerExports;
-	const worktreeModule = (await import("../../packages/extensions/extensions/worktree-shared.js")) as WorktreeExports;
+	const schedulerModule =
+		(await import("../../packages/monopi__extensions/extensions/scheduler.js")) as SchedulerExports;
+	const worktreeModule =
+		(await import("../../packages/monopi__extensions/extensions/worktree-shared.js")) as WorktreeExports;
 	const customFooterModule =
-		(await import("../../packages/extensions/extensions/custom-footer.js")) as CustomFooterExports;
-	const usageTrackerModule = (await import("../../packages/extensions/extensions/usage-tracker.js")) as ExtensionModule;
+		(await import("../../packages/monopi__extensions/extensions/custom-footer.js")) as CustomFooterExports;
+	const usageTrackerModule =
+		(await import("../../packages/monopi__extensions/extensions/usage-tracker.js")) as ExtensionModule;
 
 	const now = Date.now();
 	const schedulerTasks = Array.from({ length: 50 }, (_, index) => buildSchedulerTask(index, now));

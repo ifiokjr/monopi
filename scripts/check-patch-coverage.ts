@@ -201,7 +201,15 @@ export function formatPatchCoverageReport(summary: PatchCoverageSummary, thresho
 }
 
 export function normalizeCoveragePath(filePath: string): string {
-	return filePath.replace(/^\.\//, "").split(path.sep).join("/");
+	let normalized = filePath.replace(/^\.\//, "").split(path.sep).join("/");
+	const cwd = process.cwd().split(path.sep).join("/");
+	if (normalized === cwd) {
+		return ".";
+	}
+	if (normalized.startsWith(`${cwd}/`)) {
+		normalized = normalized.slice(cwd.length + 1);
+	}
+	return normalized;
 }
 
 export function getGitDiff(base: string, head: string): string {

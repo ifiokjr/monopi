@@ -2,7 +2,7 @@
 default: minor
 ---
 
-# Subagent Improvements: Caching, Auto-save, Inline Fields, Better Errors
+# Improve subagents
 
 ## External Agent Caching & Auto-save
 

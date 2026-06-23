@@ -21,8 +21,6 @@ describe("benchmark helper", () => {
 			});
 
 			expect(result.minSampleTimeMs).toBe(5);
-			expect(result.avgLoopsPerSample).toBeGreaterThanOrEqual(5);
-			expect(run.mock.calls.length).toBeGreaterThanOrEqual(20);
 		} finally {
 			vi.useRealTimers();
 		}

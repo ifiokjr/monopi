@@ -1,9 +1,9 @@
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
-const coreEntry = fileURLToPath(new URL("packages/core/src/index.ts", import.meta.url));
-const sharedQnaEntry = fileURLToPath(new URL("packages/shared-qna/index.ts", import.meta.url));
-const webServerEntry = fileURLToPath(new URL("packages/web-server/src/index.ts", import.meta.url));
+const coreEntry = fileURLToPath(new URL("packages/monopi__core/src/index.ts", import.meta.url));
+const sharedQnaEntry = fileURLToPath(new URL("packages/monopi__shared-qna/index.ts", import.meta.url));
+const webServerEntry = fileURLToPath(new URL("packages/monopi__web-server/src/index.ts", import.meta.url));
 
 const coverageInclude = ["scripts/**/*.{ts,mts,mjs}", "packages/**/*.{ts,tsx,mts,mjs}"];
 const coverageExclude = [
@@ -13,35 +13,35 @@ const coverageExclude = [
 	"**/dist/**",
 	"**/node_modules/**",
 	"**/vitest*.config.*",
-	"packages/cursor/proto/**",
-	"packages/providers/supported-providers.generated.ts",
+	"packages/monopi__provider-cursor/proto/**",
+	"packages/monopi__provider-catalog/supported-providers.generated.ts",
 	// Analytics files that remain intentionally file-ignored and are covered via E2E or runtime-only paths
-	"packages/analytics-dashboard/playwright.config.ts",
-	"packages/analytics-dashboard/vite.config.ts",
-	"packages/analytics-dashboard/src/App.tsx",
-	"packages/analytics-dashboard/src/main.tsx",
-	"packages/analytics-dashboard/src/components/**",
-	"packages/analytics-dashboard/src/pages/**",
-	"packages/analytics-dashboard/src/hooks/useAnalytics.ts",
-	"packages/analytics-dashboard/src/server/**",
-	"packages/analytics-db/drizzle.config.ts",
-	"packages/analytics-db/src/db.ts",
-	"packages/analytics-db/src/index.ts",
-	"packages/analytics-db/src/migrations.ts",
-	"packages/analytics-extension/index.ts",
+	"packages/monopi__analytics-dashboard/playwright.config.ts",
+	"packages/monopi__analytics-dashboard/vite.config.ts",
+	"packages/monopi__analytics-dashboard/src/App.tsx",
+	"packages/monopi__analytics-dashboard/src/main.tsx",
+	"packages/monopi__analytics-dashboard/src/components/**",
+	"packages/monopi__analytics-dashboard/src/pages/**",
+	"packages/monopi__analytics-dashboard/src/hooks/useAnalytics.ts",
+	"packages/monopi__analytics-dashboard/src/server/**",
+	"packages/monopi__analytics-db/drizzle.config.ts",
+	"packages/monopi__analytics-db/src/db.ts",
+	"packages/monopi__analytics-db/src/index.ts",
+	"packages/monopi__analytics-db/src/migrations.ts",
+	"packages/monopi__analytics-extension/index.ts",
 	// Docs site — no tests needed for a static documentation site
-	"packages/docs/vite.config.ts",
-	"packages/docs/src/**/*.tsx",
-	"packages/docs/src/**/*.ts",
-	"packages/docs/scripts/*",
+	"packages/monopi__docs/vite.config.ts",
+	"packages/monopi__docs/src/**/*.tsx",
+	"packages/monopi__docs/src/**/*.ts",
+	"packages/monopi__docs/scripts/*",
 ];
 
 export default defineConfig({
 	resolve: {
 		alias: {
-			"@ifi/oh-pi-core": coreEntry,
-			"@ifi/pi-shared-qna": sharedQnaEntry,
-			"@ifi/pi-web-server": webServerEntry,
+			"@monopi/core": coreEntry,
+			"@monopi/shared-qna": sharedQnaEntry,
+			"@monopi/web-server": webServerEntry,
 		},
 	},
 	test: {
@@ -57,26 +57,25 @@ export default defineConfig({
 		include: [
 			"benchmarks/**/*.test.ts",
 			"scripts/**/*.test.ts",
-			"packages/core/src/**/*.test.ts",
-			"packages/adaptive-routing/**/*.test.ts",
-			"packages/background-tasks/tests/**/*.test.ts",
-			"packages/cli/src/**/*.test.ts",
-			"packages/diagnostics/tests/**/*.test.ts",
-			"packages/extensions/extensions/**/*.test.ts",
-			"packages/subagents/tests/**/*.test.ts",
-			"packages/plan/tests/**/*.test.ts",
-			"packages/shared-qna/tests/**/*.test.ts",
-			"packages/spec/tests/**/*.test.ts",
-			"packages/cursor/tests/**/*.test.ts",
-			"packages/ollama/tests/**/*.test.ts",
-			"packages/providers/tests/**/*.test.ts",
-			"packages/web-server/tests/**/*.test.ts",
-			"packages/web-client/tests/**/*.test.ts",
-			"packages/web-remote/tests/**/*.test.ts",
-			"packages/analytics-db/src/tests/**/*.test.ts",
-			"packages/pi-remote-tailscale/tests/**/*.test.ts",
-			"packages/pi-bash-live-view/tests/**/*.test.ts",
-			"packages/pi-pretty/tests/**/*.test.ts",
+			"packages/monopi__core/src/**/*.test.ts",
+			"packages/monopi__adaptive-routing/**/*.test.ts",
+			"packages/monopi__background-tasks/tests/**/*.test.ts",
+			"packages/monopi__cli/src/**/*.test.ts",
+			"packages/monopi__diagnostics/tests/**/*.test.ts",
+			"packages/monopi__db/tests/**/*.test.ts",
+			"packages/monopi__extensions/extensions/**/*.test.ts",
+			"packages/monopi__subagents/tests/**/*.test.ts",
+			"packages/monopi__shared-qna/tests/**/*.test.ts",
+			"packages/monopi__provider-cursor/tests/**/*.test.ts",
+			"packages/monopi__provider-ollama/tests/**/*.test.ts",
+			"packages/monopi__provider-catalog/tests/**/*.test.ts",
+			"packages/monopi__web-server/tests/**/*.test.ts",
+			"packages/monopi__web-client/tests/**/*.test.ts",
+			"packages/monopi__web-remote/tests/**/*.test.ts",
+			"packages/monopi__analytics-db/src/tests/**/*.test.ts",
+			"packages/monopi__remote-tailscale/tests/**/*.test.ts",
+			"packages/monopi__bash-live-view/tests/**/*.test.ts",
+			"packages/monopi__pretty/tests/**/*.test.ts",
 		],
 		pool: "forks",
 	},

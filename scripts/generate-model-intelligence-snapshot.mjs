@@ -85,7 +85,7 @@ const MANUAL_BENCH_ALIASES = {
 async function fetchJson(url) {
 	const response = await fetch(url, {
 		headers: {
-			"user-agent": "oh-pi model intelligence snapshot generator",
+			"user-agent": "monopi model intelligence snapshot generator",
 		},
 	});
 

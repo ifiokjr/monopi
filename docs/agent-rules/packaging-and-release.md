@@ -3,14 +3,14 @@
 ## Changesets
 
 - Every change must include a changeset.
-- The only exception is a generated `chore: release` commit from knope.
+- The only exception is a generated `chore: release` commit from the release workflow.
 - Create a changeset with:
 
 ```bash
-knope document-change
+pnpm change
 ```
 
-This repo uses lockstep versioning and a single knope `[package]`, so every changeset frontmatter must use only `default` as the key.
+This repo uses MonoChange with a lockstep `default` group, so every changeset frontmatter must use only `default` as the key.
 
 ```md
 ---
@@ -18,7 +18,7 @@ default: patch
 ---
 ```
 
-Do not use package names like `@ifi/oh-pi` or `@ifi/oh-pi-extensions` in changeset frontmatter.
+Do not use package names like `@monopi/monopi` or `@monopi/extensions` in changeset frontmatter.
 
 ## Change types
 
@@ -28,7 +28,7 @@ Do not use package names like `@ifi/oh-pi` or `@ifi/oh-pi-extensions` in changes
 
 ## Packaging model
 
-`@ifi/oh-pi` is a bin installer, not a bundling meta-package.
+`@monopi/monopi` is a bin installer, not a bundling meta-package.
 
 - Each sub-package is a standalone pi package with its own `pi` field in `package.json`.
 - Pi loads each package with its own module root.
@@ -37,41 +37,38 @@ Do not use package names like `@ifi/oh-pi` or `@ifi/oh-pi-extensions` in changes
 ## Installation commands
 
 ```bash
-npx @ifi/oh-pi
-npx @ifi/oh-pi --version 0.2.13
-npx @ifi/oh-pi --local
-npx @ifi/oh-pi --remove
+npx @monopi/monopi
+npx @monopi/monopi --version 0.2.13
+npx @monopi/monopi --local
+npx @monopi/monopi --remove
 ```
 
 Individual packages can also be installed directly:
 
 ```bash
-pi install npm:@ifi/oh-pi-extensions
-pi install npm:@ifi/pi-extension-adaptive-routing
-pi install npm:@ifi/oh-pi-themes
-pi install npm:@ifi/oh-pi-prompts
-pi install npm:@ifi/oh-pi-skills
-pi install npm:@ifi/pi-extension-subagents
-pi install npm:@ifi/pi-plan
-pi install npm:@ifi/pi-spec
-pi install npm:@ifi/pi-provider-cursor
-pi install npm:@ifi/pi-provider-ollama
-pi install npm:@ifi/pi-analytics-extension
-pi install npm:@ifi/pi-remote-tailscale
-pi install npm:@ifi/pi-bash-live-view
-pi install npm:@ifi/pi-pretty
+pi install npm:@monopi/extensions
+pi install npm:@monopi/adaptive-routing
+pi install npm:@monopi/themes
+pi install npm:@monopi/skills
+pi install npm:@monopi/subagents
+pi install npm:@monopi/provider-cursor
+pi install npm:@monopi/provider-ollama
+pi install npm:@monopi/analytics-extension
+pi install npm:@monopi/remote-tailscale
+pi install npm:@monopi/bash-live-view
+pi install npm:@monopi/pretty
 ```
 
-Do not use `bundledDependencies` in `@ifi/oh-pi`.
+Do not use `bundledDependencies` in `@monopi/monopi`.
 
-Experimental packages can stay intentionally separate from the `@ifi/oh-pi` installer when they need an opt-in rollout or rely on unofficial upstream APIs.
+Experimental packages can stay intentionally separate from the `@monopi/monopi` installer when they need an opt-in rollout or rely on unofficial upstream APIs.
 
 ## Release flow
 
 ```bash
 ./scripts/release.sh
 ./scripts/release.sh --dry-run
-knope publish
+pnpm publish
 ```
 
-`./scripts/release.sh` runs lint, security checks, typecheck, test, build, version bump, changelog update, tag creation, and push. `knope publish` then publishes all workspace packages.
+`./scripts/release.sh` runs lint, security checks, typecheck, test, build, version bump, changelog update, tag creation, and push. `pnpm publish` then publishes all workspace packages.
