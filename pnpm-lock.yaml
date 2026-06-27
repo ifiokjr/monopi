@@ -689,6 +689,24 @@ importers:
         specifier: ^1.1.24
         version: 1.3.0
 
+  packages/monopi__extension-todos:
+    dependencies:
+      '@earendil-works/pi-agent-core':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-ai':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-coding-agent':
+        specifier: '>=0.78.1'
+        version: 0.78.1(ws@8.21.0)(zod@3.25.76)
+      '@earendil-works/pi-tui':
+        specifier: '>=0.78.1'
+        version: 0.78.1
+      typebox:
+        specifier: ^1.1.24
+        version: 1.3.0
+
   packages/monopi__extension-tool-metadata:
     dependencies:
       '@earendil-works/pi-agent-core':
