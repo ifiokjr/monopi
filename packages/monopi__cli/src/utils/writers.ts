@@ -161,15 +161,24 @@ export function writeModelConfig(agentDir: string, config: OhPConfigWithRouting)
 			}
 
 			if (cp.discoveredModels?.length) {
-				entry.models = cp.discoveredModels.map((m) => ({
-					contextWindow: m.contextWindow,
-					cost: { cacheRead: 0, cacheWrite: 0, input: 0, output: 0 },
-					id: m.id,
-					input: m.input,
-					maxTokens: m.maxTokens,
-					name: m.id,
-					reasoning: m.reasoning,
-				}));
+				entry.models = cp.discoveredModels.map((m) => {
+					const modelEntry: Record<string, unknown> = {
+						contextWindow: m.contextWindow,
+						cost: { cacheRead: 0, cacheWrite: 0, input: 0, output: 0 },
+						id: m.id,
+						input: m.input,
+						maxTokens: m.maxTokens,
+						name: m.id,
+						reasoning: m.reasoning,
+					};
+					if (m.thinkingLevelMap) {
+						modelEntry.thinkingLevelMap = m.thinkingLevelMap;
+					}
+					if (m.compat) {
+						modelEntry.compat = m.compat;
+					}
+					return modelEntry;
+				});
 			} else if (cp.defaultModel) {
 				const caps = MODEL_CAPABILITIES[cp.defaultModel];
 				entry.models = [

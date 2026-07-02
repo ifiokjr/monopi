@@ -204,6 +204,40 @@ describe("provider keep strategy", () => {
 		expect(models.providers.openai.api).toBe("openai-responses");
 	});
 
+	it("writeModelConfig persists discovered thinking metadata", () => {
+		const dir = makeTempDir();
+		writeModelConfig(
+			dir,
+			makeConfig({
+				providerStrategy: "replace",
+				providers: [
+					{
+						name: "custom-ollama",
+						apiKey: "none",
+						baseUrl: "http://localhost:11434/v1",
+						api: "openai-completions",
+						discoveredModels: [
+							{
+								contextWindow: 131072,
+								id: "gpt-oss:120b",
+								input: ["text"],
+								maxTokens: 32768,
+								reasoning: true,
+								thinkingLevelMap: { off: null, low: "low", medium: "medium", high: "high", xhigh: null },
+								compat: { maxTokensField: "max_tokens", supportsDeveloperRole: false },
+							},
+						],
+					},
+				],
+			}),
+		);
+
+		const models = JSON.parse(readFileSync(join(dir, "models.json"), "utf8"));
+		const [model] = models.providers["custom-ollama"].models;
+		expect(model.thinkingLevelMap).toEqual({ off: null, low: "low", medium: "medium", high: "high", xhigh: null });
+		expect(model.compat).toEqual({ maxTokensField: "max_tokens", supportsDeveloperRole: false });
+	});
+
 	it("writeProviderEnv merges auth/settings when strategy is add", () => {
 		const dir = makeTempDir();
 		const settingsPath = join(dir, "settings.json");

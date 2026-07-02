@@ -6,6 +6,7 @@ import {
 	type Context,
 	type Model,
 	type SimpleStreamOptions,
+	getSupportedThinkingLevels,
 	streamSimpleOpenAICompletions,
 } from "@earendil-works/pi-ai";
 
@@ -711,6 +712,7 @@ function renderModelInfo(model: CollectedOllamaModel): string {
 		`Source: ${model.provider === OLLAMA_LOCAL_PROVIDER ? "Local Ollama daemon" : "Ollama Cloud"}`,
 		`Inputs: ${model.input.join(", ")}`,
 		`Reasoning: ${model.reasoning ? "yes" : "no"}`,
+		`Thinking levels: ${getSupportedThinkingLevels(model as Model<Api>).join(", ")}`,
 		`Context window: ${model.contextWindow.toLocaleString()}`,
 		`Max tokens: ${model.maxTokens.toLocaleString()}`,
 		`Base URL: ${model.baseUrl}`,

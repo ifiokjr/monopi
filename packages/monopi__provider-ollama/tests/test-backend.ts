@@ -7,7 +7,9 @@ interface BackendModel {
 	capabilities?: string[];
 	contextWindow?: number;
 	family?: string;
+	maxTokens?: number;
 	parameterSize?: string;
+	parameters?: string;
 	quantization?: string;
 }
 
@@ -92,7 +94,9 @@ export async function createTestOllamaBackend(): Promise<TestOllamaBackend> {
 						},
 						model_info: {
 							[`${family}.context_length`]: match.contextWindow ?? 131072,
+							[`${family}.max_output_tokens`]: match.maxTokens ?? undefined,
 						},
+						parameters: match.parameters,
 					}),
 				);
 			});

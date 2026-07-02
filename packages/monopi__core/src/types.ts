@@ -9,6 +9,10 @@ export interface DiscoveredModel {
 	input: ("text" | "image")[];
 	contextWindow: number;
 	maxTokens: number;
+	/** Maps pi thinking levels to provider values; null marks unsupported levels. */
+	thinkingLevelMap?: Partial<Record<"off" | "minimal" | "low" | "medium" | "high" | "xhigh", string | null>>;
+	/** Provider-specific compatibility overrides for generated models.json entries. */
+	compat?: Record<string, unknown>;
 }
 
 /** Configuration for a single LLM provider (API key, endpoint, model selection). */

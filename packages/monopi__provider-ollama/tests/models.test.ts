@@ -1,3 +1,4 @@
+import { getSupportedThinkingLevels } from "@earendil-works/pi-ai";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -80,6 +81,8 @@ describe("ollama models", () => {
 		const models = await discoverOllamaCloudModelList("test-key");
 		expect(models?.map((model) => model.id)).toEqual(["brand-new-cloud-model", "gpt-oss:120b"]);
 		expect(models?.[0]?.source).toBe("cloud");
+		expect(models?.[1]?.reasoning).toBe(true);
+		expect(getSupportedThinkingLevels(models![1]! as never)).toEqual(["minimal", "low", "medium", "high"]);
 		expect(backend.getAuthHeaders()).toEqual(["Bearer test-key"]);
 		await backend.close();
 	});
@@ -246,6 +249,34 @@ describe("ollama models", () => {
 		await backend.close();
 	});
 
+	it("uses Ollama show metadata and catalog heuristics for thinking and token limits", async () => {
+		const backend = await createTestOllamaBackend();
+		backend.setModels([
+			{
+				id: "qwen3:32b",
+				capabilities: ["completion", "tools"],
+				contextWindow: 32768,
+				family: "qwen3",
+				maxTokens: 8192,
+				parameters: "temperature 0.7\nnum_ctx 65536\nnum_predict 12288",
+			},
+		]);
+		process.env.OLLAMA_HOST = backend.origin;
+		const models = await discoverOllamaLocalModels();
+		expect(models?.[0]?.reasoning).toBe(true);
+		expect(models?.[0]?.contextWindow).toBe(32768);
+		expect(models?.[0]?.maxTokens).toBe(8192);
+		expect(getSupportedThinkingLevels(models![0]! as never)).toEqual([
+			"off",
+			"minimal",
+			"low",
+			"medium",
+			"high",
+			"xhigh",
+		]);
+		await backend.close();
+	});
+
 	it("uses default metadata when show discovery fails", async () => {
 		const backend = await createTestOllamaBackend();
 		backend.setModels([
@@ -267,7 +298,7 @@ describe("ollama models", () => {
 		const models = await discoverOllamaCloudModels("test-key");
 		expect(models?.map((model) => model.id)).toEqual(["gpt-oss:120b", "qwen3-vl:235b"]);
 		expect(models?.[1]?.input).toEqual(["text"]);
-		expect(models?.[1]?.reasoning).toBe(false);
+		expect(models?.[1]?.reasoning).toBe(true);
 		await backend.close();
 	});
 

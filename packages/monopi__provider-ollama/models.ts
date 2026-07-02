@@ -46,6 +46,8 @@ interface OllamaShowResponse {
 	capabilities?: unknown;
 	model_info?: Record<string, unknown>;
 	details?: Record<string, unknown>;
+	parameters?: unknown;
+	template?: unknown;
 }
 
 const DEFAULT_CONTEXT_WINDOW = 128_000;
@@ -61,12 +63,27 @@ const OLLAMA_OPENAI_COMPAT: NonNullable<OllamaProviderModel["compat"]> = {
 };
 
 const OLLAMA_REASONING_THINKING_LEVEL_MAP: ThinkingLevelMap = {
+	off: "none",
 	minimal: "low",
 	low: "low",
 	medium: "medium",
 	high: "high",
-	xhigh: "high",
+	xhigh: "max",
 };
+
+const OLLAMA_GPT_OSS_THINKING_LEVEL_MAP: ThinkingLevelMap = {
+	off: null,
+	minimal: "low",
+	low: "low",
+	medium: "medium",
+	high: "high",
+	xhigh: null,
+};
+
+const OLLAMA_GPT_OSS_MODEL_PATTERN = /(?:^|[-_/:])gpt[-_]?oss(?:$|[-_/:])/i;
+const OLLAMA_QWEN3_MODEL_PATTERN = /(?:^|[-_/:])qwen3(?:$|[-_/:.])/i;
+const OLLAMA_DEEPSEEK_THINKING_MODEL_PATTERN = /(?:^|[-_/:])deepseek[-_]?(?:r1|v3\.?1)(?:$|[-_/:.])/i;
+const OLLAMA_THINKING_TEMPLATE_PATTERN = /<think>|\.thinking\b|reasoning_content/i;
 
 const OLLAMA_CLOUD_ZAI_COMPAT: Partial<NonNullable<OllamaProviderModel["compat"]>> = {
 	supportsReasoningEffort: false,
@@ -217,6 +234,7 @@ export function toOllamaModel(
 	const contextWindow = normalizePositiveInteger(model.contextWindow, DEFAULT_CONTEXT_WINDOW);
 	const maxTokens = normalizeModelMaxTokens(model, contextWindow);
 	const compatDefaults = getOllamaCompatDefaults(model);
+	const reasoning = normalizeModelReasoning(model);
 	return {
 		capabilities: sanitizeCapabilities(model.capabilities),
 		compat: {
@@ -234,11 +252,9 @@ export function toOllamaModel(
 		name: applySourceSuffix(model.name?.trim() || formatDisplayName(model.id), model.source),
 		parameterSize: sanitizeOptionalString(model.parameterSize),
 		quantization: sanitizeOptionalString(model.quantization),
-		reasoning: model.reasoning ?? false,
+		reasoning,
 		source: model.source,
-		thinkingLevelMap: model.reasoning
-			? (model.thinkingLevelMap ?? OLLAMA_REASONING_THINKING_LEVEL_MAP)
-			: model.thinkingLevelMap,
+		thinkingLevelMap: getOllamaThinkingLevelMap(model, reasoning),
 	};
 }
 
@@ -301,6 +317,7 @@ function cloneModel(model: OllamaProviderModel): OllamaProviderModel {
 		cost: { ...model.cost },
 		input: [...model.input],
 		localAvailability: model.localAvailability,
+		thinkingLevelMap: model.thinkingLevelMap ? { ...model.thinkingLevelMap } : undefined,
 	};
 }
 
@@ -328,25 +345,31 @@ function normalizeDiscoveredModel(
 		? payload.capabilities.filter((capability): capability is string => typeof capability === "string")
 		: [];
 	const capabilitySet = new Set(capabilities.map((capability) => capability.toLowerCase()));
-	const rawContext = extractContextWindow(payload.model_info);
-	const contextWindow = rawContext ?? fallback?.contextWindow ?? cached?.contextWindow ?? DEFAULT_CONTEXT_WINDOW;
+	const parameters = parseOllamaParameters(payload.parameters);
+	const rawContext = extractContextWindow(payload.model_info) ?? extractParameterInteger(parameters, "num_ctx");
+	const family = extractDetailField(payload.details, "family") ?? cached?.family ?? fallback?.family;
+	const contextWindow = rawContext ?? cached?.contextWindow ?? fallback?.contextWindow ?? DEFAULT_CONTEXT_WINDOW;
+	const rawMaxTokens =
+		extractOutputTokenLimit(payload.model_info) ?? extractParameterInteger(parameters, "num_predict");
 	const maxTokens =
-		fallback?.maxTokens ??
-		cached?.maxTokens ??
-		(rawContext ? inferMaxTokens(rawContext) : inferMaxTokens(contextWindow));
+		rawMaxTokens ?? cached?.maxTokens ?? fallback?.maxTokens ?? inferMaxTokens(contextWindow, { id, source });
+	const reasoning =
+		capabilitySet.has("thinking") ||
+		modelMatchesOllamaThinkingCatalog({ family, id, source, template: payload.template }) ||
+		Boolean(cached?.reasoning ?? fallback?.reasoning);
 	return toOllamaModel({
 		capabilities,
 		contextWindow,
-		family: extractDetailField(payload.details, "family") ?? fallback?.family ?? cached?.family,
+		family,
 		id,
-		input: capabilitySet.has("vision") ? ["text", "image"] : (fallback?.input ?? cached?.input ?? ["text"]),
+		input: capabilitySet.has("vision") ? ["text", "image"] : (cached?.input ?? fallback?.input ?? ["text"]),
 		localAvailability: source === "local" ? "installed" : undefined,
 		maxTokens,
 		parameterSize:
-			extractDetailField(payload.details, "parameter_size") ?? fallback?.parameterSize ?? cached?.parameterSize,
+			extractDetailField(payload.details, "parameter_size") ?? cached?.parameterSize ?? fallback?.parameterSize,
 		quantization:
-			extractDetailField(payload.details, "quantization_level") ?? fallback?.quantization ?? cached?.quantization,
-		reasoning: capabilitySet.has("thinking") || fallback?.reasoning || cached?.reasoning,
+			extractDetailField(payload.details, "quantization_level") ?? cached?.quantization ?? fallback?.quantization,
+		reasoning,
 		source,
 	});
 }
@@ -359,12 +382,51 @@ function extractContextWindow(modelInfo: Record<string, unknown> | undefined): n
 		if (!key.endsWith(".context_length")) {
 			continue;
 		}
-		const parsed = typeof value === "number" ? value : Number(value);
-		if (Number.isFinite(parsed) && parsed > 0) {
-			return Math.floor(parsed);
+		const parsed = normalizeUnknownPositiveInteger(value);
+		if (parsed) {
+			return parsed;
 		}
 	}
 	return null;
+}
+
+function extractOutputTokenLimit(modelInfo: Record<string, unknown> | undefined): number | null {
+	if (!modelInfo) {
+		return null;
+	}
+	for (const [key, value] of Object.entries(modelInfo)) {
+		if (!key.endsWith(".max_output_tokens")) {
+			continue;
+		}
+		const parsed = normalizeUnknownPositiveInteger(value);
+		if (parsed) {
+			return parsed;
+		}
+	}
+	return null;
+}
+
+function parseOllamaParameters(parameters: unknown): ReadonlyMap<string, number> {
+	if (typeof parameters !== "string" || parameters.trim().length === 0) {
+		return new Map();
+	}
+
+	const values = new Map<string, number>();
+	for (const line of parameters.split(/\r?\n/)) {
+		const [key, rawValue] = line.trim().split(/\s+/, 2);
+		if (!key || !rawValue) {
+			continue;
+		}
+		const parsed = normalizeUnknownPositiveInteger(rawValue);
+		if (parsed) {
+			values.set(key, parsed);
+		}
+	}
+	return values;
+}
+
+function extractParameterInteger(parameters: ReadonlyMap<string, number>, key: string): number | null {
+	return parameters.get(key) ?? null;
 }
 
 function sanitizeInput(input: OllamaProviderModel["input"] | undefined): ("text" | "image")[] {
@@ -392,6 +454,26 @@ function inferMaxTokens(
 	return DEFAULT_MAX_TOKENS;
 }
 
+function normalizeModelReasoning(
+	model: Partial<Pick<OllamaProviderModel, "family" | "id" | "reasoning" | "source">>,
+): boolean {
+	return model.reasoning ?? modelMatchesOllamaThinkingCatalog(model);
+}
+
+function getOllamaThinkingLevelMap(
+	model: Partial<Pick<OllamaProviderModel, "family" | "id" | "source" | "thinkingLevelMap">>,
+	reasoning: boolean,
+): ThinkingLevelMap | undefined {
+	if (!reasoning) {
+		return model.thinkingLevelMap;
+	}
+	if (isOllamaGptOssModel(model)) {
+		return OLLAMA_GPT_OSS_THINKING_LEVEL_MAP;
+	}
+
+	return model.thinkingLevelMap ?? OLLAMA_REASONING_THINKING_LEVEL_MAP;
+}
+
 function normalizeModelMaxTokens(
 	model: Partial<OllamaProviderModel> & Pick<OllamaProviderModel, "id">,
 	contextWindow: number,
@@ -416,12 +498,45 @@ function getOllamaCompatDefaults(
 	return {};
 }
 
+function modelMatchesOllamaThinkingCatalog(
+	model: Partial<Pick<OllamaProviderModel, "family" | "id" | "source">> & { template?: unknown },
+): boolean {
+	if (isOllamaGptOssModel(model) || isOllamaQwen3Model(model) || isOllamaDeepSeekThinkingModel(model)) {
+		return true;
+	}
+	if (isOllamaCloudZaiModel(model)) {
+		return true;
+	}
+	return typeof model.template === "string" && OLLAMA_THINKING_TEMPLATE_PATTERN.test(model.template);
+}
+
+function isOllamaGptOssModel(model: Partial<Pick<OllamaProviderModel, "family" | "id">>): boolean {
+	return modelHasToken(model, OLLAMA_GPT_OSS_MODEL_PATTERN);
+}
+
+function isOllamaQwen3Model(model: Partial<Pick<OllamaProviderModel, "family" | "id">>): boolean {
+	return modelHasToken(model, OLLAMA_QWEN3_MODEL_PATTERN);
+}
+
+function isOllamaDeepSeekThinkingModel(model: Partial<Pick<OllamaProviderModel, "family" | "id">>): boolean {
+	return modelHasToken(model, OLLAMA_DEEPSEEK_THINKING_MODEL_PATTERN);
+}
+
+function modelHasToken(model: Partial<Pick<OllamaProviderModel, "family" | "id">>, pattern: RegExp): boolean {
+	return pattern.test(model.id ?? "") || pattern.test(model.family ?? "");
+}
+
 function isOllamaCloudZaiModel(model: Partial<Pick<OllamaProviderModel, "id" | "source">>): boolean {
 	return model.source === "cloud" && typeof model.id === "string" && model.id.trim().toLowerCase().startsWith("glm-");
 }
 
 function normalizePositiveInteger(value: number | undefined, fallback: number): number {
 	return typeof value === "number" && Number.isFinite(value) && value > 0 ? Math.floor(value) : fallback;
+}
+
+function normalizeUnknownPositiveInteger(value: unknown): number | null {
+	const parsed = typeof value === "number" ? value : Number(value);
+	return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : null;
 }
 
 function formatDisplayName(id: string): string {
