@@ -39,13 +39,16 @@
 		"lint:type-aware": "oxlint --deny-warnings --type-aware .",
 		"format": "oxfmt --write . && oxfmt --write \"**/*.toml\" \"**/*.md\"",
 		"format:check": "oxfmt --check . && oxfmt --check \"**/*.toml\" \"**/*.md\"",
-		"check": "pnpm format:check && pnpm lint",
+		"check": "pnpm format:check && pnpm lint && pnpm actions:check",
 		"change": "mc change",
 		"release": "mc release",
 		"publish": "mc publish",
 		"mc:validate": "mc step:validate",
 		"mc:check": "mc check",
-		"mc:discover": "mc step:discover --format json"
+		"mc:discover": "mc step:discover --format json",
+		"actions:lint": "go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12",
+		"actions:zizmor": "uvx zizmor@1.26.1 --persona pedantic --min-severity low .github/workflows",
+		"actions:check": "pnpm actions:lint && pnpm actions:zizmor"
 	},
 	"devDependencies": {
 		"@earendil-works/pi-agent-core": "0.78.1",
