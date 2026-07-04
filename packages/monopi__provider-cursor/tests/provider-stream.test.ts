@@ -108,6 +108,9 @@ vi.mock("@bufbuild/protobuf", () => ({
 vi.mock("@earendil-works/pi-ai", () => ({
 	calculateCost: providerMocks.calculateCost,
 	createAssistantMessageEventStream: providerMocks.createAssistantMessageEventStream,
+}));
+
+vi.mock("@earendil-works/pi-ai/compat", () => ({
 	getEnvApiKey: providerMocks.getEnvApiKey,
 }));
 

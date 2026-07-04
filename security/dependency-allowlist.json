@@ -3,6 +3,7 @@
 	"description": "Approved external direct dependencies. Additions require manual review for maintenance quality, security posture, and project fit.",
 	"packages": [
 		"@mdx-js/rollup",
+		"@monochange/cli",
 		"@biomejs/biome",
 		"@bufbuild/protobuf",
 		"@clack/prompts",

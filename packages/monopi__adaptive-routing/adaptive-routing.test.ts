@@ -17,7 +17,7 @@ vi.mock("@monopi/core", async () => {
 	return await import("../monopi__core/src/model-intelligence.js");
 });
 
-vi.mock("@earendil-works/pi-ai", () => ({
+vi.mock("@earendil-works/pi-ai/compat", () => ({
 	completeSimple: vi.fn(async () => ({
 		role: "assistant",
 		content: [

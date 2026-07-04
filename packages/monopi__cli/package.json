@@ -40,7 +40,7 @@
 		"start": "node dist/bin/monopi.js"
 	},
 	"dependencies": {
-		"@clack/prompts": "^1.2.0",
+		"@clack/prompts": "^1.7.0",
 		"@monopi/agents": "0.5.1",
 		"@monopi/core": "0.5.1",
 		"@monopi/extension-answer": "0.5.1",

@@ -24,7 +24,8 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 import type { QnAQuestion, QnAResult, QnATemplate } from "@monopi/shared-qna";
 
-import { completeSimple, parseJsonWithRepair, type Api, type Model, type UserMessage } from "@earendil-works/pi-ai";
+import { parseJsonWithRepair, type Api, type Model, type UserMessage } from "@earendil-works/pi-ai";
+import { completeSimple } from "@earendil-works/pi-ai/compat";
 import { BorderedLoader } from "@earendil-works/pi-coding-agent";
 import { QnATuiComponent } from "@monopi/shared-qna";
 

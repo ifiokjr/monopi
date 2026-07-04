@@ -38,15 +38,15 @@
 		"dev": "tsgo --build --watch"
 	},
 	"dependencies": {
-		"better-sqlite3": "^12.0.0",
-		"drizzle-orm": ">=0.45.2"
+		"better-sqlite3": "^12.11.1",
+		"drizzle-orm": "^0.45.2"
 	},
 	"devDependencies": {
 		"@types/better-sqlite3": "^7.6.13",
 		"drizzle-kit": "^0.31.10"
 	},
 	"peerDependencies": {
-		"@earendil-works/pi-coding-agent": ">=0.78.1"
+		"@earendil-works/pi-coding-agent": ">=0.80.3"
 	},
 	"engines": {
 		"node": ">=20.0.0"

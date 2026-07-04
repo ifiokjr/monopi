@@ -1,9 +1,13 @@
-import { completeSimple } from "@earendil-works/pi-ai";
+import { completeSimple } from "@earendil-works/pi-ai/compat";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@earendil-works/pi-ai", () => ({
-	completeSimple: vi.fn(),
+vi.mock("@earendil-works/pi-ai", async (importOriginal) => ({
+	...(await importOriginal<typeof import("@earendil-works/pi-ai")>()),
 	getEnvApiKey: vi.fn(),
+}));
+
+vi.mock("@earendil-works/pi-ai/compat", () => ({
+	completeSimple: vi.fn(),
 }));
 
 vi.mock("@monopi/shared-qna", () => ({

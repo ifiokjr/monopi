@@ -63,7 +63,7 @@ export async function createTestCursorBackend(): Promise<TestCursorBackend> {
 	const refreshPort = (refreshServer.address() as AddressInfo).port;
 
 	const apiServer = http2.createServer();
-	apiServer.on("stream", (stream, headers) => {
+	apiServer.on("stream", (stream: http2.ServerHttp2Stream, headers) => {
 		const path = String(headers[":path"] ?? "");
 		if (path === "/agent.v1.AgentService/GetUsableModels") {
 			discoveryAuthHeaders.push(String(headers.authorization ?? ""));

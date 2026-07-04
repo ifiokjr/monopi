@@ -1,7 +1,7 @@
 import type { Api, AssistantMessage, Model } from "@earendil-works/pi-ai";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 
-import { completeSimple } from "@earendil-works/pi-ai";
+import { completeSimple } from "@earendil-works/pi-ai/compat";
 
 import type {
 	AdaptiveRoutingConfig,

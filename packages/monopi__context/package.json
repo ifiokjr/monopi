@@ -45,20 +45,19 @@
 		"test": "vitest run --config ./vitest.config.ts",
 		"test:watch": "vitest --config ./vitest.config.ts"
 	},
-	"dependencies": {},
 	"devDependencies": {
 		"@types/better-sqlite3": "^7.6.13",
-		"@types/node": "^25.6.0"
+		"@types/node": "^26.1.0"
 	},
 	"peerDependencies": {
-		"@earendil-works/pi-agent-core": ">=0.78.1",
-		"@earendil-works/pi-ai": ">=0.78.1",
-		"@earendil-works/pi-coding-agent": ">=0.78.1",
-		"@earendil-works/pi-tui": ">=0.78.1",
+		"@earendil-works/pi-agent-core": ">=0.80.3",
+		"@earendil-works/pi-ai": ">=0.80.3",
+		"@earendil-works/pi-coding-agent": ">=0.80.3",
+		"@earendil-works/pi-tui": ">=0.80.3",
 		"typebox": "^1.1.24"
 	},
 	"optionalDependencies": {
-		"better-sqlite3": "^12.6.2"
+		"better-sqlite3": "^12.11.1"
 	},
 	"pi": {
 		"extensions": [
