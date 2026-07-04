@@ -44,7 +44,6 @@
 		"@monopi/agents": "0.5.1",
 		"@monopi/core": "0.5.1",
 		"@monopi/extension-answer": "0.5.1",
-		"@monopi/extension-bg-process": "0.5.1",
 		"@monopi/extension-btw": "0.5.1",
 		"@monopi/extension-compact-header": "0.5.1",
 		"@monopi/extension-custom-footer": "0.5.1",

@@ -98,7 +98,7 @@ export const messages: Record<Locale, Record<string, string>> = {
 		// Preset
 		"preset.select": "Choose a preset:",
 		"preset.full": "⚫ Full Power",
-		"preset.fullHint": "Recommended extensions and bg-process (safe-guard stays opt-in)",
+		"preset.fullHint": "Recommended extensions (safe-guard stays opt-in)",
 		"preset.clean": "✨ Clean",
 		"preset.cleanHint": "Minimal setup, just the essentials",
 
@@ -276,7 +276,7 @@ export const messages: Record<Locale, Record<string, string>> = {
 		"preset.cleanHint": "Configuration minimale, aucune extension",
 
 		"preset.full": "⚫ Complet",
-		"preset.fullHint": "Extensions recommandées et bg-process (safe-guard reste en opt-in)",
+		"preset.fullHint": "Extensions recommandées (safe-guard reste en opt-in)",
 		"preset.select": "Choisir un préréglage :",
 		"provider.addFallback": "Ajouter un fournisseur de secours ? (avancé)",
 		"provider.apiKey": "Clé API pour {label} :",

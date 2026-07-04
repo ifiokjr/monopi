@@ -29,7 +29,6 @@ describe("monopi package list", () => {
 			INSTALLER_PACKAGES.indexOf("@monopi/extension-worktree"),
 		);
 		expect(EXPERIMENTAL_PACKAGES).not.toContain("@monopi/background-tasks");
-		expect(EXPERIMENTAL_PACKAGES).toContain("@monopi/extension-bg-process");
 		expect(SWITCHER_PACKAGES).toEqual([...INSTALLER_PACKAGES, ...EXPERIMENTAL_PACKAGES]);
 		expect(RUNTIME_INSTALLER_PACKAGES).toEqual(INSTALLER_PACKAGES);
 		expect(RUNTIME_EXPERIMENTAL_PACKAGES).toEqual(EXPERIMENTAL_PACKAGES);

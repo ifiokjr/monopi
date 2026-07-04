@@ -91,7 +91,6 @@ Optional packages that stay opt-in:
 
 Opt-in packages that stay separate from the default installer bundle:
 
-- `@monopi/extension-bg-process`
 - `@monopi/adaptive-routing`
 - `@monopi/provider-catalog`
 - `@monopi/provider-cursor`

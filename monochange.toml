@@ -88,9 +88,6 @@ type = "npm"
 path = "packages/monopi__extension-watchdog"
 type = "npm"
 
-[package."@monopi/extension-bg-process"]
-path = "packages/monopi__extension-bg-process"
-type = "npm"
 
 [package."@monopi/extension-btw"]
 path = "packages/monopi__extension-btw"
@@ -226,7 +223,6 @@ packages = [
 	"@monopi/extension-review",
 	"@monopi/extension-todos",
 	"@monopi/extension-watchdog",
-	"@monopi/extension-bg-process",
 	"@monopi/extension-btw",
 	"@monopi/extension-compact-header",
 	"@monopi/extension-custom-footer",

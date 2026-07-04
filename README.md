@@ -306,7 +306,7 @@ Creates a side-conversation widget above the editor so you can ask follow-up que
 
 **Behavior:** keep a lightweight parallel thread, then either inject the full exchange into the main agent or inject a generated summary instead.
 
-### ⏳ Background Process (`bg-process`) — **default: off**
+### ⏳ Background Tasks (`@monopi/background-tasks`) — **default: on**
 
 Manages explicit background tasks for long-lived commands like dev servers, PR watchers, and log followers. Ordinary `bash` commands stay in the foreground so their output remains visible in the current pi session.
 
@@ -410,7 +410,7 @@ Continuously samples runtime health so heavy sessions stay usable.
 
 |               | Theme       | Thinking | Includes                               |
 | ------------- | ----------- | -------- | -------------------------------------- |
-| ⚫ Full Power | monopi Dark | high     | Recommended extensions + bg-process    |
+| ⚫ Full Power | monopi Dark | high     | Recommended extensions                 |
 | 🔴 Clean      | Default     | off      | No extensions, just core               |
 | 🚀 Subagents  | monopi Dark | medium   | Subagent chains and parallel execution |
 
@@ -540,7 +540,6 @@ Managed local switching covers these packages:
 - `@monopi/subagents`
 - `@monopi/web-remote`
 - `@monopi/skills`
-- `@monopi/extension-bg-process`
 - `@monopi/adaptive-routing`
 - `@monopi/provider-catalog`
 - `@monopi/provider-cursor`

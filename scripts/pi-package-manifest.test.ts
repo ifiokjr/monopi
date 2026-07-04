@@ -20,7 +20,6 @@ describe("pi package extension entrypoints", () => {
 		const extensionPackages = [
 			"packages/monopi__extension-answer/package.json",
 			"packages/monopi__extension-watchdog/package.json",
-			"packages/monopi__extension-bg-process/package.json",
 			"packages/monopi__extension-btw/package.json",
 			"packages/monopi__extension-compact-header/package.json",
 			"packages/monopi__extension-custom-footer/package.json",

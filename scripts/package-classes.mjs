@@ -19,7 +19,6 @@ export const publishedPackages = [
 	{ dir: "packages/monopi__diagnostics", name: "@monopi/diagnostics" },
 	{ dir: "packages/monopi__extension-answer", name: "@monopi/extension-answer" },
 	{ dir: "packages/monopi__extension-watchdog", name: "@monopi/extension-watchdog" },
-	{ dir: "packages/monopi__extension-bg-process", name: "@monopi/extension-bg-process" },
 	{ dir: "packages/monopi__extension-btw", name: "@monopi/extension-btw" },
 	{ dir: "packages/monopi__extension-compact-header", name: "@monopi/extension-compact-header" },
 	{ dir: "packages/monopi__extension-custom-footer", name: "@monopi/extension-custom-footer" },

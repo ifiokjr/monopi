@@ -26,7 +26,6 @@ export const INSTALLER_PACKAGES = [
 ];
 
 export const EXPERIMENTAL_PACKAGES = [
-	"@monopi/extension-bg-process",
 	"@monopi/adaptive-routing",
 	"@monopi/provider-catalog",
 	"@monopi/provider-cursor",

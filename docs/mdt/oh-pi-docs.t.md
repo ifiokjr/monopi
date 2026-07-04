@@ -275,7 +275,6 @@ Default runtime/content packages installed by `npx @monopi/monopi`:
 
 Opt-in packages that stay separate from the default installer bundle:
 
-- `@monopi/extension-bg-process`
 - `@monopi/adaptive-routing`
 - `@monopi/provider-catalog`
 - `@monopi/provider-cursor`
@@ -333,7 +332,6 @@ Managed local switching covers these packages:
 - `@monopi/subagents`
 - `@monopi/web-remote`
 - `@monopi/skills`
-- `@monopi/extension-bg-process`
 - `@monopi/adaptive-routing`
 - `@monopi/provider-catalog`
 - `@monopi/provider-cursor`

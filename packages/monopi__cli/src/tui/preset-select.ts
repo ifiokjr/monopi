@@ -24,7 +24,7 @@ export const PRESETS: Record<string, { labelKey: string; hintKey: string; config
 	full: {
 		config: {
 			agents: "general-developer",
-			extensions: ["git-guard", "custom-footer", "diagnostics", "compact-header", "bg-process", "worktree"],
+			extensions: ["git-guard", "custom-footer", "diagnostics", "compact-header", "worktree"],
 			keybindings: "default",
 			theme: "dark",
 			thinking: "high",

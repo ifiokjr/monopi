@@ -41,7 +41,7 @@ describe("watchdog runtime diagnostics", () => {
 	});
 
 	it("drops stale activity outside the recent diagnostic window", async () => {
-		recordRuntimeSample("bg-process", "tool", "bash", 200, "bg-process");
+		recordRuntimeSample("background-tasks", "tool", "bg_task", 200, "background-tasks");
 		await vi.advanceTimersByTimeAsync(125_000);
 
 		expect(getExtensionDiagnostics()).toEqual([]);
