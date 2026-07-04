@@ -31,7 +31,7 @@
 		"@monopi/web-server": "0.5.1"
 	},
 	"peerDependencies": {
-		"@earendil-works/pi-coding-agent": ">=0.78.1",
+		"@earendil-works/pi-coding-agent": ">=0.80.3",
 		"typebox": "^1.1.24"
 	},
 	"pi": {

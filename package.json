@@ -51,21 +51,21 @@
 		"actions:check": "pnpm actions:lint && pnpm actions:zizmor"
 	},
 	"devDependencies": {
-		"@earendil-works/pi-agent-core": "0.78.1",
-		"@earendil-works/pi-ai": "0.78.1",
-		"@earendil-works/pi-coding-agent": "0.78.1",
-		"@earendil-works/pi-tui": "0.78.1",
+		"@earendil-works/pi-agent-core": "0.80.3",
+		"@earendil-works/pi-ai": "0.80.3",
+		"@earendil-works/pi-coding-agent": "0.80.3",
+		"@earendil-works/pi-tui": "0.80.3",
 		"@ifi/mdt": "^0.7.0",
 		"@monochange/cli": "^0.8.3",
-		"@types/node": "^22.15.0",
-		"@typescript/native-preview": "7.0.0-dev.20260426.1",
-		"@vitest/coverage-v8": "^4.1.5",
-		"oxfmt": "^0.46.0",
-		"oxlint": "^1.61.0",
-		"oxlint-tsgolint": "^0.22.0",
-		"tsdown": "^0.21.10",
-		"tsx": "^4.20.6",
-		"vitest": "^4.1.5"
+		"@types/node": "^26.1.0",
+		"@typescript/native-preview": "7.0.0-dev.20260704.1",
+		"@vitest/coverage-v8": "^4.1.9",
+		"oxfmt": "^0.57.0",
+		"oxlint": "^1.72.0",
+		"oxlint-tsgolint": "^0.24.0",
+		"tsdown": "^0.22.3",
+		"tsx": "^4.23.0",
+		"vitest": "^4.1.9"
 	},
 	"engines": {
 		"node": ">=20.0.0"

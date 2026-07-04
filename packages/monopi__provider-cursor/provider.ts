@@ -5,11 +5,11 @@ import {
 	calculateCost,
 	type Context,
 	createAssistantMessageEventStream,
-	getEnvApiKey,
 	type Model,
 	type SimpleStreamOptions,
 	type ToolCall,
 } from "@earendil-works/pi-ai";
+import { getEnvApiKey } from "@earendil-works/pi-ai/compat";
 import { randomUUID } from "node:crypto";
 
 import { CURSOR_RUN_PATH } from "./config.js";

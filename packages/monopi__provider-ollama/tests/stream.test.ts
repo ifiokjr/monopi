@@ -1,12 +1,12 @@
 import type { AddressInfo } from "node:net";
 
+import { type Model } from "@earendil-works/pi-ai";
 import {
-	type Model,
 	registerApiProvider,
 	resetApiProviders,
 	streamSimple,
 	streamSimpleOpenAICompletions,
-} from "@earendil-works/pi-ai";
+} from "@earendil-works/pi-ai/compat";
 import http from "node:http";
 import { afterEach, describe, expect, it } from "vitest";
 
@@ -21,6 +21,7 @@ type ChatCompletionPayload = {
 	reasoning_effort?: string;
 	enable_thinking?: boolean;
 	stream?: boolean;
+	thinking?: { type?: string; clear_thinking?: boolean };
 };
 
 async function createReasoningAwareChatBackend(): Promise<{
@@ -44,8 +45,10 @@ async function createReasoningAwareChatBackend(): Promise<{
 			const payload = JSON.parse(body || "{}") as ChatCompletionPayload;
 			requests.push(payload);
 
+			const thinkingType = payload.thinking?.type;
 			const shouldReturnVisibleText =
-				payload.reasoning_effort === undefined && typeof payload.enable_thinking === "boolean";
+				payload.reasoning_effort === undefined &&
+				(typeof payload.enable_thinking === "boolean" || thinkingType === "enabled" || thinkingType === "disabled");
 
 			res.writeHead(200, {
 				"Cache-Control": "no-cache",
@@ -53,7 +56,7 @@ async function createReasoningAwareChatBackend(): Promise<{
 				"Content-Type": "text/event-stream",
 			});
 
-			if (payload.enable_thinking) {
+			if (payload.enable_thinking || thinkingType === "enabled") {
 				writeSse(res, {
 					choices: [
 						{
@@ -167,12 +170,12 @@ describe("ollama glm cloud streaming", () => {
 
 			expect(extractText(result.content as Array<{ type: string; text?: string }>)).toBe("OK");
 			expect(payloads[0]).toMatchObject({
-				enable_thinking: true,
 				model: "glm-5.1",
+				thinking: { type: "enabled" },
 			});
 			expect(payloads[0]?.reasoning_effort).toBeUndefined();
 			expect(backend.requests[0]).toMatchObject({
-				enable_thinking: true,
+				thinking: { type: "enabled" },
 			});
 		} finally {
 			await backend.close();
@@ -205,12 +208,12 @@ describe("ollama glm cloud streaming", () => {
 
 			expect(extractText(result.content as Array<{ type: string; text?: string }>)).toBe("OK");
 			expect(payloads[0]).toMatchObject({
-				enable_thinking: false,
 				model: "glm-5.1",
+				thinking: { type: "disabled" },
 			});
 			expect(payloads[0]?.reasoning_effort).toBeUndefined();
 			expect(backend.requests[0]).toMatchObject({
-				enable_thinking: false,
+				thinking: { type: "disabled" },
 			});
 		} finally {
 			await backend.close();
@@ -263,7 +266,7 @@ describe("ollama glm cloud streaming", () => {
 			expect(extractText(result.content as Array<{ type: string; text?: string }>)).toBe("OK");
 			expect(backend.requests[0]).toMatchObject({
 				model: "glm-5.1",
-				enable_thinking: false,
+				thinking: { type: "disabled" },
 			});
 		} finally {
 			await backend.close();

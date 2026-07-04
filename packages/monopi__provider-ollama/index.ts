@@ -7,8 +7,8 @@ import {
 	type Model,
 	type SimpleStreamOptions,
 	getSupportedThinkingLevels,
-	streamSimpleOpenAICompletions,
 } from "@earendil-works/pi-ai";
+import { streamSimpleOpenAICompletions } from "@earendil-works/pi-ai/compat";
 
 import {
 	type CloudModelsGetter,

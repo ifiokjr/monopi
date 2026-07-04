@@ -45,18 +45,18 @@
 		"test:watch": "vitest --config ./vitest.config.ts"
 	},
 	"dependencies": {
-		"@shikijs/cli": "^4.0.2"
+		"@shikijs/cli": "^4.3.1"
 	},
 	"devDependencies": {
-		"@types/node": "^25.6.0"
+		"@types/node": "^26.1.0"
 	},
 	"peerDependencies": {
-		"@earendil-works/pi-coding-agent": ">=0.78.1",
-		"@earendil-works/pi-tui": ">=0.78.1",
+		"@earendil-works/pi-coding-agent": ">=0.80.3",
+		"@earendil-works/pi-tui": ">=0.80.3",
 		"typebox": "^1.1.24"
 	},
 	"optionalDependencies": {
-		"@ff-labs/fff-node": "^0.6.4"
+		"@ff-labs/fff-node": "^0.9.6"
 	},
 	"pi": {
 		"extensions": [

@@ -35,10 +35,10 @@
 		"test:worktree": "vitest run --config ./vitest.worktree.config.ts"
 	},
 	"peerDependencies": {
-		"@earendil-works/pi-agent-core": ">=0.78.1",
-		"@earendil-works/pi-ai": ">=0.78.1",
-		"@earendil-works/pi-coding-agent": ">=0.78.1",
-		"@earendil-works/pi-tui": ">=0.78.1",
+		"@earendil-works/pi-agent-core": ">=0.80.3",
+		"@earendil-works/pi-ai": ">=0.80.3",
+		"@earendil-works/pi-coding-agent": ">=0.80.3",
+		"@earendil-works/pi-tui": ">=0.80.3",
 		"typebox": "^1.1.24"
 	},
 	"pi": {
