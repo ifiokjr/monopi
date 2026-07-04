@@ -48,7 +48,6 @@ export const INSTALLER_PACKAGES = [
 
 Opt-in packages that stay separate from the default installer bundle:
 
-- `@monopi/extension-bg-process`
 - `@monopi/adaptive-routing`
 - `@monopi/provider-catalog`
 - `@monopi/provider-cursor`
@@ -61,7 +60,6 @@ Opt-in packages that stay separate from the default installer bundle:
 <!-- {/repoExperimentalPackagesDocs} -->
 */
 export const EXPERIMENTAL_PACKAGES = [
-	"@monopi/extension-bg-process",
 	"@monopi/adaptive-routing",
 	"@monopi/provider-catalog",
 	"@monopi/provider-cursor",

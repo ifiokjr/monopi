@@ -7,7 +7,6 @@ describe("PRESETS", () => {
 		const full = PRESETS.full?.config;
 		expect(full).toBeDefined();
 		expect(full?.extensions).not.toContain("safe-guard");
-		expect(full?.extensions).toContain("bg-process");
 		expect(full?.extensions).not.toContain("ant-colony");
 	});
 

@@ -177,13 +177,6 @@ export const EXTENSIONS = [
 	{
 		default: false,
 		get label() {
-			return `${icon("clock")} Bg Process — Auto-background long-running commands (dev servers, etc.)`;
-		},
-		name: "bg-process",
-	},
-	{
-		default: false,
-		get label() {
 			return `${icon("cost")} Usage Tracker — Real-time per-model token & cost monitoring with /usage command`;
 		},
 		name: "usage-tracker",

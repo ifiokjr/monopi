@@ -303,9 +303,6 @@ importers:
       '@monopi/extension-answer':
         specifier: 0.5.1
         version: link:../monopi__extension-answer
-      '@monopi/extension-bg-process':
-        specifier: 0.5.1
-        version: link:../monopi__extension-bg-process
       '@monopi/extension-btw':
         specifier: 0.5.1
         version: link:../monopi__extension-btw
@@ -490,27 +487,6 @@ importers:
       '@monopi/shared-qna':
         specifier: 0.5.1
         version: link:../monopi__shared-qna
-      typebox:
-        specifier: ^1.1.24
-        version: 1.3.0
-
-  packages/monopi__extension-bg-process:
-    dependencies:
-      '@earendil-works/pi-agent-core':
-        specifier: '>=0.80.3'
-        version: 0.80.3(ws@8.21.0)(zod@4.4.3)
-      '@earendil-works/pi-ai':
-        specifier: '>=0.80.3'
-        version: 0.80.3(ws@8.21.0)(zod@4.4.3)
-      '@earendil-works/pi-coding-agent':
-        specifier: '>=0.80.3'
-        version: 0.80.3(ws@8.21.0)(zod@4.4.3)
-      '@earendil-works/pi-tui':
-        specifier: '>=0.80.3'
-        version: 0.80.3
-      '@monopi/background-tasks':
-        specifier: 0.5.1
-        version: link:../monopi__background-tasks
       typebox:
         specifier: ^1.1.24
         version: 1.3.0

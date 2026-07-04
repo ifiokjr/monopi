@@ -97,7 +97,6 @@ Default runtime/content packages installed by `npx @monopi/monopi`:
 
 Opt-in packages that stay separate from the default installer bundle:
 
-- `@monopi/extension-bg-process`
 - `@monopi/adaptive-routing`
 - `@monopi/provider-catalog`
 - `@monopi/provider-cursor`
@@ -158,7 +157,6 @@ This package is where most of the day-to-day ergonomics live.
 | `tool-metadata`          | tool result details                                                                 | Adds start/end timestamps, duration, approximate I/O sizing, and context snapshots to tool results; also sanitizes huge outputs for UI safety |
 | `external-editor`        | `/external-editor`, `Ctrl+Shift+E`                                                  | Opens the current draft in `$VISUAL` or `$EDITOR`, then syncs the saved text back into pi                                                     |
 | `worktree`               | `/worktree`, `/worktree list`, `/worktree create`, `/worktree cleanup`              | Gives monopi first-class git worktree awareness and managed pi-owned worktrees under shared storage                                           |
-| `bg-process`             | `bg_task`, `bg_status`, `/bg`, `Ctrl+Shift+B`                                       | Explicitly manages long-lived background tasks like watchers, servers, and log tails without auto-detaching ordinary bash commands            |
 | `scheduler`              | `/remind`, `/loop`, `/schedule*`, `schedule_prompt` tool                            | Schedules one-time reminders and recurring follow-ups for builds, CI, deploys, PRs, and long-running checks                                   |
 | `usage-tracker`          | widget, `/usage`, `/usage-toggle`, `/usage-refresh`, `Ctrl+Shift+U`, `usage_report` | Tracks provider quotas, rolling cost history, and per-model/session usage                                                                     |
 | `btw` / `qq`             | `/btw*`, `/qq*`                                                                     | Runs side conversations in a widget above the editor, then injects the full thread or a summary back into the main agent                      |
@@ -216,13 +214,13 @@ This package turns explicit long-lived shell tasks into a first-class pi workflo
 - `Ctrl+Shift+B`
 - `/bg watch --follow <id>`
 
-### What it adds beyond the older `bg-process` shim
+### What it provides
 
-- tracked tasks with stable ids in addition to PID-based compatibility status
+- tracked tasks with stable ids
 - persistent log files for every spawned task
 - reactive follow-ups so pi can wake itself up when watched tasks emit new output or exit
 - richer manual management through `/bg` and the dashboard overlay
-- compatibility with the old `bg_status` flow while offering a more capable `bg_task` tool for the agent
+- `bg_status` for lightweight status checks and `bg_task` for full agent-driven task management
 
 ## `@monopi/diagnostics`: prompt timing
 
