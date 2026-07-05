@@ -45,11 +45,12 @@ describe("ollama models", () => {
 		expect(compat?.maxTokensField).toBe("max_tokens");
 	});
 
-	it("applies z.ai compat defaults to cloud glm models", () => {
+	it("applies authoritative cloud metadata and z.ai compat defaults to glm models", () => {
 		const model = toOllamaModel({
-			id: "glm-5.1",
+			contextWindow: 131_072,
+			id: "glm-5.2",
 			source: "cloud",
-			reasoning: true,
+			reasoning: false,
 			input: ["text"],
 			maxTokens: 25_344,
 		});
@@ -60,10 +61,53 @@ describe("ollama models", () => {
 					zaiToolStream?: boolean;
 			  }
 			| undefined;
+		expect(model.contextWindow).toBe(1_000_000);
 		expect(model.maxTokens).toBe(131_072);
+		expect(model.reasoning).toBe(true);
+		expect(model.capabilities).toContain("thinking");
+		expect(getSupportedThinkingLevels(model as never)).toEqual(["off", "minimal", "low", "medium", "high", "xhigh"]);
 		expect(compat?.supportsReasoningEffort).toBe(false);
 		expect(compat?.thinkingFormat).toBe("zai");
 		expect(compat?.zaiToolStream).toBe(true);
+	});
+
+	it("restores thinking levels for known Ollama Cloud reasoning models from stale stored metadata", () => {
+		const models = [
+			toOllamaModel({ contextWindow: 32_768, id: "kimi-k2.6", maxTokens: 8_192, reasoning: false, source: "cloud" }),
+			toOllamaModel({ contextWindow: 32_768, id: "minimax-m3", maxTokens: 8_192, reasoning: false, source: "cloud" }),
+			toOllamaModel({ contextWindow: 32_768, id: "qwen3.5:397b", maxTokens: 8_192, reasoning: false, source: "cloud" }),
+		];
+
+		expect(models.map((model) => model.reasoning)).toEqual([true, true, true]);
+		expect(models.map((model) => getSupportedThinkingLevels(model as never))).toEqual([
+			["off", "minimal", "low", "medium", "high", "xhigh"],
+			["off", "minimal", "low", "medium", "high", "xhigh"],
+			["off", "minimal", "low", "medium", "high", "xhigh"],
+		]);
+		expect(models.map((model) => model.contextWindow)).toEqual([262_144, 524_288, 262_144]);
+	});
+
+	it("sanitizes credential models with authoritative cloud metadata floors", () => {
+		const models = getCredentialModels({
+			access: "a",
+			expires: Date.now() + 1000,
+			refresh: "r",
+			models: [
+				{
+					...toOllamaModel({ id: "glm-5.2", source: "cloud" }),
+					contextWindow: 131_072,
+					maxTokens: 8_192,
+					reasoning: false,
+				},
+			],
+		});
+
+		expect(models[0]).toMatchObject({
+			contextWindow: 1_000_000,
+			id: "glm-5.2",
+			maxTokens: 131_072,
+			reasoning: true,
+		});
 	});
 
 	it("discovers cloud model ids before metadata enrichment", async () => {
