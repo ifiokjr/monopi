@@ -56,6 +56,42 @@ const MAX_DISCOVERY_CONCURRENCY = 6;
 
 const OLLAMA_CLOUD_ZAI_REASONING_MAX_TOKENS = 131_072;
 
+type OllamaCloudMetadataOverride = {
+	id: string;
+	contextWindow: number;
+	maxTokens: number;
+	reasoning: boolean;
+	family?: string;
+};
+
+const OLLAMA_CLOUD_METADATA_OVERRIDES: readonly OllamaCloudMetadataOverride[] = [
+	{ id: "deepseek-v3.1:671b", contextWindow: 163_840, maxTokens: 20_480, reasoning: true, family: "deepseek2" },
+	{ id: "deepseek-v3.2", contextWindow: 163_840, maxTokens: 20_480, reasoning: true, family: "deepseek3.2" },
+	{ id: "deepseek-v4-flash", contextWindow: 1_048_576, maxTokens: 65_536, reasoning: true, family: "deepseek4" },
+	{ id: "deepseek-v4-pro", contextWindow: 524_288, maxTokens: 32_768, reasoning: true, family: "deepseek4" },
+	{ id: "gemini-3-flash-preview", contextWindow: 1_048_576, maxTokens: 65_536, reasoning: true, family: "gemini" },
+	{ id: "gemma4:31b", contextWindow: 262_144, maxTokens: 32_768, reasoning: true, family: "gemma4" },
+	{ id: "glm-4.7", contextWindow: 202_752, maxTokens: 131_072, reasoning: true, family: "glm4" },
+	{ id: "glm-5", contextWindow: 202_752, maxTokens: 131_072, reasoning: true, family: "glm5" },
+	{ id: "glm-5.1", contextWindow: 202_752, maxTokens: 131_072, reasoning: true, family: "glm5.1" },
+	{ id: "glm-5.2", contextWindow: 1_000_000, maxTokens: 131_072, reasoning: true, family: "glm5.2" },
+	{ id: "gpt-oss:120b", contextWindow: 131_072, maxTokens: 16_384, reasoning: true, family: "gptoss" },
+	{ id: "gpt-oss:20b", contextWindow: 131_072, maxTokens: 16_384, reasoning: true, family: "gptoss" },
+	{ id: "kimi-k2.5", contextWindow: 262_144, maxTokens: 32_768, reasoning: true, family: "kimi-k2" },
+	{ id: "kimi-k2.6", contextWindow: 262_144, maxTokens: 32_768, reasoning: true, family: "kimi-k2" },
+	{ id: "kimi-k2.7-code", contextWindow: 262_144, maxTokens: 32_768, reasoning: true, family: "kimi-k2" },
+	{ id: "minimax-m2.1", contextWindow: 204_800, maxTokens: 20_480, reasoning: true, family: "minimax-m2" },
+	{ id: "minimax-m2.5", contextWindow: 196_608, maxTokens: 20_480, reasoning: true, family: "minimax-m2" },
+	{ id: "minimax-m2.7", contextWindow: 196_608, maxTokens: 20_480, reasoning: true, family: "minimax-m2" },
+	{ id: "minimax-m3", contextWindow: 524_288, maxTokens: 32_768, reasoning: true, family: "minimax-m3" },
+	{ id: "nemotron-3-nano:30b", contextWindow: 262_144, maxTokens: 32_768, reasoning: true, family: "nemotron-3-nano" },
+	{ id: "nemotron-3-super", contextWindow: 262_144, maxTokens: 32_768, reasoning: true, family: "nemotron_h_moe" },
+	{ id: "nemotron-3-ultra", contextWindow: 262_144, maxTokens: 32_768, reasoning: true },
+	{ id: "qwen3-coder-next", contextWindow: 262_144, maxTokens: 32_768, reasoning: true, family: "qwen3next" },
+	{ id: "qwen3-coder:480b", contextWindow: 262_144, maxTokens: 32_768, reasoning: true, family: "qwen3moe" },
+	{ id: "qwen3.5:397b", contextWindow: 262_144, maxTokens: 32_768, reasoning: true, family: "qwen3.5" },
+];
+
 const OLLAMA_OPENAI_COMPAT: NonNullable<OllamaProviderModel["compat"]> = {
 	maxTokensField: "max_tokens",
 	supportsDeveloperRole: false,
@@ -82,7 +118,10 @@ const OLLAMA_GPT_OSS_THINKING_LEVEL_MAP: ThinkingLevelMap = {
 
 const OLLAMA_GPT_OSS_MODEL_PATTERN = /(?:^|[-_/:])gpt[-_]?oss(?:$|[-_/:])/i;
 const OLLAMA_QWEN3_MODEL_PATTERN = /(?:^|[-_/:])qwen3(?:$|[-_/:.])/i;
-const OLLAMA_DEEPSEEK_THINKING_MODEL_PATTERN = /(?:^|[-_/:])deepseek[-_]?(?:r1|v3\.?1)(?:$|[-_/:.])/i;
+const OLLAMA_DEEPSEEK_THINKING_MODEL_PATTERN = /(?:^|[-_/:])deepseek[-_]?(?:r1|v3\.?[12]|v4)(?:$|[-_/:.])/i;
+const OLLAMA_KIMI_THINKING_MODEL_PATTERN = /(?:^|[-_/:])kimi[-_]?k2(?:$|[-_/:.])/i;
+const OLLAMA_MINIMAX_THINKING_MODEL_PATTERN = /(?:^|[-_/:])minimax[-_]?m[23](?:$|[-_/:.])/i;
+const OLLAMA_NEMOTRON_THINKING_MODEL_PATTERN = /(?:^|[-_/:])nemotron[-_]?3(?:$|[-_/:.])/i;
 const OLLAMA_THINKING_TEMPLATE_PATTERN = /<think>|\.thinking\b|reasoning_content/i;
 
 const OLLAMA_CLOUD_ZAI_COMPAT: Partial<NonNullable<OllamaProviderModel["compat"]>> = {
@@ -231,30 +270,34 @@ export function mergeOllamaLocalCatalog(
 export function toOllamaModel(
 	model: Partial<OllamaProviderModel> & Pick<OllamaProviderModel, "id">,
 ): OllamaProviderModel {
-	const contextWindow = normalizePositiveInteger(model.contextWindow, DEFAULT_CONTEXT_WINDOW);
-	const maxTokens = normalizeModelMaxTokens(model, contextWindow);
-	const compatDefaults = getOllamaCompatDefaults(model);
-	const reasoning = normalizeModelReasoning(model);
+	const normalizedModel = applyOllamaCloudMetadataOverrides(model);
+	const contextWindow = normalizePositiveInteger(normalizedModel.contextWindow, DEFAULT_CONTEXT_WINDOW);
+	const maxTokens = normalizeModelMaxTokens(normalizedModel, contextWindow);
+	const compatDefaults = getOllamaCompatDefaults(normalizedModel);
+	const reasoning = normalizeModelReasoning(normalizedModel);
 	return {
-		capabilities: sanitizeCapabilities(model.capabilities),
+		capabilities: sanitizeCapabilities(normalizedModel.capabilities),
 		compat: {
 			...OLLAMA_OPENAI_COMPAT,
 			...compatDefaults,
-			...(model.compat ?? {}),
+			...(normalizedModel.compat ?? {}),
 		},
 		contextWindow,
-		cost: model.cost ? { ...model.cost } : { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
-		family: sanitizeOptionalString(model.family),
-		id: model.id,
-		input: sanitizeInput(model.input),
-		localAvailability: sanitizeLocalAvailability(model.localAvailability),
+		cost: normalizedModel.cost ? { ...normalizedModel.cost } : { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+		family: sanitizeOptionalString(normalizedModel.family),
+		id: normalizedModel.id,
+		input: sanitizeInput(normalizedModel.input),
+		localAvailability: sanitizeLocalAvailability(normalizedModel.localAvailability),
 		maxTokens,
-		name: applySourceSuffix(model.name?.trim() || formatDisplayName(model.id), model.source),
-		parameterSize: sanitizeOptionalString(model.parameterSize),
-		quantization: sanitizeOptionalString(model.quantization),
+		name: applySourceSuffix(
+			normalizedModel.name?.trim() || formatDisplayName(normalizedModel.id),
+			normalizedModel.source,
+		),
+		parameterSize: sanitizeOptionalString(normalizedModel.parameterSize),
+		quantization: sanitizeOptionalString(normalizedModel.quantization),
 		reasoning,
-		source: model.source,
-		thinkingLevelMap: getOllamaThinkingLevelMap(model, reasoning),
+		source: normalizedModel.source,
+		thinkingLevelMap: getOllamaThinkingLevelMap(normalizedModel, reasoning),
 	};
 }
 
@@ -454,6 +497,45 @@ function inferMaxTokens(
 	return DEFAULT_MAX_TOKENS;
 }
 
+function applyOllamaCloudMetadataOverrides(
+	model: Partial<OllamaProviderModel> & Pick<OllamaProviderModel, "id">,
+): Partial<OllamaProviderModel> & Pick<OllamaProviderModel, "id"> {
+	const override = getOllamaCloudMetadataOverride(model);
+	if (!override) {
+		return model;
+	}
+
+	return {
+		...model,
+		capabilities: override.reasoning ? mergeCapabilities(model.capabilities, ["thinking"]) : model.capabilities,
+		contextWindow: maxPositiveInteger(model.contextWindow, override.contextWindow),
+		family: model.family ?? override.family,
+		maxTokens: maxPositiveInteger(model.maxTokens, override.maxTokens),
+		reasoning: override.reasoning ? true : model.reasoning,
+	};
+}
+
+function getOllamaCloudMetadataOverride(
+	model: Partial<Pick<OllamaProviderModel, "id" | "source">>,
+): OllamaCloudMetadataOverride | undefined {
+	if (model.source !== "cloud") {
+		return undefined;
+	}
+	const id = model.id?.trim().toLowerCase();
+	if (!id) {
+		return undefined;
+	}
+	return OLLAMA_CLOUD_METADATA_OVERRIDES.find((override) => override.id === id);
+}
+
+function mergeCapabilities(capabilities: string[] | undefined, additional: readonly string[]): string[] {
+	return [...new Set([...(capabilities ?? []), ...additional])];
+}
+
+function maxPositiveInteger(value: number | undefined, fallback: number): number {
+	return Math.max(normalizePositiveInteger(value, fallback), fallback);
+}
+
 function normalizeModelReasoning(
 	model: Partial<Pick<OllamaProviderModel, "family" | "id" | "reasoning" | "source">>,
 ): boolean {
@@ -501,7 +583,14 @@ function getOllamaCompatDefaults(
 function modelMatchesOllamaThinkingCatalog(
 	model: Partial<Pick<OllamaProviderModel, "family" | "id" | "source">> & { template?: unknown },
 ): boolean {
-	if (isOllamaGptOssModel(model) || isOllamaQwen3Model(model) || isOllamaDeepSeekThinkingModel(model)) {
+	if (
+		isOllamaGptOssModel(model) ||
+		isOllamaQwen3Model(model) ||
+		isOllamaDeepSeekThinkingModel(model) ||
+		isOllamaKimiThinkingModel(model) ||
+		isOllamaMinimaxThinkingModel(model) ||
+		isOllamaNemotronThinkingModel(model)
+	) {
 		return true;
 	}
 	if (isOllamaCloudZaiModel(model)) {
@@ -520,6 +609,18 @@ function isOllamaQwen3Model(model: Partial<Pick<OllamaProviderModel, "family" | 
 
 function isOllamaDeepSeekThinkingModel(model: Partial<Pick<OllamaProviderModel, "family" | "id">>): boolean {
 	return modelHasToken(model, OLLAMA_DEEPSEEK_THINKING_MODEL_PATTERN);
+}
+
+function isOllamaKimiThinkingModel(model: Partial<Pick<OllamaProviderModel, "family" | "id">>): boolean {
+	return modelHasToken(model, OLLAMA_KIMI_THINKING_MODEL_PATTERN);
+}
+
+function isOllamaMinimaxThinkingModel(model: Partial<Pick<OllamaProviderModel, "family" | "id">>): boolean {
+	return modelHasToken(model, OLLAMA_MINIMAX_THINKING_MODEL_PATTERN);
+}
+
+function isOllamaNemotronThinkingModel(model: Partial<Pick<OllamaProviderModel, "family" | "id">>): boolean {
+	return modelHasToken(model, OLLAMA_NEMOTRON_THINKING_MODEL_PATTERN);
 }
 
 function modelHasToken(model: Partial<Pick<OllamaProviderModel, "family" | "id">>, pattern: RegExp): boolean {
