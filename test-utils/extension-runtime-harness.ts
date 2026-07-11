@@ -109,6 +109,7 @@ export function createExtensionHarness() {
 		hasPendingMessages: () => false,
 		hasUI: true,
 		isIdle: () => true,
+		mode: "tui",
 		model: undefined as unknown,
 		modelRegistry: {
 			getAvailable: () => [],
