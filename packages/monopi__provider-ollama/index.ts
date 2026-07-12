@@ -31,6 +31,7 @@ import { clearOllamaCliStatusCache, getOllamaCliStatus, type OllamaCliStatus, pu
 import {
 	discoverOllamaCloudModelList,
 	discoverOllamaCloudModels,
+	discoverOllamaLocalModelList,
 	discoverOllamaLocalModels,
 	getCredentialModels,
 	getFallbackOllamaCloudModels,
@@ -111,6 +112,7 @@ const PULL_STATUS_KEY = "ollama.pull";
 const OLLAMA_STARTUP_CLI_REFRESH_DELAY_MS = 250;
 const OLLAMA_STARTUP_CLOUD_REFRESH_DELAY_MS = 250;
 const OLLAMA_STARTUP_CLOUD_DISCOVERY_TIMEOUT_MS = 5_000;
+const OLLAMA_STARTUP_LOCAL_DISCOVERY_TIMEOUT_MS = 1_000;
 
 let ollamaCliStatus: OllamaCliStatus | null = null;
 let missingCliWarningShown = false;
@@ -808,7 +810,11 @@ function summarizeCapabilities(model: OllamaProviderModel): string | null {
 }
 
 function getRegisteredLocalModels(): OllamaProviderModel[] {
-	if (!ollamaCliStatus?.available) {
+	if (ollamaCliStatus === null) {
+		// Initial model matching runs before the deferred CLI probe, but installed models only need the local API.
+		return localDiscoveryState.models;
+	}
+	if (!ollamaCliStatus.available) {
 		return [];
 	}
 	const cloudCatalog =
@@ -932,6 +938,21 @@ function createOllamaProcessEnv(): NodeJS.ProcessEnv {
 	return env;
 }
 
+async function primeOllamaLocalModelsBeforeRegistration(): Promise<void> {
+	const abortController = new AbortController();
+	const timeout = setTimeout(() => abortController.abort(), OLLAMA_STARTUP_LOCAL_DISCOVERY_TIMEOUT_MS);
+	timeout.unref?.();
+	try {
+		localDiscoveryState.models = (await discoverOllamaLocalModelList({ signal: abortController.signal })) ?? [];
+		localDiscoveryState.lastError = null;
+		localDiscoveryState.lastRefresh = Date.now();
+	} catch (error) {
+		localDiscoveryState.lastError = error instanceof Error ? error.message : String(error);
+	} finally {
+		clearTimeout(timeout);
+	}
+}
+
 async function primeOllamaCloudModelsBeforeRegistration(): Promise<void> {
 	const abortController = new AbortController();
 	const timeout = setTimeout(() => abortController.abort(), OLLAMA_STARTUP_CLOUD_DISCOVERY_TIMEOUT_MS);
@@ -971,6 +992,7 @@ export {
 	createOllamaCloudOAuthProvider,
 	discoverOllamaCloudModelList,
 	discoverOllamaCloudModels,
+	discoverOllamaLocalModelList,
 	discoverOllamaLocalModels,
 	getCredentialModels,
 	getFallbackOllamaCloudModels,
@@ -980,7 +1002,7 @@ export {
 export { type OllamaCloudCredentials, type OllamaProviderModel, toOllamaCloudModel, toOllamaModel } from "./models.js";
 
 export default async function ollamaProviderExtension(pi: ExtensionAPI): Promise<void> {
-	await primeOllamaCloudModelsBeforeRegistration();
+	await Promise.all([primeOllamaCloudModelsBeforeRegistration(), primeOllamaLocalModelsBeforeRegistration()]);
 	const registerLifecycle = registerOllamaLifecycle(pi);
 	bootstrapOllamaProviders(pi, registerLifecycle);
 	registerOllamaCommands(pi);
