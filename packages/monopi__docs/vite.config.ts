@@ -26,7 +26,7 @@ function ghPages404(): Plugin {
 }
 
 export default defineConfig({
-	base: "/oh-pi/",
+	base: "/monopi/",
 	build: {
 		emptyOutDir: true,
 		outDir: "dist",

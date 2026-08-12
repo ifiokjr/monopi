@@ -10,7 +10,7 @@ if (!root) throw new Error("Root element not found");
 
 createRoot(root).render(
 	<StrictMode>
-		<BrowserRouter basename="/monopi">
+		<BrowserRouter basename={import.meta.env.BASE_URL}>
 			<App />
 		</BrowserRouter>
 	</StrictMode>,
