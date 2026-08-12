@@ -215,6 +215,104 @@ describe("provider catalog extension", () => {
 		expect(providerModels?.length).toBeGreaterThan(0);
 	});
 
+	it("refreshes registered provider models through pi's refresh hook", async () => {
+		const provider = getSupportedProvider("moonshotai");
+		const storedModel = {
+			id: "stored-model",
+			name: "Stored Model",
+			contextWindow: 131072,
+			maxTokens: 16384,
+			input: ["text" as const],
+			reasoning: false,
+			cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+		};
+		const credential = {
+			type: "oauth",
+			providerId: provider.id,
+			refresh: "moonshot-key",
+			access: "moonshot-key",
+			expires: Date.now() + 60_000,
+			models: [storedModel],
+		};
+		resetProviderCatalogRuntimeStateForTests(new Map([[provider.id, credential]]));
+
+		const harness = createExtensionHarness();
+		providerCatalogExtension(harness.pi as never);
+		const refreshModels = harness.providers.get(provider.id)?.refreshModels;
+
+		await expect(refreshModels({ allowNetwork: false, credential })).resolves.toMatchObject([{ id: "stored-model" }]);
+		await expect(refreshModels({ allowNetwork: false })).resolves.toMatchObject([{ id: "stored-model" }]);
+
+		resetProviderCatalogRuntimeStateForTests();
+		const noCredentialHarness = createExtensionHarness();
+		process.env[provider.env[0] ?? "MOONSHOTAI_API_KEY"] = "moonshot-env-key";
+		providerCatalogExtension(noCredentialHarness.pi as never);
+		const networkRefresh = noCredentialHarness.providers.get(provider.id)?.refreshModels;
+		vi.stubGlobal(
+			"fetch",
+			vi
+				.fn<() => Promise<Response>>()
+				.mockResolvedValueOnce(jsonResponse({ moonshotai: { models: {} } }))
+				.mockResolvedValueOnce(jsonResponse({ data: [{ id: "network-model" }] })),
+		);
+		await expect(networkRefresh({ allowNetwork: true })).resolves.toMatchObject([{ id: "network-model" }]);
+
+		const failingContext = {
+			allowNetwork: true,
+			get signal(): AbortSignal {
+				throw new Error("catalog failed");
+			},
+		};
+		await expect(networkRefresh(failingContext)).rejects.toThrow("catalog failed");
+		delete process.env[provider.env[0] ?? "MOONSHOTAI_API_KEY"];
+		await expect(networkRefresh({ allowNetwork: true })).resolves.toMatchObject([{ id: "network-model" }]);
+	});
+
+	it("routes refresh and logout through pi's model registry and auth commands", async () => {
+		const provider = getSupportedProvider("moonshotai");
+		const credential = {
+			type: "oauth",
+			providerId: provider.id,
+			refresh: "moonshot-key",
+			access: "moonshot-key",
+			expires: Date.now() + 60_000,
+			models: [],
+		};
+		resetProviderCatalogRuntimeStateForTests(new Map([[provider.id, credential]]));
+		const harness = createExtensionHarness();
+		const refresh = vi.fn(async () => ({ errors: new Map() }));
+		harness.ctx.modelRegistry = {
+			refresh,
+			registerProvider: vi.fn((name, config) => harness.pi.registerProvider(name, config)),
+		} as never;
+		providerCatalogExtension(harness.pi as never);
+
+		await harness.commands.get("providers refresh-models").handler(provider.id, harness.ctx);
+		expect(refresh).toHaveBeenCalledWith({ force: true, providers: [provider.id] });
+		expect(harness.notifications.at(-1)?.msg).toContain("Refreshed: 1");
+
+		refresh.mockResolvedValueOnce({ errors: new Map([[provider.id, new Error("refresh failed")]]) });
+		await harness.commands.get("providers refresh-models").handler(provider.id, harness.ctx);
+		expect(harness.notifications.at(-1)?.msg).toContain("refresh failed");
+
+		await harness.commands.get("providers").handler(`logout ${provider.id}`, harness.ctx);
+		expect(harness.editorState.text).toBe("/logout");
+		expect(harness.notifications.at(-1)?.msg).toContain(`select ${provider.name}`);
+	});
+
+	it("reports unconfigured providers as skipped during refresh", async () => {
+		const provider = getSupportedProvider("moonshotai");
+		const harness = createExtensionHarness();
+		harness.ctx.modelRegistry = {
+			refresh: vi.fn(),
+			registerProvider: vi.fn((name, config) => harness.pi.registerProvider(name, config)),
+		} as never;
+		providerCatalogExtension(harness.pi as never);
+
+		await harness.commands.get("providers refresh-models").handler(provider.id, harness.ctx);
+		expect(harness.notifications.at(-1)?.msg).toContain("Skipped: 1");
+	});
+
 	it("returns null when provider selection is cancelled", async () => {
 		const provider = SUPPORTED_PROVIDERS[10];
 		if (!provider) {

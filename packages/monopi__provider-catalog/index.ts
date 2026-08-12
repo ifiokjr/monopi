@@ -557,20 +557,6 @@ async function selectProviderFromScrollableList(
 	});
 }
 
-function buildProviderPickerOptions(
-	providers: readonly SupportedProviderDefinition[],
-): { label: string; value: SupportedProviderDefinition }[] {
-	return providers.map((provider) => ({
-		label: formatProviderPickerOption(provider),
-		value: provider,
-	}));
-}
-
-function formatProviderPickerOption(provider: SupportedProviderDefinition): string {
-	const state = hasStoredCredential(provider.id) ? "✓ logged in" : getEnvApiKey(provider) ? "env key" : "login";
-	return `${provider.name} — ${provider.id} · ${state}`;
-}
-
 async function loginProviderFromCommand(
 	registrar: ProviderRegistrar,
 	ctx: ProviderCommandContext,
