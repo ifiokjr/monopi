@@ -29,7 +29,7 @@ const coverageExclude = [
 	"packages/monopi__analytics-db/src/index.ts",
 	"packages/monopi__analytics-db/src/migrations.ts",
 	"packages/monopi__analytics-extension/index.ts",
-	// Docs site — no tests needed for a static documentation site
+	// Docs site — validated through builds and focused tests rather than unit coverage thresholds
 	"packages/monopi__docs/vite.config.ts",
 	"packages/monopi__docs/src/**/*.tsx",
 	"packages/monopi__docs/src/**/*.ts",
@@ -58,6 +58,7 @@ export default defineConfig({
 			"benchmarks/**/*.test.ts",
 			"scripts/**/*.test.ts",
 			"packages/monopi__core/src/**/*.test.ts",
+			"packages/monopi__docs/src/**/*.test.tsx",
 			"packages/monopi__adaptive-routing/**/*.test.ts",
 			"packages/monopi__background-tasks/tests/**/*.test.ts",
 			"packages/monopi__cli/src/**/*.test.ts",

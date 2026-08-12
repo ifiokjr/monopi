@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, type ComponentType, type LazyExoticComponent } from "react";
 import { Link, useParams } from "react-router";
 
 import type { MdxPageData } from "@/hooks/useMdxPages";
@@ -7,8 +7,22 @@ interface MdxPageProps {
 	page: MdxPageData;
 }
 
+type MdxModuleLoader = MdxPageData["module"];
+
+// The loaders come from a static import.meta.glob catalog, so this cache has a finite domain.
+const lazyContentByModule = new Map<MdxModuleLoader, LazyExoticComponent<ComponentType>>();
+
+export function getLazyContent(module: MdxModuleLoader): LazyExoticComponent<ComponentType> {
+	const cachedContent = lazyContentByModule.get(module);
+	if (cachedContent) return cachedContent;
+
+	const content = lazy(module);
+	lazyContentByModule.set(module, content);
+	return content;
+}
+
 export function MdxPage({ page }: MdxPageProps) {
-	const Content = lazy(page.module);
+	const Content = getLazyContent(page.module);
 
 	return (
 		<article className="prose-doc">
