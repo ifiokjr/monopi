@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 
 import type { MdxPageData } from "@/hooks/useMdxPages";
 
@@ -38,9 +38,9 @@ export function NotFoundPage() {
 			<p className="text-zinc-400">
 				Page not found: <code className="text-pi-emerald">/{params["*"]}</code>
 			</p>
-			<a href="/oh-pi/" className="text-pi-emerald hover:underline">
+			<Link to="/" className="text-pi-emerald hover:underline">
 				← Back to docs
-			</a>
+			</Link>
 		</div>
 	);
 }

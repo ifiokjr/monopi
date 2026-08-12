@@ -87,7 +87,7 @@ export function Layout({ children, pages }: LayoutProps) {
 								className={`
 									block rounded-lg px-3 py-2 text-sm font-medium transition-colors
 									${
-										location.pathname === "/oh-pi/" || location.pathname === "/oh-pi"
+										location.pathname === "/"
 											? "bg-pi-emerald/10 text-pi-emerald"
 											: "text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-200"
 									}
@@ -104,7 +104,7 @@ export function Layout({ children, pages }: LayoutProps) {
 									className={`
 										block rounded-lg px-3 py-2 text-sm font-medium transition-colors
 										${
-											location.pathname === `/oh-pi/${page.slug}`
+											location.pathname === `/${page.slug}`
 												? "bg-pi-emerald/10 text-pi-emerald"
 												: "text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-200"
 										}
