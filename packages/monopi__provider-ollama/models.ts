@@ -60,8 +60,10 @@ type OllamaCloudMetadataOverride = {
 	id: string;
 	contextWindow: number;
 	maxTokens: number;
-	reasoning: boolean;
+	reasoning: true;
+	capabilities?: string[];
 	family?: string;
+	input?: OllamaProviderModel["input"];
 };
 
 const OLLAMA_CLOUD_METADATA_OVERRIDES: readonly OllamaCloudMetadataOverride[] = [
@@ -80,6 +82,15 @@ const OLLAMA_CLOUD_METADATA_OVERRIDES: readonly OllamaCloudMetadataOverride[] = 
 	{ id: "kimi-k2.5", contextWindow: 262_144, maxTokens: 32_768, reasoning: true, family: "kimi-k2" },
 	{ id: "kimi-k2.6", contextWindow: 262_144, maxTokens: 32_768, reasoning: true, family: "kimi-k2" },
 	{ id: "kimi-k2.7-code", contextWindow: 262_144, maxTokens: 32_768, reasoning: true, family: "kimi-k2" },
+	{
+		id: "kimi-k3",
+		capabilities: ["vision", "thinking", "completion", "tools"],
+		contextWindow: 1_048_576,
+		family: "kimi-k3",
+		input: ["text", "image"],
+		maxTokens: 131_072,
+		reasoning: true,
+	},
 	{ id: "minimax-m2.1", contextWindow: 204_800, maxTokens: 20_480, reasoning: true, family: "minimax-m2" },
 	{ id: "minimax-m2.5", contextWindow: 196_608, maxTokens: 20_480, reasoning: true, family: "minimax-m2" },
 	{ id: "minimax-m2.7", contextWindow: 196_608, maxTokens: 20_480, reasoning: true, family: "minimax-m2" },
@@ -116,10 +127,21 @@ const OLLAMA_GPT_OSS_THINKING_LEVEL_MAP: ThinkingLevelMap = {
 	xhigh: null,
 };
 
+const OLLAMA_KIMI_K3_THINKING_LEVEL_MAP: ThinkingLevelMap = {
+	off: null,
+	minimal: null,
+	low: "low",
+	medium: null,
+	high: "high",
+	xhigh: null,
+	max: "max",
+};
+
 const OLLAMA_GPT_OSS_MODEL_PATTERN = /(?:^|[-_/:])gpt[-_]?oss(?:$|[-_/:])/i;
 const OLLAMA_QWEN3_MODEL_PATTERN = /(?:^|[-_/:])qwen3(?:$|[-_/:.])/i;
 const OLLAMA_DEEPSEEK_THINKING_MODEL_PATTERN = /(?:^|[-_/:])deepseek[-_]?(?:r1|v3\.?[12]|v4)(?:$|[-_/:.])/i;
-const OLLAMA_KIMI_THINKING_MODEL_PATTERN = /(?:^|[-_/:])kimi[-_]?k2(?:$|[-_/:.])/i;
+const OLLAMA_KIMI_THINKING_MODEL_PATTERN = /(?:^|[-_/:])kimi[-_]?k[23](?:$|[-_/:.])/i;
+const OLLAMA_KIMI_K3_MODEL_PATTERN = /(?:^|[-_/:])kimi[-_]?k3(?:$|[-_/:.])/i;
 const OLLAMA_MINIMAX_THINKING_MODEL_PATTERN = /(?:^|[-_/:])minimax[-_]?m[23](?:$|[-_/:.])/i;
 const OLLAMA_NEMOTRON_THINKING_MODEL_PATTERN = /(?:^|[-_/:])nemotron[-_]?3(?:$|[-_/:.])/i;
 const OLLAMA_THINKING_TEMPLATE_PATTERN = /<think>|\.thinking\b|reasoning_content/i;
@@ -519,11 +541,12 @@ function applyOllamaCloudMetadataOverrides(
 
 	return {
 		...model,
-		capabilities: override.reasoning ? mergeCapabilities(model.capabilities, ["thinking"]) : model.capabilities,
+		capabilities: mergeCapabilities(model.capabilities, override.capabilities ?? ["thinking"]),
 		contextWindow: maxPositiveInteger(model.contextWindow, override.contextWindow),
 		family: model.family ?? override.family,
+		input: override.input ?? model.input,
 		maxTokens: maxPositiveInteger(model.maxTokens, override.maxTokens),
-		reasoning: override.reasoning ? true : model.reasoning,
+		reasoning: true,
 	};
 }
 
@@ -563,6 +586,9 @@ function getOllamaThinkingLevelMap(
 	}
 	if (isOllamaGptOssModel(model)) {
 		return OLLAMA_GPT_OSS_THINKING_LEVEL_MAP;
+	}
+	if (isOllamaKimiK3Model(model)) {
+		return OLLAMA_KIMI_K3_THINKING_LEVEL_MAP;
 	}
 
 	return model.thinkingLevelMap ?? OLLAMA_REASONING_THINKING_LEVEL_MAP;
@@ -625,6 +651,10 @@ function isOllamaDeepSeekThinkingModel(model: Partial<Pick<OllamaProviderModel, 
 
 function isOllamaKimiThinkingModel(model: Partial<Pick<OllamaProviderModel, "family" | "id">>): boolean {
 	return modelHasToken(model, OLLAMA_KIMI_THINKING_MODEL_PATTERN);
+}
+
+function isOllamaKimiK3Model(model: Partial<Pick<OllamaProviderModel, "family" | "id">>): boolean {
+	return modelHasToken(model, OLLAMA_KIMI_K3_MODEL_PATTERN);
 }
 
 function isOllamaMinimaxThinkingModel(model: Partial<Pick<OllamaProviderModel, "family" | "id">>): boolean {

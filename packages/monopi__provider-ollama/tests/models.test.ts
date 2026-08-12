@@ -46,6 +46,36 @@ describe("ollama models", () => {
 		expect(compat?.maxTokensField).toBe("max_tokens");
 	});
 
+	it("recognizes Kimi K3 tags as thinking models", () => {
+		const models = ["kimi-k3", "kimi_k3:latest"].map((id) => toOllamaModel({ id, source: "local" }));
+
+		expect(models.map((model) => model.reasoning)).toEqual([true, true]);
+		expect(models.map((model) => getSupportedThinkingLevels(model as never))).toEqual([
+			["low", "high", "max"],
+			["low", "high", "max"],
+		]);
+	});
+
+	it("merges Kimi K3 cloud capabilities with authoritative metadata", () => {
+		const model = toOllamaModel({
+			capabilities: ["provider-specific"],
+			contextWindow: 32_768,
+			id: "kimi-k3",
+			input: ["text"],
+			maxTokens: 8_192,
+			reasoning: false,
+			source: "cloud",
+		});
+
+		expect(model).toMatchObject({
+			capabilities: ["provider-specific", "vision", "thinking", "completion", "tools"],
+			contextWindow: 1_048_576,
+			input: ["text", "image"],
+			maxTokens: 131_072,
+			reasoning: true,
+		});
+	});
+
 	it("applies authoritative cloud metadata and z.ai compat defaults to glm models", () => {
 		const model = toOllamaModel({
 			contextWindow: 131_072,
@@ -118,16 +148,26 @@ describe("ollama models", () => {
 			{
 				id: "gpt-oss:120b",
 			},
+			{ id: "kimi-k3" },
 		]);
-		backend.setRejectedModelShows(["brand-new-cloud-model", "gpt-oss:120b"]);
+		backend.setRejectedModelShows(["brand-new-cloud-model", "gpt-oss:120b", "kimi-k3"]);
 		process.env.PI_OLLAMA_CLOUD_API_URL = backend.apiUrl;
 		process.env.PI_OLLAMA_CLOUD_MODELS_URL = `${backend.apiUrl}/models`;
 		process.env.PI_OLLAMA_CLOUD_SHOW_URL = `${backend.origin}/api/show`;
 		const models = await discoverOllamaCloudModelList("test-key");
-		expect(models?.map((model) => model.id)).toEqual(["brand-new-cloud-model", "gpt-oss:120b"]);
+		expect(models?.map((model) => model.id)).toEqual(["brand-new-cloud-model", "gpt-oss:120b", "kimi-k3"]);
 		expect(models?.[0]?.source).toBe("cloud");
 		expect(models?.[1]?.reasoning).toBe(true);
 		expect(getSupportedThinkingLevels(models![1]! as never)).toEqual(["minimal", "low", "medium", "high"]);
+		expect(models?.[2]).toMatchObject({
+			capabilities: expect.arrayContaining(["vision", "thinking", "completion", "tools"]),
+			contextWindow: 1_048_576,
+			family: "kimi-k3",
+			input: ["text", "image"],
+			maxTokens: 131_072,
+			reasoning: true,
+		});
+		expect(getSupportedThinkingLevels(models![2]! as never)).toEqual(["low", "high", "max"]);
 		expect(backend.getAuthHeaders()).toEqual(["Bearer test-key"]);
 		await backend.close();
 	});
