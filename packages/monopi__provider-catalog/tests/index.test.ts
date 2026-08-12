@@ -91,12 +91,13 @@ describe("provider catalog extension", () => {
 			refresh,
 			registerProvider: vi.fn((name, config) => harness.pi.registerProvider(name, config)),
 		} as never;
+		const credential = (harness.ctx.modelRegistry as any).authStorage.get(provider.id);
+		resetProviderCatalogRuntimeStateForTests(new Map([[provider.id, credential]]));
 
 		providerCatalogExtension(harness.pi as never);
-		await harness.emitAsync("session_start", { type: "session_start" }, harness.ctx);
 
 		expect(harness.providers.has(provider.id)).toBe(true);
-		expect(refresh).toHaveBeenCalledTimes(1);
+		expect(refresh).not.toHaveBeenCalled();
 	});
 
 	it("shows a scrollable provider login picker and lazily registers the chosen provider", async () => {
@@ -163,10 +164,8 @@ describe("provider catalog extension", () => {
 		expect(harness.ctx.ui.select).not.toHaveBeenCalled();
 
 		expect(harness.providers.has(provider.id)).toBe(true);
-		expect(stored.get(provider.id)).toMatchObject({
-			type: "oauth",
-			providerId: provider.id,
-		});
+		expect(stored.get(provider.id)).toBeUndefined();
+		expect(harness.editorState.text).toBe(`/login ${provider.id}`);
 		expect(refresh).toHaveBeenCalledTimes(1);
 	});
 
@@ -204,9 +203,10 @@ describe("provider catalog extension", () => {
 			refresh: vi.fn(),
 			registerProvider: vi.fn((name, config) => harness.pi.registerProvider(name, config)),
 		} as never;
+		const credential = (harness.ctx.modelRegistry as any).authStorage.get(provider.id);
+		resetProviderCatalogRuntimeStateForTests(new Map([[provider.id, credential]]));
 
 		providerCatalogExtension(harness.pi as never);
-		await harness.emitAsync("session_start", { type: "session_start" }, harness.ctx);
 
 		expect(harness.providers.has(provider.id)).toBe(true);
 		// Models from stored credentials should be available
@@ -298,6 +298,8 @@ describe("provider catalog extension", () => {
 			},
 			refresh: vi.fn(),
 		} as never;
+		const credential = (harness.ctx.modelRegistry as any).authStorage.get(provider.id);
+		resetProviderCatalogRuntimeStateForTests(new Map([[provider.id, credential]]));
 
 		providerCatalogExtension(harness.pi as never);
 		const command = harness.commands.get("providers");

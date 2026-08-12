@@ -207,24 +207,8 @@ function pickRouterModel(
 	return candidates.find((candidate) => candidate.tier === "cheap") ?? candidates[0];
 }
 
-async function resolveApiKey(
-	model: Model<Api>,
-	ctx: Pick<ExtensionContext, "modelRegistry">,
-): Promise<string | undefined> {
-	const registry = ctx.modelRegistry as ExtensionContext["modelRegistry"] & {
-		getApiKeyForProvider?: (provider: string) => Promise<string | undefined>;
-		authStorage?: {
-			getApiKey?: (provider: string) => Promise<string | undefined>;
-		};
-	};
-	if (typeof registry.getApiKeyForProvider === "function") {
-		return registry.getApiKeyForProvider(model.provider);
-	}
-
-	if (typeof registry.authStorage?.getApiKey === "function") {
-		return registry.authStorage.getApiKey(model.provider);
-	}
-	return undefined;
+function resolveApiKey(model: Model<Api>, ctx: Pick<ExtensionContext, "modelRegistry">): Promise<string | undefined> {
+	return ctx.modelRegistry.getApiKeyForProvider(model.provider);
 }
 
 function buildClassifierPrompt(prompt: string): string {

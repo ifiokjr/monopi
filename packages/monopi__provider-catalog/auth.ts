@@ -1,4 +1,5 @@
-import type { OAuthCredentials, OAuthLoginCallbacks, OAuthProviderInterface } from "@earendil-works/pi-ai";
+import type { OAuthCredentials, OAuthLoginCallbacks } from "@earendil-works/pi-ai";
+import type { ProviderConfig } from "@earendil-works/pi-coding-agent";
 
 import type { ProviderCatalogCredentials } from "./catalog.js";
 import type { SupportedProviderDefinition } from "./config.js";
@@ -72,25 +73,13 @@ export async function enrichProviderCredentials(
 	};
 }
 
-export function createApiKeyOAuthProvider(provider: SupportedProviderDefinition): Omit<OAuthProviderInterface, "id"> {
+export function createApiKeyOAuthProvider(provider: SupportedProviderDefinition): NonNullable<ProviderConfig["oauth"]> {
 	return {
 		getApiKey(credentials) {
 			return credentials.access;
 		},
 		login(callbacks) {
 			return loginProvider(provider, callbacks);
-		},
-		modifyModels(models, credentials) {
-			const current = getCredentialModels(credentials as ProviderCatalogCredentials);
-			return [
-				...models.filter((model) => model.provider !== provider.id),
-				...current.map((model) => ({
-					...model,
-					provider: provider.id,
-					api: provider.api,
-					baseUrl: provider.baseUrl,
-				})),
-			];
 		},
 		name: `${provider.name} (experimental)`,
 		refreshToken(credentials) {

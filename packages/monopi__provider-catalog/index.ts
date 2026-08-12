@@ -6,29 +6,17 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 /* C8 ignore file */
 
-import { AuthStorage } from "@earendil-works/pi-coding-agent";
+import { readStoredCredential } from "@earendil-works/pi-coding-agent";
 import { Container, fuzzyFilter, Input, Spacer, TruncatedText } from "@earendil-works/pi-tui";
 
 import type { ProviderCatalogCredentials, ProviderCatalogModel } from "./catalog.js";
 import type { SupportedProviderDefinition } from "./config.js";
 
-import {
-	createApiKeyOAuthProvider,
-	loginProvider,
-	refreshProviderCredential,
-	refreshProviderCredentialModels,
-} from "./auth.js";
+import { createApiKeyOAuthProvider, refreshProviderCredential, refreshProviderCredentialModels } from "./auth.js";
 import { getCatalogModels, getCredentialModels, resolveProviderModels } from "./catalog.js";
 import { getEnvApiKey, resolveApiKeyConfig, SUPPORTED_PROVIDERS } from "./config.js";
 
-type ProviderAuthReader = Pick<ExtensionContext["modelRegistry"]["authStorage"], "get">;
-type ProviderAuthWriter = Pick<ExtensionContext["modelRegistry"]["authStorage"], "get" | "set">;
-
-interface ProviderModelRegistry {
-	authStorage: ProviderAuthWriter;
-	refresh?: ExtensionContext["modelRegistry"]["refresh"];
-	registerProvider: ExtensionContext["modelRegistry"]["registerProvider"];
-}
+type ProviderModelRegistry = Pick<ExtensionContext["modelRegistry"], "refresh" | "registerProvider">;
 
 interface ProviderRegistrar {
 	registerProvider(name: string, config: ProviderConfig): void;
@@ -40,13 +28,7 @@ interface ProviderRegistryContext {
 
 interface ProviderCommandContext {
 	modelRegistry: ProviderModelRegistry;
-	ui: Pick<ExtensionCommandContext["ui"], "custom" | "notify" | "select" | "input">;
-}
-
-interface ProviderStatusContext {
-	modelRegistry: {
-		authStorage: ProviderAuthReader;
-	};
+	ui: Pick<ExtensionCommandContext["ui"], "custom" | "input" | "notify" | "select" | "setEditorText">;
 }
 
 interface RuntimeProviderState {
@@ -62,6 +44,7 @@ const runtimeState: RuntimeProviderState = {
 	models: new Map(),
 	registered: new Set(),
 };
+let testStoredCredentials: ReadonlyMap<string, unknown> | undefined;
 
 function registerProvider(registrar: ProviderRegistrar, provider: SupportedProviderDefinition): void {
 	registrar.registerProvider(provider.id, {
@@ -70,6 +53,35 @@ function registerProvider(registrar: ProviderRegistrar, provider: SupportedProvi
 		baseUrl: provider.baseUrl,
 		models: toProviderModels(runtimeState.models.get(provider.id) ?? []),
 		oauth: createApiKeyOAuthProvider(provider),
+		async refreshModels(context) {
+			const credential = context.credential?.type === "oauth" ? context.credential : undefined;
+			const storedModels = credential ? getCredentialModels(credential as ProviderCatalogCredentials) : [];
+			if (!context.allowNetwork) {
+				const models = storedModels.length > 0 ? storedModels : (runtimeState.models.get(provider.id) ?? []);
+				runtimeState.models.set(provider.id, models);
+				return toProviderModels(models);
+			}
+
+			const apiKey = credential?.access ?? getEnvApiKey(provider);
+			if (!apiKey) {
+				return toProviderModels(runtimeState.models.get(provider.id) ?? storedModels);
+			}
+
+			try {
+				const models = await resolveProviderModels(provider, apiKey, {
+					previous: runtimeState.models.get(provider.id) ?? storedModels,
+					signal: context.signal,
+				});
+				runtimeState.models.set(provider.id, models);
+				runtimeState.lastRefresh.set(provider.id, Date.now());
+				runtimeState.lastError.set(provider.id, null);
+				return toProviderModels(models);
+			} catch (error) {
+				runtimeState.lastRefresh.set(provider.id, Date.now());
+				runtimeState.lastError.set(provider.id, error instanceof Error ? error.message : String(error));
+				throw error;
+			}
+		},
 	});
 	runtimeState.registered.add(provider.id);
 }
@@ -109,8 +121,7 @@ function registerProvidersCommand(pi: ExtensionAPI): void {
 					ctx.ui.notify(`No provider matched "${query}". Run /providers list first.`, "warning");
 					return;
 				}
-				const refreshed = await refreshProviders(ctx.modelRegistry, ctx, providers);
-				ctx.modelRegistry.refresh?.();
+				const refreshed = await refreshProviders(ctx, providers);
 				ctx.ui.notify(renderRefreshSummary(refreshed, providers.length), "info");
 				return;
 			}
@@ -130,7 +141,7 @@ function registerProvidersCommand(pi: ExtensionAPI): void {
 					ctx.ui.notify(`No provider matched "${query}". Run /providers list first.`, "warning");
 					return;
 				}
-				ctx.ui.notify(await renderProviderInfo(provider, ctx), "info");
+				ctx.ui.notify(await renderProviderInfo(provider), "info");
 				return;
 			}
 
@@ -144,11 +155,11 @@ function registerProvidersCommand(pi: ExtensionAPI): void {
 					ctx.ui.notify(`No provider matched "${query}". Run /providers list first.`, "warning");
 					return;
 				}
-				ctx.ui.notify(await renderProviderModels(provider, ctx), "info");
+				ctx.ui.notify(await renderProviderModels(provider), "info");
 				return;
 			}
 
-			ctx.ui.notify(renderStatus(ctx), "info");
+			ctx.ui.notify(renderStatus(), "info");
 		},
 	};
 
@@ -198,7 +209,6 @@ function registerProvidersCommand(pi: ExtensionAPI): void {
 
 // Biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Refresh handling branches clearly by stored credential vs env configuration paths.
 async function refreshProviders(
-	registrar: ProviderRegistrar,
 	ctx: ProviderRegistryContext,
 	providers: readonly SupportedProviderDefinition[],
 ): Promise<
@@ -217,40 +227,9 @@ async function refreshProviders(
 	}[] = [];
 
 	for (const provider of providers) {
-		const credential = getStoredCredential(ctx, provider.id);
-		if (credential) {
-			try {
-				const isExpired = typeof credential.expires === "number" && credential.expires <= Date.now();
-				const refreshed = isExpired
-					? await refreshProviderCredential(provider, credential)
-					: await refreshProviderCredentialModels(provider, credential);
-				ctx.modelRegistry.authStorage.set(provider.id, {
-					type: "oauth",
-					...refreshed,
-				});
-				runtimeState.models.set(provider.id, getCredentialModels(refreshed));
-				runtimeState.lastRefresh.set(provider.id, refreshed.lastModelRefresh ?? Date.now());
-				runtimeState.lastError.set(provider.id, null);
-				registerProvider(registrar, provider);
-				results.push({
-					models: getCredentialModels(refreshed).length,
-					provider,
-					status: "refreshed",
-				});
-				continue;
-			} catch (error) {
-				results.push({
-					error: error instanceof Error ? error.message : String(error),
-					models: getCredentialModels(credential).length,
-					provider,
-					status: "failed",
-				});
-				continue;
-			}
-		}
-
-		const apiKey = getEnvApiKey(provider);
-		if (!apiKey) {
+		const credential = getStoredCredential(provider.id);
+		const credentialModelCount = credential ? getCredentialModels(credential).length : 0;
+		if (!credential && !getEnvApiKey(provider)) {
 			results.push({
 				models: runtimeState.models.get(provider.id)?.length ?? 0,
 				provider,
@@ -259,34 +238,32 @@ async function refreshProviders(
 			continue;
 		}
 
-		try {
-			const models = await resolveProviderModels(provider, apiKey, {
-				previous: runtimeState.models.get(provider.id),
-			});
-			runtimeState.models.set(provider.id, models);
-			runtimeState.lastRefresh.set(provider.id, Date.now());
-			runtimeState.lastError.set(provider.id, null);
-			registerProvider(registrar, provider);
-			results.push({ models: models.length, provider, status: "refreshed" });
-		} catch (error) {
-			runtimeState.lastRefresh.set(provider.id, Date.now());
-			runtimeState.lastError.set(provider.id, error instanceof Error ? error.message : String(error));
-			registerProvider(registrar, provider);
+		registerProvider(ctx.modelRegistry, provider);
+		const refresh = await ctx.modelRegistry.refresh({ force: true, providers: [provider.id] });
+		const error = refresh.errors.get(provider.id);
+		if (error) {
 			results.push({
-				error: error instanceof Error ? error.message : String(error),
-				models: runtimeState.models.get(provider.id)?.length ?? 0,
+				error: error.message,
+				models: runtimeState.models.get(provider.id)?.length ?? credentialModelCount,
 				provider,
 				status: "failed",
 			});
+			continue;
 		}
+
+		results.push({
+			models: runtimeState.models.get(provider.id)?.length ?? credentialModelCount,
+			provider,
+			status: "refreshed",
+		});
 	}
 
 	return results;
 }
 
-function renderStatus(ctx: ProviderStatusContext): string {
+function renderStatus(): string {
 	const configured = SUPPORTED_PROVIDERS.filter(
-		(provider) => hasStoredCredential(ctx, provider.id) || getEnvApiKey(provider),
+		(provider) => hasStoredCredential(provider.id) || getEnvApiKey(provider),
 	);
 	const lines = [`Supported providers: ${SUPPORTED_PROVIDERS.length}`, `Configured providers: ${configured.length}`];
 
@@ -297,7 +274,7 @@ function renderStatus(ctx: ProviderStatusContext): string {
 	}
 
 	for (const provider of configured.slice(0, 20)) {
-		const credential = getStoredCredential(ctx, provider.id);
+		const credential = getStoredCredential(provider.id);
 		const models = credential ? getCredentialModels(credential) : (runtimeState.models.get(provider.id) ?? []);
 		const source = credential ? "login" : "env";
 		const error = credential ? null : runtimeState.lastError.get(provider.id);
@@ -327,8 +304,8 @@ function renderProviderList(query: string): string {
 		.join("\n");
 }
 
-async function renderProviderInfo(provider: SupportedProviderDefinition, ctx: ProviderStatusContext): Promise<string> {
-	const credential = getStoredCredential(ctx, provider.id);
+async function renderProviderInfo(provider: SupportedProviderDefinition): Promise<string> {
+	const credential = getStoredCredential(provider.id);
 	const currentModels = credential ? getCredentialModels(credential) : (runtimeState.models.get(provider.id) ?? []);
 	const catalogModels = currentModels.length > 0 ? currentModels : await getCatalogModels(provider).catch(() => []);
 	const source = credential ? "login" : getEnvApiKey(provider) ? "env" : "not configured";
@@ -347,11 +324,8 @@ async function renderProviderInfo(provider: SupportedProviderDefinition, ctx: Pr
 	].join("\n");
 }
 
-async function renderProviderModels(
-	provider: SupportedProviderDefinition,
-	ctx: ProviderStatusContext,
-): Promise<string> {
-	const credential = getStoredCredential(ctx, provider.id);
+async function renderProviderModels(provider: SupportedProviderDefinition): Promise<string> {
+	const credential = getStoredCredential(provider.id);
 	const currentModels = credential ? getCredentialModels(credential) : (runtimeState.models.get(provider.id) ?? []);
 	const models = currentModels.length > 0 ? currentModels : await getCatalogModels(provider).catch(() => []);
 	if (models.length === 0) {
@@ -398,12 +372,12 @@ function renderRefreshSummary(
 	return lines.join("\n");
 }
 
-function hasStoredCredential(ctx: ProviderStatusContext, providerId: string): boolean {
-	return getStoredCredential(ctx, providerId) !== null;
+function hasStoredCredential(providerId: string): boolean {
+	return getStoredCredential(providerId) !== null;
 }
 
-function getStoredCredential(ctx: ProviderStatusContext, providerId: string): ProviderCatalogCredentials | null {
-	const credential = ctx.modelRegistry.authStorage.get(providerId);
+function getStoredCredential(providerId: string): ProviderCatalogCredentials | null {
+	const credential = testStoredCredentials ? testStoredCredentials.get(providerId) : readStoredCredential(providerId);
 	return credential && typeof credential === "object" && (credential as { type?: string }).type === "oauth"
 		? (credential as ProviderCatalogCredentials)
 		: null;
@@ -475,7 +449,7 @@ async function selectProviderFromScrollableList(
 				if (!p) continue;
 				const selected = i === selectedIndex;
 				const prefix = selected ? "→ " : "  ";
-				const status = hasStoredCredential(ctx, p.id) ? " ✓ logged in" : getEnvApiKey(p) ? " • env key" : "";
+				const status = hasStoredCredential(p.id) ? " ✓ logged in" : getEnvApiKey(p) ? " • env key" : "";
 				const line = `${prefix}${p.name} — ${p.id}${status}`;
 				listContainer.addChild(new TruncatedText(line, 1, 0));
 			}
@@ -585,16 +559,15 @@ async function selectProviderFromScrollableList(
 
 function buildProviderPickerOptions(
 	providers: readonly SupportedProviderDefinition[],
-	ctx: ProviderStatusContext,
 ): { label: string; value: SupportedProviderDefinition }[] {
 	return providers.map((provider) => ({
-		label: formatProviderPickerOption(provider, ctx),
+		label: formatProviderPickerOption(provider),
 		value: provider,
 	}));
 }
 
-function formatProviderPickerOption(provider: SupportedProviderDefinition, ctx: ProviderStatusContext): string {
-	const state = hasStoredCredential(ctx, provider.id) ? "✓ logged in" : getEnvApiKey(provider) ? "env key" : "login";
+function formatProviderPickerOption(provider: SupportedProviderDefinition): string {
+	const state = hasStoredCredential(provider.id) ? "✓ logged in" : getEnvApiKey(provider) ? "env key" : "login";
 	return `${provider.name} — ${provider.id} · ${state}`;
 }
 
@@ -603,75 +576,24 @@ async function loginProviderFromCommand(
 	ctx: ProviderCommandContext,
 	provider: SupportedProviderDefinition,
 ): Promise<void> {
-	try {
-		registerProvider(registrar, provider);
-		const credential = await loginProvider(provider, {
-			onAuth(params) {
-				ctx.ui.notify(`${params.instructions}\n${params.url}`, "info");
-			},
-			onDeviceCode() {
-				ctx.ui.notify("Complete device authentication on the provider's page.", "info");
-			},
-			onProgress(message) {
-				if (message) {
-					ctx.ui.notify(message, "info");
-				}
-			},
-			async onPrompt(params) {
-				return await promptProviderInput(ctx, `Log in to ${provider.name}`, `${params.message}\n${provider.authUrl}`);
-			},
-			async onSelect() {
-				return undefined;
-			},
-		});
-		ctx.modelRegistry.authStorage.set(provider.id, {
-			type: "oauth",
-			...credential,
-		});
-		runtimeState.models.set(provider.id, getCredentialModels(credential));
-		runtimeState.lastRefresh.set(provider.id, credential.lastModelRefresh ?? Date.now());
-		runtimeState.lastError.set(provider.id, null);
-		registerProvider(registrar, provider);
-		ctx.modelRegistry.refresh?.();
-		ctx.ui.notify(
-			`Logged in to ${provider.name}. ${getCredentialModels(credential).length} model${
-				getCredentialModels(credential).length === 1 ? "" : "s"
-			} available.`,
-			"info",
-		);
-	} catch (error) {
-		const message = error instanceof Error ? error.message : String(error);
-		runtimeState.lastError.set(provider.id, message);
-		ctx.ui.notify(`Failed to log in to ${provider.name}: ${message}`, "error");
-	}
+	registerProvider(registrar, provider);
+	await ctx.modelRegistry.refresh({ allowNetwork: false, providers: [provider.id] });
+	ctx.ui.setEditorText(`/login ${provider.id}`);
+	ctx.ui.notify(`Ready to log in to ${provider.name}. Press Enter to continue with pi's secure login flow.`, "info");
 }
 
 async function logoutProviderFromCommand(
 	ctx: ProviderCommandContext,
 	provider: SupportedProviderDefinition,
 ): Promise<void> {
-	const credential = getStoredCredential(ctx, provider.id);
+	const credential = getStoredCredential(provider.id);
 	if (!credential) {
 		ctx.ui.notify(`${provider.name} is not logged in.`, "warning");
 		return;
 	}
 
-	ctx.modelRegistry.authStorage.set(provider.id, undefined as never);
-	runtimeState.models.delete(provider.id);
-	runtimeState.lastRefresh.delete(provider.id);
-	runtimeState.lastError.delete(provider.id);
-	runtimeState.registered.delete(provider.id);
-
-	ctx.modelRegistry.refresh?.();
-	ctx.ui.notify(`Logged out of ${provider.name}.`, "info");
-}
-
-function promptProviderInput(ctx: ProviderCommandContext, title: string, placeholder?: string): Promise<string> {
-	const { input } = ctx.ui;
-	if (typeof input !== "function") {
-		throw new TypeError("Interactive input is unavailable for provider login.");
-	}
-	return input(title, placeholder).then((value) => value ?? "");
+	ctx.ui.setEditorText("/logout");
+	ctx.ui.notify(`Press Enter, then select ${provider.name} in pi's secure logout flow.`, "info");
 }
 
 function toProviderModels(models: readonly ProviderCatalogModel[]): ProviderCatalogModel[] {
@@ -710,26 +632,15 @@ function bootstrapProviders(pi: ExtensionAPI): void {
 		registerProvider(pi, provider);
 	}
 
-	// Also register providers that have models loaded from stored credentials
+	// Also register providers with stored credentials, including credentials whose catalog is currently empty.
 	for (const provider of SUPPORTED_PROVIDERS) {
-		if (runtimeState.models.has(provider.id) && !runtimeState.registered.has(provider.id)) {
+		if (
+			(runtimeState.models.has(provider.id) || hasStoredCredential(provider.id)) &&
+			!runtimeState.registered.has(provider.id)
+		) {
 			registerProvider(pi, provider);
 		}
 	}
-
-	refreshProviders(
-		pi,
-		{
-			modelRegistry: {
-				authStorage: {
-					get: () => {},
-					set: () => {},
-				},
-				registerProvider: pi.registerProvider.bind(pi),
-			},
-		},
-		SUPPORTED_PROVIDERS.filter((provider) => Boolean(getEnvApiKey(provider))),
-	);
 }
 
 /**
@@ -738,64 +649,25 @@ function bootstrapProviders(pi: ExtensionAPI): void {
  * createAgentSessionServices, before session_start fires).
  */
 function loadPersistedModels(): void {
-	// Skip in test environments to avoid reading from the real auth.json file
-	if (process.env.VITEST || process.env.NODE_ENV === "test") {
+	// Tests use an injected map so this never reads the developer's real auth.json.
+	if ((process.env.VITEST || process.env.NODE_ENV === "test") && !testStoredCredentials) {
 		return;
 	}
 
-	try {
-		const authStorage = AuthStorage.create();
-		for (const provider of SUPPORTED_PROVIDERS) {
-			if (runtimeState.models.has(provider.id)) {
-				continue;
-			}
-			try {
-				const credential = authStorage.get(provider.id);
-				if (credential && typeof credential === "object" && (credential as { type?: string }).type === "oauth") {
-					const cred = credential as ProviderCatalogCredentials;
-					const storedModels = getCredentialModels(cred);
-					if (storedModels.length > 0) {
-						runtimeState.models.set(provider.id, storedModels);
-						runtimeState.lastRefresh.set(provider.id, cred.lastModelRefresh ?? Date.now());
-					}
-				}
-			} catch {
-				// Ignore errors reading credentials for individual providers
-			}
+	for (const provider of SUPPORTED_PROVIDERS) {
+		if (runtimeState.models.has(provider.id)) {
+			continue;
 		}
-	} catch {
-		// Ignore errors creating AuthStorage
+		const credential = getStoredCredential(provider.id);
+		if (!credential) {
+			continue;
+		}
+		const storedModels = getCredentialModels(credential);
+		if (storedModels.length > 0) {
+			runtimeState.models.set(provider.id, storedModels);
+			runtimeState.lastRefresh.set(provider.id, credential.lastModelRefresh ?? Date.now());
+		}
 	}
-}
-
-function registerPersistedProviders(pi: ExtensionAPI): void {
-	pi.on("session_start", (_event, ctx: ProviderRegistryContext) => {
-		let changed = false;
-		for (const provider of SUPPORTED_PROVIDERS) {
-			const credential = getStoredCredential(ctx, provider.id);
-			const envKey = getEnvApiKey(provider);
-			if (!credential && !envKey) {
-				continue;
-			}
-
-			// Populate runtimeState.models from stored credentials so models
-			// persist across pi instances. Skip if already loaded by loadPersistedModels.
-			if (credential && !runtimeState.models.has(provider.id)) {
-				const storedModels = getCredentialModels(credential);
-				if (storedModels.length > 0) {
-					runtimeState.models.set(provider.id, storedModels);
-					runtimeState.lastRefresh.set(provider.id, credential.lastModelRefresh ?? Date.now());
-				}
-			}
-
-			const wasRegistered = runtimeState.registered.has(provider.id);
-			registerProvider(ctx.modelRegistry, provider);
-			changed ||= !wasRegistered;
-		}
-		if (changed) {
-			ctx.modelRegistry.refresh?.();
-		}
-	});
 }
 
 export type { ProviderCatalogCredentials, ProviderCatalogModel } from "./catalog.js";
@@ -809,16 +681,18 @@ export {
 	resolveProviderModels,
 };
 
-export function resetProviderCatalogRuntimeStateForTests(): void {
+export function resetProviderCatalogRuntimeStateForTests(
+	storedCredentials: ReadonlyMap<string, unknown> = new Map(),
+): void {
 	runtimeState.models.clear();
 	runtimeState.lastRefresh.clear();
 	runtimeState.lastError.clear();
 	runtimeState.registered.clear();
+	testStoredCredentials = storedCredentials;
 }
 
 export default function providerCatalogExtension(pi: ExtensionAPI): void {
 	loadPersistedModels();
 	bootstrapProviders(pi);
-	registerPersistedProviders(pi);
 	registerProvidersCommand(pi);
 }

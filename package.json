@@ -51,10 +51,10 @@
 		"actions:check": "pnpm actions:lint && pnpm actions:zizmor"
 	},
 	"devDependencies": {
-		"@earendil-works/pi-agent-core": "0.80.3",
-		"@earendil-works/pi-ai": "0.80.3",
-		"@earendil-works/pi-coding-agent": "0.80.3",
-		"@earendil-works/pi-tui": "0.80.3",
+		"@earendil-works/pi-agent-core": "0.84.1",
+		"@earendil-works/pi-ai": "0.84.1",
+		"@earendil-works/pi-coding-agent": "0.84.1",
+		"@earendil-works/pi-tui": "0.84.1",
 		"@ifi/mdt": "^0.7.0",
 		"@monochange/cli": "^0.8.3",
 		"@types/node": "^26.1.0",
@@ -68,7 +68,7 @@
 		"vitest": "^4.1.9"
 	},
 	"engines": {
-		"node": ">=20.0.0"
+		"node": ">=22.19.0"
 	},
 	"packageManager": "pnpm@10.33.0",
 	"pi": {

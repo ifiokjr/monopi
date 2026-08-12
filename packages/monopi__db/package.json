@@ -46,7 +46,7 @@
 		"drizzle-kit": "^0.31.10"
 	},
 	"peerDependencies": {
-		"@earendil-works/pi-coding-agent": ">=0.80.3"
+		"@earendil-works/pi-coding-agent": ">=0.84.1"
 	},
 	"engines": {
 		"node": ">=20.0.0"

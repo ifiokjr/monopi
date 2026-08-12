@@ -52,7 +52,7 @@
 		"@types/ws": "^8.18.1"
 	},
 	"peerDependencies": {
-		"@earendil-works/pi-coding-agent": ">=0.80.3"
+		"@earendil-works/pi-coding-agent": ">=0.84.1"
 	},
 	"engines": {
 		"node": ">=20.0.0"
