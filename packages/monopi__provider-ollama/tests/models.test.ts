@@ -56,6 +56,26 @@ describe("ollama models", () => {
 		]);
 	});
 
+	it("merges Kimi K3 cloud capabilities with authoritative metadata", () => {
+		const model = toOllamaModel({
+			capabilities: ["provider-specific"],
+			contextWindow: 32_768,
+			id: "kimi-k3",
+			input: ["text"],
+			maxTokens: 8_192,
+			reasoning: false,
+			source: "cloud",
+		});
+
+		expect(model).toMatchObject({
+			capabilities: ["provider-specific", "vision", "thinking", "completion", "tools"],
+			contextWindow: 1_048_576,
+			input: ["text", "image"],
+			maxTokens: 131_072,
+			reasoning: true,
+		});
+	});
+
 	it("applies authoritative cloud metadata and z.ai compat defaults to glm models", () => {
 		const model = toOllamaModel({
 			contextWindow: 131_072,

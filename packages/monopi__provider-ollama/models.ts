@@ -60,7 +60,7 @@ type OllamaCloudMetadataOverride = {
 	id: string;
 	contextWindow: number;
 	maxTokens: number;
-	reasoning: boolean;
+	reasoning: true;
 	capabilities?: string[];
 	family?: string;
 	input?: OllamaProviderModel["input"];
@@ -541,16 +541,12 @@ function applyOllamaCloudMetadataOverrides(
 
 	return {
 		...model,
-		capabilities: override.capabilities
-			? mergeCapabilities(model.capabilities, override.capabilities)
-			: override.reasoning
-				? mergeCapabilities(model.capabilities, ["thinking"])
-				: model.capabilities,
+		capabilities: mergeCapabilities(model.capabilities, override.capabilities ?? ["thinking"]),
 		contextWindow: maxPositiveInteger(model.contextWindow, override.contextWindow),
 		family: model.family ?? override.family,
 		input: override.input ?? model.input,
 		maxTokens: maxPositiveInteger(model.maxTokens, override.maxTokens),
-		reasoning: override.reasoning ? true : model.reasoning,
+		reasoning: true,
 	};
 }
 
