@@ -84,42 +84,8 @@ describe("multi-provider api-key auth", () => {
 		expect(refreshed.models?.map((model) => model.id)).toEqual(["kimi-k2.5"]);
 	});
 
-	it("modifies provider models from the stored credential", () => {
-		const provider = getSupportedProvider("moonshotai");
-		const oauth = createApiKeyOAuthProvider(provider);
-		const modified = oauth.modifyModels?.(
-			[
-				{
-					id: "placeholder",
-					name: "Placeholder",
-					api: "openai-completions",
-					provider: "moonshotai",
-					baseUrl: provider.baseUrl,
-					reasoning: false,
-					input: ["text"],
-					cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
-					contextWindow: 1,
-					maxTokens: 1,
-				},
-			],
-			{
-				refresh: "r",
-				access: "a",
-				expires: Date.now() + 1000,
-				models: [
-					{
-						id: "kimi-k2.5",
-						name: "Kimi K2.5",
-						reasoning: true,
-						input: ["text", "image"],
-						cost: { input: 0.6, output: 3, cacheRead: 0.1, cacheWrite: 0 },
-						contextWindow: 262144,
-						maxTokens: 32768,
-					},
-				],
-			} as never,
-		);
-
-		expect(modified?.map((model) => model.id)).toEqual(["kimi-k2.5"]);
+	it("delegates model discovery to the provider refresh hook", () => {
+		const oauth = createApiKeyOAuthProvider(getSupportedProvider("moonshotai"));
+		expect(oauth.modifyModels).toBeUndefined();
 	});
 });

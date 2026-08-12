@@ -101,7 +101,7 @@ describe("adaptive routing extension", () => {
 				sampleModel("google", "gemini-2.5-flash", "Gemini 2.5 Flash"),
 				sampleModel("anthropic", "claude-opus-4.6", "Claude Opus 4.6"),
 			],
-			getApiKey: async () => "key",
+			getApiKeyForProvider: async () => "key",
 		} as never;
 
 		adaptiveRoutingExtension(harness.pi as never);
@@ -174,7 +174,7 @@ describe("adaptive routing extension", () => {
 				sampleModel("anthropic", "claude-opus-4.6", "Claude Opus 4.6"),
 				sampleModel("openai", "gpt-5.4", "GPT-5.4"),
 			],
-			getApiKey: async () => "key",
+			getApiKeyForProvider: async () => "key",
 		} as never;
 
 		adaptiveRoutingExtension(harness.pi as never);
@@ -210,7 +210,7 @@ describe("adaptive routing extension", () => {
 				sampleModel("google", "gemini-2.5-flash", "Gemini 2.5 Flash"),
 				sampleModel("anthropic", "claude-opus-4.6", "Claude Opus 4.6"),
 			],
-			getApiKey: async () => "key",
+			getApiKeyForProvider: async () => "key",
 		} as never;
 
 		adaptiveRoutingExtension(harness.pi as never);
@@ -482,7 +482,7 @@ describe("adaptive routing extension", () => {
 		harness.ctx.model = sampleModel("google", "gemini-2.5-flash", "Gemini 2.5 Flash") as never;
 		harness.ctx.modelRegistry = {
 			getAvailable: () => [sampleModel("google", "gemini-2.5-flash"), sampleModel("openai", "gpt-5.4")],
-			getApiKey: async () => "key",
+			getApiKeyForProvider: async () => "key",
 		} as never;
 		let renderedLines: string[] = [];
 		harness.ctx.ui.custom = vi.fn(async (factory) => {

@@ -208,6 +208,78 @@ describe("ollama provider smoke tests", () => {
 		await backend.close();
 	});
 
+	it("refreshes cloud models through pi's provider refresh hook", async () => {
+		const backend = await createTestOllamaBackend();
+		backend.setAuthenticatedModels([
+			{
+				id: "kimi-k2.5",
+				capabilities: ["completion", "tools", "thinking", "vision"],
+				contextWindow: 262144,
+			},
+		]);
+		process.env.PI_OLLAMA_CLOUD_API_URL = backend.apiUrl;
+		process.env.PI_OLLAMA_CLOUD_MODELS_URL = `${backend.apiUrl}/models`;
+		process.env.PI_OLLAMA_CLOUD_SHOW_URL = `${backend.origin}/api/show`;
+
+		const harness = createExtensionHarness();
+		harnesses.push(harness);
+		await ollamaProviderExtension(harness.pi as never);
+		const refreshModels = harness.providers.get("ollama-cloud").refreshModels;
+		const credential = {
+			type: "oauth",
+			access: "ollama-key",
+			refresh: "ollama-key",
+			expires: Date.now() + 60_000,
+			models: [
+				{
+					id: "stored-cloud",
+					name: "Stored Cloud",
+					reasoning: false,
+					input: ["text"],
+					cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+					contextWindow: 131072,
+					maxTokens: 16384,
+					source: "cloud",
+				},
+			],
+		};
+
+		await expect(refreshModels({ allowNetwork: false, credential })).resolves.toEqual(
+			expect.arrayContaining([expect.objectContaining({ id: "stored-cloud" })]),
+		);
+		await expect(refreshModels({ allowNetwork: true, credential })).resolves.toEqual(
+			expect.arrayContaining([expect.objectContaining({ id: "kimi-k2.5" })]),
+		);
+		expect(backend.getAuthHeaders()).toContain("Bearer ollama-key");
+
+		const failingContext = {
+			allowNetwork: true,
+			credential,
+			get signal(): AbortSignal {
+				throw new Error("refresh failed");
+			},
+		};
+		await expect(refreshModels(failingContext)).rejects.toThrow("refresh failed");
+		await backend.close();
+	});
+
+	it("uses pi's registry refresh for the cloud refresh command", async () => {
+		const harness = createExtensionHarness();
+		harnesses.push(harness);
+		const refresh = vi.fn(async () => ({ errors: new Map() }));
+		(harness.ctx as any).modelRegistry = { refresh };
+		await ollamaProviderExtension(harness.pi as never);
+
+		await harness.commands.get("ollama-cloud").handler("refresh-models", harness.ctx);
+		expect(refresh).toHaveBeenCalledWith({ force: true, providers: ["ollama-cloud"] });
+		expect(harness.notifications.at(-1)?.msg).toContain("public models discovered");
+
+		refresh.mockResolvedValueOnce({ errors: new Map([["ollama-cloud", new Error("refresh failed")]]) });
+		await expect(harness.commands.get("ollama-cloud").handler("refresh-models", harness.ctx)).rejects.toThrow(
+			"refresh failed",
+		);
+	});
+
 	it("supports space-separated info and pull subcommands", async () => {
 		const harness = createExtensionHarness();
 		harnesses.push(harness);

@@ -1,15 +1,10 @@
-import type { OAuthCredentials, OAuthLoginCallbacks, OAuthProviderInterface } from "@earendil-works/pi-ai";
+import type { OAuthCredentials, OAuthLoginCallbacks } from "@earendil-works/pi-ai";
+import type { ProviderConfig } from "@earendil-works/pi-coding-agent";
 
 import type { OllamaCloudCredentials, OllamaProviderModel } from "./models.js";
 
-import {
-	getOllamaCloudRuntimeConfig,
-	OLLAMA_API,
-	OLLAMA_CLOUD_API_KEY_ENV,
-	OLLAMA_CLOUD_AUTH_DOCS_URL,
-	OLLAMA_CLOUD_PROVIDER,
-} from "./config.js";
-import { enrichOllamaCloudCredentials, getCredentialModels } from "./models.js";
+import { getOllamaCloudRuntimeConfig, OLLAMA_CLOUD_API_KEY_ENV, OLLAMA_CLOUD_AUTH_DOCS_URL } from "./config.js";
+import { enrichOllamaCloudCredentials } from "./models.js";
 
 const STATIC_CREDENTIAL_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 
@@ -56,29 +51,14 @@ export async function refreshOllamaCloudCredentialModels(
 export type CloudModelsGetter = () => OllamaProviderModel[];
 
 export function createOllamaCloudOAuthProvider(
-	getActiveCloudModels: CloudModelsGetter,
-): Omit<OAuthProviderInterface, "id"> {
+	_getActiveCloudModels: CloudModelsGetter,
+): NonNullable<ProviderConfig["oauth"]> {
 	return {
 		getApiKey(credentials) {
 			return credentials.access;
 		},
 		async login(callbacks) {
 			return loginOllamaCloud(callbacks);
-		},
-		modifyModels(models, credentials) {
-			const config = getOllamaCloudRuntimeConfig();
-			const runtimeModels = getActiveCloudModels();
-			const current =
-				runtimeModels.length > 0 ? runtimeModels : getCredentialModels(credentials as OllamaCloudCredentials);
-			return [
-				...models.filter((model) => model.provider !== OLLAMA_CLOUD_PROVIDER),
-				...current.map((model) => ({
-					...model,
-					provider: OLLAMA_CLOUD_PROVIDER,
-					api: OLLAMA_API,
-					baseUrl: config.apiUrl,
-				})),
-			];
 		},
 		name: "Ollama Cloud",
 		async refreshToken(credentials) {

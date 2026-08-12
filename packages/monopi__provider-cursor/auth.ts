@@ -1,9 +1,10 @@
-import type { OAuthCredentials, OAuthLoginCallbacks, OAuthProviderInterface } from "@earendil-works/pi-ai";
+import type { OAuthCredentials, OAuthLoginCallbacks } from "@earendil-works/pi-ai";
+import type { ProviderConfig } from "@earendil-works/pi-coding-agent";
 
 import type { CursorCredentials } from "./models.js";
 
-import { CURSOR_PROVIDER, getCursorRuntimeConfig } from "./config.js";
-import { enrichCursorCredentials, getCredentialModels } from "./models.js";
+import { getCursorRuntimeConfig } from "./config.js";
+import { enrichCursorCredentials } from "./models.js";
 
 const POLL_MAX_ATTEMPTS = 150;
 const POLL_BASE_DELAY_MS = 1000;
@@ -107,25 +108,13 @@ export function getTokenExpiry(token: string): number {
 	return Date.now() + 3600 * 1000;
 }
 
-export function createCursorOAuthProvider(): Omit<OAuthProviderInterface, "id"> {
+export function createCursorOAuthProvider(): NonNullable<ProviderConfig["oauth"]> {
 	return {
 		getApiKey(credentials) {
 			return credentials.access;
 		},
 		async login(callbacks) {
 			return loginCursor(callbacks);
-		},
-		modifyModels(models, credentials) {
-			const current = getCredentialModels(credentials as CursorCredentials);
-			return [
-				...models.filter((model) => model.provider !== CURSOR_PROVIDER),
-				...current.map((model) => ({
-					...model,
-					provider: CURSOR_PROVIDER,
-					api: "cursor-agent",
-					baseUrl: getCursorRuntimeConfig().apiUrl,
-				})),
-			];
 		},
 		name: "Cursor (experimental)",
 		async refreshToken(credentials) {
