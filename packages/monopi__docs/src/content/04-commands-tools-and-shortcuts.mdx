@@ -1,0 +1,134 @@
+This is a discovery index for monopi surfaces. Run a command without arguments, or with `help` where supported, for its current detailed usage.
+
+## Everyday commands
+
+| Need                                 | Command            |
+| ------------------------------------ | ------------------ |
+| Rich session status                  | `/status`          |
+| Open draft in `$VISUAL` or `$EDITOR` | `/external-editor` |
+| Ask a side question                  | `/btw`, `/qq`      |
+| Browse files                         | `/files`           |
+| Track goals and todos                | `/goal`, `/todos`  |
+| Review the current work              | `/review`          |
+| Switch prompt/model profiles         | `/prompt-mode`     |
+| Show prompt timing                   | `/diagnostics`     |
+| Inspect usage and quotas             | `/usage`           |
+| Inspect runtime health               | `/watchdog`        |
+
+## Git and worktrees
+
+```text
+/worktree status
+/worktree list
+/worktree open [branch|path]
+/worktree create <branch> [purpose]
+/worktree cleanup <branch|path|id|all>
+```
+
+## Delegation
+
+```text
+/run <agent> <task>
+/chain ...
+/parallel ...
+/agents
+```
+
+Agent-facing tools:
+
+- `subagent` — run single, chain, or parallel tasks; manage agent/chain definitions
+- `subagent_status` — inspect asynchronous run status and artifacts
+
+## Background work and scheduling
+
+```text
+/bg
+/remind in 45m <prompt>
+/loop 5m <prompt>
+/loop cron '*/5 * * * *' <prompt>
+/schedule
+```
+
+Agent-facing tools:
+
+- `bg_task` — spawn, list, follow, inspect, stop, and clear tracked processes
+- `bg_status` — lightweight task status and log access
+- `schedule_prompt` — add and manage one-time or recurring prompts
+
+## Usage, diagnostics, and health
+
+```text
+/diagnostics [status|toggle|on|off]
+/usage
+/usage-toggle
+/usage-refresh
+/watchdog
+/safe-mode
+```
+
+The `usage_report` tool returns provider rate-limit status and per-model cost details for agent-readable quota questions.
+
+## Remote sessions
+
+`@monopi/web-remote` and `@monopi/remote-tailscale` both expose `/remote`-style controls. Typical actions are:
+
+```text
+/remote
+/remote stop
+/remote widget
+```
+
+Avoid loading both packages unless you have intentionally chosen which one should own the command.
+
+## Optional providers and routing
+
+```text
+/providers status
+/providers list [query]
+/providers login [provider]
+/providers models <provider>
+/providers refresh-models [provider|all]
+
+/cursor status
+/cursor refresh-models
+/cursor clear-state
+
+/ollama status
+/ollama models
+/ollama info <model>
+/ollama pull <model>
+/ollama refresh-models
+
+/route status
+/route auto
+/route shadow
+/route explain
+/route assignments
+/route stats
+```
+
+Authentication uses Pi's native `/login` and `/logout` flows, including `/login cursor` and `/login ollama-cloud` when those packages are installed.
+
+## Analytics and terminal add-ons
+
+| Package                       | Surfaces                                                          |
+| ----------------------------- | ----------------------------------------------------------------- |
+| `@monopi/analytics-extension` | `/analytics`, `/analytics-dashboard`                              |
+| `@monopi/bash-live-view`      | `/bash-pty`, `bash_live_view`                                     |
+| `@monopi/pretty`              | highlighted `read`, `bash_pretty`, `ls`, `find`, and `grep` tools |
+
+## Common shortcuts
+
+| Shortcut       | Action                          |
+| -------------- | ------------------------------- |
+| `Ctrl+Shift+A` | Open the Agents Manager         |
+| `Ctrl+Shift+B` | Open background task management |
+| `Ctrl+Shift+D` | Toggle diagnostics              |
+| `Ctrl+Shift+E` | Open the external editor        |
+| `Ctrl+Shift+U` | Open/toggle usage reporting     |
+
+Terminal and OS key handling can vary. Commands are always the fallback when a shortcut is intercepted by your terminal.
+
+## Pi commands versus monopi commands
+
+Commands such as `/login`, `/logout`, `/model`, `/settings`, `/tree`, and `/reload` belong to Pi. Their behavior can change independently of monopi, so consult [Pi's current documentation](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent/docs) for the authoritative reference.

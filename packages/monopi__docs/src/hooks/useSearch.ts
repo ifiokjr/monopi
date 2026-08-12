@@ -25,43 +25,7 @@ async function getSearchIndex(): Promise<MiniSearch> {
 	}
 
 	indexPromise = (async () => {
-		const modules = import.meta.glob<{ default: string }>("../content/**/*.mdx", {
-			eager: false,
-			query: "?raw",
-		});
-
-		const entries: SearchIndexEntry[] = [];
-
-		for (const [path, loader] of Object.entries(modules)) {
-			const raw = await loader();
-			const content = raw.default ?? raw;
-			const text = typeof content === "string" ? content : String(content);
-
-			// Strip frontmatter
-			const body = text.replace(/^---[\s\S]*?---/, "").trim();
-			// Strip MDX/JSX tags, code blocks, and links
-			const clean = body
-				.replaceAll(/```[\s\S]*?```/g, "")
-				.replaceAll(/<[^>]+>/g, "")
-				.replaceAll(/\{\/\*[\s\S]*?\*\/\}/g, "")
-				.replaceAll(/[#*_`~|]/g, "")
-				.replaceAll(/\[[^\]]*\]\([^)]*\)/g, (match) => match.replaceAll(/[[\]]/g, ""))
-				.replaceAll(/\s+/g, " ")
-				.trim();
-
-			const slug =
-				path
-					.split("/")
-					.pop()
-					?.replace(/\.mdx$/, "") ?? "";
-
-			// Get title from frontmatter
-			const fmMatch = text.match(/^---\n(?:[\s\S]*?)title:\s*["']?(.+?)["']?\n(?:[\s\S]*?)---/);
-			const title = fmMatch?.[1] ?? slug.replaceAll(/-/g, " ");
-
-			entries.push({ id: slug, text: clean, title });
-		}
-
+		const { default: entries } = await import("../content/search-index.json");
 		const ms = new MiniSearch<SearchIndexEntry>({
 			fields: ["title", "text"],
 			searchOptions: {

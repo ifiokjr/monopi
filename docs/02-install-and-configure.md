@@ -1,0 +1,99 @@
+# Install and Configure
+
+## Requirements
+
+- Node.js 22.19 or newer
+- npm/npx available on your `PATH`
+- A supported terminal for Pi's interactive interface
+
+You do not need to install Pi first. The configurator detects the environment and can install `@earendil-works/pi-coding-agent` when it is missing.
+
+## Run the configurator
+
+```nu
+npx @monopi/monopi
+```
+
+Useful entrypoint options:
+
+```nu
+npx @monopi/monopi --yes   # accept defaults and skip confirmations
+npx @monopi/monopi --help  # show usage and the installer package inventory
+```
+
+`@monopi/monopi` delegates to `@monopi/cli`, which owns the interactive installation flow.
+
+## What setup does
+
+The configurator:
+
+1. detects Pi and existing configuration
+2. shows changes since the installed monopi version when available
+3. lets you select the extension set
+4. backs up an existing managed Pi configuration
+5. installs Pi if necessary
+6. writes settings, keybindings, agent instructions, extensions, and skills
+
+The default configuration uses the `general-developer` agent profile, Pi's dark theme, default keybindings, medium thinking, and the extensions marked as defaults in the picker.
+
+> The configurator manages files in Pi's agent directory. Review the backup path printed during setup before deleting an older configuration.
+
+## Global Pi files
+
+The normal target is Pi's resolved agent directory, commonly `~/.pi/agent/`. monopi may manage:
+
+```text
+~/.pi/agent/
+├── AGENTS.md
+├── auth.json
+├── keybindings.json
+├── models.json
+├── settings.json
+├── extensions/
+├── skills/
+└── themes/
+```
+
+Pi also supports project-local `.pi/` resources. See [Pi's package and settings documentation](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent/docs) for the current global/project precedence rules.
+
+## Credentials and providers
+
+Use Pi's native authentication UI after installation:
+
+```text
+/login
+/logout
+/model
+```
+
+Built-in Pi providers, monopi's provider catalog, Cursor, and Ollama integrations all rely on Pi's current credential and model-registry APIs. Do not hand-edit internal credential state unless a package's troubleshooting guide explicitly asks you to.
+
+Optional provider packages are installed separately:
+
+```nu
+pi install npm:@monopi/provider-catalog
+pi install npm:@monopi/provider-cursor
+pi install npm:@monopi/provider-ollama
+```
+
+Then restart Pi and use the package-specific `/providers`, `/cursor`, or `/ollama` commands.
+
+## Install one package instead
+
+You can skip the configurator and install a runtime package directly:
+
+```nu
+pi install npm:@monopi/background-tasks
+pi install npm:@monopi/subagents
+pi install npm:@monopi/pretty
+```
+
+Restart Pi after changing package sources or installing provider integrations. `/reload` is useful for ordinary extension edits, but a full restart avoids keeping previously loaded package modules alive.
+
+## Updating
+
+Run the configurator again to refresh its managed setup, or use Pi's package commands for packages you installed directly. Check [Packages and Optional Add-ons](05-packages-and-optional-add-ons.md) before adding experimental integrations.
+
+## Next step
+
+Open [Included Workflows](03-included-workflows.md) for practical examples of what to do after installation.

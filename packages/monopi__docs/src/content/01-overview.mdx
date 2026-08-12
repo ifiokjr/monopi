@@ -1,135 +1,55 @@
----
-title: "Overview"
-order: 1
-description: "Project purpose, design philosophy, package architecture, install, run modes, providers, and auth."
----
+monopi is a curated, lockstep-versioned toolkit for [Pi Coding Agent](https://github.com/badlogic/pi-mono). It adds practical workflows, terminal UI improvements, reusable skills, agent profiles, and optional provider integrations without replacing Pi itself.
 
-## 1. Project Overview
+Think of it as **oh-my-zsh for Pi**: Pi remains the coding agent and runtime; monopi supplies an opinionated collection of packages that make daily work safer, easier to observe, and easier to automate.
 
-- **Name**: `@earendil-works/pi-coding-agent`
-- **Version**: 0.52.12
-- **Author**: Mario Zechner
-- **License**: MIT
-- **Repository**: https://github.com/badlogic/pi-mono (packages/coding-agent)
-- **Website**: https://shittycodingagent.ai / https://pi.dev
-- **Node requirement**: >= 20.0.0
+## Start in 30 seconds
 
-### Positioning
-
-Pi is a **minimalist terminal coding agent harness**. Core philosophy: "adapts to your workflow, not
-the other way around." Extends via TypeScript Extensions, Skills, Prompt Templates, and Themes — no
-need to fork or modify internals.
-
-### Design Philosophy
-
-- **No MCP** — Use Skills or Extensions instead
-- **No Sub-agents** — Use Extensions to build or install third-party packages
-- **No Permission Popups** — Use Extensions to build confirmation flows
-- **No Plan Mode** — Use Extensions to build
-- **No Built-in Todos** — Use TODO.md files
-- **No Background Bash** — Use tmux
-
-### Package Architecture
-
-```
-@earendil-works/pi-ai          → LLM provider abstraction layer
-@earendil-works/pi-agent-core  → Agent loop and message types
-@earendil-works/pi-tui         → Terminal UI component library
-@earendil-works/pi-coding-agent → CLI and interactive mode (main package)
-```
-
-## 2. Installation & Setup
-
-```bash
-npm install -g @earendil-works/pi-coding-agent
-```
-
-### Authentication
-
-**API Key:**
-
-```bash
-export ANTHROPIC_API_KEY=sk-ant-...
+```nu
+npx @monopi/monopi
 pi
 ```
 
-**Subscription OAuth:**
+The first command launches the monopi configurator. It can install Pi when needed, backs up existing managed configuration, lets you choose extensions, and writes the selected setup into Pi's agent directory.
 
-```bash
-pi
-/login  # Select provider
+## What monopi adds
+
+| Area                  | Highlights                                                                                 |
+| --------------------- | ------------------------------------------------------------------------------------------ |
+| Safer coding          | Git checkpoints, guarded commands, managed worktrees, file-backed goals and todos          |
+| Long-running work     | Background processes, scheduled follow-ups, watchdog health checks                         |
+| Delegation            | Named subagents, sequential chains, parallel fan-out, reusable agent definitions           |
+| Better feedback       | Compact header, rich footer, prompt/tool timing, usage and quota reporting                 |
+| Focused workflows     | Side conversations, code review, answer-only mode, prompt modes                            |
+| Remote access         | Browser session sharing, with an optional Tailscale-backed alternative                     |
+| Content               | Skills, project `AGENTS.md` templates, themes, and keybinding presets                      |
+| Optional integrations | Adaptive routing, provider catalog, Cursor, Ollama, analytics, and enhanced terminal tools |
+
+## How the pieces fit together
+
+```text
+Pi Coding Agent
+└── monopi
+    ├── @monopi/monopi       public npx entrypoint
+    ├── @monopi/cli          interactive configurator
+    ├── runtime extensions   commands, tools, shortcuts, and UI
+    ├── content packages     skills and agent templates
+    ├── optional add-ons     providers, routing, analytics, remote access
+    └── shared libraries     core, database, web client/server, TUI helpers
 ```
 
-### Run Modes
+`@monopi/monopi` is the command most users run. It is a thin compatibility entrypoint; `@monopi/cli` owns the actual configurator. Runtime capabilities are published as separate packages so Pi can load only the features you install.
 
-| Mode        | Launch                    | Use Case                                        |
-| ----------- | ------------------------- | ----------------------------------------------- |
-| Interactive | `pi` (default)            | Full TUI interaction                            |
-| Print       | `pi -p "prompt"`          | Single output, then exit                        |
-| JSON        | `pi --mode json "prompt"` | JSON Lines event stream                         |
-| RPC         | `pi --mode rpc`           | stdin/stdout JSON protocol, embed in other apps |
-| SDK         | TypeScript import         | Programmatic embedding                          |
+## Choose your path
 
-## 3. Built-in Tools
+- **New user:** continue to [Install and Configure](02-install-and-configure.md).
+- **Want to know what daily use feels like:** read [Included Workflows](03-included-workflows.md).
+- **Looking for a command or shortcut:** use [Commands, Tools, and Shortcuts](04-commands-tools-and-shortcuts.md).
+- **Choosing packages:** see [Packages and Optional Add-ons](05-packages-and-optional-add-ons.md).
+- **Customizing behavior and appearance:** see [Skills, Agents, and Appearance](06-skills-agents-and-appearance.md).
+- **Contributing or checking compatibility:** see [Contributing and Compatibility](07-contributing-and-compatibility.md).
 
-Default 4 tools: `read`, `bash`, `edit`, `write`
+## What stays upstream
 
-Optional tools: `grep`, `find`, `ls`
+monopi deliberately does not duplicate Pi's complete reference manual. For Pi-owned concepts such as sessions, core settings, the extension API, SDK, RPC mode, TUI components, custom providers, and package loading, use the [upstream Pi documentation](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent/docs).
 
-```bash
-pi --tools read,bash,edit,write    # Default
-pi --tools read,grep,find,ls       # Read-only mode
-pi --no-tools                      # Disable all built-in tools
-```
-
-## 4. Supported Providers
-
-### Subscription (OAuth /login)
-
-| Provider                 | Description                 |
-| ------------------------ | --------------------------- |
-| Anthropic Claude Pro/Max | Claude series               |
-| OpenAI ChatGPT Plus/Pro  | GPT + Codex                 |
-| GitHub Copilot           | VS Code integration         |
-| Google Gemini CLI        | Cloud Code Assist           |
-| Google Antigravity       | Gemini 3 + Claude + GPT-OSS |
-
-### API Key
-
-| Provider          | Environment Variable                |
-| ----------------- | ----------------------------------- |
-| Anthropic         | `ANTHROPIC_API_KEY`                 |
-| OpenAI            | `OPENAI_API_KEY`                    |
-| Azure OpenAI      | `AZURE_OPENAI_API_KEY`              |
-| Google Gemini     | `GEMINI_API_KEY`                    |
-| Google Vertex     | Application Default Credentials     |
-| Amazon Bedrock    | `AWS_PROFILE` / `AWS_ACCESS_KEY_ID` |
-| Mistral           | `MISTRAL_API_KEY`                   |
-| Groq              | `GROQ_API_KEY`                      |
-| Cerebras          | `CEREBRAS_API_KEY`                  |
-| xAI               | `XAI_API_KEY`                       |
-| OpenRouter        | `OPENROUTER_API_KEY`                |
-| Vercel AI Gateway | `AI_GATEWAY_API_KEY`                |
-| ZAI               | `ZAI_API_KEY`                       |
-| OpenCode Zen      | `OPENCODE_API_KEY`                  |
-| Hugging Face      | `HF_TOKEN`                          |
-| Kimi For Coding   | `KIMI_API_KEY`                      |
-| MiniMax           | `MINIMAX_API_KEY`                   |
-
-### Custom Providers
-
-- **models.json**: `~/.pi/agent/models.json` for Ollama/vLLM/LM Studio etc.
-- **Extensions**: Use `pi.registerProvider()` for custom API/OAuth
-
-### API Key Resolution Priority
-
-1. CLI `--api-key`
-2. `auth.json` (API key or OAuth token)
-3. Environment variables
-4. `models.json` custom key
-
-### auth.json Key Formats
-
-- Shell command: `"!security find-generic-password -ws 'anthropic'"`
-- Environment variable name: `"MY_ANTHROPIC_KEY"`
-- Literal value: `"sk-ant-..."`
+This documentation focuses on what monopi installs, how its packages fit together, and which monopi surface to use for a task.

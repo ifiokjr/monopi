@@ -4,10 +4,10 @@
  *
  * This script:
  * 1. Reads markdown files from the project's docs/ directory
- * 2. Strips the first H1 title (handled by frontmatter/page title)
+ * 2. Strips the first H1 title (handled by the site page title)
  * 3. Converts HTML comments to MDX JSX comments
- * 4. Prepends frontmatter with title extracted from the filename
- * 5. Writes the result as MDX files in packages/monopi__docs/src/content/
+ * 4. Writes the result as MDX files in packages/monopi__docs/src/content/
+ * 5. Generates a lazy-loaded JSON search index from the same canonical content
  *
  * Run: pnpm docs:sync
  */
@@ -17,47 +17,50 @@ import { join, resolve } from "node:path";
 const REPO_ROOT = resolve(import.meta.dirname, "../../..");
 const DOCS_DIR = join(REPO_ROOT, "docs");
 const CONTENT_DIR = join(REPO_ROOT, "packages/monopi__docs/src/content");
+const SEARCH_INDEX_PATH = join(CONTENT_DIR, "search-index.json");
+
+const CODE_BLOCK_REGEX = /```[\s\S]*?```/g;
+const HTML_TAG_REGEX = /<[^>]+>/g;
+const MDX_COMMENT_REGEX = /\{\/\*[\s\S]*?\*\/\}/g;
+const MARKDOWN_DECORATION_REGEX = /[#*_`~|]/g;
+const MARKDOWN_LINK_REGEX = /\[([^\]]*)\]\([^)]*\)/g;
+const WHITESPACE_REGEX = /\s+/g;
 
 const TITLE_MAP = {
 	"01-overview": {
-		description: "Project purpose, design philosophy, package architecture, install, run modes, providers, and auth.",
+		description: "What monopi adds to Pi Coding Agent and how the toolkit is organized.",
 		order: 1,
 		title: "Overview",
 	},
-	"02-interactive-mode": {
-		description: "UI layout, editor features, command system, keybindings, message queue, terminal compatibility.",
+	"02-install-and-configure": {
+		description: "Install monopi, understand the configurator, and add packages or providers safely.",
 		order: 2,
-		title: "Interactive Mode",
+		title: "Install and Configure",
 	},
-	"03-sessions": {
-		description: "JSONL tree structure, entry types, branching, context compaction, branch summaries.",
+	"03-included-workflows": {
+		description: "Practical workflows for git safety, delegation, background work, scheduling, and observability.",
 		order: 3,
-		title: "Session Management",
+		title: "Included Workflows",
 	},
-	"04-extensions": {
-		description: "Extension API, event lifecycle, custom tools, UI interaction, state management.",
+	"04-commands-tools-and-shortcuts": {
+		description: "A discovery index for monopi commands, agent tools, and keyboard shortcuts.",
 		order: 4,
-		title: "Extension System",
+		title: "Commands, Tools, and Shortcuts",
 	},
-	"05-skills-prompts-themes-packages": {
-		description: "Skill packs, prompt templates, theme customization, package management.",
+	"05-packages-and-optional-add-ons": {
+		description: "Default packages, split extensions, supporting libraries, and opt-in integrations.",
 		order: 5,
-		title: "Skills, Prompts, Themes & Packages",
+		title: "Packages and Optional Add-ons",
 	},
-	"06-settings-sdk-rpc-tui": {
-		description: "All settings, SDK programming interface, RPC protocol, TUI component system.",
+	"06-skills-agents-and-appearance": {
+		description: "Customize Pi with skills, agent instructions, delegated roles, themes, and keybindings.",
 		order: 6,
-		title: "Settings, SDK, RPC & TUI",
+		title: "Skills, Agents, and Appearance",
 	},
-	"07-cli-reference": {
-		description: "Complete CLI options, directory structure, platform support.",
+	"07-contributing-and-compatibility": {
+		description: "Compatibility policy, local development, required checks, changesets, and documentation workflow.",
 		order: 7,
-		title: "CLI Reference",
-	},
-	"feature-catalog": {
-		description: "Package-by-package feature inventory.",
-		order: 8,
-		title: "Feature Catalog",
+		title: "Contributing and Compatibility",
 	},
 };
 
@@ -73,6 +76,17 @@ function convertHtmlCommentsToMdx(content) {
 
 function stripFirstH1(content) {
 	return content.replace(/^# .+\n\n?/, "");
+}
+
+function cleanForSearch(content) {
+	return content
+		.replaceAll(CODE_BLOCK_REGEX, "")
+		.replaceAll(HTML_TAG_REGEX, "")
+		.replaceAll(MDX_COMMENT_REGEX, "")
+		.replaceAll(MARKDOWN_DECORATION_REGEX, "")
+		.replaceAll(MARKDOWN_LINK_REGEX, "$1")
+		.replaceAll(WHITESPACE_REGEX, " ")
+		.trim();
 }
 
 function syncDoc(baseName) {
@@ -94,18 +108,7 @@ function syncDoc(baseName) {
 	source = stripFirstH1(source);
 	source = convertHtmlCommentsToMdx(source);
 
-	const frontmatter = [
-		"---",
-		`title: "${meta.title}"`,
-		`order: ${meta.order}`,
-		meta.description ? `description: "${meta.description}"` : null,
-		"---",
-		"",
-	]
-		.filter(Boolean)
-		.join("\n");
-
-	const output = `${frontmatter}\n${source.trim()}\n`;
+	const output = `${source.trim()}\n`;
 
 	if (!existsSync(mdxPath) || readFileSync(mdxPath, "utf8") !== output) {
 		mkdirSync(CONTENT_DIR, { recursive: true });
@@ -114,11 +117,28 @@ function syncDoc(baseName) {
 	} else {
 		console.log(`Unchanged: ${baseName}.mdx`);
 	}
+
+	return {
+		id: baseName,
+		text: cleanForSearch(source),
+		title: meta.title,
+	};
 }
 
-// Sync all known docs
+const searchEntries = [];
 for (const baseName of Object.keys(TITLE_MAP)) {
-	syncDoc(baseName);
+	const entry = syncDoc(baseName);
+	if (entry) {
+		searchEntries.push(entry);
+	}
+}
+
+const searchIndexOutput = `${JSON.stringify(searchEntries, null, "\t")}\n`;
+if (!existsSync(SEARCH_INDEX_PATH) || readFileSync(SEARCH_INDEX_PATH, "utf8") !== searchIndexOutput) {
+	writeFileSync(SEARCH_INDEX_PATH, searchIndexOutput, "utf8");
+	console.log("Synced: search-index.json");
+} else {
+	console.log("Unchanged: search-index.json");
 }
 
 console.log("\nDone! Run `pnpm docs:update` to sync MDT content with providers.");
