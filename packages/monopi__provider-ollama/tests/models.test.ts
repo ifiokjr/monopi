@@ -8,6 +8,7 @@ import { loadCachedOllamaCloudModels, saveCachedOllamaCloudModels } from "../cac
 import {
 	discoverOllamaCloudModelList,
 	discoverOllamaCloudModels,
+	discoverOllamaLocalModelList,
 	discoverOllamaLocalModels,
 	getCredentialModels,
 	toOllamaModel,
@@ -262,6 +263,20 @@ describe("ollama models", () => {
 		expect(glmCompat?.zaiToolStream).toBe(true);
 		expect(models?.[1]?.input).toEqual(["text", "image"]);
 		expect(backend.getAuthHeaders()).toEqual(["", "", ""]);
+		await backend.close();
+	});
+
+	it("discovers local model ids without waiting for metadata enrichment", async () => {
+		const backend = await createTestOllamaBackend();
+		backend.setModels([{ id: "glm-5.2:cloud" }, { id: "kimi-k2.7-code:cloud" }]);
+		backend.setRejectedModelShows(["glm-5.2:cloud", "kimi-k2.7-code:cloud"]);
+		process.env.OLLAMA_HOST = backend.origin;
+
+		const models = await discoverOllamaLocalModelList();
+
+		expect(models?.map((model) => model.id)).toEqual(["glm-5.2:cloud", "kimi-k2.7-code:cloud"]);
+		expect(models?.every((model) => model.localAvailability === "installed")).toBe(true);
+		expect(backend.getAuthHeaders()).toEqual([""]);
 		await backend.close();
 	});
 

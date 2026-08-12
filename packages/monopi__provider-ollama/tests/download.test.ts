@@ -1,3 +1,4 @@
+import { AuthStorage, ModelRegistry } from "@earendil-works/pi-coding-agent";
 import { EventEmitter } from "node:events";
 import { PassThrough } from "node:stream";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -41,6 +42,79 @@ afterEach(async () => {
 });
 
 describe("ollama local downloads", () => {
+	it("registers installed cloud proxy models before initial enabled-model matching", async () => {
+		const cloudBackend = await createTestOllamaBackend();
+		backends.push(cloudBackend);
+		cloudBackend.setModels([]);
+
+		const localBackend = await createTestOllamaBackend();
+		backends.push(localBackend);
+		localBackend.setModels([{ id: "glm-5.2:cloud" }, { id: "kimi-k2.7-code:cloud" }]);
+
+		process.env.PI_OLLAMA_CLOUD_API_URL = cloudBackend.apiUrl;
+		process.env.PI_OLLAMA_CLOUD_MODELS_URL = `${cloudBackend.apiUrl}/models`;
+		process.env.PI_OLLAMA_CLOUD_SHOW_URL = `${cloudBackend.origin}/api/show`;
+		process.env.OLLAMA_HOST = localBackend.origin;
+
+		const { default: ollamaProviderExtension } = await import("../index.js");
+		const harness = createExtensionHarness();
+		await ollamaProviderExtension(harness.pi as never);
+
+		const models = harness.providers.get("ollama")?.models as
+			| Array<{ id: string; localAvailability?: string }>
+			| undefined;
+		expect(models?.map((model) => model.id)).toEqual(["glm-5.2:cloud", "kimi-k2.7-code:cloud"]);
+		expect(models?.every((model) => model.localAvailability === "installed")).toBe(true);
+
+		const modelRegistry = ModelRegistry.inMemory(AuthStorage.inMemory());
+		modelRegistry.registerProvider("ollama", harness.providers.get("ollama"));
+		const availableModelIds = (await modelRegistry.getAvailable())
+			.filter((model) => model.provider === "ollama")
+			.map((model) => `${model.provider}/${model.id}`);
+		expect(availableModelIds).toEqual(["ollama/glm-5.2:cloud", "ollama/kimi-k2.7-code:cloud"]);
+		expect(execFileMock).not.toHaveBeenCalled();
+
+		await harness.emitAsync("session_shutdown", { type: "session_shutdown" }, harness.ctx as never);
+	});
+
+	it("bounds initial local model discovery when the daemon does not respond", async () => {
+		vi.useFakeTimers();
+		const modelsModule = await import("../models.js");
+		const cloudDiscovery = vi.spyOn(modelsModule, "discoverOllamaCloudModelList").mockResolvedValue(null);
+		let localDiscoveryAborted = false;
+		const localDiscovery = vi.spyOn(modelsModule, "discoverOllamaLocalModelList").mockImplementation(
+			(options: { signal?: AbortSignal } = {}) =>
+				new Promise((resolve) => {
+					options.signal?.addEventListener(
+						"abort",
+						() => {
+							localDiscoveryAborted = true;
+							resolve(null);
+						},
+						{ once: true },
+					);
+				}),
+		);
+
+		try {
+			const { default: ollamaProviderExtension } = await import("../index.js");
+			const harness = createExtensionHarness();
+			const registration = ollamaProviderExtension(harness.pi as never);
+
+			await vi.advanceTimersByTimeAsync(1_000);
+			await expect(registration).resolves.toBeUndefined();
+			expect(localDiscoveryAborted).toBe(true);
+			expect(harness.providers.has("ollama")).toBe(true);
+			expect(execFileMock).not.toHaveBeenCalled();
+
+			await harness.emitAsync("session_shutdown", { type: "session_shutdown" }, harness.ctx as never);
+		} finally {
+			cloudDiscovery.mockRestore();
+			localDiscovery.mockRestore();
+			vi.useRealTimers();
+		}
+	});
+
 	it("registers downloadable local models with cloud context metadata when the CLI is available", async () => {
 		execFileMock.mockImplementation((_command, _args, _options, callback) => {
 			queueMicrotask(() => {

@@ -145,6 +145,18 @@ export function getCredentialModels(credentials: OllamaCloudCredentials): Ollama
 	return models.length > 0 ? sanitizeStoredModels(models) : getFallbackOllamaCloudModels();
 }
 
+export async function discoverOllamaLocalModelList(
+	options: { signal?: AbortSignal } = {},
+): Promise<OllamaProviderModel[] | null> {
+	const config = getOllamaLocalRuntimeConfig();
+	const modelIds = await discoverOllamaModelIds(config, { signal: options.signal });
+	if (modelIds.length === 0) return null;
+	const cachedModels = new Map<string, OllamaProviderModel>();
+	return modelIds
+		.map((id) => normalizeDiscoveredModel(id, null, "local", [], cachedModels))
+		.filter((model) => model !== null);
+}
+
 export async function discoverOllamaLocalModels(
 	options: { signal?: AbortSignal } = {},
 ): Promise<OllamaProviderModel[] | null> {
