@@ -376,10 +376,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - label: min-0.80.3
-            version: 0.80.3
-          - label: current-0.80.3
-            version: 0.80.3
+          - label: min-0.84.1
+            version: 0.84.1
+          - label: current-0.84.1
+            version: 0.84.1
     steps:
       - name: 📥 checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
