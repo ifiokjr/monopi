@@ -5,37 +5,32 @@ import { Link } from "react-router";
 import { useSearch } from "@/hooks/useSearch";
 
 interface SearchDialogProps {
-	open: boolean;
 	onClose: () => void;
 }
 
-export function SearchDialog({ open, onClose }: SearchDialogProps) {
+export function SearchDialog({ onClose }: SearchDialogProps) {
 	const { query, results, loading, search } = useSearch();
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
-		if (open) {
-			// Delay focus to ensure the dialog is rendered
-			const timer = setTimeout(() => inputRef.current?.focus(), 50);
-			return () => clearTimeout(timer);
-		}
-	}, [open]);
+		// Delay focus until the lazily loaded dialog is rendered.
+		const timer = setTimeout(() => inputRef.current?.focus(), 50);
+		return () => clearTimeout(timer);
+	}, []);
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.key === "Escape" && open) onClose();
+			if (e.key === "Escape") onClose();
 		};
 		document.addEventListener("keydown", handleKeyDown);
 		return () => document.removeEventListener("keydown", handleKeyDown);
-	}, [open, onClose]);
-
-	if (!open) return null;
+	}, [onClose]);
 
 	return (
 		<div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]">
 			{/* Backdrop */}
 			<div
-				className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+				className="absolute inset-0 bg-black/70"
 				onClick={onClose}
 				onKeyDown={(e) => e.key === "Enter" && onClose()}
 				role="button"

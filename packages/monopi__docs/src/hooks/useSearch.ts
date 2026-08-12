@@ -13,6 +13,9 @@ interface SearchIndexEntry {
 	text: string;
 }
 
+const SEARCH_INDEX_URL = new URL("../content/search-index.json", import.meta.url);
+const SEARCH_RESULT_LIMIT = 10;
+
 let searchIndex: MiniSearch | null = null;
 let indexPromise: Promise<MiniSearch> | null = null;
 
@@ -24,9 +27,13 @@ async function getSearchIndex(): Promise<MiniSearch> {
 		return indexPromise;
 	}
 
-	indexPromise = (async () => {
-		const { default: entries } = await import("../content/search-index.json");
-		const ms = new MiniSearch<SearchIndexEntry>({
+	const loadPromise = (async () => {
+		const response = await fetch(SEARCH_INDEX_URL);
+		if (!response.ok) {
+			throw new Error(`Failed to load search index: ${response.status}`);
+		}
+		const entries = (await response.json()) as SearchIndexEntry[];
+		const index = new MiniSearch<SearchIndexEntry>({
 			fields: ["title", "text"],
 			searchOptions: {
 				boost: { title: 3 },
@@ -35,12 +42,17 @@ async function getSearchIndex(): Promise<MiniSearch> {
 			},
 			storeFields: ["title"],
 		});
-		ms.addAll(entries);
-		searchIndex = ms;
-		return ms;
+		index.addAll(entries);
+		searchIndex = index;
+		return index;
 	})();
+	indexPromise = loadPromise;
 
-	return indexPromise;
+	try {
+		return await loadPromise;
+	} finally {
+		if (indexPromise === loadPromise) indexPromise = null;
+	}
 }
 
 export function useSearch() {
@@ -49,8 +61,10 @@ export function useSearch() {
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
-		if (!query.trim()) {
+		const normalizedQuery = query.trim();
+		if (!normalizedQuery) {
 			setResults([]);
+			setLoading(false);
 			return;
 		}
 
@@ -62,15 +76,20 @@ export function useSearch() {
 				if (cancelled) {
 					return;
 				}
-				const hits = index.search(query) as unknown as {
+				const hits = index.search(normalizedQuery) as unknown as {
 					id: string;
 					title: string;
 				}[];
-				const searchResults: SearchResult[] = hits.map((hit) => ({
-					id: hit.id,
-					text: "",
-					title: hit.title ?? hit.id,
-				}));
+				const resultCount = Math.min(hits.length, SEARCH_RESULT_LIMIT);
+				const searchResults: SearchResult[] = [];
+				for (let index = 0; index < resultCount; index++) {
+					const hit = hits[index];
+					searchResults.push({
+						id: hit.id,
+						text: "",
+						title: hit.title ?? hit.id,
+					});
+				}
 				setResults(searchResults);
 			})
 			.catch(() => {
