@@ -1,4 +1,5 @@
-import { AuthStorage, ModelRegistry } from "@earendil-works/pi-coding-agent";
+import { InMemoryCredentialStore } from "@earendil-works/pi-ai";
+import { ModelRegistry, ModelRuntime } from "@earendil-works/pi-coding-agent";
 import { EventEmitter } from "node:events";
 import { PassThrough } from "node:stream";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -66,9 +67,15 @@ describe("ollama local downloads", () => {
 		expect(models?.map((model) => model.id)).toEqual(["glm-5.2:cloud", "kimi-k2.7-code:cloud"]);
 		expect(models?.every((model) => model.localAvailability === "installed")).toBe(true);
 
-		const modelRegistry = ModelRegistry.inMemory(AuthStorage.inMemory());
+		const modelRuntime = await ModelRuntime.create({
+			credentials: new InMemoryCredentialStore(),
+			modelsPath: null,
+			refreshOnCreate: false,
+		});
+		const modelRegistry = new ModelRegistry(modelRuntime);
 		modelRegistry.registerProvider("ollama", harness.providers.get("ollama"));
-		const availableModelIds = (await modelRegistry.getAvailable())
+		const availableModelIds = modelRegistry
+			.getAvailable()
 			.filter((model) => model.provider === "ollama")
 			.map((model) => `${model.provider}/${model.id}`);
 		expect(availableModelIds).toEqual(["ollama/glm-5.2:cloud", "ollama/kimi-k2.7-code:cloud"]);
