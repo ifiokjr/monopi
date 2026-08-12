@@ -1,4 +1,4 @@
-import { lazy, Suspense, type ComponentType, type LazyExoticComponent } from "react";
+import { lazy, Suspense, type ComponentPropsWithoutRef, type ComponentType, type LazyExoticComponent } from "react";
 import { Link, useParams } from "react-router";
 
 import type { MdxPageData } from "@/hooks/useMdxPages";
@@ -8,15 +8,35 @@ interface MdxPageProps {
 }
 
 type MdxModuleLoader = MdxPageData["module"];
+type MdxAnchorProps = ComponentPropsWithoutRef<"a">;
+interface MdxContentProps {
+	components?: { a?: ComponentType<MdxAnchorProps> };
+}
+type LazyMdxContent = LazyExoticComponent<ComponentType<MdxContentProps>>;
+
+const INTERNAL_DOC_LINK_REGEX = /^(?:\.\/)?(\d{2}-[a-z0-9-]+)\.md(#[a-z0-9-]+)?$/i;
+const MDX_COMPONENTS = { a: MdxAnchor };
 
 // The loaders come from a static import.meta.glob catalog, so this cache has a finite domain.
-const lazyContentByModule = new Map<MdxModuleLoader, LazyExoticComponent<ComponentType>>();
+const lazyContentByModule = new Map<MdxModuleLoader, LazyMdxContent>();
 
-export function getLazyContent(module: MdxModuleLoader): LazyExoticComponent<ComponentType> {
+export function getInternalDocTarget(href: string | undefined): string | null {
+	const internalMatch = href?.match(INTERNAL_DOC_LINK_REGEX);
+	if (!internalMatch) return null;
+	return `/${internalMatch[1]}${internalMatch[2] ?? ""}`;
+}
+
+function MdxAnchor({ href, ...props }: MdxAnchorProps) {
+	const internalTarget = getInternalDocTarget(href);
+	if (internalTarget) return <Link {...props} to={internalTarget} />;
+	return <a {...props} href={href} />;
+}
+
+export function getLazyContent(module: MdxModuleLoader): LazyMdxContent {
 	const cachedContent = lazyContentByModule.get(module);
 	if (cachedContent) return cachedContent;
 
-	const content = lazy(module);
+	const content = lazy(module) as LazyMdxContent;
 	lazyContentByModule.set(module, content);
 	return content;
 }
@@ -37,7 +57,7 @@ export function MdxPage({ page }: MdxPageProps) {
 					</div>
 				}
 			>
-				<Content />
+				<Content components={MDX_COMPONENTS} />
 			</Suspense>
 		</article>
 	);

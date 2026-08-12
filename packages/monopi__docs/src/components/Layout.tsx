@@ -1,10 +1,13 @@
 import { Code, ExternalLink, Menu, Search, X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router";
 
 import type { MdxPageData } from "@/hooks/useMdxPages";
 
-import { SearchDialog } from "@/components/SearchDialog";
+const SearchDialog = lazy(async () => {
+	const module = await import("@/components/SearchDialog");
+	return { default: module.SearchDialog };
+});
 
 interface LayoutProps {
 	children: React.ReactNode;
@@ -32,8 +35,12 @@ export function Layout({ children, pages }: LayoutProps) {
 
 	return (
 		<div className="flex h-screen overflow-hidden bg-zinc-950">
-			{/* Search dialog */}
-			<SearchDialog open={searchOpen} onClose={closeSearch} />
+			{/* Search stays out of the initial bundle and unmounts cleanly when closed. */}
+			{searchOpen && (
+				<Suspense fallback={null}>
+					<SearchDialog onClose={closeSearch} />
+				</Suspense>
+			)}
 
 			{/* Mobile overlay */}
 			{sidebarOpen && (
@@ -136,7 +143,7 @@ export function Layout({ children, pages }: LayoutProps) {
 			{/* Main content */}
 			<div className="flex-1 flex flex-col min-w-0">
 				{/* Top bar */}
-				<header className="flex h-14 items-center gap-3 px-4 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm lg:px-6">
+				<header className="flex h-14 items-center gap-3 px-4 border-b border-zinc-800 bg-zinc-950 lg:px-6">
 					<button
 						type="button"
 						className="lg:hidden p-2 text-zinc-400 hover:text-zinc-100"
