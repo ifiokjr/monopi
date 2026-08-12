@@ -1,0 +1,99 @@
+# Packages and Optional Add-ons
+
+monopi is a lockstep-versioned monorepo. Packages share a release version, but they do not all have the same installation role.
+
+## Installer and configurator
+
+| Package          | Role                                             |
+| ---------------- | ------------------------------------------------ |
+| `@monopi/monopi` | Public `npx` compatibility entrypoint            |
+| `@monopi/cli`    | Interactive configurator implementation          |
+| `@monopi/core`   | Shared registries, paths, icons, types, and i18n |
+
+The CLI depends on the resources it can copy into Pi. Selecting an extension in the configurator is different from manually adding every package with `pi install`.
+
+## Default runtime and content inventory
+
+The public installer carries these runtime/content packages:
+
+- split extensions: `extension-answer`, `extension-watchdog`, `extension-btw`, `extension-compact-header`, `extension-custom-footer`, `extension-external-editor`, `extension-git-guard`, `extension-scheduler`, `extension-shell-format`, `extension-tool-metadata`, `extension-usage-tracker`, and `extension-worktree`
+- `@monopi/background-tasks`
+- `@monopi/diagnostics`
+- `@monopi/subagents`
+- `@monopi/web-remote`
+- `@monopi/skills`
+
+The configurator's extension picker decides which selectable extension resources are enabled. A package being present in the installer dependency graph does not mean every feature is active in your Pi session.
+
+## Split extension packages
+
+Each extension is independently publishable and has one main responsibility:
+
+| Package                     | Purpose                                 |
+| --------------------------- | --------------------------------------- |
+| `extension-answer`          | Focused answer mode                     |
+| `extension-btw`             | Side conversations via `/btw` and `/qq` |
+| `extension-compact-header`  | Dense startup header                    |
+| `extension-custom-footer`   | Rich status footer                      |
+| `extension-external-editor` | Draft editing in `$VISUAL`/`$EDITOR`    |
+| `extension-files`           | File browser                            |
+| `extension-git-guard`       | Git checkpoints and command safety      |
+| `extension-goal`            | Long-running objective state            |
+| `extension-prompt-modes`    | Prompt/model configuration profiles     |
+| `extension-review`          | Code review workflow                    |
+| `extension-scheduler`       | Reminders and recurring monitors        |
+| `extension-shell-format`    | Shell output formatting                 |
+| `extension-todos`           | File-backed todos                       |
+| `extension-tool-metadata`   | Tool timing and size metadata           |
+| `extension-usage-tracker`   | Quota, token, and cost reporting        |
+| `extension-watchdog`        | Runtime health and safe mode            |
+| `extension-worktree`        | Managed git worktrees                   |
+
+`@monopi/extension-shared` contains helpers used by these packages and is not normally installed by itself.
+
+## Standalone runtime packages
+
+| Package                    | Purpose                                                                   |
+| -------------------------- | ------------------------------------------------------------------------- |
+| `@monopi/background-tasks` | Tracked background processes and reactive wakeups                         |
+| `@monopi/diagnostics`      | Prompt and per-turn timing                                                |
+| `@monopi/subagents`        | Single, chain, parallel, and background delegation                        |
+| `@monopi/web-remote`       | Browser-oriented remote session sharing                                   |
+| `@monopi/context`          | SQLite FTS5 context store, compression, terse mode, and context analytics |
+
+Install one directly when you want it outside the configurator:
+
+```nu
+pi install npm:@monopi/subagents
+```
+
+## Optional add-ons
+
+These stay outside the default installer bundle and should be chosen deliberately:
+
+| Package                       | Adds                                                               |
+| ----------------------------- | ------------------------------------------------------------------ |
+| `@monopi/adaptive-routing`    | Explainable automatic/shadow model routing                         |
+| `@monopi/provider-catalog`    | Lazy API-key providers backed by `models.dev`                      |
+| `@monopi/provider-cursor`     | Cursor OAuth, discovery, and AgentService streaming                |
+| `@monopi/provider-ollama`     | Local Ollama discovery plus Ollama Cloud login                     |
+| `@monopi/bash-live-view`      | PTY-backed live terminal widget                                    |
+| `@monopi/pretty`              | Highlighted reads, tree listings, search, and colored shell output |
+| `@monopi/remote-tailscale`    | Tailscale HTTPS remote sessions with token auth                    |
+| `@monopi/analytics-extension` | SQLite-backed session analytics and dashboard launcher             |
+
+Provider and routing packages are experimental. Pin versions when stability matters and restart Pi after changing them.
+
+## Supporting libraries and private apps
+
+| Package                       | Audience                                                |
+| ----------------------------- | ------------------------------------------------------- |
+| `@monopi/db`                  | Shared SQLite/Drizzle persistence for extension authors |
+| `@monopi/shared-qna`          | Shared interactive Q&A TUI helpers                      |
+| `@monopi/web-client`          | Platform-agnostic remote-session client                 |
+| `@monopi/web-server`          | Embeddable HTTP and WebSocket session server            |
+| `@monopi/analytics-db`        | Analytics schema, migrations, and queries               |
+| `@monopi/analytics-dashboard` | Private React dashboard app                             |
+| `@monopi/docs`                | Private documentation site                              |
+
+For exhaustive implementation notes and package ownership, use the repository's [long-form feature catalog](https://github.com/ifiokjr/monopi/blob/main/docs/feature-catalog.md) and each package README.

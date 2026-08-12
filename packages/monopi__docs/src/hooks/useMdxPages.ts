@@ -31,44 +31,39 @@ function extractFrontmatter(modulePath: string): { title: string; order: number;
 // Order matches the original docs numbering.
 const frontmatterMap: Record<string, { title: string; order: number; description: string }> = {
 	"01-overview": {
-		description: "Project purpose, design philosophy, package architecture, install, run modes, providers, and auth.",
+		description: "What monopi adds to Pi Coding Agent and how the toolkit is organized.",
 		order: 1,
 		title: "Overview",
 	},
-	"02-interactive-mode": {
-		description: "UI layout, editor features, command system, keybindings, message queue, terminal compatibility.",
+	"02-install-and-configure": {
+		description: "Install monopi, understand the configurator, and add packages or providers safely.",
 		order: 2,
-		title: "Interactive Mode",
+		title: "Install and Configure",
 	},
-	"03-sessions": {
-		description: "JSONL tree structure, entry types, branching, context compaction, branch summaries.",
+	"03-included-workflows": {
+		description: "Practical workflows for git safety, delegation, background work, scheduling, and observability.",
 		order: 3,
-		title: "Session Management",
+		title: "Included Workflows",
 	},
-	"04-extensions": {
-		description: "Extension API, event lifecycle, custom tools, UI interaction, state management, example index.",
+	"04-commands-tools-and-shortcuts": {
+		description: "A discovery index for monopi commands, agent tools, and keyboard shortcuts.",
 		order: 4,
-		title: "Extension System",
+		title: "Commands, Tools, and Shortcuts",
 	},
-	"05-skills-prompts-themes-packages": {
-		description: "Skill packs, prompt templates, theme customization, package management and distribution.",
+	"05-packages-and-optional-add-ons": {
+		description: "Default packages, split extensions, supporting libraries, and opt-in integrations.",
 		order: 5,
-		title: "Skills, Prompts, Themes & Packages",
+		title: "Packages and Optional Add-ons",
 	},
-	"06-settings-sdk-rpc-tui": {
-		description: "All settings, SDK programming interface, RPC protocol, TUI component system, custom models.",
+	"06-skills-agents-and-appearance": {
+		description: "Customize Pi with skills, agent instructions, delegated roles, themes, and keybindings.",
 		order: 6,
-		title: "Settings, SDK, RPC & TUI",
+		title: "Skills, Agents, and Appearance",
 	},
-	"07-cli-reference": {
-		description: "Complete CLI options, directory structure, platform support, key numbers.",
+	"07-contributing-and-compatibility": {
+		description: "Compatibility policy, local development, required checks, changesets, and documentation workflow.",
 		order: 7,
-		title: "CLI Reference",
-	},
-	"feature-catalog": {
-		description: "Package-by-package feature inventory, local dev loop, runtime/content package ownership.",
-		order: 8,
-		title: "Feature Catalog",
+		title: "Contributing and Compatibility",
 	},
 };
 
