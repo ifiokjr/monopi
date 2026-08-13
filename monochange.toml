@@ -10,7 +10,6 @@ type = "npm"
 path = "packages/monopi__adaptive-routing"
 type = "npm"
 
-
 [package."@monopi/agents"]
 path = "packages/monopi__agents"
 type = "npm"
@@ -19,46 +18,37 @@ type = "npm"
 path = "packages/monopi__analytics-dashboard"
 type = "npm"
 
-
 [package."@monopi/analytics-db"]
 path = "packages/monopi__analytics-db"
 type = "npm"
-
 
 [package."@monopi/analytics-extension"]
 path = "packages/monopi__analytics-extension"
 type = "npm"
 
-
 [package."@monopi/background-tasks"]
 path = "packages/monopi__background-tasks"
 type = "npm"
-
 
 [package."@monopi/cli"]
 path = "packages/monopi__cli"
 type = "npm"
 
-
 [package."@monopi/core"]
 path = "packages/monopi__core"
 type = "npm"
-
 
 [package."@monopi/provider-cursor"]
 path = "packages/monopi__provider-cursor"
 type = "npm"
 
-
 [package."@monopi/diagnostics"]
 path = "packages/monopi__diagnostics"
 type = "npm"
 
-
 [package."@monopi/docs"]
 path = "packages/monopi__docs"
 type = "npm"
-
 
 [package."@monopi/extension-answer"]
 path = "packages/monopi__extension-answer"
@@ -87,7 +77,6 @@ type = "npm"
 [package."@monopi/extension-watchdog"]
 path = "packages/monopi__extension-watchdog"
 type = "npm"
-
 
 [package."@monopi/extension-btw"]
 path = "packages/monopi__extension-btw"
@@ -137,71 +126,57 @@ type = "npm"
 path = "packages/monopi__context"
 type = "npm"
 
-
 [package."@monopi/monopi"]
 path = "packages/monopi__monopi"
 type = "npm"
-
 
 [package."@monopi/provider-ollama"]
 path = "packages/monopi__provider-ollama"
 type = "npm"
 
-
 [package."@monopi/bash-live-view"]
 path = "packages/monopi__bash-live-view"
 type = "npm"
-
 
 [package."@monopi/pretty"]
 path = "packages/monopi__pretty"
 type = "npm"
 
-
 [package."@monopi/remote-tailscale"]
 path = "packages/monopi__remote-tailscale"
 type = "npm"
-
 
 [package."@monopi/provider-catalog"]
 path = "packages/monopi__provider-catalog"
 type = "npm"
 
-
 [package."@monopi/shared-qna"]
 path = "packages/monopi__shared-qna"
 type = "npm"
-
 
 [package."@monopi/skills"]
 path = "packages/monopi__skills"
 type = "npm"
 
-
 [package."@monopi/subagents"]
 path = "packages/monopi__subagents"
 type = "npm"
-
 
 [package."@monopi/web-client"]
 path = "packages/monopi__web-client"
 type = "npm"
 
-
 [package."@monopi/web-remote"]
 path = "packages/monopi__web-remote"
 type = "npm"
-
 
 [package."@monopi/web-server"]
 path = "packages/monopi__web-server"
 type = "npm"
 
-
 [package."@monopi/db"]
 path = "packages/monopi__db"
 type = "npm"
-
 
 [group.monopi]
 packages = [
@@ -255,78 +230,71 @@ version_format = "primary"
 [lints]
 use = ["cargo/baseline", "npm/baseline", "dart/baseline"]
 
-
 [ecosystems.cargo]
 enabled = true
-
 
 [ecosystems.npm]
 enabled = true
 
+[source]
+provider = "github"
+owner = "ifiokjr"
+repo = "monopi"
+
+[source.releases]
+enabled = true
+source = "monochange"
+branches = ["main"]
+enforce_for_tags = true
+enforce_for_publish = true
+enforce_for_commit = false
 
 [changesets.affected]
 enabled = true
-
 required = true
-
 skip_labels = []
-
 comment_on_failure = true
-
 changed_paths = []
-
 ignored_paths = []
-
 
 [cli.change]
 help_text = "Create a new changeset file for the next release"
-[[cli.change.steps]]
-type = "CreateChangeFile"
-
-[[cli.change.steps]]
-type = "Command"
-command = "pnpm format"
+steps = [
+	{ type = "CreateChangeFile", name = "create changeset" },
+	{ type = "Command", name = "format workspace", command = "pnpm format" },
+]
 
 [cli.release]
-help_text = "Bump versions, update changelog, create git tag, and push"
-[[cli.release.steps]]
-type = "Command"
-command = "pnpm security:check"
-
-[[cli.release.steps]]
-type = "PrepareRelease"
-
-[[cli.release.steps]]
-type = "Command"
-command = "pnpm install --lockfile-only"
-
-[[cli.release.steps]]
-type = "Command"
-command = "git add ."
-
-[[cli.release.steps]]
-type = "Command"
-command = "git commit -m 'chore: release $version'"
-
-[[cli.release.steps]]
-type = "Command"
-command = "git push"
-
-[[cli.release.steps]]
-type = "CommitRelease"
+help_text = "Prepare a local release: plan bumps, sync the lockfile, and optionally commit, push, tag, and publish the GitHub release"
+inputs = [
+	{ name = "format", type = "choice", choices = [
+		"text",
+		"json",
+		"markdown",
+	], default = "markdown" },
+	{ name = "no_verify", type = "boolean", default = true },
+	{ name = "commit", help_text = "Whether to commit the release changes", type = "boolean", default = false },
+	{ name = "push", help_text = "Whether to push the release after the commit", type = "boolean", default = false },
+	{ name = "tag", help_text = "Whether to create and push release tags from the release commit", type = "boolean", default = false },
+	{ name = "publish_release", help_text = "Whether to publish the GitHub release object for the release tag", type = "boolean", default = false },
+]
+steps = [
+	{ type = "Command", name = "security check", command = "pnpm security:check" },
+	{ type = "PrepareRelease", name = "plan release", allow_empty_changesets = true },
+	{ type = "Command", name = "sync lockfile", when = "{{ number_of_changesets > 0 }}", command = "pnpm install --lockfile-only" },
+	{ type = "CommitRelease", name = "create release commit", when = "{{ number_of_changesets > 0 && inputs.commit }}", inputs = { no_verify = "{{ inputs.no_verify }}", stage_all = true } },
+	{ type = "Command", name = "push release commit", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.push }}", command = "git push" },
+	{ type = "TagRelease", name = "create and push release tags", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.tag }}", inputs = { from = "HEAD", push = true, format = "json" } },
+	{ type = "PublishRelease", name = "publish GitHub release", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.tag && inputs.publish_release }}", inputs = { from-ref = "HEAD", draft = false, format = "json" } },
+]
 
 [cli.publish]
 help_text = "Build and publish all public packages to npm"
-[[cli.publish.steps]]
-type = "Command"
-command = "pnpm build"
-
-[[cli.publish.steps]]
-type = "Command"
-command = "pnpm -r publish --access public --no-git-checks"
+steps = [
+	{ type = "Command", name = "build packages", command = "pnpm build" },
+	{ type = "Command", name = "publish packages", command = "pnpm -r publish --access public --no-git-checks" },
+]
 
 [cli.get-version]
 help_text = "Print the current version"
-[[cli.get-version.steps]]
-type = "Command"
-command = "echo $version"
+steps = [{ type = "Command", name = "print version", command = "echo $version" }]
