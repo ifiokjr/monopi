@@ -22,6 +22,10 @@
 		"!tests/**"
 	],
 	"type": "module",
+	"exports": {
+		".": "./index.ts",
+		"./package.json": "./package.json"
+	},
 	"dependencies": {
 		"@monopi/core": "0.5.1"
 	},

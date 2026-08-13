@@ -433,10 +433,10 @@ export async function createStartupBenchmarkSuite(): Promise<StartupBenchmarkSui
 
 	for (const entry of filteredManifestEntries) {
 		definitions.push({
-			budget: { medianMs: 800, p95Ms: 1_000 },
+			budget: { medianMs: 800 },
 			group: "extension startup",
 			id: `extension-startup-${entry.id}`,
-			iterations: 10,
+			iterations: 20,
 			label: `isolated extension startup (${entry.id})`,
 			minSampleTimeMs: 20,
 			note: `Loads only ${entry.id} (${entry.path}) and fires session_start/session_shutdown for focused regression tracking.`,

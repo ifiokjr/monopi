@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
 type PiPackageManifest = {
+	exports?: Record<string, string>;
 	pi?: {
 		extensions?: string[];
 	};
@@ -44,5 +45,21 @@ describe("pi package extension entrypoints", () => {
 			expect(entries.every((entry) => entry.endsWith(".ts"))).toBe(true);
 			expect(entries.every((entry) => !(entry.endsWith("/extensions") || entry.endsWith("/extension")))).toBe(true);
 		}
+	});
+
+	it("declares raw TypeScript entrypoints for shared helper packages", () => {
+		const helperPackagePaths = [
+			"packages/monopi__extension-shared/package.json",
+			"packages/monopi__shared-qna/package.json",
+		];
+
+		for (const packagePath of helperPackagePaths) {
+			const manifest = readPackageJson(packagePath);
+			expect(manifest.exports?.["."]).toBe("./index.ts");
+		}
+
+		const sharedIndex = readFileSync(path.resolve(repoRoot, "packages/monopi__extension-shared/index.ts"), "utf-8");
+		expect(sharedIndex).not.toContain('.js"');
+		expect(sharedIndex).toContain("./runtime-mode.ts");
 	});
 });
