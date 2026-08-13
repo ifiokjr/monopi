@@ -50,7 +50,7 @@ Never create `new RegExp(...)` inside a function that runs repeatedly (event han
 
 ```ts
 // ❌ Slow — compiles on every call
-function extractPheromones(output: string) {
+function extractSections(output: string) {
 	for (const section of sections) {
 		const regex = new RegExp(`#{1,2} ${section}\\n([\\s\\S]*?)(?=\\n#{1,2} |$)`, "i");
 		// ...

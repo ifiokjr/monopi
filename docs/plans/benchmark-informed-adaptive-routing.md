@@ -5,8 +5,6 @@
 > Related specs:
 >
 > - `docs/plans/adaptive-routing-mode.md`
-> - `docs/plans/subagent-and-colony-adaptive-routing.md`
-> - `docs/plans/subagent-and-colony-adaptive-routing-implementation.md`
 
 ## 1. Problem Statement
 
@@ -25,7 +23,7 @@ It cannot yet answer richer strategy questions such as:
 - how much do docs and tool availability matter here?
 - is the workspace small enough for a cheap fast model, or large enough to justify a stronger planner?
 - should the system prefer cost, speed, quality, or robustness under ambiguity?
-- should the task stay single-agent, use delegated execution, or escalate into ant-colony work?
+- should the task stay single-agent or use delegated subagent execution?
 
 That gap matters because the best route for a task is rarely just a single model decision. In practice, the winning execution shape depends on:
 
@@ -194,7 +192,7 @@ A strategy might include:
 - execution mode
 - primary model
 - thinking level
-- whether to use subagents or ant-colony
+- whether to use subagents
 - which skills to enable or prioritize
 - which tool profile to expose
 - how much docs/context to inject
@@ -292,7 +290,7 @@ Recommended design:
 
 priority: cost secondary: quality
 
-defaults: prefer-fast-feedback: true allow-subagents: true allow-ant-colony: false
+defaults: prefer-fast-feedback: true allow-subagents: true
 
 for large-repos: prefer: quality
 
@@ -349,8 +347,6 @@ Potential package additions or expansions:
   - strategy scorer
 - `packages/monopi__subagents`
   - richer strategy metadata for delegated roles
-- `packages/ant-colony`
-  - caste strategy metadata and routing hooks
 - `packages/monopi__provider-catalog`
   - richer capability metadata and benchmark profile lookup
 
@@ -462,7 +458,7 @@ Add:
 
 Expand from model-only routing to strategy routing:
 
-- single-agent vs delegated vs colony choices
+- single-agent vs delegated subagent choices
 - tool-profile selection
 - docs-context policy selection
 - skill bundle recommendations or auto-selection

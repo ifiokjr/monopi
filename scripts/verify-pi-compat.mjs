@@ -17,7 +17,6 @@ export const SMOKE_TESTS = [
 	"packages/monopi__extension-scheduler/tests/scheduler.test.ts",
 	"packages/monopi__extension-worktree/tests/worktree.test.ts",
 	"packages/monopi__diagnostics/tests/smoke.test.ts",
-	"packages/ant-colony/tests/smoke.test.ts",
 	"packages/monopi__subagents/tests/smoke.test.ts",
 	"packages/monopi__provider-cursor/tests/smoke.test.ts",
 	"packages/monopi__provider-ollama/tests/smoke.test.ts",

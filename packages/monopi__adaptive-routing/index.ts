@@ -739,7 +739,6 @@ function buildDelegatedWhyLines(
 		lines.push("Usage: /route why <category|role-override> [task text]");
 		lines.push("Examples:");
 		lines.push("  /route why quick-discovery scan the repo and summarize hotspots");
-		lines.push("  /route why colony:scout quick scout pass over the workspace");
 		return lines;
 	}
 

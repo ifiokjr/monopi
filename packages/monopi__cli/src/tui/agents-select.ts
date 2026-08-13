@@ -3,7 +3,7 @@ import { t } from "@monopi/core";
 
 /**
  * Presents an interactive prompt for the user to select an agent template
- * (e.g. general developer, fullstack, security, data/AI, colony operator).
+ * (e.g. general developer, fullstack, security, or data/AI).
  *
  * Exits the process if the user cancels the selection.
  *
@@ -33,11 +33,6 @@ export async function selectAgents(initialValue?: string): Promise<string> {
 				value: "data-ai-engineer",
 				label: t("agent.dataai"),
 				hint: t("agent.dataaiHint"),
-			},
-			{
-				value: "colony-operator",
-				label: t("agent.colony"),
-				hint: t("agent.colonyHint"),
 			},
 		],
 	});

@@ -275,7 +275,7 @@ The UI and explanation payload must expose this confidence level explicitly.
 ## 11.2 Future integration points
 
 - subagent default routing
-- ant-colony caste/model routing
+- subagent role/model routing
 - Cursor provider participation
 - user feedback loop and offline policy tuning
 
@@ -502,7 +502,7 @@ The first tuning system should recommend config changes rather than silently sel
 
 ### Phase 6
 
-- subagents / ant-colony / Cursor expansion
+- subagents / Cursor expansion
 
 ## 18. Open Questions
 

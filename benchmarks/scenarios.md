@@ -73,5 +73,5 @@
 ## Usage Guidelines
 
 - Each scenario must be reproducible (explicit inputs and acceptance criteria).
-- Single agent and colony mode must use the same scenario definition.
+- Single-agent and subagent modes must use the same scenario definition.
 - When modifying scenarios, preserve a change log (can be added in PR description).

@@ -13,7 +13,7 @@
 
 1. Homepage leads with "30-second setup success"
 2. Then shows the full feature catalog
-3. Architecture and biomimicry details come last
+3. Advanced architecture details come last
 
 ## 2) Near-Term Milestones
 
@@ -21,7 +21,7 @@
 
 - [ ] README homepage information architecture rewrite (entry value first)
 - [ ] Publish 2-minute demo (asciinema + script)
-- [ ] Add "When NOT to use Ant Colony" section to reduce misuse cost
+- [ ] Add "When NOT to delegate to subagents" guidance to reduce misuse cost
 
 **Success Metrics**
 
@@ -30,14 +30,12 @@
 
 ### M2 (2–4 weeks): Evolvable Foundation
 
-- [ ] Abstract `PheromoneStore` interface (JSONL as default implementation)
-- [ ] Make pheromone decay strategy configurable (per task type)
-- [ ] Add SQLite implementation (optional)
+- [ ] Keep subagent run metadata bounded during long sessions
+- [ ] Document cleanup and retention behavior for delegated runs
 
 **Success Metrics**
 
-- Storage layer swap doesn't affect queen/nest main flow
-- State file growth stays controlled during long sessions
+- Subagent state growth stays controlled during long sessions
 
 ### M3 (4–6 weeks): SDK Resilience
 
@@ -51,17 +49,17 @@
 
 ### M4 (6–8 weeks): Evidence-Driven Growth
 
-- [ ] Publish benchmark: single agent vs colony (varying task complexity)
+- [ ] Publish benchmark: single agent vs subagents (varying task complexity)
 - [ ] Open evaluation methodology and reproducible experiment scripts
 - [ ] Community focus: build density in one community first
 
 **Success Metrics**
 
-- Reproducible data proving colony benefit boundaries (when it helps, when it doesn't)
+- Reproducible data defining when subagent delegation helps and when it does not
 
 ## 3) Non-Goals (Current Phase)
 
-- No distributed colony clusters
+- No distributed subagent clusters
 - No broad multi-language community operations
 - No complex monetization features
 

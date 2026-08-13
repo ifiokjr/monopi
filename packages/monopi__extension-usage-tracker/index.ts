@@ -1208,7 +1208,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 	/**
 	 * Broadcast current usage/rate-limit data to other extensions via `pi.events`.
 	 *
-	 * The ant-colony budget-planner listens on `"usage:limits"` to receive:
+	 * Delegated-routing consumers listen on `"usage:limits"` to receive:
 	 * - Provider rate limit windows (Anthropic, OpenAI, Google rate limits)
 	 * - Aggregate session cost
 	 * - Per-model usage snapshots

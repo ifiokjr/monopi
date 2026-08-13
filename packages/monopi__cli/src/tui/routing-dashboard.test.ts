@@ -170,7 +170,7 @@ describe("buildRoutingDashboard", () => {
 		expect(dashboard).toContain("Implementation: missing-provider → openai");
 		expect(dashboard).toContain("Session default: openai/gpt-5-mini");
 		expect(dashboard).toContain("scout → groq/llama-3.3-70b-versatile (Quick discovery)");
-		expect(dashboard).toContain("worker, drone, backend → openai/gpt-5-mini (Implementation)");
+		expect(dashboard).toContain("worker → openai/gpt-5-mini (Implementation)");
 		expect(dashboard).toContain(
 			"artist, frontend-designer → cursor-agent/<configured externally> (Visual / design work)",
 		);

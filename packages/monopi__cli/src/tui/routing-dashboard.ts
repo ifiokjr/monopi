@@ -11,49 +11,42 @@ import { detectPiPackageInstallScopes } from "../utils/pi-packages.js";
 
 export const ROUTING_CATEGORIES = [
 	{
-		colony: ["scout"],
 		label: "Quick discovery",
 		name: "quick-discovery",
 		recommended: ["groq", "ollama-cloud", "ollama", "openai"],
 		subagents: ["scout"],
 	},
 	{
-		colony: [],
 		label: "Planning",
 		name: "planning-default",
 		recommended: ["openai", "ollama-cloud", "ollama", "groq"],
 		subagents: ["planner", "context-builder"],
 	},
 	{
-		colony: ["worker", "drone", "backend"],
 		label: "Implementation",
 		name: "implementation-default",
 		recommended: ["openai", "ollama-cloud", "ollama", "groq"],
 		subagents: ["worker"],
 	},
 	{
-		colony: [],
 		label: "Research",
 		name: "research-default",
 		recommended: ["openai", "groq", "ollama-cloud", "ollama"],
 		subagents: ["researcher"],
 	},
 	{
-		colony: ["soldier", "review"],
 		label: "Review / critical validation",
 		name: "review-critical",
 		recommended: ["openai", "ollama-cloud", "ollama", "groq"],
 		subagents: ["reviewer"],
 	},
 	{
-		colony: ["design"],
 		label: "Visual / design work",
 		name: "visual-engineering",
 		recommended: ["ollama-cloud", "ollama", "openai", "groq"],
 		subagents: ["artist", "frontend-designer"],
 	},
 	{
-		colony: ["multimodal"],
 		label: "Multimodal media work",
 		name: "multimodal-default",
 		recommended: ["ollama-cloud", "ollama", "openai", "groq"],
@@ -225,18 +218,10 @@ function buildDelegatedAssignmentLines(config: AdaptiveRoutingSetupConfig | unde
 	});
 }
 
-function buildConsumerLines(
-	title: string,
-	providers: ProviderConfig[],
-	config: AdaptiveRoutingSetupConfig | undefined,
-	consumerKey: "subagents" | "colony",
-): string[] {
-	const lines = [`${title}:`];
+function buildSubagentLines(providers: ProviderConfig[], config: AdaptiveRoutingSetupConfig | undefined): string[] {
+	const lines = ["Subagents:"];
 	for (const category of ROUTING_CATEGORIES) {
-		const consumers = category[consumerKey];
-		if (consumers.length === 0) {
-			continue;
-		}
+		const consumers = category.subagents;
 		lines.push(
 			`- ${consumers.join(", ")} → ${resolveCategoryTarget(category.name, providers, config)} (${category.label})`,
 		);
@@ -264,7 +249,6 @@ export function buildRoutingDashboard({
 		"",
 		"Effective routing:",
 		`Session default: ${sessionDefault}`,
-		...buildConsumerLines("Subagents", mergedProviders, config, "subagents"),
-		...buildConsumerLines("Ant colony", mergedProviders, config, "colony"),
+		...buildSubagentLines(mergedProviders, config),
 	].join("\n");
 }

@@ -6,7 +6,7 @@
 
 - **Boundary convergence**: Centralize scattered SDK calls into `PiAdapter`; business logic should not depend on low-level API details.
 - **Upgrade isolation**: When the SDK upgrades, absorb differences in the adapter layer first; don't propagate changes to scheduling and task orchestration.
-- **Behavior preservation**: Only constrain call boundaries; don't change queen/spawner business semantics or task flow.
+- **Behavior preservation**: Only constrain call boundaries; don't change orchestrator/spawner business semantics or task flow.
 - **Testability**: Interface injection enables mock/fake for repeatable testing of timeouts, cancellation, and streaming events.
 
 ## 2. Interface Draft (TypeScript)
@@ -93,6 +93,6 @@ export interface PiAdapter {
 
 ## 4. Non-Goals (Current Phase)
 
-- No rewriting queen/spawner scheduling strategy.
+- No rewriting orchestrator/spawner scheduling strategy.
 - No new business state machines or task assignment rules.
 - No benchmark or evaluation criteria changes in this phase.

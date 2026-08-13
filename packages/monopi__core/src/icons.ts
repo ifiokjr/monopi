@@ -28,7 +28,6 @@ export function setPlainIcons(enabled: boolean): void {
 
 /** All known icon names used across monopi packages. */
 export type IconName =
-	| "ant"
 	| "bolt"
 	| "budget"
 	| "cancel"
@@ -36,11 +35,9 @@ export type IconName =
 	| "check"
 	| "circle"
 	| "clock"
-	| "colony"
 	| "cost"
 	| "cross"
 	| "custom"
-	| "drone"
 	| "error"
 	| "gear"
 	| "hammer"
@@ -74,7 +71,6 @@ export type IconName =
 	| "wrench";
 
 const EMOJI_ICONS: Record<IconName, string> = {
-	ant: "🐜",
 	bolt: "⚡",
 	budget: "💰",
 	cancel: "✖",
@@ -82,11 +78,9 @@ const EMOJI_ICONS: Record<IconName, string> = {
 	check: "✓",
 	circle: "⚫",
 	clock: "⏳",
-	colony: "🐜",
 	cost: "💰",
 	cross: "✗",
 	custom: "🎛️",
-	drone: "⚙️",
 	emacs: "🔵",
 	error: "❌",
 	gear: "⚙️",
@@ -121,7 +115,6 @@ const EMOJI_ICONS: Record<IconName, string> = {
 };
 
 const PLAIN_ICONS: Record<IconName, string> = {
-	ant: "[ant]",
 	bolt: "[!]",
 	budget: "[$]",
 	cancel: "[x]",
@@ -129,11 +122,9 @@ const PLAIN_ICONS: Record<IconName, string> = {
 	check: "[ok]",
 	circle: "[*]",
 	clock: "[..]",
-	colony: "[ant]",
 	cost: "[$]",
 	cross: "[x]",
 	custom: "[=]",
-	drone: "[d]",
 	emacs: "[e]",
 	error: "[ERR]",
 	gear: "[*]",
@@ -171,7 +162,7 @@ const PLAIN_ICONS: Record<IconName, string> = {
  * Look up an icon by name, returning either an emoji or plain-text variant
  * depending on the `OH_PI_PLAIN_ICONS` environment variable.
  *
- * @param name - The icon name (e.g. `"check"`, `"rocket"`, `"ant"`)
+ * @param name - The icon name (e.g. `"check"`, `"rocket"`, `"warning"`)
  * @returns The icon string for the current mode
  */
 export function icon(name: IconName): string {
