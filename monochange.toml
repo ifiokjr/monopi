@@ -276,7 +276,7 @@ inputs = [
 	{ name = "commit", help_text = "Whether to commit the release changes", type = "boolean", default = false },
 	{ name = "push", help_text = "Whether to push the release after the commit", type = "boolean", default = false },
 	{ name = "tag", help_text = "Whether to create and push release tags from the release commit", type = "boolean", default = false },
-	{ name = "publish_release", help_text = "Whether to publish the GitHub release object for the release tag", type = "boolean", default = false },
+	{ name = "publish", help_text = "Whether to publish the GitHub release object for the release tag", type = "boolean", default = false },
 ]
 steps = [
 	{ type = "Command", name = "security check", command = "pnpm security:check" },
