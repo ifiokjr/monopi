@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/provider-ollama",
-	"version": "0.5.1",
+	"version": "0.6.0",
 	"description": "Experimental Ollama provider for pi with local discovery and cloud login support.",
 	"keywords": [
 		"cloud",

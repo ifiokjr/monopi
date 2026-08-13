@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/adaptive-routing",
-	"version": "0.5.1",
+	"version": "0.6.0",
 	"description": "Optional adaptive and delegated routing extension for pi.",
 	"keywords": [
 		"adaptive-routing",
@@ -33,7 +33,7 @@
 		"evaluate:corpus": "pnpm tsx ./evaluate-corpus.ts"
 	},
 	"dependencies": {
-		"@monopi/core": "0.5.1"
+		"@monopi/core": "0.6.0"
 	},
 	"peerDependencies": {
 		"@earendil-works/pi-agent-core": ">=0.84.1",

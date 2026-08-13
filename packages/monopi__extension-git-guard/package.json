@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/extension-git-guard",
-	"version": "0.5.1",
+	"version": "0.6.0",
 	"description": "Monopi git-guard pi extension.",
 	"keywords": [
 		"pi-package"

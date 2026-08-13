@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/extension-external-editor",
-	"version": "0.5.1",
+	"version": "0.6.0",
 	"description": "Monopi external-editor pi extension.",
 	"keywords": [
 		"pi-package"

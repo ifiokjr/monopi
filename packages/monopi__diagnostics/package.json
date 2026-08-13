@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/diagnostics",
-	"version": "0.5.1",
+	"version": "0.6.0",
 	"description": "Prompt-completion diagnostics extension for pi with timestamps, durations, per-turn timing, and a live widget.",
 	"keywords": [
 		"diagnostics",

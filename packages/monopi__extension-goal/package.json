@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/extension-goal",
-	"version": "0.5.1",
+	"version": "0.6.0",
 	"description": "Monopi goal pi extension for long-running objectives.",
 	"keywords": [
 		"pi-package"
