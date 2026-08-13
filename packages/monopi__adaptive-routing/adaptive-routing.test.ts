@@ -265,7 +265,7 @@ describe("adaptive routing extension", () => {
 					delegatedModelSelection: {
 						disabledProviders: ["google"],
 						roleOverrides: {
-							"colony:scout": {
+							"subagent:scout": {
 								preferredModels: ["openai/gpt-5-mini"],
 							},
 						},
@@ -298,7 +298,7 @@ describe("adaptive routing extension", () => {
 				"Delegated Routing Assignments",
 				expect.stringContaining("Disabled providers: google"),
 				expect.stringContaining("Role overrides:"),
-				expect.stringContaining("colony:scout"),
+				expect.stringContaining("subagent:scout"),
 				expect.stringContaining("openai/gpt-5-mini"),
 			]),
 		);

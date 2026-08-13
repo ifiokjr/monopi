@@ -66,7 +66,7 @@ In addition to prompt routing, the config can declare delegated categories for s
 			"subagent:planner": {
 				"preferredModels": ["google/gemini-3.1-pro", "openai/gpt-5.4"]
 			},
-			"colony:scout": {
+			"subagent:scout": {
 				"preferredModels": ["openai/gpt-5-mini"],
 				"preferFastModels": true
 			}

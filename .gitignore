@@ -3,7 +3,6 @@ packages/monopi__adaptive-routing/node_modules
 packages/monopi__adaptive-routing/node_modules
 dist/
 coverage/
-.ant-colony/
 *.tmp
 *.tsbuildinfo
 .ace-tool/

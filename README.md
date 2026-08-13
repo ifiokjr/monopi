@@ -187,7 +187,7 @@ CI runs `pnpm mdt check` so provider and consumer blocks stay in sync with the r
 
 ### Plain Icons (disable emoji)
 
-If emoji icons render poorly in your terminal (wrong font, garbled glyphs, misaligned widths), you can switch to ASCII-safe fallbacks. All emoji like 🐜 ✅ ❌ 🚀 become plain text like `[ant]` `[ok]` `[ERR]` `[>>]`.
+If emoji icons render poorly in your terminal (wrong font, garbled glyphs, misaligned widths), you can switch to ASCII-safe fallbacks. Emoji like ✅ ❌ 🚀 become plain text like `[ok]` `[ERR]` `[>>]`.
 
 Three ways to enable (in priority order):
 

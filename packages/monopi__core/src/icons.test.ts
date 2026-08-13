@@ -46,7 +46,6 @@ describe("icons", () => {
 		it("returns emoji by default", () => {
 			expect(icon("check")).toBe("✓");
 			expect(icon("cross")).toBe("✗");
-			expect(icon("ant")).toBe("🐜");
 			expect(icon("rocket")).toBe("🚀");
 			expect(icon("warning")).toBe("⚠️");
 		});
@@ -55,7 +54,6 @@ describe("icons", () => {
 			process.env.OH_PI_PLAIN_ICONS = "1";
 			expect(icon("check")).toBe("[ok]");
 			expect(icon("cross")).toBe("[x]");
-			expect(icon("ant")).toBe("[ant]");
 			expect(icon("rocket")).toBe("[>>]");
 			expect(icon("warning")).toBe("[!]");
 		});

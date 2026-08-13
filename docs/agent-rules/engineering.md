@@ -83,4 +83,4 @@ packages/
 - CLI code imports from `@monopi/core`, not via relative paths.
 - Extensions import from pi SDK packages.
 - `noDefaultExport: off` is intentional because extensions use default exports as their API pattern.
-- Ant colony runs use isolated git worktrees by default, with shared-cwd fallback when worktrees are unavailable.
+- Subagent runs use isolated git worktrees by default, with shared-cwd fallback when worktrees are unavailable.

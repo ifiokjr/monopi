@@ -129,29 +129,7 @@ The usage tracker hydrates from session history near startup and also schedules 
 - widget rendering should follow the latest active session context after `session_switch` without requiring a remount
 - deferred startup probe/cache work now skips requesting a widget redraw when the visible widget state stays unchanged, which removes the remaining idle startup no-op rerender from the runtime churn report
 
-### 5. `packages/monopi__subagents/*` (runtime)
-
-**Why it matters**
-
-The colony runtime keeps orchestration in-process. The deeper audit found several responsiveness risks outside first-load startup:
-
-- blocking git worktree setup
-- synchronous nest/state writes
-- busy-wait lock spinning
-- blocking `npx tsc --noEmit`
-- repeated background status refreshes while colonies are active
-
-**Benchmark status**
-
-The new PR-gated suite covers the default extension stack at startup, but colony runtime execution still needs a dedicated focused benchmark suite.
-
-**Latest mitigation**
-
-- background colony footer status should now be deduplicated so identical progress summaries do not keep re-sending `setStatus(...)`
-- nest lock contention now sleeps with `Atomics.wait(...)` instead of burning CPU in a tight busy loop while another process holds the lock
-- pre-review typecheck now runs only when completed worker tasks touched TypeScript files under a detectable TS project, and it prefers the local `node_modules/.bin/tsc` binary over `npx`
-
-### 6. `packages/monopi__diagnostics/*`
+### 5. `packages/monopi__diagnostics/*`
 
 **Why it matters**
 
@@ -232,7 +210,7 @@ Good options to explore next:
 1. reduce synchronous scheduler disk touches on `session_start`
 2. reduce or eliminate eager `getBranch()` / history reconstruction on startup-sensitive paths
 3. remove fixed idle redraw timers where event-driven updates are sufficient
-4. add focused benchmark suites for ant-colony runtime responsiveness and subagent monitor load
+4. add focused benchmark suites for subagent execution and monitor load
 
 ## Practical takeaway
 

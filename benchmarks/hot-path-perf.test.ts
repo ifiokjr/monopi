@@ -76,11 +76,11 @@ describe("hot path micro benchmarks", () => {
 	);
 
 	benchmarkIt(
-		"pheromone decay prune (write-pointer in-place)",
+		"aged cache entry prune (write-pointer in-place)",
 		async () => {
 			const result = await runBenchmark({
-				id: "pheromone-prune",
-				label: "pheromone decay prune (write-pointer)",
+				id: "aged-cache-prune",
+				label: "aged cache entry prune (write-pointer)",
 				group: "micro",
 				iterations: 50,
 				warmupIterations: 2,

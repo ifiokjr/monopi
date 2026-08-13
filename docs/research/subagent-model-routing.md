@@ -1,4 +1,4 @@
-# Subagent + Ant Colony model-routing research
+# Subagent model-routing research
 
 ## Why this exists
 
@@ -35,20 +35,6 @@ Today it resolves in this order:
 2. frontmatter `model`
 3. delegated category from adaptive-routing config
 4. session default
-
-### Ant colony
-
-Current resolution lives in:
-
-- `packages/ant-colony/extensions/ant-colony/routing-config.ts`
-- `packages/ant-colony/extensions/ant-colony/queen.ts`
-- `packages/ant-colony/extensions/ant-colony/index.ts`
-
-Today each caste / worker class resolves against delegated categories, but selection is still mostly:
-
-- explicit override
-- delegated category provider order / fallback group
-- current session model
 
 ### Adaptive routing already has useful primitives
 
@@ -233,13 +219,13 @@ For every delegated task:
 
 ## Draft config direction
 
-I would not keep this hard-coded inside subagents or ant-colony.
+I would not keep this hard-coded inside individual subagent definitions.
 
 I think the cleanest home is still the adaptive-routing config because:
 
 - it already stores delegated categories
 - it already understands provider reserves
-- both subagents and ant-colony already read it indirectly
+- subagents already read it indirectly
 
 Example direction:
 
@@ -286,7 +272,7 @@ Example direction:
 			"subagent:planner": {
 				"preferredModels": ["google/gemini-3.1-pro", "openai/gpt-5.4"]
 			},
-			"colony:scout": {
+			"subagent:scout": {
 				"preferredProviders": ["groq", "google", "ollama-cloud"]
 			}
 		}
@@ -370,7 +356,7 @@ Recommended rollout:
 
 - keep the JSON snapshot in-repo
 - add a shared model-intelligence loader
-- add a shared delegated-model selector used by both subagents and ant-colony
+- add a shared delegated-model selector used by all subagents
 - support provider/model disable lists
 - support user role overrides
 
@@ -391,7 +377,7 @@ Recommended rollout:
 The best first real implementation is:
 
 1. treat the new snapshot as the static intelligence source
-2. move subagents and ant-colony onto one shared delegated selector
+2. move all subagent execution paths onto one shared delegated selector
 3. keep the selector fully runtime-aware of live available models
 4. let user config disable providers and pin preferred role models
 5. only after that add latency enrichment

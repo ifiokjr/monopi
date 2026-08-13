@@ -1,12 +1,12 @@
 # Benchmark Results Template
 
-> Records "single agent vs colony" comparison results for the same scenario.
+> Records "single agent vs subagents" comparison results for the same scenario.
 
 ## Run Header
 
 - Date:
 - Executor:
-- Mode: Single agent / Colony
+- Mode: Single agent / Subagents
 - Scenario ID:
 - Complexity level: S / M / L
 - Run count:
@@ -27,11 +27,11 @@
 | Scenario ID | Level | Mode         | Success Rate | Avg Duration | Avg Cost | Rollback Rate | Notes |
 | ----------- | ----- | ------------ | -----------: | -----------: | -------: | ------------: | ----- |
 | S-01        | S     | Single agent |              |              |          |               |       |
-| S-01        | S     | Colony       |              |              |          |               |       |
+| S-01        | S     | Subagents    |              |              |          |               |       |
 | M-01        | M     | Single agent |              |              |          |               |       |
-| M-01        | M     | Colony       |              |              |          |               |       |
+| M-01        | M     | Subagents    |              |              |          |               |       |
 | L-01        | L     | Single agent |              |              |          |               |       |
-| L-01        | L     | Colony       |              |              |          |               |       |
+| L-01        | L     | Subagents    |              |              |          |               |       |
 
 ---
 
@@ -40,7 +40,7 @@
 - Scenarios covered this round:
 - Key observations:
 - Single agent advantages:
-- Colony advantages:
+- Subagent advantages:
 - Anomalies and failure samples:
 - Improvement suggestions for next round:
 
