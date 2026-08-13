@@ -281,6 +281,7 @@ inputs = [
 steps = [
 	{ type = "Command", name = "security check", command = "pnpm security:check" },
 	{ type = "PrepareRelease", name = "plan release", allow_empty_changesets = true },
+	{ type = "Command", name = "sync internal dependencies", when = "{{ number_of_changesets > 0 }}", command = "pnpm monochange versions sync --strategy exact" },
 	{ type = "Command", name = "sync lockfile", when = "{{ number_of_changesets > 0 }}", command = "pnpm install --lockfile-only" },
 	{ type = "CommitRelease", name = "create release commit", when = "{{ number_of_changesets > 0 && inputs.commit }}", inputs = { no_verify = "{{ inputs.no_verify }}", stage_all = true } },
 	{ type = "Command", name = "push release commit", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.push }}", command = "git push" },
