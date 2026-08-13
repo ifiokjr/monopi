@@ -8,6 +8,7 @@ coverage/
 *.tsbuildinfo
 .ace-tool/
 .mdt/
+.playwright-cli/
 
 # npm lockfile (migrated to pnpm)
 package-lock.json
