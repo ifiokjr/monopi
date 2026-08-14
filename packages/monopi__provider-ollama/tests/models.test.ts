@@ -118,6 +118,14 @@ describe("ollama models", () => {
 		expect(models.map((model) => model.contextWindow)).toEqual([262_144, 524_288, 262_144]);
 	});
 
+	it("applies cloud metadata overrides to cloud-suffixed model ids", () => {
+		const model = toOllamaModel({ id: "deepseek-v4-flash:cloud", source: "cloud" });
+
+		expect(model.contextWindow).toBe(1_048_576);
+		expect(model.maxTokens).toBe(65_536);
+		expect(model.reasoning).toBe(true);
+	});
+
 	it("sanitizes credential models with authoritative cloud metadata floors", () => {
 		const models = getCredentialModels({
 			access: "a",
