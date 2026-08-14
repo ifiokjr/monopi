@@ -556,7 +556,13 @@ function getOllamaCloudMetadataOverride(
 	if (model.source !== "cloud") {
 		return undefined;
 	}
-	const id = model.id?.trim().toLowerCase();
+	// Cloud model ids carry a `:cloud` suffix (e.g. `deepseek-v4-flash:cloud`), but the
+	// override catalog keys on the base model id (e.g. `deepseek-v4-flash`). Strip the
+	// suffix so cloud variants inherit the same context window / max tokens metadata.
+	const id = model.id
+		?.trim()
+		.toLowerCase()
+		.replace(/:cloud$/, "");
 	if (!id) {
 		return undefined;
 	}
