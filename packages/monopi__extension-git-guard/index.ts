@@ -13,6 +13,8 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 
 export const INTERACTIVE_GIT_WARNING_PREFIX = "Interactive git command blocked";
 const DIRTY_REPO_CHECK_DELAY_MS = 250;
+const GUARDED_COMMAND_TOOLS = new Set(["bash", "native_shell"]);
+const NUSHELL_EXTERNAL_COMMAND_PREFIX_REGEX = /^\^\s*/;
 
 interface InteractiveGitDetection {
 	reason: string;
@@ -47,7 +49,7 @@ function stripLeadingEnvAssignments(segment: string): string {
 	while (true) {
 		const next = stripped.replace(/^(?:[A-Za-z_][A-Za-z0-9_]*=(?:"[^"]*"|'[^']*'|\S+)\s+)*/, "");
 		if (next === stripped) {
-			return stripped;
+			return stripped.replace(NUSHELL_EXTERNAL_COMMAND_PREFIX_REGEX, "");
 		}
 		stripped = next.trimStart();
 	}
@@ -153,7 +155,7 @@ export default function (pi: ExtensionAPI) {
 	};
 
 	pi.on("tool_call", async (event) => {
-		if (event.toolName !== "bash") {
+		if (!GUARDED_COMMAND_TOOLS.has(event.toolName)) {
 			return;
 		}
 		const command = (event.input as { command?: string }).command ?? "";

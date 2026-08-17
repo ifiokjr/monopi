@@ -189,6 +189,20 @@ describe("subagent utils", () => {
 			details: "Command failed with exit code 23",
 		});
 
+		const nativeShellExit = detectSubagentError([
+			{
+				role: "toolResult",
+				toolName: "native_shell",
+				content: [{ type: "text", text: "Command failed with exit code 127" }],
+				isError: false,
+			},
+		] as never);
+		expect(nativeShellExit).toMatchObject({
+			hasError: true,
+			exitCode: 127,
+			errorType: "native_shell",
+		});
+
 		const bashFatal = detectSubagentError([
 			{
 				role: "toolResult",

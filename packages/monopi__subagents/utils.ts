@@ -16,6 +16,18 @@ import type { AsyncStatus, DisplayItem, ErrorInfo } from "./types.js";
 
 // Cache for status file reads - avoid re-reading unchanged files
 const statusCache = new Map<string, { mtime: number; status: AsyncStatus }>();
+const COMMAND_TOOL_NAMES = new Set(["bash", "native_shell"]);
+const COMMAND_EXIT_CODE_REGEX = /exit(?:ed)?\s*(?:with\s*)?(?:code|status)?\s*[:\s]?\s*(\d+)/i;
+const FATAL_COMMAND_OUTPUT_PATTERNS = [
+	/command not found/i,
+	/permission denied/i,
+	/no such file or directory/i,
+	/segmentation fault/i,
+	/killed|terminated/i,
+	/out of memory/i,
+	/connection refused/i,
+	/timeout/i,
+];
 
 /**
  * Read async job status from disk (with mtime-based caching)
@@ -249,7 +261,7 @@ export function detectSubagentError(messages: Message[]): ErrorInfo {
 		if ((msg as unknown as { isError: boolean }).isError) {
 			const text = msg.content.find((c) => c.type === "text");
 			const details = text && "text" in text ? text.text : undefined;
-			const exitMatch = details?.match(/exit(?:ed)?\s*(?:with\s*)?(?:code|status)?\s*[:\s]?\s*(\d+)/i);
+			const exitMatch = details?.match(COMMAND_EXIT_CODE_REGEX);
 			return {
 				details: details?.slice(0, 200),
 				errorType: (msg as unknown as { toolName: string }).toolName || "tool",
@@ -259,7 +271,7 @@ export function detectSubagentError(messages: Message[]): ErrorInfo {
 		}
 
 		const { toolName } = msg as unknown as { toolName: string };
-		if (toolName !== "bash") {
+		if (!COMMAND_TOOL_NAMES.has(toolName)) {
 			continue;
 		}
 
@@ -269,13 +281,13 @@ export function detectSubagentError(messages: Message[]): ErrorInfo {
 		}
 		const output = text.text;
 
-		const exitMatch = output.match(/exit(?:ed)?\s*(?:with\s*)?(?:code|status)?\s*[:\s]?\s*(\d+)/i);
+		const exitMatch = output.match(COMMAND_EXIT_CODE_REGEX);
 		if (exitMatch) {
 			const code = Number.parseInt(exitMatch[1], 10);
 			if (code !== 0) {
 				return {
 					details: output.slice(0, 200),
-					errorType: "bash",
+					errorType: toolName,
 					exitCode: code,
 					hasError: true,
 				};
@@ -285,21 +297,11 @@ export function detectSubagentError(messages: Message[]): ErrorInfo {
 		// NOTE: These patterns can match legitimate output (grep results, logs,
 		// Testing). With the assistant-message check above, most false positives
 		// Are mitigated since the agent will have responded after routine errors.
-		const fatalPatterns = [
-			/command not found/i,
-			/permission denied/i,
-			/no such file or directory/i,
-			/segmentation fault/i,
-			/killed|terminated/i,
-			/out of memory/i,
-			/connection refused/i,
-			/timeout/i,
-		];
-		for (const pattern of fatalPatterns) {
+		for (const pattern of FATAL_COMMAND_OUTPUT_PATTERNS) {
 			if (pattern.test(output)) {
 				return {
 					details: output.slice(0, 200),
-					errorType: "bash",
+					errorType: toolName,
 					exitCode: 1,
 					hasError: true,
 				};
