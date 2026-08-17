@@ -559,7 +559,7 @@ export async function runSync(
 		}
 	}
 
-	if (shareEnabled && options.sessionDir) {
+	if (options.sessionDir) {
 		const sessionFile = findLatestSessionFile(options.sessionDir);
 		if (sessionFile) {
 			result.sessionFile = sessionFile;

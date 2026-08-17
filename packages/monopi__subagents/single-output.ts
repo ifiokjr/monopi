@@ -43,6 +43,25 @@ export function persistSingleOutput(
 	}
 }
 
+export function formatSingleFailure(params: {
+	error?: string;
+	partialOutput?: string;
+	transcriptPath?: string;
+}): string {
+	const sections = [`Agent failed: ${params.error?.trim() || "Unknown subagent failure"}`];
+	const partialOutput = params.partialOutput?.trim();
+
+	if (partialOutput) {
+		sections.push(`Partial output:\n${partialOutput}`);
+	}
+
+	if (params.transcriptPath) {
+		sections.push(`Transcript: ${params.transcriptPath}`);
+	}
+
+	return sections.join("\n\n");
+}
+
 export function finalizeSingleOutput(params: {
 	fullOutput: string;
 	truncatedOutput?: string;

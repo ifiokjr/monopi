@@ -53,7 +53,12 @@ import { recordRun } from "./run-history.js";
 import { createSubagentRuntimeMonitor } from "./runtime-monitor.js";
 import { StatusParams, SubagentParams } from "./schemas.js";
 import { cleanupOldChainDirs, isParallelStep, resolveStepBehavior } from "./settings.js";
-import { finalizeSingleOutput, injectSingleOutputInstruction, resolveSingleOutputPath } from "./single-output.js";
+import {
+	finalizeSingleOutput,
+	formatSingleFailure,
+	injectSingleOutputInstruction,
+	resolveSingleOutputPath,
+} from "./single-output.js";
 import { discoverAvailableSkills, normalizeSkillInput } from "./skills.js";
 import {
 	ASYNC_DIR,
@@ -1003,8 +1008,17 @@ MANAGEMENT (use action field — omit agent/task/chain/tasks):
 				});
 
 				if (r.exitCode !== 0) {
+					const partialOutput = r.truncation?.text || fullOutput;
+					const transcriptPath =
+						r.sessionFile || (artifactConfig.includeJsonl ? r.artifactPaths?.jsonlPath : undefined);
+					const failureOutput = formatSingleFailure({
+						error: r.error,
+						partialOutput,
+						transcriptPath,
+					});
+
 					return {
-						content: [{ type: "text", text: r.error || "Failed" }],
+						content: [{ type: "text", text: failureOutput }],
 						details: {
 							mode: "single",
 							results: [r],

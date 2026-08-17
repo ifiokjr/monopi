@@ -46,6 +46,11 @@ const mocks = vi.hoisted(() => ({
 	finalizeSingleOutput: vi.fn(({ truncatedOutput, fullOutput }: any) => ({
 		displayOutput: truncatedOutput || fullOutput || "(no output)",
 	})),
+	formatSingleFailure: vi.fn(({ error, partialOutput, transcriptPath }: any) => {
+		const sections = [`Agent failed: ${error}`, `Partial output:\n${partialOutput}`];
+		if (transcriptPath) sections.push(`Transcript: ${transcriptPath}`);
+		return sections.join("\n\n");
+	}),
 	injectSingleOutputInstruction: vi.fn((task: string) => task),
 	resolveSingleOutputPath: vi.fn((output: string | undefined) => (output ? `/tmp/${output}` : undefined)),
 	recordRun: vi.fn(),
@@ -151,6 +156,7 @@ vi.mock("../skills.js", () => ({
 }));
 vi.mock("../single-output.js", () => ({
 	finalizeSingleOutput: mocks.finalizeSingleOutput,
+	formatSingleFailure: mocks.formatSingleFailure,
 	injectSingleOutputInstruction: mocks.injectSingleOutputInstruction,
 	resolveSingleOutputPath: mocks.resolveSingleOutputPath,
 }));
@@ -632,11 +638,41 @@ describe("subagent entrypoint", () => {
 			messages: [],
 			truncation: { text: "truncated" },
 			error: "boom",
+			sessionFile: "/tmp/session/run.jsonl",
 			progressSummary: { durationMs: 5 },
 		});
 		const failure = await tool.execute("s4", { agent: "scout", task: "inspect" }, undefined, undefined, ctx);
 		expect(failure.isError).toBe(true);
-		expect(failure.content[0]?.text).toBe("boom");
+		expect(failure.content[0]?.text).toContain("Agent failed: boom");
+		expect(failure.content[0]?.text).toContain("Partial output:\ntruncated");
+		expect(failure.content[0]?.text).toContain("Transcript: /tmp/session/run.jsonl");
+		expect(mocks.formatSingleFailure).toHaveBeenCalledWith({
+			error: "boom",
+			partialOutput: "truncated",
+			transcriptPath: "/tmp/session/run.jsonl",
+		});
+
+		mocks.runSync.mockResolvedValueOnce({
+			agent: "scout",
+			exitCode: 1,
+			messages: [],
+			artifactPaths: { jsonlPath: "/tmp/artifacts/not-created.jsonl" },
+			error: "no transcript",
+			progressSummary: { durationMs: 5 },
+		});
+		const failureWithoutTranscript = await tool.execute(
+			"s5",
+			{ agent: "scout", task: "inspect" },
+			undefined,
+			undefined,
+			ctx,
+		);
+		expect(failureWithoutTranscript.content[0]?.text).not.toContain("Transcript:");
+		expect(mocks.formatSingleFailure).toHaveBeenLastCalledWith({
+			error: "no transcript",
+			partialOutput: "final output",
+			transcriptPath: undefined,
+		});
 	});
 
 	it("reports async run status from result files and not-found cases", async () => {
