@@ -253,6 +253,25 @@ describe("runSync", () => {
 		expect(executionMocks.resolveSkillsAsync).toHaveBeenCalledWith(["ecsc-reviewer"], "/legal/project");
 	});
 
+	it("returns a session transcript when persistence is enabled without sharing", async () => {
+		const runPromise = runSync(
+			"/repo",
+			[{ name: "reviewer", model: "anthropic/claude-sonnet-4" }],
+			"reviewer",
+			"Inspect",
+			{ sessionDir: "/tmp/session", share: false },
+		);
+
+		await vi.waitFor(() => expect(executionMocks.procs).toHaveLength(1));
+		executionMocks.procs[0].emit("close", 0);
+
+		await expect(runPromise).resolves.toMatchObject({
+			exitCode: 0,
+			sessionFile: "/tmp/session/run.jsonl",
+		});
+		expect(executionMocks.findLatestSessionFile).toHaveBeenCalledWith("/tmp/session");
+	});
+
 	it("streams successful runs, writes artifacts, and records truncation + shared sessions", async () => {
 		const onUpdate = vi.fn();
 		const longTask = "A".repeat(9000);

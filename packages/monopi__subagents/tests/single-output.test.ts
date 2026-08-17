@@ -3,7 +3,12 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { finalizeSingleOutput, injectSingleOutputInstruction, resolveSingleOutputPath } from "../single-output.js";
+import {
+	finalizeSingleOutput,
+	formatSingleFailure,
+	injectSingleOutputInstruction,
+	resolveSingleOutputPath,
+} from "../single-output.js";
 
 const tempDirs: string[] = [];
 
@@ -46,6 +51,24 @@ describe("injectSingleOutputInstruction", () => {
 	it("appends an output instruction with the resolved path", () => {
 		const output = injectSingleOutputInstruction("Analyze this", "/tmp/report.md");
 		expect(output).toMatch(/Write your findings to: \/tmp\/report\.md/);
+	});
+});
+
+describe("formatSingleFailure", () => {
+	it("preserves partial output and a transcript path", () => {
+		const output = formatSingleFailure({
+			error: "bash failed (exit 127): ^git: command not found",
+			partialOutput: "Inspected the package before the command failed.",
+			transcriptPath: "/tmp/artifacts/run.jsonl",
+		});
+
+		expect(output).toContain("Agent failed: bash failed (exit 127)");
+		expect(output).toContain("Partial output:\nInspected the package");
+		expect(output).toContain("Transcript: /tmp/artifacts/run.jsonl");
+	});
+
+	it("provides a useful fallback when no details were captured", () => {
+		expect(formatSingleFailure({})).toBe("Agent failed: Unknown subagent failure");
 	});
 });
 
