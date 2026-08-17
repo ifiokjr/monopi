@@ -16,6 +16,7 @@ describe("detectInteractiveGitCommand", () => {
 		expect(result).not.toBeNull();
 		expect(result?.reason).toContain("git commit");
 		expect(result?.suggestion).toContain("git commit -m");
+		expect(detectInteractiveGitCommand("^git commit")?.reason).toContain("git commit");
 	});
 
 	it("ignores non-git shell text that merely mentions git", () => {
@@ -48,12 +49,36 @@ describe("INTERACTIVE_GIT_WARNING_PREFIX", () => {
 });
 
 describe("git-guard extension", () => {
+	it("guards interactive commands from Bash and native shell tools", async () => {
+		const harness = createExtensionHarness();
+		gitGuardExtension(harness.pi as never);
+
+		for (const toolName of ["bash", "native_shell"]) {
+			const results = await harness.emitAsync(
+				"tool_call",
+				{ input: { command: toolName === "native_shell" ? "^git commit" : "git commit" }, toolName },
+				harness.ctx,
+			);
+			const blocked = results.find((result) => result !== undefined) as { block: boolean; reason: string };
+			expect(blocked.block).toBe(true);
+			expect(blocked.reason).toContain(INTERACTIVE_GIT_WARNING_PREFIX);
+		}
+
+		const unguarded = await harness.emitAsync(
+			"tool_call",
+			{ input: { command: "git commit" }, toolName: "unrelated_tool" },
+			harness.ctx,
+		);
+		expect(unguarded.every((result) => result === undefined)).toBe(true);
+	});
+
 	it("defers dirty-repo startup checks until after the initial startup window", async () => {
 		vi.useFakeTimers();
 		try {
 			const harness = createExtensionHarness();
 			harness.pi.exec = vi.fn(async () => ({
 				stdout: " M README.md\n?? notes.txt\n",
+				stderr: "",
 				exitCode: 0,
 			}));
 
