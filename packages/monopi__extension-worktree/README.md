@@ -14,9 +14,9 @@ pi install npm:@monopi/extension-worktree
 
 ## Commands
 
-- `/worktree` — show worktree status for the current repo.
-- `/worktree status` — same as above.
-- `/worktree list` — list linked worktrees and mark pi-owned ones.
-- `/worktree open [branch|path]` — open an existing worktree.
-- `/worktree create <branch> [purpose]` — create a pi-owned worktree.
-- `/worktree cleanup <branch|path|id|all>` — remove pi-owned worktrees.
+- `/worktree`: show worktree status for the current repo.
+- `/worktree status`: same as above.
+- `/worktree list`: list linked worktrees and mark pi-owned ones.
+- `/worktree open [branch|path]`: open an existing worktree.
+- `/worktree create <branch> [purpose]`: create a pi-owned worktree.
+- `/worktree cleanup <branch|path|id|all>`: remove pi-owned worktrees.

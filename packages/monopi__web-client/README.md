@@ -4,7 +4,7 @@
 
 ## Why use this?
 
-When pi is sharing a session via `/remote`, a web server streams the conversation. This library lets you build your own UI — browser, mobile, or desktop — that connects to that server and displays the session.
+When pi is sharing a session via `/remote`, a web server streams the conversation. This library lets you build your own UI for a browser, mobile, or desktop that connects to that server and displays the session.
 
 Use it when the built-in remote web UI doesn't match your needs.
 
@@ -41,5 +41,5 @@ Build your own:
 
 ## Notes
 
-- This package compiles to `dist/` — run `pnpm build` if modifying it
-- No runtime dependency on pi itself — works as a standalone library
+- This package compiles to `dist/`: run `pnpm build` if modifying it
+- No runtime dependency on pi itself: works as a standalone library

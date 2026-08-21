@@ -1,12 +1,12 @@
 # `@monopi/shared-qna`
 
-> Shared TUI Q&A helpers for pi extensions — one place for pi-tui loading logic.
+> Shared TUI Q&A helpers for pi extensions: one place for pi-tui loading logic.
 
 ## Why use this?
 
 Multiple first-party monopi packages need the pi TUI library (`@earendil-works/pi-tui`). This package centralizes the loading strategy so each package doesn't duplicate the same fallback-resolution code.
 
-If you're writing a pi extension that uses the TUI, depend on this package instead of importing `@earendil-works/pi-tui` directly — it handles resolution edge cases automatically.
+If you're writing a pi extension that uses the TUI, depend on this package instead of importing `@earendil-works/pi-tui` directly. It handles resolution edge cases automatically.
 
 ## Installation
 
@@ -53,5 +53,5 @@ const piTui = await requirePiTuiModule();
 
 ## Related
 
-- [`@earendil-works/pi-tui`](https://www.npmjs.com/package/@earendil-works/pi-tui) — the pi TUI library itself
-- [`@monopi/extension-worktree`](../monopi__extension-worktree) — uses this for TUI-based widgets
+- [`@earendil-works/pi-tui`](https://www.npmjs.com/package/@earendil-works/pi-tui): the pi TUI library itself
+- [`@monopi/extension-worktree`](../monopi__extension-worktree): uses this for TUI-based widgets

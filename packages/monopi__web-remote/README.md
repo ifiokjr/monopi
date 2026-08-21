@@ -1,6 +1,6 @@
 # `@monopi/web-remote`
 
-> Share your pi session through a browser — for code reviews, pair programming, or demos.
+> Share your pi session through a browser for code reviews, pair programming, or demos.
 
 ## Why use this?
 
@@ -60,7 +60,7 @@ The browser view mirrors your pi session:
 
 - By default the server binds to `localhost` only
 - For remote access, pair with `@monopi/remote-tailscale` for HTTPS over Tailscale tunnels
-- No data is stored on disk — the session streams live
+- No data is stored on disk: the session streams live
 
 ## Related packages
 
@@ -72,6 +72,6 @@ The browser view mirrors your pi session:
 
 ## Notes
 
-- This package ships raw TypeScript — pi loads it directly, no build step needed
+- This package ships raw TypeScript: pi loads it directly, no build step needed
 - Only one remote session can be active at a time
 - Works with `@monopi/remote-tailscale` for accessing over the internet with TLS

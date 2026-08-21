@@ -21,6 +21,6 @@
 
 ## Workflow
 
-- Read before write — understand context first
-- Minimal changes — don't refactor unrelated code
-- Verify after changes — run tests or check output
+- Read before write: understand context first
+- Minimal changes: don't refactor unrelated code
+- Verify after changes: run tests or check output

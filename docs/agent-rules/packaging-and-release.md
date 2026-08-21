@@ -22,9 +22,9 @@ Do not use package names like `@monopi/monopi` or `@monopi/extension-worktree` i
 
 ## Change types
 
-- `major` — breaking API or behavior changes
-- `minor` — new features, extensions, or config options
-- `patch` — bug fixes, docs updates, and internal refactors
+- `major`: breaking API or behavior changes
+- `minor`: new features, extensions, or config options
+- `patch`: bug fixes, docs updates, and internal refactors
 
 ## Packaging model
 

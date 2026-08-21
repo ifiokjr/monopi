@@ -22,15 +22,15 @@ The watchdog samples CPU, memory, and event-loop lag on an interval, records rec
 
 ## Commands
 
-- `/watchdog` and `/watchdog status` — show current watchdog state.
-- `/watchdog startup` — show startup diagnostics.
-- `/watchdog overlay` and `/watchdog dashboard` — open the detailed overlay.
-- `/watchdog config` — show the effective config and thresholds.
-- `/watchdog sample` — run a manual sample.
-- `/watchdog blame` — attribute recent UI churn to active extensions.
-- `/watchdog on` / `/watchdog off` — enable or disable sampling.
-- `/watchdog reset` — clear recorded samples and alerts.
-- `/safe-mode [on|off|status]` — control safe mode directly.
+- `/watchdog` and `/watchdog status`: show current watchdog state.
+- `/watchdog startup`: show startup diagnostics.
+- `/watchdog overlay` and `/watchdog dashboard`: open the detailed overlay.
+- `/watchdog config`: show the effective config and thresholds.
+- `/watchdog sample`: run a manual sample.
+- `/watchdog blame`: attribute recent UI churn to active extensions.
+- `/watchdog on` / `/watchdog off`: enable or disable sampling.
+- `/watchdog reset`: clear recorded samples and alerts.
+- `/safe-mode [on|off|status]`: control safe mode directly.
 
 ## Config file
 

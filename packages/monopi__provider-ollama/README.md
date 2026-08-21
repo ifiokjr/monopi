@@ -45,13 +45,13 @@ This package is intentionally separate from `@monopi/monopi` for now.
 
 ## Commands
 
-- `/ollama status` — show local CLI + daemon status, local install/download counts, and cloud auth/catalog status
-- `/ollama refresh-models` — refresh both local and cloud Ollama models
-- `/ollama models` — list local and cloud Ollama models with source/capability badges for easier selection
-- `/ollama info <model>` — show detailed metadata for a local or cloud Ollama model, including context window size
-- `/ollama pull <model>` — manually download a local Ollama model via the Ollama CLI
-- `/ollama-cloud status` — backward-compatible cloud-only status alias
-- `/ollama-cloud refresh-models` — backward-compatible cloud-only refresh alias
+- `/ollama status`: show local CLI + daemon status, local install/download counts, and cloud auth/catalog status
+- `/ollama refresh-models`: refresh both local and cloud Ollama models
+- `/ollama models`: list local and cloud Ollama models with source/capability badges for easier selection
+- `/ollama info <model>`: show detailed metadata for a local or cloud Ollama model, including context window size
+- `/ollama pull <model>`: manually download a local Ollama model via the Ollama CLI
+- `/ollama-cloud status`: backward-compatible cloud-only status alias
+- `/ollama-cloud refresh-models`: backward-compatible cloud-only refresh alias
 
 ## Notes
 

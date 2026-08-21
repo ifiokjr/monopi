@@ -7,8 +7,8 @@ and `@monopi/analytics-dashboard` use to store and retrieve AI usage data.
 
 ## Why use this?
 
-If you're building on top of monopi analytics — writing your own dashboard, running custom queries,
-or extending the data model — this package gives you the typed ORM client without duplicating the
+If you're building on top of monopi analytics, writing your own dashboard, running custom queries,
+or extending the data model, this package gives you the typed ORM client without duplicating the
 schema.
 
 ## Schema overview
@@ -72,11 +72,11 @@ await endSession(sessionId);
 
 ## Tech stack
 
-- **`better-sqlite3`** — synchronous, fast, zero-config SQLite for Node.js
-- **`drizzle-orm`** — type-safe query builder with schema definitions
-- **`drizzle-kit`** — migration generation tool
+- **`better-sqlite3`**: synchronous, fast, zero-config SQLite for Node.js
+- **`drizzle-orm`**: type-safe query builder with schema definitions
+- **`drizzle-kit`**: migration generation tool
 
 ## Related packages
 
-- [`@monopi/analytics-extension`](../monopi__analytics-extension) — hooks into pi events to record data
-- [`@monopi/analytics-dashboard`](../monopi__analytics-dashboard) — React SPA that visualizes the data
+- [`@monopi/analytics-extension`](../monopi__analytics-extension): hooks into pi events to record data
+- [`@monopi/analytics-dashboard`](../monopi__analytics-dashboard): React SPA that visualizes the data

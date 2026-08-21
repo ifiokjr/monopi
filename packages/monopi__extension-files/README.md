@@ -1,6 +1,6 @@
 # @monopi/extension-files
 
-Standalone pi extension package for `files` — file browser with git status and session references.
+Standalone pi extension package for `files`: a file browser with git status and session references.
 
 ```bash
 pi install npm:@monopi/extension-files
@@ -8,13 +8,13 @@ pi install npm:@monopi/extension-files
 
 ## Commands
 
-- `/files` — browse files in the current git tree plus session-referenced files, with quick actions (reveal, open, edit, diff).
+- `/files`: browse files in the current git tree plus session-referenced files, with quick actions (reveal, open, edit, diff).
 
 ## Shortcuts
 
-- `ctrl+shift+o` — browse files mentioned in the session.
-- `ctrl+shift+f` — reveal the latest file reference in Finder.
-- `ctrl+shift+r` — reveal the latest file reference in the default file manager.
+- `ctrl+shift+o`: browse files mentioned in the session.
+- `ctrl+shift+f`: reveal the latest file reference in Finder.
+- `ctrl+shift+r`: reveal the latest file reference in the default file manager.
 
 ## Attribution
 

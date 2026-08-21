@@ -1,6 +1,6 @@
 # oh-pi Roadmap (2026 H1)
 
-> Key judgment: the biggest risk isn't technical implementation — it's **positioning and growth**.
+> Key judgment: the biggest risk isn't technical implementation, it's **positioning and growth**.
 
 ## 1) Product Positioning (Straighten First)
 

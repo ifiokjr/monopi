@@ -15,9 +15,9 @@ Heavy coding workflows increasingly span multiple providers with different stren
 
 This guesswork creates three recurring problems:
 
-1. **Wasted premium capacity** — expensive models get used for work that cheaper models could complete.
-2. **Bad manual routing overhead** — the user must repeatedly switch models and thinking levels mid-session.
-3. **Quota cliff failures** — a preferred provider runs low unexpectedly and the session does not smoothly move to the nearest equivalent alternative.
+1. **Wasted premium capacity**: expensive models get used for work that cheaper models could complete.
+2. **Bad manual routing overhead**: the user must repeatedly switch models and thinking levels mid-session.
+3. **Quota cliff failures**: a preferred provider runs low unexpectedly and the session does not smoothly move to the nearest equivalent alternative.
 
 ## 2. Product Thesis
 
@@ -38,7 +38,7 @@ The system should use a **cheap classifier model** to estimate task characterist
 
 - Add an opt-in routing mode that automatically selects model and thinking level per prompt.
 - Minimize unnecessary premium model usage while preserving quality on hard tasks.
-- Prefer the user’s ranked models while gracefully falling back when quota is low or unavailable.
+- Prefer the user's ranked models while gracefully falling back when quota is low or unavailable.
 - Make routing explainable enough that the user can trust and override it.
 
 ### Secondary goals
@@ -100,7 +100,7 @@ Adaptive Routing Mode should eventually expose:
 
 ## 6.1 Two-stage routing
 
-### Stage A — cheap prompt classification
+### Stage A: cheap prompt classification
 
 A low-cost router model classifies the prompt into structured fields such as:
 
@@ -117,7 +117,7 @@ A low-cost router model classifies the prompt into structured fields such as:
 
 The classifier must not directly choose the final model. It only produces structured metadata.
 
-### Stage B — deterministic policy engine
+### Stage B: deterministic policy engine
 
 The local router computes the final route using:
 
@@ -321,9 +321,9 @@ The UI and explanation payload must expose this confidence level explicitly.
 
 Adaptive Routing Mode must measure correctness at three distinct layers:
 
-1. **Classifier correctness** — did the cheap model estimate task shape reasonably?
-2. **Routing correctness** — given the task estimate and runtime inputs, did the policy engine choose the right model and thinking level?
-3. **Outcome correctness** — did the selected route help the user finish successfully with less unnecessary premium spend?
+1. **Classifier correctness**: did the cheap model estimate task shape reasonably?
+2. **Routing correctness**: given the task estimate and runtime inputs, did the policy engine choose the right model and thinking level?
+3. **Outcome correctness**: did the selected route help the user finish successfully with less unnecessary premium spend?
 
 These layers must be measured separately because a classifier can be imperfect while the policy still recovers, and a reasonable route can still produce a bad outcome.
 
@@ -352,7 +352,7 @@ The first practical rollout should include a **shadow mode** where the router co
 
 Shadow mode exists to answer:
 
-- how often does the router agree with the user’s manual choice?
+- how often does the router agree with the user's manual choice?
 - where does it disagree?
 - are disagreements concentrated around certain intents, providers, or thinking levels?
 
@@ -394,9 +394,9 @@ The default design should avoid repo pollution and store router telemetry in sha
 
 Supported modes should be:
 
-- `off` — no persisted router telemetry
-- `local` — local-only event logs and aggregates under shared pi storage
-- `export` — local collection plus explicit user-triggered export of redacted traces
+- `off`: no persisted router telemetry
+- `local`: local-only event logs and aggregates under shared pi storage
+- `export`: local collection plus explicit user-triggered export of redacted traces
 
 Remote collection should not be part of the initial design.
 
@@ -404,9 +404,9 @@ Remote collection should not be part of the initial design.
 
 Supported privacy levels should be:
 
-- `minimal` — no raw prompt storage; only hashes and structured route metadata
-- `redacted` — redacted summaries or snippets where feasible
-- `full-local` — raw prompt content stored locally only when explicitly enabled
+- `minimal`: no raw prompt storage; only hashes and structured route metadata
+- `redacted`: redacted summaries or snippets where feasible
+- `full-local`: raw prompt content stored locally only when explicitly enabled
 
 The default should favor `local` telemetry with `minimal` privacy.
 
@@ -473,7 +473,7 @@ The first tuning system should recommend config changes rather than silently sel
 
 - Misclassification from the cheap classifier can route tasks too low.
 - Aggressive reserve policies can over-conserve premium capacity and hurt quality.
-- Opaque “unlimited” plans do not expose exact remaining usage, so confidence labeling is critical.
+- Opaque "unlimited" plans do not expose exact remaining usage, so confidence labeling is critical.
 - Too much hidden automation will reduce trust even if the routing is technically correct.
 - Implicit telemetry can be noisy and should not be mistaken for ground truth.
 - Over-collecting prompt data would create privacy risks and damage trust.
@@ -508,7 +508,7 @@ The first tuning system should recommend config changes rather than silently sel
 
 - Which cheap router model should be the default for classification?
 - Should route decisions be sticky for one turn, a whole task, or until manual unlock?
-- Should “design” and “architecture” be hard-coded starter intents or fully user-configurable from day one?
+- Should "design" and "architecture" be hard-coded starter intents or fully user-configurable from day one?
 - How should the router behave when usage-tracker data is stale but still cached?
 - Which implicit signals are strong enough to surface in reports but weak enough to keep out of automatic policy changes?
 - Should user-approved tuning suggestions edit router config directly or generate reviewable proposals first?

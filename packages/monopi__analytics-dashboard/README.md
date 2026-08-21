@@ -1,6 +1,6 @@
 # @monopi/analytics-dashboard
 
-Visual dashboard for tracking your Pi AI usage metrics — models, tokens, costs, codebases, and more.
+Visual dashboard for tracking your Pi AI usage metrics: models, tokens, costs, codebases, and more.
 
 ![Pi Analytics Dashboard](screenshot-overview.png)
 
@@ -26,7 +26,7 @@ The dashboard supports two data modes controlled by `VITE_API_MODE`:
 
 | Mode     | Value            | Description                                             |
 | -------- | ---------------- | ------------------------------------------------------- |
-| **Mock** | `mock` (default) | Uses generated mock data — no database needed           |
+| **Mock** | `mock` (default) | Uses generated mock data, no database needed            |
 | **API**  | `api`            | Fetches from the Express server which reads from SQLite |
 
 ### Mock Mode (default)

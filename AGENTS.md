@@ -1,6 +1,6 @@
-# Agent Rules — oh-pi
+# Agent Rules: monopi
 
-oh-pi is a lockstep-versioned pnpm monorepo of pi extensions, themes, prompts, skills, agents, and TUI tooling.
+monopi is a lockstep-versioned pnpm monorepo of pi extensions, themes, prompts, skills, agents, and TUI tooling.
 
 ## Essentials
 
@@ -13,8 +13,8 @@ Use MDT through `pnpm mdt ...`, not a globally installed `mdt` binary. This keep
 <!-- {/repoMdtUsageRuleDocs} -->
 
 - Non-standard repo commands:
-  - `pnpm typecheck` — type-checks the repo with `tsgo` (`@typescript/native-preview`)
-  - `pnpm build` — runs every workspace package build script
+  - `pnpm typecheck`: type-checks the repo with `tsgo` (`@typescript/native-preview`)
+  - `pnpm build`: runs every workspace package build script
 - Every non-release change must include a changeset created with `pnpm mc create`; changeset frontmatter must use only `monopi`.
 
 <!-- {=repoMdtCommandsDocs} -->
@@ -49,7 +49,7 @@ These rules prevent performance regressions identified during the 2025-04 audit.
 Never create `new RegExp(...)` inside a function that runs repeatedly (event handlers, parsers, per-message processors). Instead, compile the regex once at module scope or in a lazy-init singleton.
 
 ```ts
-// ❌ Slow — compiles on every call
+// ❌ Slow: compiles on every call
 function extractSections(output: string) {
 	for (const section of sections) {
 		const regex = new RegExp(`#{1,2} ${section}\\n([\\s\\S]*?)(?=\\n#{1,2} |$)`, "i");
@@ -57,7 +57,7 @@ function extractSections(output: string) {
 	}
 }
 
-// ✅ Fast — compile once at module scope
+// ✅ Fast: compile once at module scope
 const SECTION_REGEXES = SECTIONS.map((s) => new RegExp(`#{1,2} ${s}\\n([\\s\\S]*?)(?=\\n#{1,2} |$)`, "i"));
 ```
 
@@ -66,13 +66,13 @@ const SECTION_REGEXES = SECTIONS.map((s) => new RegExp(`#{1,2} ${s}\\n([\\s\\S]*
 Extensions that write to disk on every usage sample, event, or tick must debounce writes (≥10s). Do not `writeFileSync` on every `recordUsage` call.
 
 ```ts
-// ❌ Slow — writes to disk per event
+// ❌ Slow: writes to disk per event
 function recordUsage(sample) {
 	rollingHistory.push(sample);
 	saveRollingHistory(); // writeFileSync on every call!
 }
 
-// ✅ Fast — debounce disk writes
+// ✅ Fast: debounce disk writes
 const PERSIST_DEBOUNCE_MS = 10_000;
 let rollingHistoryDirty = false;
 let rollingHistorySaveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -96,12 +96,12 @@ function scheduleRollingHistorySave() {
 When pruning aged items from an array, use a write-pointer instead of repeated `splice()` calls:
 
 ```ts
-// ❌ O(n²) — each splice shifts elements
+// ❌ O(n²): each splice shifts elements
 for (let i = arr.length - 1; i >= 0; i--) {
 	if (shouldRemove(arr[i])) arr.splice(i, 1);
 }
 
-// ✅ O(n) — single pass with write pointer
+// ✅ O(n): single pass with write pointer
 let write = 0;
 for (let read = 0; read < arr.length; read++) {
 	if (!shouldRemove(arr[read])) arr[write++] = arr[read];
@@ -179,13 +179,13 @@ Sync I/O in initial setup (extension load, config read) is acceptable. Sync I/O 
 
 ### 8. Avoid O(n²) object spread in `.reduce()`
 
-Do not use `.reduce()` with object spread (`{ ...acc, [key]: value }`) for large collections — each iteration copies all previous keys:
+Do not use `.reduce()` with object spread (`{ ...acc, [key]: value }`) for large collections. Each iteration copies all previous keys:
 
 ```ts
-// ❌ O(n²) — each spread copies all previous entries
+// ❌ O(n²): each spread copies all previous entries
 const result = items.reduce((acc, item) => ({ ...acc, [item.id]: item }), {});
 
-// ✅ O(n) — mutate once
+// ✅ O(n): mutate once
 const result: Record<string, Item> = {};
 for (const item of items) result[item.id] = item;
 ```
@@ -259,7 +259,7 @@ for (const task of Array.from(tasks.values())) {
 	if (shouldDelete(task)) tasks.delete(task.id);
 }
 
-// ✅ No snapshot — collect then delete
+// ✅ No snapshot: collect then delete
 const deleteIds: string[] = [];
 for (const task of tasks.values()) {
 	if (shouldDelete(task)) deleteIds.push(task.id);

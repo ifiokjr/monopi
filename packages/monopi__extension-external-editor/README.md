@@ -14,8 +14,8 @@ pi install npm:@monopi/extension-external-editor
 
 ## Commands
 
-- `/external-editor` — open the current draft in `$VISUAL` or `$EDITOR`.
-- `/external-editor status` — show which editor is configured and how to use the command.
+- `/external-editor`: open the current draft in `$VISUAL` or `$EDITOR`.
+- `/external-editor status`: show which editor is configured and how to use the command.
 
 ## Notes
 

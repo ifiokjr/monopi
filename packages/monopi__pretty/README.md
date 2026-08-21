@@ -4,11 +4,11 @@ Pretty terminal output for pi built-in tools.
 
 ## Features
 
-- **`read`** — Syntax-highlighted file content with line numbers + inline image rendering
-- **`bash_pretty`** — Colored exit status with output preview
-- **`ls`** — Tree-view directory listing with Nerd Font file type icons
-- **`find`** / **`grep`** — FFF-backed frecency-aware search with grouped/highlighted rendering
-- **`multi_grep`** — OR-search across multiple patterns
+- **`read`**: Syntax-highlighted file content with line numbers + inline image rendering
+- **`bash_pretty`**: Colored exit status with output preview
+- **`ls`**: Tree-view directory listing with Nerd Font file type icons
+- **`find`** / **`grep`**: FFF-backed frecency-aware search with grouped/highlighted rendering
+- **`multi_grep`**: OR-search across multiple patterns
 
 ## Install
 
@@ -35,9 +35,9 @@ grep pattern="handleRequest" glob="*.ts"
 
 ## Commands
 
-- `/fff-health` — Check FFF index status
-- `/fff-rescan` — Force rescan of current directory
-- `/multi-grep patterns=["foo","bar"] glob="*.ts"` — OR grep multiple patterns
+- `/fff-health`: Check FFF index status
+- `/fff-rescan`: Force rescan of current directory
+- `/multi-grep patterns=["foo","bar"] glob="*.ts"`: OR grep multiple patterns
 
 ## Configuration
 
@@ -51,4 +51,4 @@ grep pattern="handleRequest" glob="*.ts"
 
 ## License
 
-MIT — Ifiok Jr.
+MIT, Ifiok Jr.

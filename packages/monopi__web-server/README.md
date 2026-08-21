@@ -4,7 +4,7 @@
 
 ## Why use this?
 
-When you want pi sessions to be viewable remotely, you need a server. This package provides the server-side primitives — HTTP routing, WebSocket streaming, and token-based access control — that `@monopi/web-remote` uses to expose pi sessions.
+When you want pi sessions to be viewable remotely, you need a server. This package provides the server-side primitives that `@monopi/web-remote` uses to expose pi sessions: HTTP routing, WebSocket streaming, and token-based access control.
 
 Use it directly if you're embedding pi remote access into your own application or service.
 
@@ -40,5 +40,5 @@ pnpm add @monopi/web-server
 
 ## Notes
 
-- This package compiles to `dist/` — run `pnpm build` if modifying it
+- This package compiles to `dist/`: run `pnpm build` if modifying it
 - Depends on `express` and `ws` for HTTP + WebSocket handling
