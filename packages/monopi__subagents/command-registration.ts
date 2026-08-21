@@ -20,6 +20,7 @@ interface ParsedStep {
 interface RegisterSubagentCommandsOptions {
 	getBaseCwd: () => string;
 	openAgentManager: (ctx: ExtensionContext) => Promise<void>;
+	openFleetInspector: (ctx: ExtensionContext) => Promise<void>;
 }
 
 function parseInlineConfig(raw: string): InlineConfig {
@@ -209,6 +210,13 @@ export function registerSubagentCommands(pi: ExtensionAPI, options: RegisterSuba
 		description: "Open the Agents Manager",
 		handler: async (_args, ctx) => {
 			await options.openAgentManager(ctx);
+		},
+	});
+
+	pi.registerCommand("fleet", {
+		description: "Toggle between running subagents and inspect their live output",
+		handler: async (_args, ctx) => {
+			await options.openFleetInspector(ctx);
 		},
 	});
 

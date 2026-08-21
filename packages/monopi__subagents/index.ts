@@ -46,6 +46,7 @@ import { registerSubagentCommands } from "./command-registration.js";
 import { createDynamicAgent } from "./dynamic-agent.js";
 import { runSync } from "./execution.js";
 import { closeExternalAgentWatchers, parseStringList, resolveExternalAgent } from "./external-agents.js";
+import { createFleetState, FleetInspectorComponent } from "./fleet-inspector.js";
 import { resolveSubagentLimits } from "./limits.js";
 import { resolveSubagentModelResolution, toAvailableModelRefs } from "./model-routing.js";
 import { renderSubagentResult, renderWidget } from "./render.js";
@@ -1209,6 +1210,21 @@ MANAGEMENT (use action field, omit agent/task/chain/tasks):
 		};
 	};
 
+	const openFleetInspector = async (ctx: ExtensionContext) => {
+		if (!ctx.hasUI) {
+			ctx.ui.notify("Fleet inspector requires a TUI session", "error");
+			return;
+		}
+		await ctx.ui.custom<boolean>(
+			(tui, theme, _kb, done) =>
+				new FleetInspectorComponent(tui, theme, createFleetState(), () => [...asyncJobs.values()], done),
+			{
+				overlay: true,
+				overlayOptions: { anchor: "center", maxHeight: "80%", width: 84 },
+			},
+		);
+	};
+
 	const openAgentManager = async (ctx: ExtensionContext) => {
 		const agentData = { ...discoverAgentsAll(ctx.cwd), cwd: ctx.cwd };
 		const models = ctx.modelRegistry.getAvailable().map((m) => ({
@@ -1326,11 +1342,19 @@ MANAGEMENT (use action field, omit agent/task/chain/tasks):
 	registerSubagentCommands(pi, {
 		getBaseCwd: () => baseCwd,
 		openAgentManager,
+		openFleetInspector,
 	});
 
 	pi.registerShortcut("ctrl+shift+a", {
 		handler: async (ctx) => {
 			await openAgentManager(ctx);
+		},
+	});
+
+	// Same key as upstream pi-subagents' fleet inspector; free in pi defaults.
+	pi.registerShortcut("ctrl+alt+f", {
+		handler: async (ctx) => {
+			await openFleetInspector(ctx);
 		},
 	});
 

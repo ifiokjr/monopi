@@ -692,4 +692,30 @@ describe("subagent entrypoint", () => {
 		expect(found.content[0]?.text).toContain("Run: result-1");
 		expect(found.content[0]?.text).toContain("State: complete");
 	});
+
+	it("opens the fleet inspector via ctrl+alt+f and guards headless sessions", async () => {
+		const pi = createMockPi();
+		const ctx = createCtx();
+		registerSubagentExtension(pi as never);
+
+		const shortcut = pi.shortcuts.get("ctrl+alt+f");
+		expect(shortcut).toBeDefined();
+
+		let created: { dispose?: () => void } | undefined;
+		ctx.ui.custom = vi.fn(async (factory: (...args: unknown[]) => unknown) => {
+			created = factory({ requestRender: () => {} }, ctx.ui.theme, {}, vi.fn()) as {
+				dispose?: () => void;
+			};
+			return true;
+		});
+
+		await shortcut.handler(ctx);
+		expect(ctx.ui.custom).toHaveBeenCalledTimes(1);
+		expect(typeof created?.dispose).toBe("function");
+		created?.dispose?.();
+
+		const notify = vi.fn();
+		await shortcut.handler({ ...ctx, hasUI: false, ui: { notify } });
+		expect(notify).toHaveBeenCalledWith("Fleet inspector requires a TUI session", "error");
+	});
 });

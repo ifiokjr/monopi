@@ -143,8 +143,34 @@ The MCP adapter's metadata cache must be populated for direct tools to work. On 
 | `/chain agent1 "task1" -> agent2 "task2"`    | Run agents in sequence with per-step tasks |
 | `/parallel agent1 "task1" -> agent2 "task2"` | Run agents in parallel with per-step tasks |
 | `/agents`                                    | Open the Agents Manager overlay            |
+| `/fleet`                                     | Toggle between subagents and inspect them  |
 
 All commands validate agent names locally and tab-complete them, then route through the tool framework for full live progress rendering. Results are sent to the conversation for the LLM to discuss.
+
+### Fleet Inspector
+
+While subagents run in the background, press `ctrl+alt+f` (or run `/fleet`) to open the fleet inspector — a live overlay for toggling between runs and watching what each one is doing:
+
+```text
+╭────────────────────── Subagent fleet [2 active / 3] ──────────────────────╮
+│ ▸ ● scout → planner · step 1/2 · 12.0s · 4.2k tok · active now            │
+│   ● reviewer · running · 38s · 1.1k tok · active now                      │
+│   ✗ researcher → writer · failed · 1m 02s                                 │
+╰──────────────── ↑↓/jk select · enter inspect · r refresh · esc close ─────╯
+```
+
+Keys inside the inspector:
+
+| Key                | Action                                             |
+| ------------------ | -------------------------------------------------- |
+| `↑`/`↓` or `j`/`k` | Move between subagent runs                         |
+| `enter` or `→`     | Inspect the selected run                           |
+| `←`, `backspace`   | Back to the run list                               |
+| `x` or `ctrl+o`    | Expand/collapse the live output tail               |
+| `r`                | Refresh immediately (the view also auto-refreshes) |
+| `esc`              | Back, or close from the list                       |
+
+The detail view shows every chain step with status, duration and token counts, plus a rolling output tail of the current step. The async widget above the editor also gains a `· ctrl+alt+f fleet` hint whenever background work is active.
 
 ### Per-Step Tasks
 
