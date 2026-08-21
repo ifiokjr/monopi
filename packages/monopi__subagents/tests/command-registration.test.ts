@@ -37,6 +37,19 @@ function createCtx() {
 }
 
 describe("registerSubagentCommands", () => {
+	it("opens the fleet inspector from /fleet", async () => {
+		const pi = createPi();
+		const openFleetInspector = vi.fn(async () => {});
+		registerSubagentCommands(pi as never, {
+			getBaseCwd: () => "/repo",
+			openAgentManager: vi.fn(),
+			openFleetInspector,
+		});
+
+		await pi.commands.get("fleet").handler("", {});
+		expect(openFleetInspector).toHaveBeenCalledTimes(1);
+	});
+
 	it("opens the agent manager and offers agent completions", async () => {
 		discoverAgentsMock.mockReturnValue({
 			agents: [{ name: "scout" }, { name: "planner" }, { name: "reviewer" }],

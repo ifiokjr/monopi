@@ -472,7 +472,9 @@ function truncateAnsi(text: string, maxWidth: number): string {
 			return `${result}…`;
 		}
 	}
-	return result;
+	// Unreachable: entering the loop requires visibleWidth > maxWidth, so the
+	// check above always returns before every visible char is consumed.
+	return result; // patch-coverage-ignore
 }
 
 // ============================================================================

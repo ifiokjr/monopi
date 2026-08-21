@@ -107,6 +107,14 @@ describe("buildFleetJobs", () => {
 			steps: [],
 		});
 	});
+
+	it("breaks priority ties by start time", () => {
+		utilsMocks.readStatus.mockReturnValue(null);
+		const later = makeJob({ asyncId: "late", startedAt: 3_000 });
+		const earlier = makeJob({ asyncId: "early", startedAt: 1_000 });
+		const jobs = buildFleetJobs([later, earlier], NOW);
+		expect(jobs.map((j) => j.asyncId)).toEqual(["early", "late"]);
+	});
 });
 
 describe("handleFleetInput", () => {
@@ -162,6 +170,156 @@ describe("handleFleetInput", () => {
 		expect(handleFleetInput(state, jobs, "\x7F")).toEqual({ type: "back" });
 		expect(handleFleetInput(state, jobs, "x")).toEqual({ type: "toggle-output" });
 		expect(handleFleetInput(state, jobs, "\x0F")).toEqual({ type: "toggle-output" });
+	});
+
+	it("pages up and down by viewport height", () => {
+		const { jobs, state } = stateWithJobs(14);
+
+		handleFleetInput(state, jobs, "\x1B[6~");
+		expect(state.cursor).toBe(10);
+		handleFleetInput(state, jobs, "\x1B[6~");
+		expect(state.cursor).toBe(13);
+		handleFleetInput(state, jobs, "\x1B[5~");
+		expect(state.cursor).toBe(3);
+		handleFleetInput(state, jobs, "\x1B[5~");
+		expect(state.cursor).toBe(0);
+	});
+
+	it("scrolls the viewport to keep the cursor visible", () => {
+		const state = createFleetState();
+		const jobs: FleetJobView[] = Array.from({ length: 12 }, (_, i) => ({
+			asyncId: `job-${i}`,
+			status: "running",
+			activity: "",
+			steps: [],
+			stepsTotal: 1,
+		}));
+
+		state.cursor = 11;
+		selectedJob(state, jobs);
+		expect(state.scrollOffset).toBe(2);
+
+		state.cursor = 1;
+		selectedJob(state, jobs);
+		expect(state.scrollOffset).toBe(1);
+	});
+
+	it("renders queued/failed icons, mode fallback chains and step counts", () => {
+		const views: FleetJobView[] = [
+			{
+				activity: "",
+				agents: [],
+				asyncId: "queued-job",
+				mode: "single",
+				status: "queued",
+				steps: [],
+				stepsTotal: 1,
+			},
+			{
+				activity: "",
+				agents: ["scout", "planner"],
+				asyncId: "failed-job",
+				currentStep: 1,
+				status: "failed",
+				steps: [
+					{ agent: "scout", status: "complete" },
+					{ agent: "planner", error: "boom", status: "failed" },
+				],
+				stepsTotal: 2,
+			},
+			{
+				activity: "",
+				agents: ["scout"],
+				asyncId: "no-step-details",
+				currentStep: 0,
+				status: "running",
+				steps: [],
+				stepsTotal: 1,
+			},
+			{
+				activity: "",
+				agents: ["a", "b", "c"],
+				asyncId: "count-only",
+				startedAt: NOW - 5_000,
+				status: "complete",
+				steps: [],
+				stepsTotal: 3,
+				updatedAt: NOW - 1_000,
+			},
+			{
+				activity: "",
+				agents: [],
+				asyncId: "never-started",
+				mode: undefined,
+				status: "queued",
+				steps: [],
+				stepsTotal: 1,
+			},
+		];
+
+		const lines = renderFleetList(createFleetState(), views, 84, theme, NOW);
+		const text = lines.join("\n");
+		expect(text).toContain("○ single");
+		expect(text).toContain("✗ planner");
+		expect(text).toContain("● scout");
+		expect(text).toContain("3 steps");
+	});
+
+	it("omits elapsed labels for runs without a start time", () => {
+		utilsMocks.getOutputTail.mockReturnValue([]);
+		const job: FleetJobView = {
+			activity: "",
+			agents: [],
+			asyncId: "never-started",
+			status: "queued",
+			steps: [],
+			stepsTotal: 1,
+		};
+
+		const text = renderFleetDetail({ ...createFleetState(), screen: "detail" }, job, 84, theme, NOW).join("\n");
+		expect(text).toContain("queued");
+		expect(text).not.toContain("elapsed");
+	});
+
+	it("truncates long rows to the available width", () => {
+		const views: FleetJobView[] = [
+			{
+				activity: "doing lots of work right now indeed yes",
+				agents: ["verylongagentname", "anotherlongone"],
+				asyncId: "wide-job",
+				currentStep: 0,
+				startedAt: NOW - 90_000,
+				status: "running",
+				steps: [],
+				stepsTotal: 1,
+			},
+		];
+
+		const lines = renderFleetList(createFleetState(), views, 30, theme, NOW);
+		expect(lines.join("\n")).toContain("…");
+	});
+
+	it("shows failed step errors and truncates ANSI-colored output tails in detail", () => {
+		utilsMocks.getOutputTail.mockReturnValue(["\x1B[31mthis output line is long enough to need truncation\x1B[0m"]);
+		const job: FleetJobView = {
+			activity: "",
+			agents: ["scout"],
+			asyncId: "err-job-123456",
+			currentStep: 0,
+			outputFile: "/tmp/out.log",
+			startedAt: NOW - 2_000,
+			status: "failed",
+			steps: [{ agent: "scout", durationMs: 500, error: "kaboom: unexpected failure", status: "failed", tokens: 10 }],
+			stepsTotal: 1,
+			updatedAt: NOW,
+		};
+
+		const state = createFleetState();
+		state.screen = "detail";
+		state.selectedId = job.asyncId;
+		const text = renderFleetDetail(state, job, 20, theme, NOW).join("\n");
+		expect(text).toContain("kaboom");
+		expect(text).toContain("…");
 	});
 
 	it("r refreshes anywhere and q closes only from list", () => {
@@ -320,5 +478,30 @@ describe("FleetInspectorComponent", () => {
 		setJobs([]);
 		component.refresh();
 		expect(component.render(84).join("\n")).toContain("Run no longer active");
+	});
+
+	it("renders the list screen from the component", () => {
+		const { component } = makeComponent([makeJob()]);
+		const text = component.render(84).join("\n");
+		expect(text).toContain("Subagent fleet");
+		expect(text).toContain("▸ ● ● scout");
+	});
+
+	it("re-renders without acting on unmapped keys", () => {
+		const { component, tui } = makeComponent([makeJob()]);
+		component.handleInput("z");
+		expect(component["state"].screen).toBe("list");
+		expect(tui.requestRender).toHaveBeenCalled();
+	});
+
+	it("toggles output expansion and refreshes on demand", () => {
+		const { component } = makeComponent([makeJob()]);
+		component.handleInput("\r");
+		component.handleInput("x");
+		expect(component["state"].expandedOutput).toBe(true);
+		component.handleInput("x");
+		expect(component["state"].expandedOutput).toBe(false);
+		component.handleInput("r");
+		expect(component["state"].screen).toBe("detail");
 	});
 });
