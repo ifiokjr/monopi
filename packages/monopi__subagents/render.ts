@@ -169,7 +169,7 @@ export function renderWidget(
 	const { theme } = ctx.ui;
 	const w = getTermWidth();
 	const lines: string[] = [];
-	lines.push(theme.fg("accent", "Async subagents"));
+	lines.push(truncLine(`${theme.fg("accent", "Async subagents")} ${theme.fg("dim", "· ctrl+alt+f fleet")}`, w));
 
 	for (const job of displayedJobs) {
 		const id = job.asyncId.slice(0, 6);

@@ -46,6 +46,7 @@ describe("registerSubagentCommands", () => {
 		registerSubagentCommands(pi as never, {
 			getBaseCwd: () => "/repo",
 			openAgentManager,
+			openFleetInspector: vi.fn(async () => {}),
 		});
 
 		await pi.commands.get("agents").handler("", {});
@@ -64,6 +65,7 @@ describe("registerSubagentCommands", () => {
 		registerSubagentCommands(pi as never, {
 			getBaseCwd: () => "/repo",
 			openAgentManager: vi.fn(),
+			openFleetInspector: vi.fn(),
 		});
 
 		await pi.commands.get("run").handler("unknown investigate", ctx);
@@ -98,6 +100,7 @@ describe("registerSubagentCommands", () => {
 		registerSubagentCommands(pi as never, {
 			getBaseCwd: () => "/repo",
 			openAgentManager: vi.fn(),
+			openFleetInspector: vi.fn(),
 		});
 
 		await pi.commands
@@ -129,6 +132,7 @@ describe("registerSubagentCommands", () => {
 		registerSubagentCommands(pi as never, {
 			getBaseCwd: () => "/repo",
 			openAgentManager: vi.fn(),
+			openFleetInspector: vi.fn(),
 		});
 
 		await pi.commands.get("parallel").handler('scout "inspect" -> planner "plan" -> reviewer "review"', ctx);

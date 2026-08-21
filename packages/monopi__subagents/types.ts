@@ -162,7 +162,10 @@ export interface AsyncStatus {
 	steps?: {
 		agent: string;
 		status: string;
+		startedAt?: number;
+		endedAt?: number;
 		durationMs?: number;
+		error?: string;
 		tokens?: TokenUsage;
 		skills?: string[];
 	}[];
