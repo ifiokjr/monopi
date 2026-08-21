@@ -1201,7 +1201,21 @@ describe("usage-tracker extension", () => {
 			const text = result.content[0].text;
 
 			expect(text).toContain("Anthropic auth token expired");
-			expect(text).toContain("re-authenticate in pi settings");
+			expect(text).toContain("Re-authenticate in pi settings");
+		});
+
+		it("reports a generic endpoint failure for the Anthropic OAuth usage endpoint", async () => {
+			mockFetch.mockResolvedValue(makeFetchResponse({ status: 503, ok: false }));
+
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ctx);
+
+			const tool = pi._tools.get("usage_report");
+			const result = await runWithTimers(() => tool.execute("id", { format: "detailed" }, undefined, undefined, ctx));
+			const text = result.content[0].text;
+
+			expect(text).toContain("Anthropic OAuth usage endpoint returned 503");
+			expect(text).toContain("rate limit details unavailable");
 		});
 
 		it("shows a non-auth note when Anthropic OAuth usage endpoint is rate-limited", async () => {
@@ -1236,7 +1250,58 @@ describe("usage-tracker extension", () => {
 			const text = result.content[0].text;
 
 			expect(text).toContain("OpenAI auth token expired");
-			expect(text).toContain("re-authenticate in pi settings");
+			expect(text).toContain("Re-authenticate in pi settings");
+		});
+
+		it("shows a placeholder when no provider probe has produced data", async () => {
+			delete process.env.OLLAMA_API_KEY;
+			delete process.env.OLLAMA_HOST;
+			delete process.env.OLLAMA_HOST_CLOUD;
+			(readFileSync as ReturnType<typeof vi.fn>).mockImplementation((path: string) => {
+				if (String(path).includes("auth.json")) {
+					return "{}";
+				}
+				return "{}";
+			});
+			ctx.model = { id: "unknown-model" } as any;
+
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ctx);
+
+			const tool = pi._tools.get("usage_report");
+			const result = await runWithTimers(() => tool.execute("id", { format: "detailed" }, undefined, undefined, ctx));
+			const text = result.content[0].text;
+			expect(text).toContain("No rate limit data yet; will probe after next turn");
+		});
+
+		it("shows a placeholder in the usage overlay when no rate limit data exists", async () => {
+			delete process.env.OLLAMA_API_KEY;
+			delete process.env.OLLAMA_HOST;
+			delete process.env.OLLAMA_HOST_CLOUD;
+			(readFileSync as ReturnType<typeof vi.fn>).mockImplementation((path: string) => {
+				if (String(path).includes("auth.json")) {
+					return "{}";
+				}
+				return "{}";
+			});
+			ctx.model = { id: "claude-sonnet-4-20250514", provider: "anthropic" } as any;
+
+			usageTracker(pi as any);
+
+			await runWithTimers(() => pi._commands.get("usage").handler("anthropic", ctx));
+			expect(ctx.ui.custom).toHaveBeenCalledWith(expect.any(Function), expect.objectContaining({ overlay: true }));
+
+			const rendererFactory = (ctx.ui.custom as ReturnType<typeof vi.fn>).mock.calls[0][0] as (...args: unknown[]) => {
+				render: (width: number) => string[];
+			};
+			const component = rendererFactory(
+				{ requestRender: vi.fn() },
+				{ fg: (_color: string, text: string) => text },
+				{},
+				vi.fn(),
+			);
+			const rendered = component.render(220).join("\n");
+			expect(rendered).toContain("No rate limit data yet; will probe after next turn");
 		});
 
 		it("shows no-auth note when provider has no token configured", async () => {
@@ -1264,6 +1329,21 @@ describe("usage-tracker extension", () => {
 
 			expect(text).toContain("No pi auth configured for OpenAI");
 			expect(text).toContain("Run pi login");
+		});
+
+		it("reports a generic endpoint failure for the OpenAI usage endpoint", async () => {
+			ctx.model = { id: "gpt-4o" } as any;
+			mockFetch.mockResolvedValue(makeFetchResponse({ status: 502, ok: false }));
+
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ctx);
+
+			const tool = pi._tools.get("usage_report");
+			const result = await runWithTimers(() => tool.execute("id", { format: "detailed" }, undefined, undefined, ctx));
+			const text = result.content[0].text;
+
+			expect(text).toContain("OpenAI usage endpoint returned 502");
+			expect(text).toContain("rate limit details unavailable");
 		});
 	});
 

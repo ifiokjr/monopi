@@ -339,7 +339,7 @@ export async function probeAnthropicDirect(token: string): Promise<ProviderRateL
 			});
 
 			if (response.status === 401) {
-				result.error = "Anthropic auth token expired \u2014 re-authenticate in pi settings.";
+				result.error = "Anthropic auth token expired. Re-authenticate in pi settings.";
 				return result;
 			}
 			if (response.status === 429) {
@@ -393,7 +393,7 @@ export async function probeAnthropicDirect(token: string): Promise<ProviderRateL
 		});
 
 		if (response.status === 401) {
-			result.error = "Anthropic auth token expired \u2014 re-authenticate in pi settings.";
+			result.error = "Anthropic auth token expired. Re-authenticate in pi settings.";
 			return result;
 		}
 		if (!response.ok) {

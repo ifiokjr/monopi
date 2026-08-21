@@ -228,4 +228,18 @@ describe("evaluateCorpus", () => {
 		expect(text).toContain("Mismatched: 1");
 		expect(text).toContain("model: got");
 	});
+
+	it("formats field-level mismatches with expected and actual values", () => {
+		const badIntentExample: CorpusEntry = {
+			...cheapQnaExample,
+			expectedIntent: "design",
+		};
+
+		const result = evaluateCorpus([badIntentExample], {
+			config: DEFAULT_ADAPTIVE_ROUTING_CONFIG,
+			candidates,
+		});
+		const text = formatEvaluationSummary(result);
+		expect(text).toContain("expected design, got quick-qna");
+	});
 });

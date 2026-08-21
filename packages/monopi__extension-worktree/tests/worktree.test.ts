@@ -307,4 +307,69 @@ describe("worktree extension", () => {
 		expect(worktreeShared.removeManagedWorktree).not.toHaveBeenCalled();
 		expect(harness.notifications.at(-1)?.msg).toContain("pi only cleans pi-owned worktrees by default");
 	});
+
+	it("reports skipped worktrees when cleaning a pi-owned checkout", async () => {
+		const harness = createExtensionHarness();
+		harness.ctx.cwd = "/repo";
+		worktreeShared.getRepoWorktreeContext.mockReturnValue(makeSnapshot());
+		worktreeShared.removeManagedWorktree.mockReturnValue({
+			metadata: { branch: "feat/other" },
+			note: "removed",
+		} as never);
+		worktreeShared.getRepoWorktreeSnapshot.mockReturnValue(
+			makeSnapshot({
+				currentWorktreeRoot: "/repo/wt-current",
+				worktrees: [
+					{
+						path: "/repo/wt-current",
+						branch: "feat/current",
+						head: "abc",
+						bare: false,
+						detached: false,
+						lockedReason: null,
+						prunableReason: null,
+						isMain: false,
+						isCurrent: true,
+						isManaged: true,
+						metadata: {
+							owner: { instanceId: "pi-test-instance", hostname: "test-host", pid: 123, createdFromCwd: "/repo" },
+							purpose: "test",
+							worktreePath: "/repo/wt-current",
+							branch: "feat/current",
+							createdAt: 0,
+							lastSeenAt: 0,
+						},
+					},
+					{
+						path: "/repo/wt-other",
+						branch: "feat/other",
+						head: "abc",
+						bare: false,
+						detached: false,
+						lockedReason: null,
+						prunableReason: null,
+						isMain: false,
+						isCurrent: false,
+						isManaged: true,
+						metadata: {
+							owner: { instanceId: "pi-test-instance", hostname: "test-host", pid: 123, createdFromCwd: "/repo" },
+							purpose: "test",
+							worktreePath: "/repo/wt-other",
+							branch: "feat/other",
+							createdAt: 0,
+							lastSeenAt: 0,
+						},
+					},
+				],
+			}),
+		);
+
+		worktreeExtension(harness.pi as never);
+		await harness.commands.get("worktree").handler("cleanup all", harness.ctx);
+
+		expect(worktreeShared.removeManagedWorktree).toHaveBeenCalledTimes(1);
+		expect(harness.messages.at(-1)?.content).toContain(
+			"feat/current: current session is running inside this worktree.",
+		);
+	});
 });
