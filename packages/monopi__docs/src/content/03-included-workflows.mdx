@@ -17,9 +17,9 @@ Pi-owned worktrees live under shared Pi storage and carry owner/purpose metadata
 
 `@monopi/subagents` supports three execution shapes:
 
-- **single** — run one named specialist
-- **chain** — pass each step's result to the next step
-- **parallel** — fan independent work out concurrently
+- **single**: run one named specialist
+- **chain**: pass each step's result to the next step
+- **parallel**: fan independent work out concurrently
 
 ```text
 /run scout Find where authentication is implemented
@@ -73,11 +73,11 @@ This is useful for quick explanations, competing ideas, and questions you do not
 
 The default UI packages expose different levels of feedback:
 
-- **custom footer** — model, thinking level, tokens, cost, context, cwd, branch, and worktree state
-- **tool metadata** — start/end time, duration, approximate I/O size, and context snapshots
-- **diagnostics** — prompt-level and per-turn timing
-- **usage tracker** — provider quotas, rolling cost history, and per-model usage
-- **watchdog** — CPU, memory, event-loop, startup, and blame reports with a reduced-churn safe mode
+- **custom footer**: model, thinking level, tokens, cost, context, cwd, branch, and worktree state
+- **tool metadata**: start/end time, duration, approximate I/O size, and context snapshots
+- **diagnostics**: prompt-level and per-turn timing
+- **usage tracker**: provider quotas, rolling cost history, and per-model usage
+- **watchdog**: CPU, memory, event-loop, startup, and blame reports with a reduced-churn safe mode
 
 Common surfaces are `/status`, `/diagnostics`, `/usage`, `/watchdog`, and the `usage_report` tool.
 
