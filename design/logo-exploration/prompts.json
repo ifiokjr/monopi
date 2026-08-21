@@ -1,5 +1,20 @@
 [
-	{ "file": "01-pixel-pi-classic.png", "name": "Pixel pi, 8-bit", "desc": "Round-2 #5 and #9 merged: a classic 8-bit pixel pi sprite.", "prompt": "retro pixel art logo icon centered on solid black background, greek letter pi symbol built from chunky square pixels, purple violet body with teal cyan highlight pixels on the top bar, crisp aliased edges, flat colors, no anti-aliasing, no gradients, no text, 8-bit sprite style" },
-	{ "file": "02-pixel-cluster-pi.png", "name": "Pixel cluster + pi", "desc": "Round-2 #7 with the requested pi symbol nested into the cluster.", "prompt": "retro pixel art logo icon centered on solid dark charcoal background, large abstract letter m shape made of chunky purple square pixels with a smaller greek letter pi symbol made of bright teal cyan pixels nested at its lower right corner, crisp aliased pixel edges, flat colors, no anti-aliasing, no text" },
-	{ "file": "03-neon-pixel-pi.png", "name": "Neon pixel pi", "desc": "Round-2 #9 as pixels: chunky glowing blocks, neon bloom.", "prompt": "logo icon centered on pure black background, greek letter pi drawn from chunky glowing pixel blocks, neon cyan glow with soft bloom around deep purple pixel cores, hybrid of retro pixel art and neon sign aesthetic, subtle reflection below, dark ambient, no text" }
+	{
+		"file": "01-pixel-pi-classic.png",
+		"name": "Pixel pi, 8-bit",
+		"desc": "Round-2 #5 and #9 merged: a classic 8-bit pixel pi sprite.",
+		"prompt": "retro pixel art logo icon centered on solid black background, greek letter pi symbol built from chunky square pixels, purple violet body with teal cyan highlight pixels on the top bar, crisp aliased edges, flat colors, no anti-aliasing, no gradients, no text, 8-bit sprite style"
+	},
+	{
+		"file": "02-pixel-cluster-pi.png",
+		"name": "Pixel cluster + pi",
+		"desc": "Round-2 #7 with the requested pi symbol nested into the cluster.",
+		"prompt": "retro pixel art logo icon centered on solid dark charcoal background, large abstract letter m shape made of chunky purple square pixels with a smaller greek letter pi symbol made of bright teal cyan pixels nested at its lower right corner, crisp aliased pixel edges, flat colors, no anti-aliasing, no text"
+	},
+	{
+		"file": "03-neon-pixel-pi.png",
+		"name": "Neon pixel pi",
+		"desc": "Round-2 #9 as pixels: chunky glowing blocks, neon bloom.",
+		"prompt": "logo icon centered on pure black background, greek letter pi drawn from chunky glowing pixel blocks, neon cyan glow with soft bloom around deep purple pixel cores, hybrid of retro pixel art and neon sign aesthetic, subtle reflection below, dark ambient, no text"
+	}
 ]

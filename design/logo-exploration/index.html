@@ -1,226 +1,496 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>monopi logo exploration</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐜</text></svg>" />
-<style>
-	:root {
-		color-scheme: dark;
-		--bg: #0d1117;
-		--panel: #161b27;
-		--panel-2: #1d2433;
-		--line: #2a3347;
-		--ink: #e8edf6;
-		--muted: #8b96ab;
-		--purple: #7c3aed;
-		--cyan: #00d4aa;
-	}
-	* { box-sizing: border-box; }
-	body {
-		margin: 0;
-		background:
-			radial-gradient(1200px 500px at 70% -10%, rgba(124, 58, 237, 0.14), transparent 60%),
-			radial-gradient(900px 400px at 10% 110%, rgba(0, 212, 170, 0.08), transparent 60%),
-			var(--bg);
-		color: var(--ink);
-		font-family: ui-sans-serif, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
-		line-height: 1.5;
-		padding: 40px clamp(16px, 4vw, 56px) 120px;
-	}
-	header { max-width: 1280px; margin: 0 auto 28px; }
-	h1 { margin: 0 0 6px; font-size: 26px; letter-spacing: -0.02em; }
-	h1 .ant { color: var(--cyan); }
-	.sub { color: var(--muted); margin: 0; max-width: 72ch; }
-	.sub code { color: var(--cyan); font-size: 0.92em; }
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>monopi logo exploration</title>
+		<link
+			rel="icon"
+			href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐜</text></svg>"
+		/>
+		<style>
+			:root {
+				color-scheme: dark;
+				--bg: #0d1117;
+				--panel: #161b27;
+				--panel-2: #1d2433;
+				--line: #2a3347;
+				--ink: #e8edf6;
+				--muted: #8b96ab;
+				--purple: #7c3aed;
+				--cyan: #00d4aa;
+			}
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				margin: 0;
+				background:
+					radial-gradient(1200px 500px at 70% -10%, rgba(124, 58, 237, 0.14), transparent 60%),
+					radial-gradient(900px 400px at 10% 110%, rgba(0, 212, 170, 0.08), transparent 60%), var(--bg);
+				color: var(--ink);
+				font-family: ui-sans-serif, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+				line-height: 1.5;
+				padding: 40px clamp(16px, 4vw, 56px) 120px;
+			}
+			header {
+				max-width: 1280px;
+				margin: 0 auto 28px;
+			}
+			h1 {
+				margin: 0 0 6px;
+				font-size: 26px;
+				letter-spacing: -0.02em;
+			}
+			h1 .ant {
+				color: var(--cyan);
+			}
+			.sub {
+				color: var(--muted);
+				margin: 0;
+				max-width: 72ch;
+			}
+			.sub code {
+				color: var(--cyan);
+				font-size: 0.92em;
+			}
 
-	.grid {
-		max-width: 1280px; margin: 0 auto;
-		display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;
-	}
-	.card {
-		background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
-		overflow: hidden; display: flex; flex-direction: column;
-		transition: border-color 0.15s ease, box-shadow 0.15s ease;
-	}
-	.card:hover { border-color: #3b4763; }
-	.card.picked { border-color: var(--cyan); box-shadow: 0 0 0 1px var(--cyan), 0 12px 32px rgba(0, 212, 170, 0.12); }
-	.thumb-wrap { position: relative; background: #0a0e15; cursor: zoom-in; }
-	.thumb-wrap img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
-	.badge {
-		position: absolute; top: 10px; left: 10px; width: 30px; height: 30px;
-		border-radius: 50%; background: rgba(13, 17, 23, 0.85); border: 1px solid var(--line);
-		display: grid; place-items: center; font-weight: 700; font-size: 13px; color: var(--muted);
-	}
-	.card.picked .badge { background: var(--cyan); color: #04211b; border-color: var(--cyan); }
-	.pick-flag {
-		position: absolute; top: 10px; right: 10px; padding: 3px 9px; border-radius: 999px;
-		font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-		background: var(--cyan); color: #04211b; opacity: 0; transform: translateY(-4px);
-		transition: all 0.15s ease;
-	}
-	.card.picked .pick-flag { opacity: 1; transform: none; }
-	.body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
-	.name { font-weight: 650; font-size: 15px; }
-	.desc { color: var(--muted); font-size: 13px; margin: 0; flex: 1; }
-	.stars { display: flex; gap: 4px; align-items: center; }
-	.star {
-		background: none; border: none; font-size: 19px; line-height: 1; cursor: pointer;
-		color: #39445c; padding: 2px; transition: color 0.1s ease, transform 0.1s ease;
-	}
-	.star:hover { transform: scale(1.15); }
-	.star.on { color: var(--cyan); }
-	.stars .label { margin-left: 8px; font-size: 11px; color: var(--muted); }
-	.actions { display: flex; gap: 8px; }
-	button.btn {
-		flex: 1; padding: 8px 10px; border-radius: 9px; cursor: pointer; font-size: 13px; font-weight: 600;
-		border: 1px solid var(--line); background: var(--panel-2); color: var(--ink);
-		transition: all 0.12s ease;
-	}
-	button.btn:hover { border-color: #46536f; }
-	button.btn.primary.picked { background: var(--cyan); border-color: var(--cyan); color: #04211b; }
-	button.btn.iterate.active { border-color: var(--purple); color: #d9c8fb; background: rgba(124, 58, 237, 0.16); }
+			.grid {
+				max-width: 1280px;
+				margin: 0 auto;
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+				gap: 20px;
+			}
+			.card {
+				background: var(--panel);
+				border: 1px solid var(--line);
+				border-radius: 14px;
+				overflow: hidden;
+				display: flex;
+				flex-direction: column;
+				transition:
+					border-color 0.15s ease,
+					box-shadow 0.15s ease;
+			}
+			.card:hover {
+				border-color: #3b4763;
+			}
+			.card.picked {
+				border-color: var(--cyan);
+				box-shadow:
+					0 0 0 1px var(--cyan),
+					0 12px 32px rgba(0, 212, 170, 0.12);
+			}
+			.thumb-wrap {
+				position: relative;
+				background: #0a0e15;
+				cursor: zoom-in;
+			}
+			.thumb-wrap img {
+				display: block;
+				width: 100%;
+				aspect-ratio: 1;
+				object-fit: cover;
+			}
+			.badge {
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				width: 30px;
+				height: 30px;
+				border-radius: 50%;
+				background: rgba(13, 17, 23, 0.85);
+				border: 1px solid var(--line);
+				display: grid;
+				place-items: center;
+				font-weight: 700;
+				font-size: 13px;
+				color: var(--muted);
+			}
+			.card.picked .badge {
+				background: var(--cyan);
+				color: #04211b;
+				border-color: var(--cyan);
+			}
+			.pick-flag {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				padding: 3px 9px;
+				border-radius: 999px;
+				font-size: 11px;
+				font-weight: 700;
+				letter-spacing: 0.06em;
+				text-transform: uppercase;
+				background: var(--cyan);
+				color: #04211b;
+				opacity: 0;
+				transform: translateY(-4px);
+				transition: all 0.15s ease;
+			}
+			.card.picked .pick-flag {
+				opacity: 1;
+				transform: none;
+			}
+			.body {
+				padding: 14px 16px 16px;
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+				flex: 1;
+			}
+			.name {
+				font-weight: 650;
+				font-size: 15px;
+			}
+			.desc {
+				color: var(--muted);
+				font-size: 13px;
+				margin: 0;
+				flex: 1;
+			}
+			.stars {
+				display: flex;
+				gap: 4px;
+				align-items: center;
+			}
+			.star {
+				background: none;
+				border: none;
+				font-size: 19px;
+				line-height: 1;
+				cursor: pointer;
+				color: #39445c;
+				padding: 2px;
+				transition:
+					color 0.1s ease,
+					transform 0.1s ease;
+			}
+			.star:hover {
+				transform: scale(1.15);
+			}
+			.star.on {
+				color: var(--cyan);
+			}
+			.stars .label {
+				margin-left: 8px;
+				font-size: 11px;
+				color: var(--muted);
+			}
+			.actions {
+				display: flex;
+				gap: 8px;
+			}
+			button.btn {
+				flex: 1;
+				padding: 8px 10px;
+				border-radius: 9px;
+				cursor: pointer;
+				font-size: 13px;
+				font-weight: 600;
+				border: 1px solid var(--line);
+				background: var(--panel-2);
+				color: var(--ink);
+				transition: all 0.12s ease;
+			}
+			button.btn:hover {
+				border-color: #46536f;
+			}
+			button.btn.primary.picked {
+				background: var(--cyan);
+				border-color: var(--cyan);
+				color: #04211b;
+			}
+			button.btn.iterate.active {
+				border-color: var(--purple);
+				color: #d9c8fb;
+				background: rgba(124, 58, 237, 0.16);
+			}
 
-	/* inline iterate panel */
-	.iterate-panel { display: none; flex-direction: column; gap: 8px; }
-	.iterate-panel.open { display: flex; }
-	.iterate-panel textarea {
-		width: 100%; min-height: 64px; resize: vertical; border-radius: 9px;
-		border: 1px solid var(--purple); background: #0a0e15; color: var(--ink);
-		padding: 9px 11px; font: inherit; font-size: 13px;
-	}
-	.iterate-panel textarea:focus { outline: none; box-shadow: 0 0 0 1px var(--purple); }
-	.iterate-panel .row { display: flex; gap: 8px; justify-content: flex-end; }
-	.iterate-panel .row button {
-		padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 12.5px; font-weight: 650; border: none;
-	}
-	.iterate-panel .save { background: var(--purple); color: white; }
-	.iterate-panel .save:hover { filter: brightness(1.15); }
-	.iterate-panel .cancel { background: transparent; color: var(--muted); border: 1px solid var(--line); }
-	.request-chip {
-		display: none; align-items: flex-start; gap: 8px; padding: 8px 11px; border-radius: 9px;
-		background: rgba(124, 58, 237, 0.14); border: 1px dashed var(--purple);
-		font-size: 12.5px; color: #d9c8fb;
-	}
-	.request-chip.show { display: flex; }
-	.request-chip .text { flex: 1; overflow-wrap: anywhere; }
-	.request-chip .edit {
-		background: none; border: none; color: var(--muted); cursor: pointer; font-size: 12px;
-		text-decoration: underline; padding: 0;
-	}
+			/* inline iterate panel */
+			.iterate-panel {
+				display: none;
+				flex-direction: column;
+				gap: 8px;
+			}
+			.iterate-panel.open {
+				display: flex;
+			}
+			.iterate-panel textarea {
+				width: 100%;
+				min-height: 64px;
+				resize: vertical;
+				border-radius: 9px;
+				border: 1px solid var(--purple);
+				background: #0a0e15;
+				color: var(--ink);
+				padding: 9px 11px;
+				font: inherit;
+				font-size: 13px;
+			}
+			.iterate-panel textarea:focus {
+				outline: none;
+				box-shadow: 0 0 0 1px var(--purple);
+			}
+			.iterate-panel .row {
+				display: flex;
+				gap: 8px;
+				justify-content: flex-end;
+			}
+			.iterate-panel .row button {
+				padding: 6px 14px;
+				border-radius: 8px;
+				cursor: pointer;
+				font-size: 12.5px;
+				font-weight: 650;
+				border: none;
+			}
+			.iterate-panel .save {
+				background: var(--purple);
+				color: white;
+			}
+			.iterate-panel .save:hover {
+				filter: brightness(1.15);
+			}
+			.iterate-panel .cancel {
+				background: transparent;
+				color: var(--muted);
+				border: 1px solid var(--line);
+			}
+			.request-chip {
+				display: none;
+				align-items: flex-start;
+				gap: 8px;
+				padding: 8px 11px;
+				border-radius: 9px;
+				background: rgba(124, 58, 237, 0.14);
+				border: 1px dashed var(--purple);
+				font-size: 12.5px;
+				color: #d9c8fb;
+			}
+			.request-chip.show {
+				display: flex;
+			}
+			.request-chip .text {
+				flex: 1;
+				overflow-wrap: anywhere;
+			}
+			.request-chip .edit {
+				background: none;
+				border: none;
+				color: var(--muted);
+				cursor: pointer;
+				font-size: 12px;
+				text-decoration: underline;
+				padding: 0;
+			}
 
-	/* bottom feedback */
-	.feedback {
-		max-width: 1280px; margin: 34px auto 0; background: var(--panel);
-		border: 1px solid var(--line); border-radius: 14px; padding: 22px;
-	}
-	.feedback h2 { margin: 0 0 4px; font-size: 18px; }
-	.feedback p.hint { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
-	.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
-	.chip {
-		padding: 6px 13px; border-radius: 999px; border: 1px solid var(--line);
-		background: transparent; color: var(--muted); cursor: pointer; font-size: 13px;
-	}
-	.chip:hover { border-color: var(--purple); color: var(--ink); }
-	.chip.on { background: rgba(124, 58, 237, 0.22); border-color: var(--purple); color: #d9c8fb; }
-	textarea#notes {
-		width: 100%; min-height: 90px; resize: vertical; border-radius: 10px;
-		border: 1px solid var(--line); background: #0a0e15; color: var(--ink);
-		padding: 12px 14px; font: inherit; font-size: 14px;
-	}
-	textarea#notes:focus { outline: none; border-color: var(--purple); }
-	.submit-row { display: flex; align-items: center; gap: 14px; margin-top: 14px; }
-	.pending-note { font-size: 13px; color: var(--muted); }
-	.pending-note strong { color: #d9c8fb; }
-	#submit {
-		padding: 10px 26px; border-radius: 10px; border: none; cursor: pointer;
-		font-size: 15px; font-weight: 700;
-		background: linear-gradient(100deg, var(--purple), #5636c9);
-		color: white;
-	}
-	#submit:hover { filter: brightness(1.12); }
-	#submit:disabled { opacity: 0.55; cursor: default; }
-	#status { font-size: 13px; color: var(--muted); }
-	#status.ok { color: var(--cyan); }
-	#status.err { color: #ff7b72; }
+			/* bottom feedback */
+			.feedback {
+				max-width: 1280px;
+				margin: 34px auto 0;
+				background: var(--panel);
+				border: 1px solid var(--line);
+				border-radius: 14px;
+				padding: 22px;
+			}
+			.feedback h2 {
+				margin: 0 0 4px;
+				font-size: 18px;
+			}
+			.feedback p.hint {
+				margin: 0 0 14px;
+				color: var(--muted);
+				font-size: 13px;
+			}
+			.chips {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 8px;
+				margin-bottom: 14px;
+			}
+			.chip {
+				padding: 6px 13px;
+				border-radius: 999px;
+				border: 1px solid var(--line);
+				background: transparent;
+				color: var(--muted);
+				cursor: pointer;
+				font-size: 13px;
+			}
+			.chip:hover {
+				border-color: var(--purple);
+				color: var(--ink);
+			}
+			.chip.on {
+				background: rgba(124, 58, 237, 0.22);
+				border-color: var(--purple);
+				color: #d9c8fb;
+			}
+			textarea#notes {
+				width: 100%;
+				min-height: 90px;
+				resize: vertical;
+				border-radius: 10px;
+				border: 1px solid var(--line);
+				background: #0a0e15;
+				color: var(--ink);
+				padding: 12px 14px;
+				font: inherit;
+				font-size: 14px;
+			}
+			textarea#notes:focus {
+				outline: none;
+				border-color: var(--purple);
+			}
+			.submit-row {
+				display: flex;
+				align-items: center;
+				gap: 14px;
+				margin-top: 14px;
+			}
+			.pending-note {
+				font-size: 13px;
+				color: var(--muted);
+			}
+			.pending-note strong {
+				color: #d9c8fb;
+			}
+			#submit {
+				padding: 10px 26px;
+				border-radius: 10px;
+				border: none;
+				cursor: pointer;
+				font-size: 15px;
+				font-weight: 700;
+				background: linear-gradient(100deg, var(--purple), #5636c9);
+				color: white;
+			}
+			#submit:hover {
+				filter: brightness(1.12);
+			}
+			#submit:disabled {
+				opacity: 0.55;
+				cursor: default;
+			}
+			#status {
+				font-size: 13px;
+				color: var(--muted);
+			}
+			#status.ok {
+				color: var(--cyan);
+			}
+			#status.err {
+				color: #ff7b72;
+			}
 
-	.lightbox {
-		position: fixed; inset: 0; background: rgba(4, 6, 10, 0.88); display: none;
-		align-items: center; justify-content: center; z-index: 50; cursor: zoom-out;
-	}
-	.lightbox.open { display: flex; }
-	.lightbox img { max-width: min(86vw, 860px); max-height: 86vh; border-radius: 12px; border: 1px solid var(--line); }
-</style>
-</head>
-<body>
-<header>
-	<h1>monopi logo exploration <span style="color: var(--muted); font-size: 16px; font-weight: 500">· round 3 · pixel π</span></h1>
-	<p class="sub">Round 3, from your round-2 feedback (pixel art + the pi symbol). Three takes:
-	classic 8-bit sprite, the cluster with a nested pi, and a neon-pixel hybrid.
-	Same loop as before: zoom, rate, iterate per card, submit straight back to the agent.</p>
-</header>
+			.lightbox {
+				position: fixed;
+				inset: 0;
+				background: rgba(4, 6, 10, 0.88);
+				display: none;
+				align-items: center;
+				justify-content: center;
+				z-index: 50;
+				cursor: zoom-out;
+			}
+			.lightbox.open {
+				display: flex;
+			}
+			.lightbox img {
+				max-width: min(86vw, 860px);
+				max-height: 86vh;
+				border-radius: 12px;
+				border: 1px solid var(--line);
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<h1>
+				monopi logo exploration
+				<span style="color: var(--muted); font-size: 16px; font-weight: 500">· round 3 · pixel π</span>
+			</h1>
+			<p class="sub">
+				Round 3, from your round-2 feedback (pixel art + the pi symbol). Three takes: classic 8-bit sprite, the cluster
+				with a nested pi, and a neon-pixel hybrid. Same loop as before: zoom, rate, iterate per card, submit straight
+				back to the agent.
+			</p>
+		</header>
 
-<div class="grid" id="grid"></div>
+		<div class="grid" id="grid"></div>
 
-<div class="feedback">
-	<h2>General feedback</h2>
-	<p class="hint">Optional. Per-card requests live on the cards; anything global goes here.</p>
-	<div class="chips" id="chips"></div>
-	<textarea id="notes" placeholder="Anything overall? e.g. 'I like the hexagon family, explore lighter backgrounds next round'"></textarea>
-	<div class="submit-row">
-		<button id="submit">Send feedback</button>
-		<span class="pending-note" id="pending"></span>
-		<span id="status"></span>
-	</div>
-</div>
+		<div class="feedback">
+			<h2>General feedback</h2>
+			<p class="hint">Optional. Per-card requests live on the cards; anything global goes here.</p>
+			<div class="chips" id="chips"></div>
+			<textarea
+				id="notes"
+				placeholder="Anything overall? e.g. 'I like the hexagon family, explore lighter backgrounds next round'"
+			></textarea>
+			<div class="submit-row">
+				<button id="submit">Send feedback</button>
+				<span class="pending-note" id="pending"></span>
+				<span id="status"></span>
+			</div>
+		</div>
 
-<div class="lightbox" id="lightbox"><img alt="" id="lightbox-img" /></div>
+		<div class="lightbox" id="lightbox"><img alt="" id="lightbox-img" /></div>
 
-<script>
-	const CANDIDATES = [
-	{
-		"file": "01-pixel-pi-classic.png",
-		"name": "Pixel pi, 8-bit",
-		"desc": "Round-2 #5 and #9 merged: a classic 8-bit pixel pi sprite.",
-		"prompt": "retro pixel art logo icon centered on solid black background, greek letter pi symbol built from chunky square pixels, purple violet body with teal cyan highlight pixels on the top bar, crisp aliased edges, flat colors, no anti-aliasing, no gradients, no text, 8-bit sprite style"
-	},
-	{
-		"file": "02-pixel-cluster-pi.png",
-		"name": "Pixel cluster + pi",
-		"desc": "Round-2 #7 with the requested pi symbol nested into the cluster.",
-		"prompt": "retro pixel art logo icon centered on solid dark charcoal background, large abstract letter m shape made of chunky purple square pixels with a smaller greek letter pi symbol made of bright teal cyan pixels nested at its lower right corner, crisp aliased pixel edges, flat colors, no anti-aliasing, no text"
-	},
-	{
-		"file": "03-neon-pixel-pi.png",
-		"name": "Neon pixel pi",
-		"desc": "Round-2 #9 as pixels: chunky glowing blocks, neon bloom.",
-		"prompt": "logo icon centered on pure black background, greek letter pi drawn from chunky glowing pixel blocks, neon cyan glow with soft bloom around deep purple pixel cores, hybrid of retro pixel art and neon sign aesthetic, subtle reflection below, dark ambient, no text"
-	}
-];
-	const CHIPS = [
-		"more minimal", "light background version", "add a wordmark", "different palette",
-		"rounder shapes", "sharper edges", "keep direction, new variation", "drop this direction",
-	];
+		<script>
+			const CANDIDATES = [
+				{
+					file: "01-pixel-pi-classic.png",
+					name: "Pixel pi, 8-bit",
+					desc: "Round-2 #5 and #9 merged: a classic 8-bit pixel pi sprite.",
+					prompt:
+						"retro pixel art logo icon centered on solid black background, greek letter pi symbol built from chunky square pixels, purple violet body with teal cyan highlight pixels on the top bar, crisp aliased edges, flat colors, no anti-aliasing, no gradients, no text, 8-bit sprite style",
+				},
+				{
+					file: "02-pixel-cluster-pi.png",
+					name: "Pixel cluster + pi",
+					desc: "Round-2 #7 with the requested pi symbol nested into the cluster.",
+					prompt:
+						"retro pixel art logo icon centered on solid dark charcoal background, large abstract letter m shape made of chunky purple square pixels with a smaller greek letter pi symbol made of bright teal cyan pixels nested at its lower right corner, crisp aliased pixel edges, flat colors, no anti-aliasing, no text",
+				},
+				{
+					file: "03-neon-pixel-pi.png",
+					name: "Neon pixel pi",
+					desc: "Round-2 #9 as pixels: chunky glowing blocks, neon bloom.",
+					prompt:
+						"logo icon centered on pure black background, greek letter pi drawn from chunky glowing pixel blocks, neon cyan glow with soft bloom around deep purple pixel cores, hybrid of retro pixel art and neon sign aesthetic, subtle reflection below, dark ambient, no text",
+				},
+			];
+			const CHIPS = [
+				"more minimal",
+				"light background version",
+				"add a wordmark",
+				"different palette",
+				"rounder shapes",
+				"sharper edges",
+				"keep direction, new variation",
+				"drop this direction",
+			];
 
-	let picked = null;
-	const ratings = {};
-	const requests = {};
-	const chipState = new Set();
+			let picked = null;
+			const ratings = {};
+			const requests = {};
+			const chipState = new Set();
 
-	const grid = document.getElementById("grid");
-	const pendingEl = document.getElementById("pending");
+			const grid = document.getElementById("grid");
+			const pendingEl = document.getElementById("pending");
 
-	function refreshPending() {
-		const count = Object.keys(requests).length;
-		pendingEl.textContent = count === 0 ? "" : `${count} iteration request${count > 1 ? "s" : ""} attached`;
-	}
+			function refreshPending() {
+				const count = Object.keys(requests).length;
+				pendingEl.textContent = count === 0 ? "" : `${count} iteration request${count > 1 ? "s" : ""} attached`;
+			}
 
-	CANDIDATES.forEach((candidate, index) => {
-		const card = document.createElement("div");
-		card.className = "card";
-		card.id = `card-${index}`;
-		card.innerHTML = `
+			CANDIDATES.forEach((candidate, index) => {
+				const card = document.createElement("div");
+				card.className = "card";
+				card.id = `card-${index}`;
+				card.innerHTML = `
 			<div class="thumb-wrap">
 				<img src="candidates/${candidate.file}" alt="${candidate.name}" loading="lazy" />
 				<span class="badge">${index + 1}</span>
@@ -247,162 +517,171 @@
 				</div>
 			</div>`;
 
-		const panel = card.querySelector(".iterate-panel");
-		const iterateBtn = card.querySelector(".btn.iterate");
-		const chip = card.querySelector(".request-chip");
-		const primaryBtn = card.querySelector(".btn.primary");
+				const panel = card.querySelector(".iterate-panel");
+				const iterateBtn = card.querySelector(".btn.iterate");
+				const chip = card.querySelector(".request-chip");
+				const primaryBtn = card.querySelector(".btn.primary");
 
-		card.querySelector(".thumb-wrap").addEventListener("click", () => {
-			document.getElementById("lightbox-img").src = `candidates/${candidate.file}`;
-			document.getElementById("lightbox").classList.add("open");
-		});
-
-		primaryBtn.addEventListener("click", () => {
-			if (picked === index) {
-				picked = null;
-				card.classList.remove("picked");
-				primaryBtn.textContent = "Pick favourite";
-				return;
-			}
-			picked = index;
-			document.querySelectorAll(".card").forEach((c) => c.classList.remove("picked"));
-			document.querySelectorAll(".btn.primary").forEach((b) => (b.textContent = "Pick favourite"));
-			card.classList.add("picked");
-			primaryBtn.textContent = "Picked ✓";
-		});
-
-		function openPanel() {
-			panel.classList.add("open");
-			iterateBtn.classList.add("active");
-			iterateBtn.textContent = "Cancel request";
-			panel.querySelector("textarea").focus();
-		}
-		function closePanel() {
-			panel.classList.remove("open");
-			iterateBtn.classList.remove("active");
-			iterateBtn.textContent = requests[index] ? "Edit request…" : "Iterate this…";
-		}
-
-		iterateBtn.addEventListener("click", () => {
-			if (panel.classList.contains("open")) {
-				closePanel();
-			} else {
-				document.querySelectorAll(".iterate-panel.open").forEach((p) => p.classList.remove("open"));
-				document.querySelectorAll(".btn.iterate.active").forEach((b) => {
-					b.classList.remove("active");
-					b.textContent = "Iterate this…";
+				card.querySelector(".thumb-wrap").addEventListener("click", () => {
+					document.getElementById("lightbox-img").src = `candidates/${candidate.file}`;
+					document.getElementById("lightbox").classList.add("open");
 				});
-				openPanel();
-			}
-		});
 
-		card.querySelector(".save").addEventListener("click", () => {
-			const value = panel.querySelector("textarea").value.trim();
-			if (!value) {
-				delete requests[index];
-				chip.classList.remove("show");
-			} else {
-				requests[index] = value;
-				chip.querySelector(".text").textContent = `↻ ${value}`;
-				chip.classList.add("show");
-			}
-			closePanel();
-			refreshPending();
-		});
-
-		card.querySelector(".cancel").addEventListener("click", closePanel);
-
-		chip.querySelector(".edit").addEventListener("click", () => {
-			panel.querySelector("textarea").value = requests[index] ?? "";
-			openPanel();
-		});
-
-		card.querySelectorAll(".star").forEach((star) => {
-			star.addEventListener("click", () => {
-				const value = Number(star.dataset.star);
-				ratings[index] = ratings[index] === value ? null : value;
-				card.querySelectorAll(".star").forEach((s) => {
-					s.classList.toggle("on", Number(s.dataset.star) <= (ratings[index] ?? 0));
+				primaryBtn.addEventListener("click", () => {
+					if (picked === index) {
+						picked = null;
+						card.classList.remove("picked");
+						primaryBtn.textContent = "Pick favourite";
+						return;
+					}
+					picked = index;
+					document.querySelectorAll(".card").forEach((c) => c.classList.remove("picked"));
+					document.querySelectorAll(".btn.primary").forEach((b) => (b.textContent = "Pick favourite"));
+					card.classList.add("picked");
+					primaryBtn.textContent = "Picked ✓";
 				});
-				card.querySelector(".label").textContent = ratings[index] ? `${ratings[index]}/5` : "";
-			});
-		});
 
-		grid.appendChild(card);
-	});
-
-	const chipsEl = document.getElementById("chips");
-	CHIPS.forEach((chipText) => {
-		const button = document.createElement("button");
-		button.className = "chip";
-		button.textContent = chipText;
-		button.addEventListener("click", () => {
-			chipState.has(chipText) ? chipState.delete(chipText) : chipState.add(chipText);
-			button.classList.toggle("on", chipState.has(chipText));
-		});
-		chipsEl.appendChild(button);
-	});
-
-	document.getElementById("lightbox").addEventListener("click", () => {
-		document.getElementById("lightbox").classList.remove("open");
-	});
-
-	async function send() {
-		const status = document.getElementById("status");
-		const payload = JSON.stringify({
-			type: "logo-exploration-round-3",
-			favourite: picked === null ? null : { index: picked + 1, name: CANDIDATES[picked].name },
-			ratings: Object.fromEntries(Object.entries(ratings).filter(([, v]) => v).map(([k, v]) => [Number(k) + 1, v])),
-			iterateRequests: Object.entries(requests).map(([k, v]) => ({ index: Number(k) + 1, name: CANDIDATES[Number(k)].name, request: v })),
-			globalChips: [...chipState],
-			notes: document.getElementById("notes").value.trim(),
-		});
-		for (let attempt = 1; attempt <= 3; attempt += 1) {
-			try {
-				const response = await fetch("/feedback", {
-					method: "POST",
-					headers: { "content-type": "application/json" },
-					body: payload,
-				});
-				if (!response.ok) throw new Error(`server responded ${response.status}`);
-				return true;
-			} catch (error) {
-				if (attempt === 3) {
-					status.textContent = `Could not send (${error.message}). `;
-					status.className = "err";
-					const copy = document.createElement("button");
-					copy.textContent = "Copy feedback";
-					copy.style.cssText = "margin-left:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);border-radius:6px;padding:2px 10px;cursor:pointer;font-size:12px";
-					copy.addEventListener("click", () => {
-						navigator.clipboard.writeText(payload).then(() => {
-							copy.textContent = "Copied ✓";
-							status.append(" Paste it to the agent in chat.");
-						});
-					});
-					status.append(copy);
-					return false;
+				function openPanel() {
+					panel.classList.add("open");
+					iterateBtn.classList.add("active");
+					iterateBtn.textContent = "Cancel request";
+					panel.querySelector("textarea").focus();
 				}
-				await new Promise((r) => setTimeout(r, 1500 * attempt));
-			}
-		}
-		return false;
-	}
+				function closePanel() {
+					panel.classList.remove("open");
+					iterateBtn.classList.remove("active");
+					iterateBtn.textContent = requests[index] ? "Edit request…" : "Iterate this…";
+				}
 
-	document.getElementById("submit").addEventListener("click", async () => {
-		const status = document.getElementById("status");
-		const button = document.getElementById("submit");
-		button.disabled = true;
-		status.textContent = "Sending…";
-		status.className = "";
-		try {
-			if (await send()) {
-				status.textContent = "Sent. The agent has your feedback.";
-				status.className = "ok";
+				iterateBtn.addEventListener("click", () => {
+					if (panel.classList.contains("open")) {
+						closePanel();
+					} else {
+						document.querySelectorAll(".iterate-panel.open").forEach((p) => p.classList.remove("open"));
+						document.querySelectorAll(".btn.iterate.active").forEach((b) => {
+							b.classList.remove("active");
+							b.textContent = "Iterate this…";
+						});
+						openPanel();
+					}
+				});
+
+				card.querySelector(".save").addEventListener("click", () => {
+					const value = panel.querySelector("textarea").value.trim();
+					if (!value) {
+						delete requests[index];
+						chip.classList.remove("show");
+					} else {
+						requests[index] = value;
+						chip.querySelector(".text").textContent = `↻ ${value}`;
+						chip.classList.add("show");
+					}
+					closePanel();
+					refreshPending();
+				});
+
+				card.querySelector(".cancel").addEventListener("click", closePanel);
+
+				chip.querySelector(".edit").addEventListener("click", () => {
+					panel.querySelector("textarea").value = requests[index] ?? "";
+					openPanel();
+				});
+
+				card.querySelectorAll(".star").forEach((star) => {
+					star.addEventListener("click", () => {
+						const value = Number(star.dataset.star);
+						ratings[index] = ratings[index] === value ? null : value;
+						card.querySelectorAll(".star").forEach((s) => {
+							s.classList.toggle("on", Number(s.dataset.star) <= (ratings[index] ?? 0));
+						});
+						card.querySelector(".label").textContent = ratings[index] ? `${ratings[index]}/5` : "";
+					});
+				});
+
+				grid.appendChild(card);
+			});
+
+			const chipsEl = document.getElementById("chips");
+			CHIPS.forEach((chipText) => {
+				const button = document.createElement("button");
+				button.className = "chip";
+				button.textContent = chipText;
+				button.addEventListener("click", () => {
+					chipState.has(chipText) ? chipState.delete(chipText) : chipState.add(chipText);
+					button.classList.toggle("on", chipState.has(chipText));
+				});
+				chipsEl.appendChild(button);
+			});
+
+			document.getElementById("lightbox").addEventListener("click", () => {
+				document.getElementById("lightbox").classList.remove("open");
+			});
+
+			async function send() {
+				const status = document.getElementById("status");
+				const payload = JSON.stringify({
+					type: "logo-exploration-round-3",
+					favourite: picked === null ? null : { index: picked + 1, name: CANDIDATES[picked].name },
+					ratings: Object.fromEntries(
+						Object.entries(ratings)
+							.filter(([, v]) => v)
+							.map(([k, v]) => [Number(k) + 1, v]),
+					),
+					iterateRequests: Object.entries(requests).map(([k, v]) => ({
+						index: Number(k) + 1,
+						name: CANDIDATES[Number(k)].name,
+						request: v,
+					})),
+					globalChips: [...chipState],
+					notes: document.getElementById("notes").value.trim(),
+				});
+				for (let attempt = 1; attempt <= 3; attempt += 1) {
+					try {
+						const response = await fetch("/feedback", {
+							method: "POST",
+							headers: { "content-type": "application/json" },
+							body: payload,
+						});
+						if (!response.ok) throw new Error(`server responded ${response.status}`);
+						return true;
+					} catch (error) {
+						if (attempt === 3) {
+							status.textContent = `Could not send (${error.message}). `;
+							status.className = "err";
+							const copy = document.createElement("button");
+							copy.textContent = "Copy feedback";
+							copy.style.cssText =
+								"margin-left:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);border-radius:6px;padding:2px 10px;cursor:pointer;font-size:12px";
+							copy.addEventListener("click", () => {
+								navigator.clipboard.writeText(payload).then(() => {
+									copy.textContent = "Copied ✓";
+									status.append(" Paste it to the agent in chat.");
+								});
+							});
+							status.append(copy);
+							return false;
+						}
+						await new Promise((r) => setTimeout(r, 1500 * attempt));
+					}
+				}
+				return false;
 			}
-		} finally {
-			button.disabled = false;
-		}
-	});
-</script>
-</body>
+
+			document.getElementById("submit").addEventListener("click", async () => {
+				const status = document.getElementById("status");
+				const button = document.getElementById("submit");
+				button.disabled = true;
+				status.textContent = "Sending…";
+				status.className = "";
+				try {
+					if (await send()) {
+						status.textContent = "Sent. The agent has your feedback.";
+						status.className = "ok";
+					}
+				} finally {
+					button.disabled = false;
+				}
+			});
+		</script>
+	</body>
 </html>

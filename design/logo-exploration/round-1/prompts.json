@@ -1,12 +1,62 @@
 [
-	{ "file": "01-hex-ant.png", "name": "Hex ant, refined", "desc": "Evolution of the current mark: a geometric ant assembled from clean hexagons.", "prompt": "minimal flat vector logo icon centered on solid very dark navy background, geometric ant constructed from three hexagons, large purple hexagon abdomen, small teal cyan hexagon head with two angular antennae, sharp clean edges, flat design, no gradients, no text, iconic app mark style, generous empty margin" },
-	{ "file": "02-terminal-ant.png", "name": "Terminal ant", "desc": "The ant living inside a terminal window with a blinking-cursor vibe.", "prompt": "flat vector logo icon centered on solid near-black background, minimalist terminal window rectangle with rounded corners and thin top bar with three dots, inside it a simple geometric ant silhouette in glowing teal cyan, purple accent, flat design, crisp edges, no text, software tool logo" },
-	{ "file": "03-monogram-m.png", "name": "Hex monogram m", "desc": "A lowercase m built from honeycomb cells, abstract and typeable.", "prompt": "minimal flat vector logo icon centered on solid dark charcoal background, lowercase letter m constructed from connected hexagon honeycomb cells, gradient from purple violet to teal cyan, geometric modular design, flat, no shadows, no extra text, modern developer tool brand mark" },
-	{ "file": "04-circuit-ant.png", "name": "Circuit ant", "desc": "Ant traced as circuit-board traces with node dots.", "prompt": "flat vector logo icon centered on solid very dark background, top view of a small ant drawn as printed circuit board traces, thin glowing lines with round solder node dots, body segments as hexagonal pads, purple and cyan neon colors, symmetric, minimal, no text" },
-	{ "file": "05-pixel-ant.png", "name": "Pixel ant", "desc": "Retro 8-bit pixel ant for the terminal-native crowd.", "prompt": "retro pixel art logo icon centered on solid black background, small 8-bit ant sprite made of chunky square pixels, purple body and cyan head, crisp aliased pixels, flat colors, no anti-aliasing, no text, nostalgic computing logo" },
-	{ "file": "06-lowpoly-ant.png", "name": "Low-poly ant", "desc": "Faceted origami-style ant head in profile.", "prompt": "flat vector logo icon centered on solid dark slate background, geometric low-poly ant head in profile facing right, faceted triangular facets in shades of purple and teal, origami paper fold style, sharp angles, flat colors, no text, minimal emblem" },
-	{ "file": "07-prompt-ant.png", "name": "Prompt chevron", "desc": "Shell prompt `>_` fused with an ant silhouette.", "prompt": "minimal flat vector logo icon centered on solid near-black background, bold chevron arrow and underscore terminal prompt symbol where the chevron is stylized as an abstract ant with tiny antennae, bright teal cyan on dark, single color plus purple accent dot, flat geometric, no text" },
-	{ "file": "08-badge.png", "name": "Hex badge", "desc": "Circular badge emblem with hex-pattern ring around the ant.", "prompt": "flat vector emblem logo centered on solid dark background, circular badge with a ring of small hexagons around a central geometric ant icon, purple and teal two-color palette, thin precise line work, symmetrical, stamp-like, no text" },
-	{ "file": "09-swarm.png", "name": "Swarm trail", "desc": "Three hexagons in motion suggesting an ant trail.", "prompt": "abstract minimal flat vector logo centered on solid dark navy background, three hexagons of decreasing size moving diagonally leaving a dotted trail, largest hexagon purple, middle teal, smallest white, sense of motion and swarm, extremely simple, no text, startup logo" },
-	{ "file": "10-neon-ant.png", "name": "Neon outline", "desc": "Single-weight neon line ant with subtle glow.", "prompt": "minimal logo icon centered on pure black background, continuous single line drawing of an ant in neon tube style, glowing cyan line with soft glow, small purple accent glow at the abdomen, elegant thin stroke, dark ambient, no text" }
+	{
+		"file": "01-hex-ant.png",
+		"name": "Hex ant, refined",
+		"desc": "Evolution of the current mark: a geometric ant assembled from clean hexagons.",
+		"prompt": "minimal flat vector logo icon centered on solid very dark navy background, geometric ant constructed from three hexagons, large purple hexagon abdomen, small teal cyan hexagon head with two angular antennae, sharp clean edges, flat design, no gradients, no text, iconic app mark style, generous empty margin"
+	},
+	{
+		"file": "02-terminal-ant.png",
+		"name": "Terminal ant",
+		"desc": "The ant living inside a terminal window with a blinking-cursor vibe.",
+		"prompt": "flat vector logo icon centered on solid near-black background, minimalist terminal window rectangle with rounded corners and thin top bar with three dots, inside it a simple geometric ant silhouette in glowing teal cyan, purple accent, flat design, crisp edges, no text, software tool logo"
+	},
+	{
+		"file": "03-monogram-m.png",
+		"name": "Hex monogram m",
+		"desc": "A lowercase m built from honeycomb cells, abstract and typeable.",
+		"prompt": "minimal flat vector logo icon centered on solid dark charcoal background, lowercase letter m constructed from connected hexagon honeycomb cells, gradient from purple violet to teal cyan, geometric modular design, flat, no shadows, no extra text, modern developer tool brand mark"
+	},
+	{
+		"file": "04-circuit-ant.png",
+		"name": "Circuit ant",
+		"desc": "Ant traced as circuit-board traces with node dots.",
+		"prompt": "flat vector logo icon centered on solid very dark background, top view of a small ant drawn as printed circuit board traces, thin glowing lines with round solder node dots, body segments as hexagonal pads, purple and cyan neon colors, symmetric, minimal, no text"
+	},
+	{
+		"file": "05-pixel-ant.png",
+		"name": "Pixel ant",
+		"desc": "Retro 8-bit pixel ant for the terminal-native crowd.",
+		"prompt": "retro pixel art logo icon centered on solid black background, small 8-bit ant sprite made of chunky square pixels, purple body and cyan head, crisp aliased pixels, flat colors, no anti-aliasing, no text, nostalgic computing logo"
+	},
+	{
+		"file": "06-lowpoly-ant.png",
+		"name": "Low-poly ant",
+		"desc": "Faceted origami-style ant head in profile.",
+		"prompt": "flat vector logo icon centered on solid dark slate background, geometric low-poly ant head in profile facing right, faceted triangular facets in shades of purple and teal, origami paper fold style, sharp angles, flat colors, no text, minimal emblem"
+	},
+	{
+		"file": "07-prompt-ant.png",
+		"name": "Prompt chevron",
+		"desc": "Shell prompt `>_` fused with an ant silhouette.",
+		"prompt": "minimal flat vector logo icon centered on solid near-black background, bold chevron arrow and underscore terminal prompt symbol where the chevron is stylized as an abstract ant with tiny antennae, bright teal cyan on dark, single color plus purple accent dot, flat geometric, no text"
+	},
+	{
+		"file": "08-badge.png",
+		"name": "Hex badge",
+		"desc": "Circular badge emblem with hex-pattern ring around the ant.",
+		"prompt": "flat vector emblem logo centered on solid dark background, circular badge with a ring of small hexagons around a central geometric ant icon, purple and teal two-color palette, thin precise line work, symmetrical, stamp-like, no text"
+	},
+	{
+		"file": "09-swarm.png",
+		"name": "Swarm trail",
+		"desc": "Three hexagons in motion suggesting an ant trail.",
+		"prompt": "abstract minimal flat vector logo centered on solid dark navy background, three hexagons of decreasing size moving diagonally leaving a dotted trail, largest hexagon purple, middle teal, smallest white, sense of motion and swarm, extremely simple, no text, startup logo"
+	},
+	{
+		"file": "10-neon-ant.png",
+		"name": "Neon outline",
+		"desc": "Single-weight neon line ant with subtle glow.",
+		"prompt": "minimal logo icon centered on pure black background, continuous single line drawing of an ant in neon tube style, glowing cyan line with soft glow, small purple accent glow at the abdomen, elegant thin stroke, dark ambient, no text"
+	}
 ]

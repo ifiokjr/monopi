@@ -1,12 +1,62 @@
 [
-	{ "file": "01-hex-stack.png", "name": "Hex stack", "desc": "Three stacked hexagons forming an abstract monopi tower.", "prompt": "minimal flat vector logo icon centered on solid very dark navy background, three hexagons stacked vertically with slight offsets, top hexagon bright teal cyan, middle purple violet, bottom deep purple, clean sharp edges, flat design, no gradients, no text, iconic app mark, generous empty margin" },
-	{ "file": "02-prompt-block.png", "name": "Prompt block", "desc": "A terminal chevron and underscore inside a rounded square tile.", "prompt": "flat vector logo icon centered on solid near-black background, rounded square app tile containing a bold terminal greater-than chevron and underscore cursor in glowing teal cyan with a small purple accent dot, flat design, crisp edges, no text, modern developer tool logo" },
-	{ "file": "03-monogram-m.png", "name": "Split monogram m", "desc": "Bold geometric lowercase m, half purple half cyan.", "prompt": "minimal flat vector logo icon centered on solid dark charcoal background, bold geometric lowercase letter m built from thick uniform strokes, left half purple violet right half teal cyan with a clean diagonal split, flat colors, no shadows, no extra text, modern software brand mark" },
-	{ "file": "04-layers.png", "name": "Layered toolkit", "desc": "Isometric layered blocks suggesting a toolkit stack.", "prompt": "flat vector logo icon centered on solid very dark background, three isometric layered rhombus blocks stacked with small gaps like a layer stack, top layer teal cyan, middle purple, bottom dim slate, minimal geometric, flat design, no text" },
-	{ "file": "05-pi-orbit.png", "name": "Pi orbit", "desc": "An abstract pi glyph wrapped by an orbital ring.", "prompt": "minimal flat vector logo icon centered on solid near-black background, abstract greek pi symbol drawn as two thick pillars on a horizontal bar, a thin elliptical orbit ring sweeping around it, pi in white, ring gradient from purple to cyan, flat with subtle glow, no text" },
-	{ "file": "06-circuit-hex.png", "name": "Circuit hex", "desc": "One hexagon pad with circuit traces radiating out.", "prompt": "flat vector logo icon centered on solid very dark background, single large hexagon outline with printed circuit board traces radiating from its corners ending in round node dots, thin precise lines, purple hexagon with cyan traces, symmetric, minimal, no text" },
-	{ "file": "07-pixel-cluster.png", "name": "Pixel cluster", "desc": "Chunky pixel cluster resolving into an abstract m.", "prompt": "retro pixel art logo icon centered on solid black background, cluster of chunky square pixels forming an abstract geometric letter m shape, mix of purple cyan and white pixels, crisp aliased edges, flat colors, no anti-aliasing, no text, nostalgic computing logo" },
-	{ "file": "08-constellation.png", "name": "Constellation", "desc": "Connected nodes forming a minimal network constellation.", "prompt": "minimal flat vector logo icon centered on solid dark navy background, five glowing dots connected by thin lines forming a small constellation network shape, dots alternate cyan and purple, one central white node, elegant sparse composition, no text" },
-	{ "file": "09-neon-pi.png", "name": "Neon pi", "desc": "Single-line neon pi symbol with soft glow.", "prompt": "minimal logo icon centered on pure black background, continuous single line drawing of the greek letter pi in neon tube style, glowing cyan line with soft bloom, small purple glow accent at one corner, elegant thin stroke, dark ambient, no other elements" },
-	{ "file": "10-modular-tiles.png", "name": "Modular tiles", "desc": "Four rounded tiles in a grid, one lit cyan.", "prompt": "flat vector logo icon centered on solid dark background, two by two grid of rounded square tiles with even gaps, three tiles dim slate gray and one tile bright teal cyan with a tiny purple dot in its corner, modular plugin aesthetic, flat design, no text" }
+	{
+		"file": "01-hex-stack.png",
+		"name": "Hex stack",
+		"desc": "Three stacked hexagons forming an abstract monopi tower.",
+		"prompt": "minimal flat vector logo icon centered on solid very dark navy background, three hexagons stacked vertically with slight offsets, top hexagon bright teal cyan, middle purple violet, bottom deep purple, clean sharp edges, flat design, no gradients, no text, iconic app mark, generous empty margin"
+	},
+	{
+		"file": "02-prompt-block.png",
+		"name": "Prompt block",
+		"desc": "A terminal chevron and underscore inside a rounded square tile.",
+		"prompt": "flat vector logo icon centered on solid near-black background, rounded square app tile containing a bold terminal greater-than chevron and underscore cursor in glowing teal cyan with a small purple accent dot, flat design, crisp edges, no text, modern developer tool logo"
+	},
+	{
+		"file": "03-monogram-m.png",
+		"name": "Split monogram m",
+		"desc": "Bold geometric lowercase m, half purple half cyan.",
+		"prompt": "minimal flat vector logo icon centered on solid dark charcoal background, bold geometric lowercase letter m built from thick uniform strokes, left half purple violet right half teal cyan with a clean diagonal split, flat colors, no shadows, no extra text, modern software brand mark"
+	},
+	{
+		"file": "04-layers.png",
+		"name": "Layered toolkit",
+		"desc": "Isometric layered blocks suggesting a toolkit stack.",
+		"prompt": "flat vector logo icon centered on solid very dark background, three isometric layered rhombus blocks stacked with small gaps like a layer stack, top layer teal cyan, middle purple, bottom dim slate, minimal geometric, flat design, no text"
+	},
+	{
+		"file": "05-pi-orbit.png",
+		"name": "Pi orbit",
+		"desc": "An abstract pi glyph wrapped by an orbital ring.",
+		"prompt": "minimal flat vector logo icon centered on solid near-black background, abstract greek pi symbol drawn as two thick pillars on a horizontal bar, a thin elliptical orbit ring sweeping around it, pi in white, ring gradient from purple to cyan, flat with subtle glow, no text"
+	},
+	{
+		"file": "06-circuit-hex.png",
+		"name": "Circuit hex",
+		"desc": "One hexagon pad with circuit traces radiating out.",
+		"prompt": "flat vector logo icon centered on solid very dark background, single large hexagon outline with printed circuit board traces radiating from its corners ending in round node dots, thin precise lines, purple hexagon with cyan traces, symmetric, minimal, no text"
+	},
+	{
+		"file": "07-pixel-cluster.png",
+		"name": "Pixel cluster",
+		"desc": "Chunky pixel cluster resolving into an abstract m.",
+		"prompt": "retro pixel art logo icon centered on solid black background, cluster of chunky square pixels forming an abstract geometric letter m shape, mix of purple cyan and white pixels, crisp aliased edges, flat colors, no anti-aliasing, no text, nostalgic computing logo"
+	},
+	{
+		"file": "08-constellation.png",
+		"name": "Constellation",
+		"desc": "Connected nodes forming a minimal network constellation.",
+		"prompt": "minimal flat vector logo icon centered on solid dark navy background, five glowing dots connected by thin lines forming a small constellation network shape, dots alternate cyan and purple, one central white node, elegant sparse composition, no text"
+	},
+	{
+		"file": "09-neon-pi.png",
+		"name": "Neon pi",
+		"desc": "Single-line neon pi symbol with soft glow.",
+		"prompt": "minimal logo icon centered on pure black background, continuous single line drawing of the greek letter pi in neon tube style, glowing cyan line with soft bloom, small purple glow accent at one corner, elegant thin stroke, dark ambient, no other elements"
+	},
+	{
+		"file": "10-modular-tiles.png",
+		"name": "Modular tiles",
+		"desc": "Four rounded tiles in a grid, one lit cyan.",
+		"prompt": "flat vector logo icon centered on solid dark background, two by two grid of rounded square tiles with even gaps, three tiles dim slate gray and one tile bright teal cyan with a tiny purple dot in its corner, modular plugin aesthetic, flat design, no text"
+	}
 ]
