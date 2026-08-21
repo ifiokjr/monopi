@@ -70,5 +70,5 @@ pnpm exec vitest run --config packages/monopi__remote-tailscale/vitest.config.ts
 
 ## Related packages
 
-- `@monopi/web-server` — shared HTTP + WebSocket transport
-- `@monopi/web-remote` — simpler built-in remote command package
+- `@monopi/web-server`: shared HTTP + WebSocket transport
+- `@monopi/web-remote`: simpler built-in remote command package

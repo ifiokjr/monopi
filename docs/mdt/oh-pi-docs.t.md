@@ -208,6 +208,89 @@ The watchdog samples CPU, memory, and event-loop lag on an interval, records rec
 
 <!-- {/extensionsWatchdogAlertBehaviorDocs} -->
 
+<!-- {@extensionsCompactHeaderOverview} -->
+
+The compact-header extension replaces pi's verbose startup header with a table-style summary showing the model, provider, thinking level, extension count, and other session details in one compact block. It also bootstraps the plain-icons setting: it reads `plainIcons` from settings.json and the `--plain-icons` CLI flag, then bridges the value to the `OH_PI_PLAIN_ICONS` environment variable so every monopi package picks it up consistently.
+
+<!-- {/extensionsCompactHeaderOverview} -->
+
+<!-- {@extensionsCustomFooterOverview} -->
+
+The custom-footer extension replaces the default pi footer with a rich status bar. It shows the model name with its thinking-level indicator, input and output token counts, accumulated cost, context window usage as a color-coded percentage, elapsed session time, the abbreviated working directory, and the git branch when available. The footer auto-refreshes every 30 seconds and whenever the git branch changes.
+
+<!-- {/extensionsCustomFooterOverview} -->
+
+<!-- {@extensionsExternalEditorOverview} -->
+
+The external-editor extension adds an `/external-editor` command and a `ctrl+shift+e` shortcut for opening the current draft in your configured external editor (`$VISUAL` or `$EDITOR`). When you save the file, the updated text is synced back into pi's prompt input. It complements pi's built-in `app.editor.external` keybinding, which defaults to `Ctrl+G`.
+
+<!-- {/extensionsExternalEditorOverview} -->
+
+<!-- {@extensionsGitGuardOverview} -->
+
+The git-guard extension adds four git safety features for git-managed repositories:
+
+- interactive git guard: blocks git shell commands that are likely to open an editor and hang
+- dirty repo warning: notifies you at session start when there are uncommitted changes
+- turn checkpoints: creates a git stash snapshot before each agent turn
+- terminal notification: sends a desktop or terminal notification when the agent finishes
+
+It supports the Kitty (OSC 99) and generic terminal (OSC 777) notification protocols.
+
+<!-- {/extensionsGitGuardOverview} -->
+
+<!-- {@extensionsToolMetadataOverview} -->
+
+The tool-metadata extension enriches tool results with execution metadata so pi can show when a tool started, when it finished, how long it ran, and roughly how much text went in and out. It appends structured metadata to tool result details, which other features like diagnostics reuse for consistent timing displays. It also sanitizes oversized tool output and detail payloads so the TUI stays stable when tools return very large text blobs.
+
+<!-- {/extensionsToolMetadataOverview} -->
+
+<!-- {@extensionsWorktreeOverview} -->
+
+The worktree extension adds centralized git worktree awareness to monopi. It detects whether the current checkout is the main repository or a linked worktree, shows when the current worktree is pi-owned, and tracks owner and purpose metadata for pi-created worktrees. It provides `/worktree` commands for status, listing, opening, creating, and cleaning up worktrees. Pi-owned worktrees are created under shared pi storage namespaced by the canonical repository root, and cleanup focuses on pi-owned worktrees while leaving external ones alone unless you explicitly intervene.
+
+<!-- {/extensionsWorktreeOverview} -->
+
+<!-- {@extensionsSchedulerCommandsDocs} -->
+
+Scheduler commands:
+
+- `/remind in 45m <prompt>`: one-time reminder
+- `/loop 5m <prompt>`: recurring check on an interval
+- `/loop cron '*/5 * * * *' <prompt>`: recurring check on a cron schedule
+- `/schedule`: show upcoming tasks
+- `/schedule tui`: open the interactive schedule manager
+- `/schedule list`: list all tasks
+- `/schedule enable <id>` and `/schedule disable <id>`: enable or disable a task
+- `/schedule delete <id>`: delete a task
+- `/schedule clear`: clear all tasks
+- `/schedule clear-other`: clear tasks created by other instances
+- `/schedule adopt <id|all>`: take ownership of tasks from another instance
+- `/schedule release <id|all>`: release ownership of tasks
+
+The `schedule_prompt` tool lets the agent schedule follow-ups itself, including `continueUntilComplete` retries until a success marker appears.
+
+<!-- {/extensionsSchedulerCommandsDocs} -->
+
+<!-- {@sharedExtensionPackageOverview} -->
+
+`@monopi/extension-shared` is an internal library of runtime utilities shared by monopi extension packages. Extension packages depend on it at build time; users never install it directly. It provides:
+
+- runtime mode resolution and safe-mode state
+- status bar and UI cache helpers
+- watchdog runtime diagnostics formatting
+- shared worktree helpers (repo context snapshots, managed worktree metadata, pi ownership)
+
+<!-- {/sharedExtensionPackageOverview} -->
+
+<!-- {@docsPackageOverview} -->
+
+`@monopi/docs` is the private documentation site for monopi. It is a Vite and React app that renders the markdown files from `docs/` as MDX pages with a search index. `pnpm docs:sync` runs `scripts/sync-content.mjs`, which reads `docs/*.md`, strips the first H1, converts HTML comments to MDX comments, and regenerates a lazy-loaded JSON search index.
+
+Run `pnpm docs:dev` to develop, `pnpm docs:build` to build, and `pnpm docs:sync` to sync content from the source markdown.
+
+<!-- {/docsPackageOverview} -->
+
 <!-- {@repoStartHerePathDocs} -->
 
 Use this reading path depending on what you are trying to do:

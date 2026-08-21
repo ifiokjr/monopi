@@ -37,7 +37,7 @@ describe("multiGrep", () => {
 	it("falls back to exec grep when FFF fails", async () => {
 		vi.doUnmock("@ff-labs/fff-node");
 		const result = await execMultiGrep(["import"], "*.ts", ".");
-		// Result depends on actual codebase — just verify structure
+		// Result depends on actual codebase: just verify structure
 		expect(typeof result.ok).toBe("boolean");
 	});
 });

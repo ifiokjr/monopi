@@ -1,6 +1,6 @@
 # @monopi/extension-prompt-modes
 
-Standalone pi extension package for `prompt-modes` — switch between prompt/model configurations.
+Standalone pi extension package for `prompt-modes`: switch between prompt and model configurations.
 
 ```bash
 pi install npm:@monopi/extension-prompt-modes
@@ -8,14 +8,14 @@ pi install npm:@monopi/extension-prompt-modes
 
 ## Commands
 
-- `/mode` — open the mode selector.
-- `/mode <name>` — apply a named mode (sets model, thinking level, and system prompt overrides).
-- `/mode store [name]` — store the current selection into a named mode.
+- `/mode`: open the mode selector.
+- `/mode <name>`: apply a named mode (sets model, thinking level, and system prompt overrides).
+- `/mode store [name]`: store the current selection into a named mode.
 
 ## Shortcuts
 
-- `ctrl+shift+m` — open the mode selector.
-- `ctrl+space` — cycle/quick select.
+- `ctrl+shift+m`: open the mode selector.
+- `ctrl+space`: cycle/quick select.
 
 Modes are persisted to a project modes file (falling back to a global file) so they survive across sessions.
 

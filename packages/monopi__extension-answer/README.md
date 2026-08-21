@@ -8,8 +8,8 @@ pi install npm:@monopi/extension-answer
 
 ## Commands
 
-- `/answer` — extract questions from the last completed assistant message and answer them in the Q&A overlay.
-- `/answer auto` — toggle automatic question detection after assistant turns.
+- `/answer`: extract questions from the last completed assistant message and answer them in the Q&A overlay.
+- `/answer auto`: toggle automatic question detection after assistant turns.
 
 The extension uses `@monopi/shared-qna` for the interactive Q&A UI. It accepts both Monopi's JSON-array extraction format and the upstream object-shaped `{ "questions": [...] }` format, and prefers a configured fast extraction model when one is available.
 

@@ -1,13 +1,16 @@
 /**
- * Oh-pi Git Checkpoint Extension
- *
- * Provides four git-safety features for git-managed repositories:
- * 1. **Interactive git guard** — blocks git bash commands that are likely to open an editor and hang
- * 2. **Dirty repo warning** — notifies at session start if there are uncommitted changes
- * 3. **Turn checkpoints** — creates a git stash snapshot before each agent turn
- * 4. **Terminal notification** — sends a desktop/terminal notification when the agent finishes
- *
- * Supports Kitty (OSC 99) and generic terminal (OSC 777) notification protocols.
+<!-- {=extensionsGitGuardOverview} -->
+
+The git-guard extension adds four git safety features for git-managed repositories:
+
+- interactive git guard: blocks git shell commands that are likely to open an editor and hang
+- dirty repo warning: notifies you at session start when there are uncommitted changes
+- turn checkpoints: creates a git stash snapshot before each agent turn
+- terminal notification: sends a desktop or terminal notification when the agent finishes
+
+It supports the Kitty (OSC 99) and generic terminal (OSC 777) notification protocols.
+
+<!-- {/extensionsGitGuardOverview} -->
  */
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
@@ -127,7 +130,7 @@ function terminalNotify(title: string, body: string): void {
 }
 
 /**
- * Extension entry point — registers hooks for dirty-repo detection, stash checkpoints,
+ * Extension entry point: registers hooks for dirty-repo detection, stash checkpoints,
  * and completion notifications.
  */
 export default function (pi: ExtensionAPI) {
@@ -149,7 +152,7 @@ export default function (pi: ExtensionAPI) {
 					ctx.ui.notify(`Dirty repo: ${lines} uncommitted change(s)`, "warning");
 				}
 			} catch {
-				// Not a git repo — nothing to warn about
+				// Not a git repo: nothing to warn about
 			}
 		}, DIRTY_REPO_CHECK_DELAY_MS);
 	};
@@ -180,7 +183,7 @@ export default function (pi: ExtensionAPI) {
 		try {
 			await pi.exec("git", ["stash", "create", "-m", `oh-pi-turn-${turnCount}`]);
 		} catch {
-			// Not a git repo — skip silently
+			// Not a git repo: skip silently
 		}
 	});
 

@@ -1,15 +1,9 @@
 /**
- * Custom Footer Extension — Enhanced Status Bar
- *
- * Replaces the default pi footer with a rich status bar showing:
- * - Model name with thinking-level indicator
- * - Input/output token counts and accumulated cost
- * - Context window usage percentage (color-coded: green/yellow/red)
- * - Elapsed session time
- * - Current working directory (abbreviated)
- * - Git branch name (if available)
- *
- * The footer auto-refreshes every 30 seconds and on git branch changes.
+<!-- {=extensionsCustomFooterOverview} -->
+
+The custom-footer extension replaces the default pi footer with a rich status bar. It shows the model name with its thinking-level indicator, input and output token counts, accumulated cost, context window usage as a color-coded percentage, elapsed session time, the abbreviated working directory, and the git branch when available. The footer auto-refreshes every 30 seconds and whenever the git branch changes.
+
+<!-- {/extensionsCustomFooterOverview} -->
  */
 
 import type { AssistantMessage } from "@earendil-works/pi-ai";

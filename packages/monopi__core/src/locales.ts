@@ -3,9 +3,9 @@ import type { Locale } from "./types.js";
 export const messages: Record<Locale, Record<string, string>> = {
 	en: {
 		// Welcome
-		"welcome.title": "monopi — one-click setup for pi agent",
+		"welcome.title": "monopi: one-click setup for pi agent",
 		"welcome.piDetected": "pi {version} detected",
-		"welcome.piNotFound": "pi not found — will install",
+		"welcome.piNotFound": "pi not found. Will install",
 		"welcome.envInfo": "{terminal} │ {os} │ Node {node}",
 		"welcome.existingConfig": "Existing config found",
 		"welcome.existingConfigDetail": "{count} files ({size}KB) at ~/.pi/agent/",
@@ -157,7 +157,7 @@ export const messages: Record<Locale, Record<string, string>> = {
 		"confirm.changes": "⚠ Changes",
 		"confirm.existingDetected": "Existing config detected. How to proceed?",
 		"confirm.backup": "📦 Backup & apply",
-		"confirm.backupHint": "Safe — backup first, then overwrite",
+		"confirm.backupHint": "Safe. Backup first, then overwrite",
 		"confirm.overwrite": "⚡ Overwrite",
 		"confirm.overwriteHint": "Replace without backup",
 		"confirm.cancel": "✖  Cancel",
@@ -202,7 +202,7 @@ export const messages: Record<Locale, Record<string, string>> = {
 		"confirm.backedUp": "Sauvegardé dans {dir}",
 		"confirm.backingUp": "Sauvegarde de ~/.pi/agent/",
 		"confirm.backup": "📦 Sauvegarder & appliquer",
-		"confirm.backupHint": "Sûr — sauvegarde d'abord, puis écrasement",
+		"confirm.backupHint": "Sûr. Sauvegarde d'abord, puis écrasement",
 		"confirm.cancel": "✖  Annuler",
 		"confirm.cancelHint": "Garder la configuration actuelle",
 		"confirm.changes": "⚠ Modifications",
@@ -343,7 +343,7 @@ export const messages: Record<Locale, Record<string, string>> = {
 		"welcome.existingProviders": "Fournisseurs détectés : {providers}",
 		"welcome.piDetected": "pi {version} détecté",
 
-		"welcome.piNotFound": "pi non trouvé — installation en cours",
-		"welcome.title": "monopi — configuration en un clic pour pi agent",
+		"welcome.piNotFound": "pi non trouvé. Installation en cours",
+		"welcome.title": "monopi: configuration en un clic pour pi agent",
 	},
 };

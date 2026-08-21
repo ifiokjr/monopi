@@ -1,5 +1,5 @@
 /**
- * Answer Extension — interactive Q&A from LLM responses
+ * Answer Extension: interactive Q&A from LLM responses
  *
  * Adds `/answer` and `/answer auto` commands that extract questions from the
  * last assistant message and present them in the shared QnA TUI component.
@@ -47,26 +47,26 @@ const EXTRACTION_SYSTEM_PROMPT = [
 	'If there is a recommendation but no multiple options, create a single option array with the recommendation marked `recommended: true`. The user will see the one recommended option and an "Other" choice to describe what they actually want.',
 	"If no questions are found, output an empty array: []",
 	"",
-	"Example output — simple options:",
+	"Example output: simple options:",
 	"```json",
 	'[{"question": "What is your preferred database?", "options": [{"label": "PostgreSQL", "description": "Relational, mature"}, {"label": "MongoDB", "description": "Document store, flexible schema"}, {"label": "SQLite", "description": "Lightweight, embedded"}]},',
 	' {"question": "Should we use TypeScript or JavaScript?", "options": [{"label": "TypeScript", "description": "Static typing, better DX", "recommended": true}, {"label": "JavaScript", "description": "Simpler, no build step"}]},',
 	' {"question": "Any additional context or preferences?"}]',
 	"```",
 	"",
-	"Example output — question with choices found in a detailed section:",
+	"Example output: question with choices found in a detailed section:",
 	"```json",
 	String.raw`[{"question": "What is the most expensive bug this system could ship?", "context": "Rank the options below by impact.", "fullContext": "What is the most expensive bug this system could ship?\n\nRank these:\n\na. Wrong version bump (e.g. patch instead of major)\nb. Missing package in release (e.g. dependency not propagated)\nc. Breaking dependency graph (e.g. circular propagation, non-termination)\nd. Config parsing silently ignores invalid input\ne. Adapter produces wrong manifest edits (e.g. corrupts Cargo.toml)", "options": [{"label": "a. Wrong version bump", "description": "e.g. patch instead of major"}, {"label": "b. Missing package in release", "description": "e.g. dependency not propagated"}, {"label": "c. Breaking dependency graph", "description": "e.g. circular propagation"}, {"label": "d. Config parsing silently ignores invalid input"}, {"label": "e. Adapter produces wrong manifest edits", "description": "e.g. corrupts Cargo.toml"}]}]`,
 	"```",
 	"",
-	"Example output — single recommendation without explicit choices:",
+	"Example output: single recommendation without explicit choices:",
 	"```json",
 	'[{"question": "Which testing strategy should we use first?", "context": "Based on the current codebase state.", "options": [{"label": "Proptest", "description": "Property-based testing finds more bugs per hour and integrates easily.", "recommended": true}]}]',
 	"```",
 	"",
 	"Guidelines:",
 	"- Find the MOST COMPLETE formulation of each question. If a question appears both as a detailed section (with choices, rankings, or examples) and as a short summary later (e.g. 'please answer the six questions above'), extract from the detailed section.",
-	"- Keep `question` concise — one sentence with the core question. Put the full original text in `fullContext` so users can expand for detail. Put background context in the `context` field.",
+	"- Keep `question` concise. One sentence with the core question. Put the full original text in `fullContext` so users can expand for detail. Put background context in the `context` field.",
 	"- Always extract all explicit choices as `options`. For example, if a question lists options a-e, include every option in the `options` array.",
 	"- Mark any clearly recommended option with `recommended: true`. Do not add a `recommended` field to non-recommended options.",
 	"- When there is a recommendation without multiple options, create a single option array with the recommendation marked `recommended: true`. The user will see the one recommended option and an 'Other' choice to describe what they actually want.",

@@ -1,9 +1,9 @@
 /**
- * Oh-pi Compact Header — table-style startup info with dynamic column widths
- *
- * Also bootstraps the plain-icons setting: reads `plainIcons` from
- * settings.json and/or the `--plain-icons` CLI flag, and bridges it
- * to the `OH_PI_PLAIN_ICONS` env var so all oh-pi packages pick it up.
+<!-- {=extensionsCompactHeaderOverview} -->
+
+The compact-header extension replaces pi's verbose startup header with a table-style summary showing the model, provider, thinking level, extension count, and other session details in one compact block. It also bootstraps the plain-icons setting: it reads `plainIcons` from settings.json and the `--plain-icons` CLI flag, then bridges the value to the `OH_PI_PLAIN_ICONS` environment variable so every monopi package picks it up consistently.
+
+<!-- {/extensionsCompactHeaderOverview} -->
  */
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
@@ -25,7 +25,7 @@ function loadPlainIconsSetting(): boolean {
 				return true;
 			}
 		} catch {
-			/* File missing or unparseable — skip */
+			/* File missing or unparseable: skip */
 		}
 	}
 	return false;

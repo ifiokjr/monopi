@@ -6,11 +6,11 @@ monopi customizes both how Pi reasons about a project and how the terminal sessi
 
 `@monopi/skills` installs three maintained, on-demand instruction packs:
 
-| Skill          | Use it for                                                                |
-| -------------- | ------------------------------------------------------------------------- |
-| `btw`          | Use the `/btw` or `/qq` side-conversation workflow effectively            |
-| `debug-helper` | Analyze errors, logs, crashes, and performance problems                   |
-| `nushell`      | Write correct Nushell commands, pipelines, variables, and data transforms |
+| Skill          | Use it for                                                                        |
+| -------------- | --------------------------------------------------------------------------------- |
+| `btw`          | Use the `/btw` or `/qq` side-conversation workflow without interrupting main work |
+| `debug-helper` | Analyze errors, logs, crashes, and performance problems                           |
+| `nushell`      | Write correct Nushell commands, pipelines, variables, and data transforms         |
 
 Each skill is a directory containing `SKILL.md` and any supporting resources. Pi can load it when a request matches its description, or you can invoke it explicitly with `/<skill-name>`.
 

@@ -120,7 +120,7 @@ export class PiWebClient {
 					return;
 				}
 
-				// All other messages are events — dispatch to listeners
+				// All other messages are events: dispatch to listeners
 				this._emit(data.type as string, data);
 			};
 

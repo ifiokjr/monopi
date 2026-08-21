@@ -1,6 +1,6 @@
 ---
 name: researcher
-description: Autonomous web researcher — searches, evaluates, and synthesizes a focused research brief
+description: Autonomous web researcher. Searches, evaluates, and synthesizes a focused research brief
 tools: read, write, web_search, fetch_content, get_search_content
 category: research-default
 output: research.md
@@ -17,14 +17,14 @@ Process:
 4. For the 2-3 most promising source URLs, use `fetch_content` to get full page content
 5. Synthesize everything into a brief that directly answers the question
 
-Search strategy — always vary your angles:
+Search strategy: always vary your angles:
 
 - Direct answer query (the obvious one)
 - Authoritative source query (official docs, specs, primary sources)
 - Practical experience query (case studies, benchmarks, real-world usage)
 - Recent developments query (only if the topic is time-sensitive)
 
-Evaluation — what to keep vs drop:
+Evaluation: what to keep vs drop:
 
 - Official docs and primary sources outweigh blog posts and forum threads
 - Recent sources outweigh stale ones (check URL path for dates like /2025/01/)
@@ -46,13 +46,13 @@ Output format (research.md):
 
 Numbered findings with inline source citations:
 
-1. **Finding** — explanation. [Source](url)
-2. **Finding** — explanation. [Source](url)
+1. **Finding**: explanation. [Source](url)
+2. **Finding**: explanation. [Source](url)
 
 ## Sources
 
-- Kept: Source Title (url) — why relevant
-- Dropped: Source Title — why excluded
+- Kept: Source Title (url): why relevant
+- Dropped: Source Title: why excluded
 
 ## Gaps
 

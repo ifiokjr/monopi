@@ -208,6 +208,39 @@ describe("ollama provider smoke tests", () => {
 		await backend.close();
 	});
 
+	it("lists discovered models with context windows via /ollama models", async () => {
+		const backend = await createTestOllamaBackend();
+		backend.setModels([
+			{
+				id: "glm-5.1",
+				capabilities: ["completion", "tools", "thinking"],
+				contextWindow: 202752,
+			},
+		]);
+		process.env.PI_OLLAMA_CLOUD_API_URL = backend.apiUrl;
+		process.env.PI_OLLAMA_CLOUD_MODELS_URL = `${backend.apiUrl}/models`;
+		process.env.PI_OLLAMA_CLOUD_SHOW_URL = `${backend.origin}/api/show`;
+		delete process.env.OLLAMA_API_KEY;
+
+		const harness = createExtensionHarness();
+		harnesses.push(harness);
+		await ollamaProviderExtension(harness.pi as never);
+
+		for (let attempt = 0; attempt < 80; attempt += 1) {
+			const models = harness.providers.get("ollama-cloud")?.models as Array<{ id: string }> | undefined;
+			if (models?.length === 1) {
+				break;
+			}
+			await new Promise((resolve) => setTimeout(resolve, 10));
+		}
+
+		await harness.commands.get("ollama models").handler("", harness.ctx);
+		expect(harness.notifications.at(-1)?.msg).toContain("glm-5.1");
+		expect(harness.notifications.at(-1)?.msg).toContain("202,752 ctx");
+
+		await backend.close();
+	});
+
 	it("refreshes cloud models through pi's provider refresh hook", async () => {
 		const backend = await createTestOllamaBackend();
 		backend.setAuthenticatedModels([

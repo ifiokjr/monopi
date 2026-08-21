@@ -1,5 +1,5 @@
 /**
- * Prompt Modes Extension — switch between prompt/model configurations.
+ * Prompt Modes Extension: switch between prompt/model configurations.
  *
  * Adapted from mitsuhiko/agent-stuff extensions/prompt-editor.ts.
  * Copyright Armin Ronacher and contributors. Licensed under Apache-2.0.

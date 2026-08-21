@@ -1,6 +1,6 @@
 ---
 name: nushell
-description: Nushell syntax reference for shell commands — variables, pipelines, tables, custom commands, control flow, Bash-to-Nu equivalents, and common gotchas
+description: Nushell syntax reference for shell commands: variables, pipelines, tables, custom commands, control flow, Bash-to-Nu equivalents, and common gotchas
 ---
 
 # Nushell Skill
@@ -9,7 +9,7 @@ Use this skill whenever the user's shell is Nushell (nu). All shell commands pro
 
 ## Core Concepts
 
-Nushell treats everything as structured data. Pipelines pass tables, lists, and records — not plain text. This is the single biggest difference from Bash.
+Nushell treats everything as structured data. Pipelines pass tables, lists, and records: not plain text. This is the single biggest difference from Bash.
 
 ## Variables
 
@@ -26,13 +26,13 @@ $count += 1
 # Constants (parse-time evaluation)
 const config_dir = "~/.config"
 
-# Environment variables — use $env.VAR, NOT $VAR
+# Environment variables: use $env.VAR, NOT $VAR
 $env.PATH
 $env.HOME
 $env.PWD
 let path = $env.PATH | append "/usr/local/bin"
 
-# $in — the current pipeline input
+# $in: the current pipeline input
 [1 2 3] | $in.1                     # => 2
 ls | $in | where size > 1mb
 ```
@@ -123,7 +123,7 @@ ls | get name.0                      # First filename
 ## Strings
 
 ```nu
-# Interpolation — use $"..." with () placeholders
+# Interpolation: use $"..." with () placeholders
 let name = "Alice"
 $"Hello, ($name)!"                  # => Hello, Alice!
 
@@ -165,7 +165,7 @@ let lst = [a b c]
 $lst.0                              # => a
 $lst.-1                             # => c (last element)
 
-# Modify (creates new lists — immutable)
+# Modify (creates new lists: immutable)
 [1, 2, 3] | insert 1 99             # Insert at index
 [1, 2, 3] | update 1 99            # Replace at index
 [1, 2, 3] | prepend 0              # Add to front
@@ -270,7 +270,7 @@ ls | get name | to text | ^grep ".rs"
 ## Control Flow
 
 ```nu
-# If/else — must produce same type from both branches
+# If/else: must produce same type from both branches
 if $condition {
     "yes"
 } else {
@@ -319,15 +319,15 @@ open access.log | lines | parse "{ip} - - [{date}] \"{method} {path}\" {status} 
 
 ## Key Gotchas
 
-1. **No `&&` or `||`** — use `;`, `and`, `or`
-2. **No `$VAR` for env vars** — use `$env.VAR`
-3. **No `grep`/`sed`/`awk`** — use `where`, `str replace`, `each`
-4. **`ls` returns a table**, not text — filter with `where`, not `grep`
-5. **`open` is for reading files** — use `open file.txt` not `cat file.txt`
-6. **Closures can't capture `mut` variables** — use immutable `let` inside closures
-7. **External commands need `^` prefix** — `^git` not just `git`
-8. **No `$(cmd)` substitution** — use `(cmd)` directly in expressions
-9. **No backtick command substitution** — use `(cmd)`
-10. **No `fi`/`done`/`esac`** — just `{ }` blocks
-11. **`rm` is safer** — no `rm -rf` needed, just `rm -r`
-12. **`$in` refers to pipeline input** — very useful for chaining
+1. **No `&&` or `||`**: use `;`, `and`, `or`
+2. **No `$VAR` for env vars**: use `$env.VAR`
+3. **No `grep`/`sed`/`awk`**: use `where`, `str replace`, `each`
+4. **`ls` returns a table**, not text: filter with `where`, not `grep`
+5. **`open` is for reading files**: use `open file.txt` not `cat file.txt`
+6. **Closures can't capture `mut` variables**: use immutable `let` inside closures
+7. **External commands need `^` prefix**: `^git` not just `git`
+8. **No `$(cmd)` substitution**: use `(cmd)` directly in expressions
+9. **No backtick command substitution**: use `(cmd)`
+10. **No `fi`/`done`/`esac`**: just `{ }` blocks
+11. **`rm` is safer**: no `rm -rf` needed, just `rm -r`
+12. **`$in` refers to pipeline input**: very useful for chaining

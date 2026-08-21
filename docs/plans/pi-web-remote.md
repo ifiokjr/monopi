@@ -4,8 +4,8 @@
 
 Add the ability to manage a pi-coding-agent instance remotely via a web browser or mobile app. Two modes of operation:
 
-- **`/remote` command** — from within a running pi TUI session, exposes that session over the network. Displays a QR code + URL in the terminal.
-- **Headless daemon** (`pi-web serve`) — a long-running background process for always-on access (e.g., Mac Mini that you talk to from anywhere).
+- **`/remote` command**: from within a running pi TUI session, exposes that session over the network. Displays a QR code + URL in the terminal.
+- **Headless daemon** (`pi-web serve`): a long-running background process for always-on access (e.g., Mac Mini that you talk to from anywhere).
 
 Both modes share the same protocol, client library, web UI, and security model.
 
@@ -34,7 +34,7 @@ $ pi
   🌐 Remote active · 0 clients · /remote stop
 ```
 
-That's it. Scan the QR code with your phone. The web UI opens. You're connected. Type on your phone or in the terminal — both work on the same session.
+That's it. Scan the QR code with your phone. The web UI opens. You're connected. Type on your phone or in the terminal; both work on the same session.
 
 Everything else is automatic:
 
@@ -58,7 +58,7 @@ Same idea. QR code appears. Scan it. Run it in tmux or as a system service. Toke
 
 ### For App Developers (Future)
 
-The client library works in browsers, React Native, and Node.js — same API everywhere:
+The client library works in browsers, React Native, and Node.js with the same API everywhere:
 
 ```typescript
 import { PiWebClient } from "@monopi/web-client";
@@ -128,7 +128,7 @@ Client                                 Server
   │      instanceId: "blue-fox-92",      │
   │      session: { ... } }              │
   │                                      │
-  │    (now authenticated — all RPC      │
+  │    (now authenticated; all RPC      │
   │     commands available)              │
   │                                      │
   ├─── { type: "prompt",  ─────────────► │
@@ -156,11 +156,11 @@ The web UI reads `t` from the URL on load, stores it in memory (never in localSt
 
 The human-readable instance ID (e.g., `blue-fox-92`) is a **display name only**. It is not a credential and cannot be used to connect. It helps users identify which instance they're looking at when they have multiple running.
 
-Generated as `adjective-noun-number` from the token hash — deterministic but not reversible.
+Generated as `adjective-noun-number` from the token hash. Deterministic but not reversible.
 
 ---
 
-## Security Model — Instance Isolation
+## Security model: instance isolation
 
 ### Single-User, Single-Instance Architecture
 
@@ -206,7 +206,7 @@ Phone  ──► ┐
 Laptop ──► ┘
 ```
 
-Both clients see the same event stream. Input from either client is delivered to the agent. This is intentional — it's **your** instance on **your** devices.
+Both clients see the same event stream. Input from either client is delivered to the agent. This is intentional. It's **your** instance on **your** devices.
 
 ### Preventing Takeover
 
@@ -223,10 +223,10 @@ Both clients see the same event stream. Input from either client is delivered to
 
 ### Optional Hardening (Phase 5)
 
-- `--allowed-ips 192.168.1.0/24` — restrict to local network
-- `--token-ttl 24h` — auto-expire token, must re-run `/remote` to get a new one
-- `--max-clients 2` — limit concurrent connections
-- `--read-only` — clients can observe but not send prompts (monitoring mode)
+- `--allowed-ips 192.168.1.0/24`: restrict to local network
+- `--token-ttl 24h`: auto-expire token, must re-run `/remote` to get a new one
+- `--max-clients 2`: limit concurrent connections
+- `--read-only`: clients can observe but not send prompts (monitoring mode)
 
 ---
 
@@ -249,7 +249,7 @@ The user types `/remote`. Behind the scenes, the extension auto-detects the best
   ├── 3. Build QR URL
   │     ├── Tunnel found:
   │     │     https://pi-remote.dev?host=wss://abc.trycloudflare.com&t=TOKEN
-  │     │     (works from anywhere — phone doesn't need to be on same WiFi)
+  │     │     (works from anywhere; phone doesn't need to be on same WiFi)
   │     │
   │     └── LAN only:
   │           http://192.168.1.42:3100?t=TOKEN
@@ -260,7 +260,7 @@ The user types `/remote`. Behind the scenes, the extension auto-detects the best
 
 ### Why Hosted UI + Local Pi Is Secure
 
-When a tunnel is available, the QR code points to a hosted UI (e.g., Deno Deploy). This is a **static SPA** — just HTML, CSS, and JavaScript served from a CDN.
+When a tunnel is available, the QR code points to a hosted UI (e.g., Deno Deploy). This is a **static SPA**: just HTML, CSS, and JavaScript served from a CDN.
 
 ```
 ┌──────────────────┐   1. Load UI (static files)   ┌──────────────────┐
@@ -305,15 +305,15 @@ The user doesn't choose. `/remote` picks whichever is available.
 
 All four packages join the lockstep versioning in `monochange.toml`.
 
-**Note:** `web-remote` replaces the old `web-extension` concept. It serves double duty — it's both a pi extension (registers `/remote`) AND loads the web server. For headless daemon mode, `web-server` runs standalone without the extension.
+**Note:** `web-remote` replaces the old `web-extension` concept. It serves double duty: it's both a pi extension (registers `/remote`) and loads the web server. For headless daemon mode, `web-server` runs standalone without the extension.
 
 ---
 
-## Phase 1 — Server Core
+## Phase 1: server core
 
 **Goal:** An embeddable HTTP + WebSocket server that bridges a pi `AgentSession` to remote clients with token-based auth.
 
-### 1.1 — Scaffold `packages/monopi__web-server/`
+### 1.1: scaffold `packages/monopi__web-server/`
 
 - [ ] Create `package.json`:
   - `"name": "@monopi/web-server"`
@@ -326,18 +326,18 @@ All four packages join the lockstep versioning in `monochange.toml`.
 - [ ] Add to `monochange.toml` `versioned_files`
 - [ ] Add test globs to root `vitest.config.ts` and `biome.json`
 
-### 1.2 — Token Generation & Management
+### 1.2: token generation and management
 
 - [ ] `src/token.ts`
-  - `generateToken(): string` — 256-bit crypto random, hex-encoded (64 chars)
-  - `generateInstanceId(token: string): string` — deterministic adjective-noun-NN from SHA-256 of token (e.g., `blue-fox-92`)
+  - `generateToken(): string`: 256-bit crypto random, hex-encoded (64 chars)
+  - `generateInstanceId(token: string): string`: deterministic adjective-noun-NN from SHA-256 of token (e.g., `blue-fox-92`)
   - `loadOrCreateToken(tokenFilePath?: string): { token, instanceId, isNew }`
   - Token file written with `0600` permissions
-  - `validateToken(provided: string, expected: string): boolean` — constant-time comparison to prevent timing attacks
+  - `validateToken(provided: string, expected: string): boolean`: constant-time comparison to prevent timing attacks
 
-### 1.3 — Embeddable Web Server
+### 1.3: embeddable web server
 
-- [ ] `src/server.ts` — `PiWebServer` class (used by both `/remote` and daemon)
+- [ ] `src/server.ts`: `PiWebServer` class (used by both `/remote` and daemon)
 
   ```typescript
   class PiWebServer {
@@ -376,7 +376,7 @@ All four packages join the lockstep versioning in `monochange.toml`.
   }
   ```
 
-### 1.4 — WebSocket Protocol Handler
+### 1.4: WebSocket protocol handler
 
 - [ ] `src/ws-handler.ts`
   - **Auth handshake:** first message must be `{ type: "auth", token: "..." }`. Reject with `{ type: "auth_error", reason: "invalid_token" }` and close the socket on failure. Respond with `{ type: "auth_ok", instanceId, session }` on success.
@@ -386,21 +386,21 @@ All four packages join the lockstep versioning in `monochange.toml`.
   - **Client tracking:** assign each connection a `clientId`, track connected count
   - **CORS:** allow connections from `hostedUiUrl` origin if configured
 
-### 1.5 — REST API
+### 1.5: REST API
 
-- [ ] `src/routes.ts` — Hono routes (all require `Authorization: Bearer <token>`)
-  - `GET /api/health` — server status (no auth required)
-  - `GET /api/instance` — instance info (id, uptime, connected clients)
-  - `GET /api/session/state` — current session state
-  - `GET /api/session/messages` — message history
-  - `GET /api/session/stats` — token usage and cost
-  - `GET /api/session/export` — HTML export
-  - `GET /api/models` — available models
-  - `GET /` — serve web-ui SPA (no auth — token is in the URL query param)
+- [ ] `src/routes.ts`: Hono routes (all require `Authorization: Bearer <token>`)
+  - `GET /api/health`: server status (no auth required)
+  - `GET /api/instance`: instance info (id, uptime, connected clients)
+  - `GET /api/session/state`: current session state
+  - `GET /api/session/messages`: message history
+  - `GET /api/session/stats`: token usage and cost
+  - `GET /api/session/export`: HTML export
+  - `GET /api/models`: available models
+  - `GET /`: serve web-ui SPA (no auth: token is in the URL query param)
 
-### 1.6 — Tunnel Integration
+### 1.6: tunnel integration
 
-- [ ] `src/tunnel.ts` — tunnel lifecycle management
+- [ ] `src/tunnel.ts`: tunnel lifecycle management
   - `startTunnel(localPort, provider?): Promise<{ publicUrl: string; stop: () => void }>`
   - Auto-detect available tunnel provider:
     1. Check for `cloudflared` binary → `cloudflared tunnel --url http://localhost:PORT`
@@ -410,9 +410,9 @@ All four packages join the lockstep versioning in `monochange.toml`.
   - Health check: periodically verify tunnel is alive
   - Graceful stop: kill tunnel process on server shutdown
 
-### 1.7 — Daemon CLI Entrypoint
+### 1.7: daemon CLI entrypoint
 
-- [ ] `src/bin/pi-web.ts` — `pi-web serve` command
+- [ ] `src/bin/pi-web.ts`: `pi-web serve` command
   - Minimal required: `pi-web serve --cwd ~/projects/my-app`
   - Optional overrides: `--port`, `--host`, `--token-file`, `--no-tunnel`
   - Auto-detect tunnel + LAN IP (same logic as `/remote` extension)
@@ -420,21 +420,21 @@ All four packages join the lockstep versioning in `monochange.toml`.
   - Attach it to `PiWebServer`
   - Display QR code + URL
   - Persist token to `~/.config/pi-web/token` by default
-  - Graceful shutdown on SIGINT/SIGTERM — save session, stop tunnel, stop server
+  - Graceful shutdown on SIGINT/SIGTERM: save session, stop tunnel, stop server
 
-### 1.8 — Tests
+### 1.8: tests
 
-- [ ] `tests/token.test.ts` — generation, validation, persistence, constant-time compare
-- [ ] `tests/server.test.ts` — start/stop lifecycle, client connect/disconnect
-- [ ] `tests/ws-handler.test.ts` — auth handshake, command dispatch, event relay
-- [ ] `tests/routes.test.ts` — REST endpoint auth + response shapes
-- [ ] `tests/tunnel.test.ts` — tunnel provider detection, URL parsing, lifecycle
+- [ ] `tests/token.test.ts`: generation, validation, persistence, constant-time compare
+- [ ] `tests/server.test.ts`: start/stop lifecycle, client connect/disconnect
+- [ ] `tests/ws-handler.test.ts`: auth handshake, command dispatch, event relay
+- [ ] `tests/routes.test.ts`: REST endpoint auth + response shapes
+- [ ] `tests/tunnel.test.ts`: tunnel provider detection, URL parsing, lifecycle
 - [ ] Mock `AgentSession` for unit tests (no real LLM calls)
 
 ### Phase 1 Deliverable
 
 ```bash
-# Start a daemon — auto-detects tunnel, shows QR code
+# Start a daemon; auto-detects tunnel, shows QR code
 pi-web serve --cwd ~/projects/my-app
 
 # Under the hood, WebSocket protocol works like this:
@@ -449,11 +449,11 @@ wscat -c ws://localhost:3100/ws
 
 ---
 
-## Phase 2 — `/remote` Extension
+## Phase 2: `/remote` extension
 
 **Goal:** A pi extension that registers the `/remote` command. One command, zero config. Starts the server, detects connectivity, shows a QR code.
 
-### 2.1 — Scaffold `packages/monopi__web-remote/`
+### 2.1: scaffold `packages/monopi__web-remote/`
 
 - [ ] Create `package.json`:
   - `"name": "@monopi/web-remote"`
@@ -463,13 +463,13 @@ wscat -c ws://localhost:3100/ws
   - Peer dependencies: `@earendil-works/pi-coding-agent`, `@sinclair/typebox`
 - [ ] Add to `monochange.toml` `versioned_files`
 
-### 2.2 — Extension Implementation
+### 2.2: extension implementation
 
-- [ ] `index.ts` — Main extension
-  - **`/remote`** — the only command the user needs to know
+- [ ] `index.ts`: Main extension
+  - **`/remote`**: the only command the user needs to know
     - If not active: start server + show QR code
     - If already active: re-show QR code + connected client count
-    - `/remote stop` — tear everything down
+    - `/remote stop`: tear everything down
   - **Auto-detect everything on start:**
     1. Find a free port (start at 3100, increment if taken)
     2. Generate token
@@ -477,17 +477,17 @@ wscat -c ws://localhost:3100/ws
     4. If tunnel found: start it, build QR URL as `https://pi-remote.dev?host=wss://TUNNEL_URL&t=TOKEN`
     5. If no tunnel: get LAN IP, build QR URL as `http://LAN_IP:PORT?t=TOKEN`
     6. Show QR code via `ctx.ui.custom()` overlay (auto-dismiss after 15s)
-  - **Status line** — persistent `🌐 Remote: 2 clients` in footer via `ctx.ui.setStatus()`
-  - **Session lifecycle** — on `session_shutdown`, stop server + tunnel. On `session_switch`, detach old session, attach new one.
-  - **Client connect/disconnect** — `ctx.ui.notify()` toast in terminal
+  - **Status line**: persistent `🌐 Remote: 2 clients` in footer via `ctx.ui.setStatus()`
+  - **Session lifecycle**: on `session_shutdown`, stop server + tunnel. On `session_switch`, detach old session, attach new one.
+  - **Client connect/disconnect**: `ctx.ui.notify()` toast in terminal
 
-### 2.3 — Permission Gate
+### 2.3: permission gate
 
 - [ ] When remote clients are connected, dangerous tool calls (`rm -rf`, `sudo`, sensitive path writes) trigger `ctx.ui.confirm()` which routes to the web client as an `extension_ui_request` dialog. Terminal user can also approve.
 
-### 2.4 — Tests
+### 2.4: tests
 
-- [ ] `tests/remote.test.ts` — auto-detect logic, server lifecycle
+- [ ] `tests/remote.test.ts`: auto-detect logic, server lifecycle
 
 ### Phase 2 Deliverable
 
@@ -497,7 +497,7 @@ pi
 # QR code appears. Scan it. Done.
 
 > /remote
-# Already active — shows QR again + "2 clients connected"
+# Already active; shows QR again + "2 clients connected"
 
 > /remote stop
 # Everything stops
@@ -505,29 +505,29 @@ pi
 
 ---
 
-## Phase 3 — Client Library
+## Phase 3: client library
 
 **Goal:** A typed, platform-agnostic TypeScript client that works in browsers, React Native, and Node.js.
 
-### 3.1 — Scaffold `packages/monopi__web-client/`
+### 3.1: scaffold `packages/monopi__web-client/`
 
 - [ ] Create `package.json`:
   - `"name": "@monopi/web-client"`
   - `"type": "module"`, compiled to dist/
-  - **Zero runtime dependencies** — uses native `WebSocket` API
+  - **Zero runtime dependencies**: uses native `WebSocket` API
   - Exports ESM + CJS for maximum compatibility
-- [ ] `tsconfig.json` with `"lib": ["ES2022"]` — no DOM types
+- [ ] `tsconfig.json` with `"lib": ["ES2022"]`: no DOM types
 - [ ] Add to `monochange.toml` `versioned_files`
 
-### 3.2 — Client Core
+### 3.2: client core
 
-- [ ] `src/types.ts` — Full TypeScript types mirroring pi's RPC protocol
+- [ ] `src/types.ts`: Full TypeScript types mirroring pi's RPC protocol
   - All command types (prompt, steer, set_model, etc.)
   - All event types (agent_start, message_update, etc.)
   - `ConnectionState`, `SessionInfo`, `InstanceInfo`
-  - No dependency on pi packages — types are self-contained
+  - No dependency on pi packages: types are self-contained
 
-- [ ] `src/client.ts` — `PiWebClient` class
+- [ ] `src/client.ts`: `PiWebClient` class
 
   ```typescript
   class PiWebClient {
@@ -581,17 +581,17 @@ pi
   }
   ```
 
-- [ ] `src/reconnect.ts` — Auto-reconnection with exponential backoff
+- [ ] `src/reconnect.ts`: Auto-reconnection with exponential backoff
   - On reconnect: re-authenticate with same token
   - Fetch messages via `getMessages()` to re-sync UI state
   - Emit `connection` event so UI can show reconnecting state
 
-### 3.3 — Platform Compatibility
+### 3.3: platform compatibility
 
-- [ ] **Browser** — uses native `WebSocket`, works out of the box
-- [ ] **React Native** — uses native `WebSocket`, works out of the box
-- [ ] **Node.js 21+** — uses native `WebSocket`, works out of the box
-- [ ] **Node.js <21** — pass `ws` library as `options.WebSocket`:
+- [ ] **Browser**: uses native `WebSocket`, works out of the box
+- [ ] **React Native**: uses native `WebSocket`, works out of the box
+- [ ] **Node.js 21+**: uses native `WebSocket`, works out of the box
+- [ ] **Node.js <21**: pass `ws` library as `options.WebSocket`:
   ```typescript
   import WebSocket from "ws";
   const client = new PiWebClient({
@@ -603,10 +603,10 @@ pi
 - [ ] No `Buffer`, `process`, `fs`, or other Node-only APIs in client code
 - [ ] No `document`, `window`, or other DOM APIs in client code
 
-### 3.4 — Tests
+### 3.4: tests
 
-- [ ] `tests/client.test.ts` — auth flow, command/response, event dispatch
-- [ ] `tests/reconnect.test.ts` — reconnection + state recovery
+- [ ] `tests/client.test.ts`: auth flow, command/response, event dispatch
+- [ ] `tests/reconnect.test.ts`: reconnection + state recovery
 - [ ] Mock WebSocket for unit tests
 
 ### Phase 3 Deliverable
@@ -633,11 +633,11 @@ await client.prompt("What files are here?");
 
 ---
 
-## Phase 4 — Web UI
+## Phase 4: web UI
 
 **Goal:** A React SPA served by the web server. Chat interface with tool output, model switching, and extension dialogs.
 
-### 4.1 — Scaffold `packages/monopi__web-client/`
+### 4.1: scaffold `packages/monopi__web-client/`
 
 - [ ] Create `package.json`:
   - `"name": "@monopi/web-client"`
@@ -646,29 +646,29 @@ await client.prompt("What files are here?");
 - [ ] Vite config: builds to `dist/`, `web-server` serves statically
 - [ ] Add to `monochange.toml` `versioned_files`
 
-### 4.2 — Connection Screen
+### 4.2: connection screen
 
 - [ ] `src/pages/Connect.tsx`
   - On load: read URL parameters:
-    - `t` — token
-    - `host` — pi-web server WebSocket URL (for hosted UI mode)
+    - `t`: token
+    - `host`: pi-web server WebSocket URL (for hosted UI mode)
   - **Self-contained mode** (no `host` param): connect WebSocket to same origin
   - **Hosted UI mode** (`host` param present): connect WebSocket to the `host` URL
   - If token present: auto-connect, show connecting spinner
   - If no token: show manual entry form (paste a full pi-web URL or token + host)
   - On success: strip `t` from URL bar (`history.replaceState`; keep `host`), navigate to chat
   - On failure: show error with retry button
-  - Store `host` in sessionStorage (survives refresh, not tabs) so the user doesn't need to re-enter it. **Never store token** — memory only.
+  - Store `host` in sessionStorage (survives refresh, not tabs) so the user doesn't need to re-enter it. **Never store token**: memory only.
 
-### 4.3 — Core Layout
+### 4.3: core layout
 
-- [ ] `src/pages/Chat.tsx` — Main layout
+- [ ] `src/pages/Chat.tsx`: Main layout
   - Header: instance ID, model name, thinking level, connected indicator
   - Main area: scrollable message list
   - Input area: chat input with send/abort controls
   - Status bar: token usage, cost, context usage %
 
-### 4.4 — Chat Components
+### 4.4: chat components
 
 - [ ] `src/components/ChatMessage.tsx`
   - User messages: plain text with markdown
@@ -690,7 +690,7 @@ await client.prompt("What files are here?");
   - `write`/`edit`: file path + diff view
   - Custom tools: JSON fallback
 
-### 4.5 — Extension UI Dialogs
+### 4.5: extension UI dialogs
 
 - [ ] `src/components/ExtensionDialog.tsx`
   - `select` → radio/button list modal
@@ -700,19 +700,19 @@ await client.prompt("What files are here?");
   - `notify` → toast notification (non-blocking)
   - `setStatus` → status bar update
 
-### 4.6 — Controls
+### 4.6: controls
 
-- [ ] `src/components/ModelSelector.tsx` — dropdown + thinking level
-- [ ] `src/components/ConnectionStatus.tsx` — connected/reconnecting indicator
-- [ ] `src/components/SessionInfo.tsx` — tokens, cost, context %
+- [ ] `src/components/ModelSelector.tsx`: dropdown + thinking level
+- [ ] `src/components/ConnectionStatus.tsx`: connected/reconnecting indicator
+- [ ] `src/components/SessionInfo.tsx`: tokens, cost, context %
 
-### 4.7 — State Management
+### 4.7: state management
 
-- [ ] `src/hooks/usePiClient.ts` — `PiWebClient` lifecycle + React state
-- [ ] `src/hooks/useMessages.ts` — accumulate messages from events
-- [ ] `src/hooks/useExtensionUI.ts` — dialog queue + auto-timeout
+- [ ] `src/hooks/usePiClient.ts`: `PiWebClient` lifecycle + React state
+- [ ] `src/hooks/useMessages.ts`: accumulate messages from events
+- [ ] `src/hooks/useExtensionUI.ts`: dialog queue + auto-timeout
 
-### 4.8 — Build Integration
+### 4.8: build integration
 
 - [ ] `web-server` serves `web-ui/dist/` at `GET /` with SPA fallback
 - [ ] Dev mode: Vite dev server proxies `/ws` to `web-server`
@@ -729,31 +729,31 @@ pi
 
 ---
 
-## Phase 5 — Advanced Features
+## Phase 5: advanced features
 
-### 5.1 — Session Branching & Tree View
+### 5.1: session branching and tree view
 
 - [ ] Visual tree navigator in web UI (mirrors pi's `/tree`)
 - [ ] Fork from any message
 - [ ] Labels / bookmarks
 
-### 5.2 — Slash Commands & Skills
+### 5.2: slash commands and skills
 
 - [ ] `/` trigger in chat input with autocomplete
 - [ ] List from `getCommands()`
 
-### 5.3 — Security Hardening (Internal — No User Config)
+### 5.3: security hardening (internal, no user config)
 
 - [ ] Auto-expire tokens after 30 days for daemon mode (re-run to refresh)
 - [ ] Max 5 concurrent clients (hard limit, not configurable)
 - [ ] Audit log to `~/.config/pi-web/audit.log`
 
-### 5.4 — Hosted UI Deployment
+### 5.4: hosted UI deployment
 
-- [ ] Publish and maintain `https://pi-remote.dev` (static SPA on Deno Deploy) so `/remote` with tunnel just works — no user deployment needed
+- [ ] Publish and maintain `https://pi-remote.dev` (static SPA on Deno Deploy) so `/remote` with tunnel just works: no user deployment needed
 - [ ] Vercel / Netlify / Deno Deploy adapters for self-hosting the UI
 
-### 5.5 — React Native Starter
+### 5.5: React Native starter
 
 - [ ] Example React Native app in `examples/react-native/`
 - [ ] Demonstrates: connect, chat, tool output, extension dialogs
@@ -763,7 +763,7 @@ pi
 
 ## Build & CI Integration
 
-### `monochange.toml` — Add to `versioned_files`
+### `monochange.toml`: add to `versioned_files`
 
 ```toml
 "packages/monopi__web-server/package.json",
@@ -772,13 +772,13 @@ pi
 "packages/monopi__web-client/package.json",
 ```
 
-### Root `package.json` — Update build script
+### Root `package.json`: update build script
 
 ```json
 "build": "pnpm -r --filter @monopi/core --filter @monopi/cli --filter @monopi/web-server --filter @monopi/web-client --filter @monopi/web-client run build"
 ```
 
-### Root `vitest.config.ts` — Add test globs
+### Root `vitest.config.ts`: add test globs
 
 ```typescript
 "packages/monopi__web-server/tests/**/*.test.ts",
@@ -786,7 +786,7 @@ pi
 "packages/monopi__web-remote/tests/**/*.test.ts",
 ```
 
-### `biome.json` — Add source globs
+### `biome.json`: add source globs
 
 ```json
 "packages/monopi__web-server/src/**/*.ts",
@@ -796,7 +796,7 @@ pi
 "packages/monopi__web-client/src/**/*.tsx"
 ```
 
-### `packages/monopi__monopi/bin/monopi.mjs` — Add to PACKAGES
+### `packages/monopi__monopi/bin/monopi.mjs`: add to PACKAGES
 
 ```javascript
 "@monopi/web-remote",   // /remote command extension
@@ -818,7 +818,7 @@ pi
   └── @earendil-works/pi-coding-agent (peer dep: SDK)
 
 @monopi/web-client (standalone client library)
-  └── (no dependencies — platform-agnostic)
+  └── (no dependencies; platform-agnostic)
 
 @monopi/web-client (React SPA)
   └── @monopi/web-client

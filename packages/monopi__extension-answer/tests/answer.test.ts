@@ -1304,11 +1304,11 @@ describe("runAnswerFlow factory callbacks", () => {
 			const component = factory(fakeTui, fakeTheme, fakeKeybindings, done);
 
 			if (component?.onAbort === undefined) {
-				// QnATuiComponent — capture options
+				// QnATuiComponent: capture options
 				qnaComponentOptions = component?.options ?? component;
 				setTimeout(() => done(null), 0);
 			} else {
-				// BorderedLoader — resolve with questions
+				// BorderedLoader: resolve with questions
 				setTimeout(() => done([{ question: "What DB?" }]), 0);
 			}
 
@@ -1406,10 +1406,10 @@ describe("runAnswerFlow with preextractedText", () => {
 			const component = factory(fakeTui, fakeTheme, fakeKeybindings, done);
 
 			if (component?.onAbort === undefined) {
-				// QnA — cancel
+				// QnA: cancel
 				setTimeout(() => done(null), 0);
 			} else {
-				// BorderedLoader — return extracted questions
+				// BorderedLoader: return extracted questions
 				setTimeout(() => done([{ question: "What DB?" }]), 0);
 			}
 

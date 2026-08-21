@@ -1,13 +1,13 @@
-# oh-pi Roadmap (2026 H1)
+# monopi Roadmap (2026 H1)
 
-> Key judgment: the biggest risk isn't technical implementation — it's **positioning and growth**.
+> Key judgment: the biggest risk isn't technical implementation, it's **positioning and growth**.
 
 ## 1) Product Positioning (Straighten First)
 
 ### Primary Positioning
 
-- **oh-pi**: One-click configuration and onboarding portal (install, initialize, theme/extension/skill assembly)
-- oh-pi packages provide extensions, skills, themes, prompts, subagents, and config tooling.
+- **monopi**: one-click configuration and onboarding portal (install, initialize, theme/extension/skill assembly)
+- monopi packages provide extensions, skills, themes, prompts, subagents, and config tooling.
 
 ### Communication Principles
 

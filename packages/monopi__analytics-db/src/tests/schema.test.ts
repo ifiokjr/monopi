@@ -1,5 +1,5 @@
 /**
- * Analytics DB — Unit Tests
+ * Analytics DB: Unit Tests
  *
  * Tests for utility functions and schema definitions that don't require SQLite.
  */

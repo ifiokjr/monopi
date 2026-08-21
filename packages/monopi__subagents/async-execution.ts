@@ -185,7 +185,7 @@ export async function executeAsyncChain(id: string, params: AsyncChainParams): P
 		};
 	};
 
-	// Build runner steps — sequential steps become flat objects,
+	// Build runner steps: sequential steps become flat objects,
 	// Parallel steps become { parallel: [...], concurrency?, failFast? }
 	const steps: RunnerStep[] = [];
 	for (const s of chain) {

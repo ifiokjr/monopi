@@ -1,6 +1,6 @@
 # PiAdapter Interface Draft (Phase C)
 
-> Goal: Introduce an anti-corruption layer between `spawner.ts` and the pi SDK — unifying session creation, tool injection, streaming callbacks, and interrupt/timeout handling to isolate SDK change impact.
+> Goal: Introduce an anti-corruption layer between `spawner.ts` and the pi SDK, unifying session creation, tool injection, streaming callbacks, and interrupt/timeout handling to isolate SDK change impact.
 
 ## 1. Design Goals
 

@@ -128,7 +128,7 @@ async function refreshProviderToken(
 				apiToken = parsed.token;
 			}
 		} catch {
-			// Not JSON — use as-is (Anthropic and OpenAI return raw tokens).
+			// Not JSON: use as-is (Anthropic and OpenAI return raw tokens).
 		}
 
 		return { entry: updated, token: apiToken };
@@ -161,7 +161,7 @@ export async function ensureFreshToken(
 			: null;
 	}
 
-	// Token expired — try refreshing via pi's OAuth module
+	// Token expired: try refreshing via pi's OAuth module
 	return refreshProviderToken(authKey, entry, allAuth);
 }
 
@@ -339,7 +339,7 @@ export async function probeAnthropicDirect(token: string): Promise<ProviderRateL
 			});
 
 			if (response.status === 401) {
-				result.error = "Anthropic auth token expired \u2014 re-authenticate in pi settings.";
+				result.error = "Anthropic auth token expired. Re-authenticate in pi settings.";
 				return result;
 			}
 			if (response.status === 429) {
@@ -352,7 +352,7 @@ export async function probeAnthropicDirect(token: string): Promise<ProviderRateL
 				return result;
 			}
 			if (!response.ok) {
-				result.note = `Anthropic OAuth usage endpoint returned ${response.status} — rate limit details unavailable.`;
+				result.note = `Anthropic OAuth usage endpoint returned ${response.status}; rate limit details unavailable.`;
 				result.plan = "OAuth";
 				return result;
 			}
@@ -393,7 +393,7 @@ export async function probeAnthropicDirect(token: string): Promise<ProviderRateL
 		});
 
 		if (response.status === 401) {
-			result.error = "Anthropic auth token expired \u2014 re-authenticate in pi settings.";
+			result.error = "Anthropic auth token expired. Re-authenticate in pi settings.";
 			return result;
 		}
 		if (!response.ok) {
@@ -547,7 +547,7 @@ export async function probeOpenAIDirect(token: string): Promise<ProviderRateLimi
 		});
 
 		if (response.status === 401) {
-			result.error = "OpenAI auth token expired — re-authenticate in pi settings.";
+			result.error = "OpenAI auth token expired. Re-authenticate in pi settings.";
 			return result;
 		}
 		if (response.status === 429) {
@@ -557,7 +557,7 @@ export async function probeOpenAIDirect(token: string): Promise<ProviderRateLimi
 			return result;
 		}
 		if (!response.ok) {
-			result.note = `OpenAI usage endpoint returned ${response.status} — rate limit details unavailable.`;
+			result.note = `OpenAI usage endpoint returned ${response.status}; rate limit details unavailable.`;
 			return result;
 		}
 
@@ -693,7 +693,7 @@ export async function probeGoogleDirect(token: string, authEntry?: PiAuthEntry):
 		});
 
 		if (response.status === 401) {
-			result.error = "Google auth token expired — re-authenticate in pi settings.";
+			result.error = "Google auth token expired. Re-authenticate in pi settings.";
 			return result;
 		}
 		if (!response.ok) {
@@ -862,7 +862,7 @@ export async function probeOllamaDirect(token: string | null): Promise<ProviderR
 				signal: AbortSignal.timeout(PROBE_TIMEOUT_MS),
 			});
 			if (response.status === 401) {
-				cloudNote = "Cloud auth was rejected — run /login ollama-cloud again.";
+				cloudNote = "Cloud auth was rejected. Run /login ollama-cloud again.";
 			} else if (response.ok) {
 				const payload = (await response.json()) as { data?: { id?: string }[] };
 				maybeAddGenericRateLimitWindow(result, response.headers);

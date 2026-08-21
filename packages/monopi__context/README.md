@@ -4,11 +4,11 @@ Pi-native context manager: SQLite FTS5 knowledge base, terse mode, and context-w
 
 ## Features
 
-- **Session Knowledge Base** — Index every user, assistant, and tool message into a local SQLite database with FTS5 full-text search.
-- **BM25 Search** — Query past sessions by keyword, scoped to the current project directory.
-- **Auto-Indexing** — On session shutdown, all messages are automatically indexed.
-- **Manual Control** — `/ctx index`, `/ctx search`, `/ctx stats`, `/ctx purge`.
-- **Terse Mode** — Toggle a terse-output mode that reminds the LLM to be brief.
+- **Session Knowledge Base**: Index every user, assistant, and tool message into a local SQLite database with FTS5 full-text search.
+- **BM25 Search**: Query past sessions by keyword, scoped to the current project directory.
+- **Auto-Indexing**: On session shutdown, all messages are automatically indexed.
+- **Manual Control**: `/ctx index`, `/ctx search`, `/ctx stats`, `/ctx purge`.
+- **Terse Mode**: Toggle a terse-output mode that reminds the LLM to be brief.
 
 ## Commands
 
@@ -26,7 +26,7 @@ The SQLite database lives at `~/.pi/context-kb/sessions.db` and uses WAL mode fo
 
 ## Optional Dependency
 
-`better-sqlite3` is an optional dependency. If it is not installed, the extension degrades gracefully — `/ctx index` will silently no-op and search commands will show a friendly warning.
+`better-sqlite3` is an optional dependency. If it is not installed, the extension degrades gracefully: `/ctx index` silently no-ops and search commands show a friendly warning.
 
 ## Installation
 

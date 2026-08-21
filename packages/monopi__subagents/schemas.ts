@@ -154,7 +154,7 @@ export const SubagentParams = Type.Object({
 				"Management action: 'list' (discover agents/chains), 'get' (full detail), 'create', 'update', 'delete'. Omit for execution mode.",
 		}),
 	),
-	// Chain identifier for management (can't reuse 'chain' — that's the execution array)
+	// Chain identifier for management (can't reuse 'chain': that's the execution array)
 	chainName: Type.Optional(
 		Type.String({
 			description: "Chain name for get/update/delete management actions",

@@ -3,7 +3,7 @@
  * Pi Analytics Database Client
  *
  * SQLite database connection and query utilities using Drizzle ORM.
- * better-sqlite3 is synchronous — no async/await needed.
+ * better-sqlite3 is synchronous: no async/await needed.
  */
 
 import type { BetterSQLite3Database } from "drizzle-orm/better-sqlite3";

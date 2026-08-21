@@ -4,7 +4,7 @@
 
 # 🐜 monopi
 
-**One command to supercharge [pi-coding-agent](https://github.com/badlogic/pi-mono).**
+**One command to install and configure [pi-coding-agent](https://github.com/badlogic/pi-mono).**
 
 Like oh-my-zsh for pi.
 
@@ -124,7 +124,7 @@ This is a monorepo. Install everything at once with `npx @monopi/monopi`, or pic
 
 ### Full Feature Catalog
 
-For a package-by-package inventory of everything in the repo — including every extension, runtime package, skill, theme, AGENTS template, and contributor-facing library — see [docs/feature-catalog.md](./docs/feature-catalog.md).
+For a package-by-package inventory of everything in the repo (every extension, runtime package, skill, theme, AGENTS template, and contributor-facing library), see [docs/feature-catalog.md](./docs/feature-catalog.md).
 
 ### Installer Options
 
@@ -208,10 +208,10 @@ pi --plain-icons
 Add `"plainIcons": true` to your global or project-local settings:
 
 ```bash
-# Global — applies to all projects
+# Global: applies to all projects
 echo '  "plainIcons": true' >> ~/.pi/agent/settings.json
 
-# Or project-local — applies only to this repo
+# Or project-local: applies only to this repo
 echo '  "plainIcons": true' >> .pi/settings.json
 ```
 
@@ -229,13 +229,13 @@ echo '  "plainIcons": true' >> .pi/settings.json
 
 ## Extensions
 
-### 📦 Git Guard (`git-guard`) — **default: on**
+### Git Guard (`git-guard`), on by default
 
 Prevents accidental code loss by auto-creating stash checkpoints before the agent makes changes. Warns when the repo is dirty (uncommitted changes) and notifies when operations complete.
 
 **How it works:** On `session_start`, checks `git status`. If dirty, creates `git stash` with a timestamped name. On `tool_result` for write/edit operations, tracks changed files.
 
-### 📊 Custom Footer (`custom-footer`) — **default: on**
+### Custom Footer (`custom-footer`), on by default
 
 Replaces the default pi footer with a rich status bar showing real-time metrics:
 
@@ -247,7 +247,7 @@ Replaces the default pi footer with a rich status bar showing real-time metrics:
 
 **How it works:** Uses `ctx.ui.setFooter()` with a component that reads `ctx.sessionManager.getBranch()` for token/cost data and `footerData.getGitBranch()` for git info. Auto-refreshes every 30s.
 
-### ⏱ Diagnostics (`diagnostics`) — **default: on**
+### Diagnostics (`diagnostics`), on by default
 
 Adds prompt-level completion diagnostics so you can see when a prompt started, when it finished, how long it took, and how each assistant turn progressed.
 
@@ -260,7 +260,7 @@ Adds prompt-level completion diagnostics so you can see when a prompt started, w
 
 **How it works:** Reuses the same timestamp/duration formatting as `tool-metadata`, tracks `before_agent_start`, `turn_end`, and `agent_end`, then emits a custom diagnostic message when the agent goes idle for that prompt.
 
-### 🧾 Tool Metadata (`tool-metadata`) — **default: on**
+### Tool Metadata (`tool-metadata`), on by default
 
 Enriches tool results with execution metadata so pi can show when a tool started, when it finished, how long it took, and roughly how much text went in or out.
 
@@ -268,11 +268,11 @@ Enriches tool results with execution metadata so pi can show when a tool started
 
 **How it works:** Hooks tool calls/results centrally and appends structured metadata to tool result `details`, which other features like diagnostics can reuse for consistent timing displays.
 
-### ⚡ Compact Header (`compact-header`) — **default: on**
+### Compact Header (`compact-header`), on by default
 
 Replaces the verbose default startup header with a dense one-liner showing model, provider, thinking level, and extension count.
 
-### ⌨️ External Editor (`external-editor`) — **default: on**
+### External Editor (`external-editor`), on by default
 
 Adds a discoverable `/external-editor` command and a `Ctrl+Shift+E` shortcut for opening the current draft in `$VISUAL` or `$EDITOR`, then syncing the saved text back into pi.
 
@@ -280,7 +280,7 @@ Adds a discoverable `/external-editor` command and a `Ctrl+Shift+E` shortcut for
 
 **Notes:** This complements pi's built-in `app.editor.external` binding (`Ctrl+G` by default). Users who want a different primary key can still remap that binding in `keybindings.json`.
 
-### 🌲 Worktree (`worktree`) — **default: on**
+### Worktree (`worktree`), on by default
 
 Adds centralized git worktree awareness for monopi. It detects whether the current checkout is the main repo or a linked worktree, shows when the current worktree is pi-owned, and tracks owner + purpose metadata for pi-created worktrees.
 
@@ -288,7 +288,7 @@ Adds centralized git worktree awareness for monopi. It detects whether the curre
 
 **Behavior:** pi-owned worktrees are created under shared pi storage, namespaced by the canonical repo root. Cleanup focuses on pi-owned worktrees only and leaves external/manual worktrees alone unless you explicitly intervene.
 
-### 📅 Scheduler (`scheduler`) — **default: on**
+### Scheduler (`scheduler`), on by default
 
 Adds first-class reminders, recurring follow-ups, and future check-ins to pi.
 
@@ -298,7 +298,7 @@ Adds first-class reminders, recurring follow-ups, and future check-ins to pi.
 
 **Behavior:** tasks run only while pi is active and idle, persist under shared pi storage, default to instance scope, and can opt into workspace scope for shared CI/build/deploy monitors. Use `continueUntilComplete` when a follow-up should keep retrying until a success marker appears.
 
-### 💬 BTW / QQ (`btw`) — **default: on**
+### BTW / QQ (`btw`), on by default
 
 Creates a side-conversation widget above the editor so you can ask follow-up questions, think in parallel, or park a tangent without interrupting the main thread.
 
@@ -306,7 +306,7 @@ Creates a side-conversation widget above the editor so you can ask follow-up que
 
 **Behavior:** keep a lightweight parallel thread, then either inject the full exchange into the main agent or inject a generated summary instead.
 
-### ⏳ Background Tasks (`@monopi/background-tasks`) — **default: on**
+### Background Tasks (`@monopi/background-tasks`), on by default
 
 Manages explicit background tasks for long-lived commands like dev servers, PR watchers, and log followers. Ordinary `bash` commands stay in the foreground so their output remains visible in the current pi session.
 
@@ -321,7 +321,7 @@ Agent: bg_task spawn "npm run dev"
 
 **Commands:** `bg_status list` | `bg_status log --pid 12345` | `bg_status stop --pid 12345`
 
-### 🧭 Adaptive Routing (`adaptive-routing`) — **optional package**
+### Adaptive Routing (`adaptive-routing`), optional package
 
 Adaptive routing now ships as its own package so users can opt into routing behavior explicitly:
 
@@ -331,7 +331,7 @@ pi install npm:@monopi/adaptive-routing
 
 It adds `/route` controls, local routing telemetry, and delegated startup categories that subagents can use for provider assignment when no explicit model override is set.
 
-### 💰 Usage Tracker (`usage-tracker`) — **default: off**
+### Usage Tracker (`usage-tracker`), off by default
 
 <!-- {=extensionsUsageTrackerOverview} -->
 
@@ -357,9 +357,9 @@ Claude [████████░░░░] 67% ↻in 3d 2h │ 💰$0.42 │ 
 ╭─ Usage Dashboard ──────────────────────────────────────╮
 
   ▸ Claude Rate Limits
-    Weekly (all)   [████████████░░░░░░░░] 67% left (33% used) — resets in 3d 2h
+    Weekly (all)   [████████████░░░░░░░░] 67% left (33% used) · resets in 3d 2h
       Pace: On pace | Expected 31% used | Lasts until reset
-    Session        [████████████████░░░░] 82% left (18% used) — resets in 2h 5m
+    Session        [████████████████░░░░] 82% left (18% used) · resets in 2h 5m
     Most constrained: Weekly (all) (67% left)
 
   ──────────────────────────────────────────────────────────
@@ -388,7 +388,7 @@ Key usage-tracker surfaces:
 
 <!-- {/extensionsUsageTrackerCommandsDocs} -->
 
-### 🛡️ Watchdog + Safe Mode (`watchdog`) — **default: on**
+### Watchdog and Safe Mode (`watchdog`), on by default
 
 Continuously samples runtime health so heavy sessions stay usable.
 
@@ -400,19 +400,19 @@ Continuously samples runtime health so heavy sessions stay usable.
 
 ## Setup Modes
 
-| Mode          | Steps | For                               |
-| ------------- | ----- | --------------------------------- |
-| 🚀 **Quick**  | 3     | Pick provider → enter key → done  |
-| 📦 **Preset** | 2     | Choose a role profile → enter key |
-| 🎛️ **Custom** | 6     | Pick everything yourself          |
+| Mode   | Steps | For                               |
+| ------ | ----- | --------------------------------- |
+| Quick  | 3     | Pick provider → enter key → done  |
+| Preset | 2     | Choose a role profile → enter key |
+| Custom | 6     | Pick everything yourself          |
 
 ### Presets
 
-|               | Theme       | Thinking | Includes                               |
-| ------------- | ----------- | -------- | -------------------------------------- |
-| ⚫ Full Power | monopi Dark | high     | Recommended extensions                 |
-| 🔴 Clean      | Default     | off      | No extensions, just core               |
-| 🚀 Subagents  | monopi Dark | medium   | Subagent chains and parallel execution |
+|            | Theme       | Thinking | Includes                               |
+| ---------- | ----------- | -------- | -------------------------------------- |
+| Full Power | monopi Dark | high     | Recommended extensions                 |
+| Clean      | Default     | off      | No extensions, just core               |
+| Subagents  | monopi Dark | medium   | Subagent chains and parallel execution |
 
 ### Providers
 
@@ -430,14 +430,14 @@ Anthropic · OpenAI · Google Gemini · Groq · OpenRouter · xAI · Mistral
 
 ## Themes
 
-| Theme               | Description                  |
-| ------------------- | ---------------------------- |
-| 🌙 monopi Dark      | Cyan + purple, high contrast |
-| 🌙 Cyberpunk        | Neon magenta + electric cyan |
-| 🌙 Nord             | Arctic blue palette          |
-| 🌙 Catppuccin Mocha | Pastel on dark               |
-| 🌙 Tokyo Night      | Blue + purple twilight       |
-| 🌙 Gruvbox Dark     | Warm retro tones             |
+| Theme            | Description                  |
+| ---------------- | ---------------------------- |
+| monopi Dark      | Cyan + purple, high contrast |
+| Cyberpunk        | Neon magenta + electric cyan |
+| Nord             | Arctic blue palette          |
+| Catppuccin Mocha | Pastel on dark               |
+| Tokyo Night      | Blue + purple twilight       |
+| Gruvbox Dark     | Warm retro tones             |
 
 ---
 
@@ -595,21 +595,21 @@ If you are changing one of the compiled contributor packages (`@monopi/core`, `@
 pnpm change
 ```
 
-This creates a file in `.changeset/` describing the change. Because this repo uses MonoChange with a lockstep `default` group, changeset frontmatter must use **only** `default` as the key:
+This creates a file in `.changeset/` describing the change. Because this repo uses MonoChange with a lockstep `monopi` group, changeset frontmatter must use **only** `monopi` as the key:
 
 ```md
 ---
-default: patch
+monopi: patch
 ---
 ```
 
-Do not use package names like `@monopi/monopi` or `@monopi/extension-worktree` in changeset frontmatter here — MonoChange validates changesets against the configured `default` release group.
+Do not use package names like `@monopi/monopi` or `@monopi/extension-worktree` in changeset frontmatter here. MonoChange validates changesets against the configured `monopi` release group.
 
 Choose the change type:
 
-- **`major`** — Breaking changes
-- **`minor`** — New features
-- **`patch`** — Bug fixes
+- **`major`**: breaking changes
+- **`minor`**: new features
+- **`patch`**: bug fixes
 
 ### Releasing
 

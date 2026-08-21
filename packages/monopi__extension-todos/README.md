@@ -1,6 +1,6 @@
 # @monopi/extension-todos
 
-Standalone pi extension package for `todos` — file-backed todo management.
+Standalone pi extension package for `todos`: file-backed todo management.
 
 ```bash
 pi install npm:@monopi/extension-todos
@@ -8,11 +8,11 @@ pi install npm:@monopi/extension-todos
 
 ## Commands
 
-- `/todos` — open the visual todo manager overlay.
+- `/todos`: open the visual todo manager overlay.
 
 ## Tools
 
-- `todo` — manage file-based todos: `list`, `list-all`, `get`, `create`, `update`, `append`, `delete`, `claim`, `release`.
+- `todo`: manage file-based todos: `list`, `list-all`, `get`, `create`, `update`, `append`, `delete`, `claim`, `release`.
 
 Todos are stored as standalone markdown files under `<todo-dir>` (defaults to `.pi/todos`, overridable via the `PI_TODO_PATH` environment variable). Each file begins with a JSON front-matter block followed by an optional markdown body. Claim tasks before working on them to avoid conflicts.
 

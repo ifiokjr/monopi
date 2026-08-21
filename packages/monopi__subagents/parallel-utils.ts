@@ -18,7 +18,7 @@ export interface RunnerSubagentStep {
 	outputPath?: string;
 }
 
-/** Parallel step group — multiple agents running concurrently */
+/** Parallel step group: multiple agents running concurrently */
 export interface ParallelStepGroup {
 	parallel: RunnerSubagentStep[];
 	concurrency?: number;

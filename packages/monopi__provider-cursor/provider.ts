@@ -72,7 +72,7 @@ import {
 const REJECT_REASON = "Tool not available in this environment. Use the MCP tools provided by pi instead.";
 const THINKING_TAG_NAMES = ["think", "thinking", "reasoning", "thought", "think_intent"];
 const MAX_THINKING_TAG_LEN = 16;
-// Pre-compiled thinking tag pattern — avoid new RegExp() per stream chunk.
+// Pre-compiled thinking tag pattern: avoid new RegExp() per stream chunk.
 const THINKING_TAG_PATTERN = new RegExp(`<(/?)(?:${THINKING_TAG_NAMES.join("|")})\\s*>`, "gi");
 
 type StreamState = {

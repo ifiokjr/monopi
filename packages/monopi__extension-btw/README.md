@@ -8,8 +8,8 @@ pi install npm:@monopi/extension-btw
 
 ## Commands
 
-- `/btw` — open the side chat. When saved conversations exist, this opens a conversation picker.
-- `/btw <question>` — start a new side conversation and ask immediately without interrupting the main thread.
+- `/btw`: open the side chat. When saved conversations exist, this opens a conversation picker.
+- `/btw <question>`: start a new side conversation and ask immediately without interrupting the main thread.
 
 Questions entered inside an open overlay continue that conversation. Conversations are persisted independently as custom session
 entries, so you can switch between previous threads and restore them as the session tree changes.

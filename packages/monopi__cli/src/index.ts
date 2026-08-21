@@ -19,12 +19,12 @@ export interface RunOptions {
 }
 
 /**
- * Main entry point — orchestrates the full monopi setup flow:
+ * Main entry point: orchestrates the full monopi setup flow:
  * detect environment → select language → welcome → choose mode → configure → apply.
  */
 export async function run(options: RunOptions = {}) {
 	if (!options.yes && process.stdin.isTTY) {
-		// New interactive installer (default in TTY environments — breaking change)
+		// New interactive installer (default in TTY environments: breaking change)
 		await runInstaller();
 		return;
 	}
@@ -49,7 +49,7 @@ export async function run(options: RunOptions = {}) {
 }
 
 /**
- * Quick mode — only ask for provider setup, use sensible defaults for everything else.
+ * Quick mode: only ask for provider setup, use sensible defaults for everything else.
  * @param env - Detected environment info
  * @returns Generated config with recommended defaults
  */
@@ -71,7 +71,7 @@ async function quickFlow(env: EnvInfo): Promise<OhPConfigWithRouting> {
 }
 
 /**
- * Preset mode — user picks a role-based preset, then configures providers.
+ * Preset mode: user picks a role-based preset, then configures providers.
  * @param env - Detected environment info
  * @returns Generated config based on selected preset
  */
@@ -81,7 +81,7 @@ async function presetFlow(env: EnvInfo): Promise<OhPConfigWithRouting> {
 }
 
 /**
- * Custom mode — user picks theme, keybindings, extensions, agents, and advanced options.
+ * Custom mode: user picks theme, keybindings, extensions, agents, and advanced options.
  * @param env - Detected environment info
  * @returns Fully customized config
  */

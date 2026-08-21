@@ -22,7 +22,7 @@ export interface AgentConfig {
 	mcpDirectTools?: string[];
 	model?: string;
 	thinking?: string;
-	/** Idle timeout in ms — kill the agent if it produces no output for this long.
+	/** Idle timeout in ms: kill the agent if it produces no output for this long.
 	 *  Default: 15 min (from DEFAULT_IDLE_TIMEOUT_MS). Set to 0 to disable. */
 	idleTimeoutMs?: number;
 	systemPrompt: string;

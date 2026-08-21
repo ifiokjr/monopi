@@ -55,7 +55,7 @@ Subagents stores project-scope agents and chains in shared pi storage by default
 
 <!-- {/subagentsProjectAgentStorageOverview} -->
 
-**Builtin agents:** The extension ships with ready-to-use agents — `scout`, `planner`, `worker`, `reviewer`, `context-builder`, `researcher`, `artist`, `frontend-designer`, and `multimodal-summariser`. They load at lowest priority so any user or project agent with the same name overrides them. Builtin agents appear with a `[builtin]` badge in listings and cannot be modified through management actions (create a same-named user agent to override instead).
+**Builtin agents:** The extension ships with ready-to-use agents: `scout`, `planner`, `worker`, `reviewer`, `context-builder`, `researcher`, `artist`, `frontend-designer`, and `multimodal-summariser`. They load at lowest priority so any user or project agent with the same name overrides them. Builtin agents appear with a `[builtin]` badge in listings and cannot be modified through management actions (create a same-named user agent to override instead).
 
 > **Note:** The `researcher` agent uses `web_search`, `fetch_content`, and `get_search_content` tools which require the [pi-web-access](https://github.com/nicobailon/pi-web-access) extension. Install it with `pi install npm:pi-web-access`.
 >
@@ -127,9 +127,9 @@ tools: read, bash, mcp:github/search_repositories, mcp:github/get_file_contents
 | `mcp:server-name`           | All tools from that MCP server |
 | `mcp:server-name/tool_name` | One specific tool              |
 
-The `mcp:` items are additive — they don't affect which builtins the agent gets. `tools: mcp:chrome-devtools` (with no regular tools listed) gives the agent all default builtins plus chrome-devtools tools. To restrict builtins, list them explicitly: `tools: read, bash, mcp:chrome-devtools`.
+The `mcp:` items are additive. They don't affect which builtins the agent gets. `tools: mcp:chrome-devtools` (with no regular tools listed) gives the agent all default builtins plus chrome-devtools tools. To restrict builtins, list them explicitly: `tools: read, bash, mcp:chrome-devtools`.
 
-Subagents only get direct MCP tools when `mcp:` items are explicitly listed. Even if your `mcp.json` has `directTools: true` globally, a subagent without `mcp:` in its frontmatter won't get any direct tools — keeping it lean. The `mcp` proxy tool is still available for discovery if needed.
+Subagents only get direct MCP tools when `mcp:` items are explicitly listed. Even if your `mcp.json` has `directTools: true` globally, a subagent without `mcp:` in its frontmatter won't get any direct tools, keeping it lean. The `mcp` proxy tool is still available for discovery if needed.
 
 The MCP adapter's metadata cache must be populated for direct tools to work. On the first session with a new MCP server, tools will only be available through the `mcp` proxy. Restart Pi after the first session and direct tools become available.
 
@@ -205,7 +205,7 @@ Background tasks run asynchronously and notify you when complete. Check status w
 
 ## Agents Manager
 
-Press **Ctrl+Shift+A** or type `/agents` to open the Agents Manager overlay — a TUI for browsing, viewing, editing, creating, and launching agents and chains.
+Press **Ctrl+Shift+A** or type `/agents` to open the Agents Manager overlay, a TUI for browsing, viewing, editing, creating, and launching agents and chains.
 
 **Screens:**
 
@@ -221,31 +221,31 @@ Press **Ctrl+Shift+A** or type `/agents` to open the Agents Manager overlay — 
 
 **List screen keybindings:**
 
-- `↑↓` — navigate agents/chains
-- `Enter` — view detail
-- Type any character — search/filter
-- `Tab` — toggle selection (agents only)
-- `Ctrl+N` — new agent from template
-- `Ctrl+K` — clone current item
-- `Ctrl+D` or `Del` — delete current item
-- `Ctrl+R` — run selected (1 agent: launch, 2+: sequential chain)
-- `Ctrl+P` — open parallel builder (from selection or cursor agent)
-- `Esc` — clear query, then selection, then close overlay
+- `↑↓`: navigate agents/chains
+- `Enter`: view detail
+- Type any character: search/filter
+- `Tab`: toggle selection (agents only)
+- `Ctrl+N`: new agent from template
+- `Ctrl+K`: clone current item
+- `Ctrl+D` or `Del`: delete current item
+- `Ctrl+R`: run selected (1 agent: launch, 2+: sequential chain)
+- `Ctrl+P`: open parallel builder (from selection or cursor agent)
+- `Esc`: clear query, then selection, then close overlay
 
 **Parallel builder keybindings:**
 
-- `↑↓` — navigate slots
-- `Ctrl+A` — add agent (opens search picker)
-- `Del` or `Ctrl+D` — remove slot
-- `Enter` — edit per-slot task override
-- `Ctrl+R` — continue to task input (requires 2+ slots)
-- `Esc` — back to list
+- `↑↓`: navigate slots
+- `Ctrl+A`: add agent (opens search picker)
+- `Del` or `Ctrl+D`: remove slot
+- `Enter`: edit per-slot task override
+- `Ctrl+R`: continue to task input (requires 2+ slots)
+- `Esc`: back to list
 
 **Task input keybindings:**
 
-- `Enter` — launch (or quick run if skip-clarify is on)
-- `Tab` — toggle skip-clarify (defaults to on for all manager launches)
-- `Esc` — back
+- `Enter`: launch (or quick run if skip-clarify is on)
+- `Tab`: toggle skip-clarify (defaults to on for all manager launches)
+- `Esc`: back
 
 **Multi-select workflow:** Select agents with `Tab`, then press `Ctrl+R` for a sequential chain or `Ctrl+P` to open the parallel builder. The parallel builder lets you add the same agent multiple times, set per-slot task overrides, and launch N agents in parallel. Slots without a custom task use the shared task entered on the next screen.
 
@@ -342,7 +342,7 @@ _Navigation mode:_
 - `m` - Select model (all modes)
 - `t` - Select thinking level (all modes)
 - `s` - Select skills (all modes)
-- `b` - Toggle background/async execution (all modes) — shows `[b]g:ON` when enabled
+- `b` - Toggle background/async execution (all modes): shows `[b]g:ON` when enabled
 - `w` - Edit writes/output file (single, chain only)
 - `r` - Edit reads list (chain only)
 - `p` - Toggle progress tracking (chain only)
@@ -500,7 +500,7 @@ Skills are specialized instructions loaded from SKILL.md files and injected into
 
 ## Management Actions
 
-Agent definitions are not loaded into LLM context by default. Management actions let the LLM discover, inspect, create, and modify agent and chain definitions at runtime through the `subagent` tool — no manual file editing or restart required. Newly created agents are immediately usable in the same session. Set `action` and omit execution payloads (`task`, `chain`, `tasks`).
+Agent definitions are not loaded into LLM context by default. Management actions let the LLM discover, inspect, create, and modify agent and chain definitions at runtime through the `subagent` tool. No manual file editing or restart required. Newly created agents are immediately usable in the same session. Set `action` and omit execution payloads (`task`, `chain`, `tasks`).
 
 ```typescript
 // Discover all agents and chains (management defaults to both scopes)
@@ -669,7 +669,7 @@ Session root resolution follows this precedence:
 2. `config.defaultSessionDir`
 3. Derived from parent session (stored alongside parent session file)
 
-Sessions are always enabled — every subagent run gets a session directory for tracking.
+Sessions are always enabled. Every subagent run gets a session directory for tracking.
 
 ### `projectAgentStorageMode`
 
@@ -877,9 +877,9 @@ The `modelPolicy` field controls how the agent's model is resolved:
 
 ### API
 
-- **`createDynamicAgent(spec)`** — Convert a `DynamicAgentSpec` into an `AgentConfig` compatible with the existing runner. Returns an ephemeral config with `source: "builtin"` and `filePath: "<dynamic>"`.
-- **`resolveDynamicModel(spec, options)`** — Pure function that resolves the effective model string based on the spec and available scoped models. Used internally by `runDynamicAgent`; exposed for unit testing and custom orchestrators.
-- **`runDynamicAgent(cwd, spec, task, options)`** — Create an ephemeral agent from `spec`, resolve its model, run it via `runSync`, then return the result. Optionally calls `onUsage` with final usage data for budget tracking across subagent calls.
+- **`createDynamicAgent(spec)`**: Convert a `DynamicAgentSpec` into an `AgentConfig` compatible with the existing runner. Returns an ephemeral config with `source: "builtin"` and `filePath: "<dynamic>"`.
+- **`resolveDynamicModel(spec, options)`**: Pure function that resolves the effective model string based on the spec and available scoped models. Used internally by `runDynamicAgent`; exposed for unit testing and custom orchestrators.
+- **`runDynamicAgent(cwd, spec, task, options)`**: Create an ephemeral agent from `spec`, resolve its model, run it via `runSync`, then return the result. Optionally calls `onUsage` with final usage data for budget tracking across subagent calls.
 
 ### Worktrees
 
@@ -900,8 +900,8 @@ const result = await runDynamicAgent(
     worktree: {
       branch: "feat/auth-refactor",
       purpose: "Isolated refactor of auth module",
-      baseRef: "main",        // optional — defaults to HEAD
-      cleanup: false,       // optional — remove worktree after execution (default: false)
+      baseRef: "main",        // optional; defaults to HEAD
+      cleanup: false,       // optional; remove worktree after execution (default: false)
     },
   },
 );
@@ -914,8 +914,8 @@ if (result.worktreePath) {
 
 | Option    | Type      | Required | Default | Description                                  |
 | --------- | --------- | -------- | ------- | -------------------------------------------- |
-| `branch`  | `string`  | Yes      | —       | Branch name for the new worktree             |
-| `purpose` | `string`  | Yes      | —       | Reason for the worktree (stored in registry) |
+| `branch`  | `string`  | Yes      |         | Branch name for the new worktree             |
+| `purpose` | `string`  | Yes      |         | Reason for the worktree (stored in registry) |
 | `baseRef` | `string`  | No       | `HEAD`  | Base ref for the new branch                  |
 | `cleanup` | `boolean` | No       | `false` | Remove worktree after execution              |
 

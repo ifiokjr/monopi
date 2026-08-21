@@ -24,7 +24,7 @@ Use these types:
 
 ## Issue titles
 
-Write issue titles in sentence case — capitalize only the first word and proper nouns.
+Write issue titles in sentence case. Capitalize only the first word and proper nouns.
 
 - ✅ "Fix memory leak in usage tracker"
 - ✅ "Support nested worktree paths on Windows"
@@ -60,7 +60,7 @@ This keeps the commit history clean after squash merging and makes the PR list s
 
 When the agent runs `git` or `gh`, prefer non-interactive invocations so an editor like Helix or Vim does not block the run.
 
-- Do not assume `git rebase --continue` supports `--no-edit` — it does not.
+- Do not assume `git rebase --continue` supports `--no-edit`. It does not.
 - When continuing a rebase, use:
   ```bash
   GIT_EDITOR=true git rebase --continue

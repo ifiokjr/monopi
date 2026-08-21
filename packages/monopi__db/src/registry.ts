@@ -21,7 +21,7 @@ const modules = new Map<SchemaModuleId, SchemaModule>();
 
 export function registerSchemaModule(mod: SchemaModule): void {
 	if (modules.has(mod.id)) {
-		return; // already registered — idempotent
+		return; // already registered: idempotent
 	}
 	modules.set(mod.id, mod);
 }

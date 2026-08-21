@@ -4,10 +4,10 @@
 
 ## 0. Problem Mapping (from retrospective)
 
-1. **Unclear positioning**: The boundary between oh-pi (config portal) and subagents (delegated execution) isn't sharp enough.
+1. **Unclear positioning**: The boundary between monopi (config portal) and subagents (delegated execution) isn't sharp enough.
 2. **SDK coupling risk**: `spawner` has deep direct dependency on the pi SDK; upstream breaking changes are high risk.
 3. **Missing "wow" moment**: Docs are thorough, but first-time UX lacks a strong demo closure.
-4. **Scattered growth**: Multi-language rollout started before community focus — feedback density is too low.
+4. **Scattered growth**: Multi-language rollout started before community focus. Feedback density is too low.
 
 ## 1. Execution Principles
 

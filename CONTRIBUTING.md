@@ -83,25 +83,25 @@ docs: update README with new extension list
 pnpm change
 ```
 
-Because this repo uses MonoChange with a lockstep `default` group, changeset frontmatter must use **only** `default` as the key — not package names.
+Because this repo uses MonoChange with a lockstep `monopi` group, changeset frontmatter must use **only** `monopi` as the key, not package names.
 
 ```md
 ---
-default: patch
+monopi: patch
 ---
 ```
 
 Use one of:
 
-- `major` — breaking API/behavior changes
-- `minor` — new features, new extensions, new config options
-- `patch` — bug fixes, docs, and internal refactors
+- `major`: breaking API/behavior changes
+- `minor`: new features, new extensions, new config options
+- `patch`: bug fixes, docs, and internal refactors
 
 If you use package names like `@monopi/monopi` or `@monopi/extension-worktree` in changeset frontmatter, MonoChange will reject the changeset for this repo configuration.
 
 ## Branch Strategy
 
-- `main` — stable branch, no force pushes
+- `main`: stable branch, no force pushes
 - Feature branches created from `main`, named: `feat/xxx`, `fix/xxx`, `docs/xxx`
 - Merge via Pull Request, at least one review required
 
@@ -132,7 +132,7 @@ If you use package names like `@monopi/monopi` or `@monopi/extension-worktree` i
 - Keep functions under 50 lines where possible
 - Add comments only for complex logic
 - Never hardcode keys or sensitive information
-- Handle errors explicitly — don't fail silently
+- Handle errors explicitly. Don't fail silently.
 
 ## Reporting Issues
 

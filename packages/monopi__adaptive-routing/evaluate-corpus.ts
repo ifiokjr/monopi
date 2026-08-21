@@ -229,7 +229,7 @@ export function evaluateCorpus(corpus: CorpusEntry[], opts: EvaluateCorpusOption
  */
 export function formatEvaluationSummary(summary: CorpusSummary): string {
 	const lines: string[] = [
-		`Corpus Evaluation — ${summary.total} examples`,
+		`Corpus Evaluation: ${summary.total} examples`,
 		`  Matched: ${summary.matched} / ${summary.total}`,
 		`  Mismatched: ${summary.mismatched}`,
 		`  Intent accuracy: ${(summary.intentAccuracy * 100).toFixed(1)}%`,
@@ -246,7 +246,7 @@ export function formatEvaluationSummary(summary: CorpusSummary): string {
 			}
 			lines.push(`  • ${run.name}`);
 			for (const m of run.mismatches) {
-				lines.push(`    - ${m.fieldName}: expected ${String(m.expected)} — got ${String(m.actual)}`);
+				lines.push(`    - ${m.fieldName}: expected ${String(m.expected)}, got ${String(m.actual)}`);
 			}
 			if (run.modelMismatch) {
 				lines.push(`    - model: got ${run.modelMismatch}`);

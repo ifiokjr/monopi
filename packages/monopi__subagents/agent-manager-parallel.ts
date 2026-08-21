@@ -331,7 +331,7 @@ export function renderParallel(state: ParallelState, agents: AgentOption[], widt
 	let statusText = "";
 	if (state.mode === "browse") {
 		if (state.slots.length < 2) {
-			statusText = theme.fg("dim", `${state.slots.length} agent — add at least 2 for parallel`);
+			statusText = theme.fg("dim", `${state.slots.length} agent. Add at least 2 for parallel`);
 		} else {
 			statusText = theme.fg("dim", formatSlotSummary(state.slots));
 		}

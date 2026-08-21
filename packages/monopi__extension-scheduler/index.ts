@@ -731,7 +731,7 @@ export class SchedulerRuntime {
 
 	private pruneDispatchHistory(now: number) {
 		const cutoff = now - DISPATCH_RATE_LIMIT_WINDOW_MS;
-		// Single-pass write-pointer prune — O(n) with no splice() shifts.
+		// Single-pass write-pointer prune: O(n) with no splice() shifts.
 		let write = 0;
 		// Biome-ignore lint/style/useForOf: C-style loop needed for write-pointer in-place prune algorithm
 		for (let read = 0; read < this.dispatchTimestamps.length; read++) {
@@ -752,7 +752,7 @@ export class SchedulerRuntime {
 		return this.dispatchTimestamps.length < MAX_DISPATCHES_PER_WINDOW;
 	}
 
-	/** Check if any enabled, pending, non-awaiting-completion task exists — single-pass, no allocation. */
+	/** Check if any enabled, pending, non-awaiting-completion task exists: single-pass, no allocation. */
 	private hasPendingTasks(): boolean {
 		for (const task of this.tasks.values()) {
 			if (task.enabled && task.pending && !task.awaitingCompletion) {
@@ -762,7 +762,7 @@ export class SchedulerRuntime {
 		return false;
 	}
 
-	/** Find the next dispatchable task — single-pass with early-exit, no sort needed for the single min. */
+	/** Find the next dispatchable task: single-pass with early-exit, no sort needed for the single min. */
 	private getNextDispatchableTask(): ScheduleTask | undefined {
 		let best: ScheduleTask | undefined;
 		for (const task of this.tasks.values()) {
@@ -1447,7 +1447,7 @@ export class SchedulerRuntime {
 					try {
 						cached = new RegExp(regexMatch[1], regexMatch[2]);
 					} catch {
-						cached = null; // Invalid regex — fall back to substring matching
+						cached = null; // Invalid regex: fall back to substring matching
 					}
 				} else {
 					cached = null;
@@ -2150,7 +2150,10 @@ export class SchedulerRuntime {
 			"warning",
 		);
 		// Persist a compact hint in the status bar so users see it without repeated notifications.
-		this.setStatus("pi-scheduler-stale", `⚠ ${count} stale task${count === 1 ? "" : "s"} — /schedule to review`);
+		this.setStatus(
+			"pi-scheduler-stale",
+			`⚠ ${count} stale task${count === 1 ? "" : "s"} need review. Use /schedule to manage them.`,
+		);
 	}
 
 	private resumeReasonLabel(reason: ResumeReason): string {

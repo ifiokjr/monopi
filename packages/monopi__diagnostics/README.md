@@ -1,6 +1,6 @@
 # `@monopi/diagnostics`
 
-> Prompt-completion timing for pi — know exactly how long each prompt took and why.
+> Prompt-completion timing for pi. Know exactly how long each prompt took and why.
 
 ## Why use this?
 
@@ -56,7 +56,7 @@ When a prompt needs multiple assistant turns, the log breaks down each turn's ti
 
 ## Shortcut
 
-`Ctrl+Shift+D` — quick toggle without typing a command.
+`Ctrl+Shift+D`: quick toggle without typing a command.
 
 ## How it works
 
@@ -77,5 +77,5 @@ When a prompt needs multiple assistant turns, the log breaks down each turn's ti
 
 ## Notes
 
-- Ships raw TypeScript — no build step needed
+- Ships raw TypeScript: no build step needed
 - Disable via `/diagnostics off` or `Ctrl+Shift+D` if you prefer a cleaner UI

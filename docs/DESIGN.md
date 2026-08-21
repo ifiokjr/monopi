@@ -408,8 +408,8 @@ monopi/
 
 ### 6.1 Dual Distribution
 
-1. **npx @monopi/monopi** — Installer tool (installs all monopi packages)
-2. **pi install npm:monopi** — Pi Package (extensions/skills/themes/templates)
+1. **npx @monopi/monopi**: installer tool (installs all monopi packages)
+2. **pi install npm:monopi**: pi package (extensions/skills/themes/templates)
 
 Users can use just the configurator, just the Pi Package, or both.
 
@@ -431,7 +431,7 @@ Users can use just the configurator, just the Pi Package, or both.
 
 ## 7. Development Roadmap
 
-### Phase 1 — MVP (Core Configurator)
+### Phase 1: MVP (core configurator)
 
 - [x] Project scaffold (package.json, tsconfig, bin)
 - [x] Environment detection (pi version, existing config)
@@ -441,7 +441,7 @@ Users can use just the configurator, just the Pi Package, or both.
 - [ ] Base themes (oh-p-dark, oh-p-light)
 - [x] Base Prompt Templates (review, fix, explain)
 
-### Phase 2 — Complete Experience
+### Phase 2: complete experience
 
 - [ ] All provider support (including OAuth guidance)
 - [x] All presets
@@ -452,7 +452,7 @@ Users can use just the configurator, just the Pi Package, or both.
 - [ ] MCP bridge extension + preset servers
 - [x] AGENTS.md template selection
 
-### Phase 3 — Ecosystem
+### Phase 3: ecosystem
 
 - [ ] `monopi update` to update preset resources
 - [ ] `monopi doctor` to diagnose config issues

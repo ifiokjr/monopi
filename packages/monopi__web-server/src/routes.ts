@@ -15,7 +15,7 @@ export interface RoutesOptions {
 export function createRoutes(options: RoutesOptions): Hono {
 	const app = new Hono();
 
-	// Health check — no auth required
+	// Health check: no auth required
 	app.get("/api/health", (c) =>
 		c.json({
 			status: "ok",

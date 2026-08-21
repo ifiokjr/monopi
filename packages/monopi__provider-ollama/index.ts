@@ -556,7 +556,7 @@ async function pullLocalModel(pi: ExtensionAPI, ctx: CommandContextLike, modelId
 			await pullOllamaModel(modelId, {
 				env: createOllamaProcessEnv(),
 				onOutput: (line) => {
-					ctx.ui.setStatus(PULL_STATUS_KEY, `Pulling ${modelId} — ${line}`);
+					ctx.ui.setStatus(PULL_STATUS_KEY, `Pulling ${modelId}: ${line}`);
 				},
 			});
 
@@ -793,7 +793,7 @@ function renderModelList(models: CollectedOllamaModel[]): string {
 					.sort((left, right) => sortCollectedModels(left, right))
 					.map(
 						(model) =>
-							`  ${sourceIcon(model.provider)} ${model.provider}/${model.id} — ${model.name}${renderModelBadges(
+							`  ${sourceIcon(model.provider)} ${model.provider}/${model.id}: ${model.name}${renderModelBadges(
 								model,
 							)} · ${model.contextWindow.toLocaleString()} ctx`,
 					),

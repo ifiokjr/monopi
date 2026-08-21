@@ -1,4 +1,11 @@
 /* C8 ignore file */
+/**
+<!-- {=extensionsWorktreeOverview} -->
+
+The worktree extension adds centralized git worktree awareness to monopi. It detects whether the current checkout is the main repository or a linked worktree, shows when the current worktree is pi-owned, and tracks owner and purpose metadata for pi-created worktrees. It provides `/worktree` commands for status, listing, opening, creating, and cleaning up worktrees. Pi-owned worktrees are created under shared pi storage namespaced by the canonical repository root, and cleanup focuses on pi-owned worktrees while leaving external ones alone unless you explicitly intervene.
+
+<!-- {/extensionsWorktreeOverview} -->
+ */
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import type {
 	GitWorktreeEntry,
@@ -475,7 +482,7 @@ async function handleCleanup(pi: ExtensionAPI, args: string, ctx: ExtensionConte
 		if (skipped.length > 0) {
 			lines.push("## Skipped");
 			for (const entry of skipped) {
-				lines.push(`- ${entry.branch} — current session is running inside this worktree.`);
+				lines.push(`- ${entry.branch}: current session is running inside this worktree.`);
 			}
 		}
 		sendReport(pi, lines.join("\n"));

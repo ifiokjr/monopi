@@ -403,7 +403,7 @@ describe("provider catalog extension", () => {
 		const command = harness.commands.get("providers");
 
 		await command.handler("list moon", harness.ctx);
-		expect(harness.notifications.at(-1)?.msg).toContain(`${provider.id} — ${provider.name}`);
+		expect(harness.notifications.at(-1)?.msg).toContain(`${provider.id}: ${provider.name}`);
 
 		await command.handler(`info ${provider.id}`, harness.ctx);
 		expect(harness.notifications.at(-1)?.msg).toContain("Configured via: login");

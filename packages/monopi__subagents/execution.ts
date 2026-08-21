@@ -105,7 +105,7 @@ export async function runSync(
 			} else if (BUILTIN_TOOL_NAMES.has(tool)) {
 				builtinTools.push(tool);
 			}
-			// Else: extension-registered tool (e.g. read_full) — let the
+			// Else: extension-registered tool (e.g. read_full): let the
 			// Extension register it naturally; don't pass via --tools.
 		}
 		if (builtinTools.length > 0) {
@@ -236,7 +236,7 @@ export async function runSync(
 		let processClosed = false;
 		const UPDATE_THROTTLE_MS = 50; // Reduced from 75ms for faster responsiveness
 
-		// Idle-timeout watchdog — kills the process if no activity for N ms.
+		// Idle-timeout watchdog: kills the process if no activity for N ms.
 		// Default 15 min; 0 disables. Agent frontmatter can override: `idleTimeoutMs: 1800000`
 		const idleTimeout = idleTimeoutMs ?? DEFAULT_IDLE_TIMEOUT_MS;
 		let idleTimer: ReturnType<typeof setTimeout> | null = null;
@@ -413,7 +413,7 @@ export async function runSync(
 					scheduleUpdate();
 				}
 			} catch {
-				// Count unparseable lines — corrupted output shouldn't be silently lost
+				// Count unparseable lines: corrupted output shouldn't be silently lost
 				result.parseErrors = (result.parseErrors ?? 0) + 1;
 			}
 		};

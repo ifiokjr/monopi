@@ -2,7 +2,7 @@
 
 > Pi extension for analytics tracking with SQLite persistence.
 
-Tracks your AI usage — which models you call, how many tokens you burn, what you spend — and stores it all in a local SQLite database so you can query trends over time.
+Tracks your AI usage: which models you call, how many tokens you burn, what you spend, and stores it all in a local SQLite database so you can query trends over time.
 
 ## Why use this?
 
@@ -55,10 +55,10 @@ Shows session counts, total tokens, total cost, and recent activity.
 
 The dashboard provides charts and tables for:
 
-- **Overview** — total spend, sessions, tokens by period
-- **Models** — cost and token breakdown by model
-- **Codebases** — which projects drive the most usage
-- **Insights** — usage patterns across time
+- **Overview**: total spend, sessions, tokens by period
+- **Models**: cost and token breakdown by model
+- **Codebases**: which projects drive the most usage
+- **Insights**: usage patterns across time
 
 ## How it works
 
@@ -80,5 +80,5 @@ It reads directly from the same SQLite database.
 
 ## Related packages
 
-- [`@monopi/analytics-db`](../monopi__analytics-db) — SQLite schema, migrations, typed queries
-- [`@monopi/analytics-dashboard`](../monopi__analytics-dashboard) — React visualization SPA
+- [`@monopi/analytics-db`](../monopi__analytics-db): SQLite schema, migrations, typed queries
+- [`@monopi/analytics-dashboard`](../monopi__analytics-dashboard): React visualization SPA

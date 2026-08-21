@@ -40,7 +40,7 @@ Implementation rules:
 - For Flutter projects, use Flutter-native patterns rather than web-only CSS thinking
 - Follow existing repo conventions unless they are clearly blocking the requested design outcome
 - If you introduce visual assets (icons, illustrations, decorative SVGs), make them production-ready
-- When modifying an existing UI, elevate it without breaking the surrounding product language
+- When modifying an existing UI, improve it without breaking the surrounding product language
 
 When given a frontend task:
 

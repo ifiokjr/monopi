@@ -236,9 +236,9 @@ Primary surfaces:
 
 Use it when you want to answer questions like:
 
-- “When did this prompt actually start?”
-- “Did the slowdown happen in one long turn or several short turns?”
-- “How long did this full interaction take end-to-end?”
+- "When did this prompt actually start?"
+- "Did the slowdown happen in one long turn or several short turns?"
+- "How long did this full interaction take end-to-end?"
 
 Subagents is the primary execution system for coordinating multiple AI agents.
 
@@ -293,10 +293,10 @@ Plan mode turns planning into a first-class session state instead of an informal
 
 While active, plan mode exposes tools that are not available the rest of the time:
 
-- `task_agents` — read-only delegated research tasks
-- `steer_task_agent` — rerun a specific research task with extra guidance
-- `request_user_input` — gather structured clarification from the user
-- `set_plan` — overwrite the canonical plan file with the latest full plan
+- `task_agents`: read-only delegated research tasks
+- `steer_task_agent`: rerun a specific research task with extra guidance
+- `request_user_input`: gather structured clarification from the user
+- `set_plan`: overwrite the canonical plan file with the latest full plan
 
 Plan mode is best when you want structured planning without jumping directly into implementation.
 
@@ -445,7 +445,7 @@ Purpose:
 - React 19 + Vite 8 SPA for visualizing AI usage
 - Pages: Overview, Models, Codebases, Insights (emotions, words, misspellings)
 - Mock data mode for development, real API mode via Express server
-- Private package — run `pnpm dev` inside `packages/monopi__analytics-dashboard/`
+- Private package. Run `pnpm dev` inside `packages/monopi__analytics-dashboard/`
 
 ## Content packs
 
@@ -453,11 +453,11 @@ Purpose:
 
 The skills pack currently ships 3 maintained skills.
 
-| Skill          | What it is for                                                 |
-| -------------- | -------------------------------------------------------------- |
-| `btw` (`/qq`)  | Use the `/btw` or `/qq` side-conversation workflow effectively |
-| `debug-helper` | Analyze errors, logs, crashes, and performance issues          |
-| `nushell`      | Nushell syntax reference for shell commands                    |
+| Skill          | What it is for                                                                    |
+| -------------- | --------------------------------------------------------------------------------- |
+| `btw` (`/qq`)  | Use the `/btw` or `/qq` side-conversation workflow without interrupting main work |
+| `debug-helper` | Analyze errors, logs, crashes, and performance issues                             |
+| `nushell`      | Nushell syntax reference for shell commands                                       |
 
 ## `@monopi/agents`
 

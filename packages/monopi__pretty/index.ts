@@ -1,5 +1,5 @@
 /**
- * Pi-pretty — Pretty terminal output for pi built-in tools.
+ * Pi-pretty: Pretty terminal output for pi built-in tools.
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";

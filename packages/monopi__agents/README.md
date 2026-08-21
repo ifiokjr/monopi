@@ -1,6 +1,6 @@
 # `@monopi/agents`
 
-> AGENTS.md templates for pi — pre-built role profiles that set pi's behavior.
+> AGENTS.md templates for pi: pre-built role profiles that set pi's behavior.
 
 ## Why use this?
 
@@ -49,6 +49,6 @@ Each file is a markdown template designed to be copied and customized.
 
 ## Related
 
-- [`@monopi/monopi`](../monopi) — full installer bundle
-- [`@monopi/cli`](../monopi__cli) — interactive TUI configurator that uses these templates
-- [Pi AGENTS.md docs](https://github.com/badlogic/pi-mono) — how AGENTS.md works in pi
+- [`@monopi/monopi`](../monopi): full installer bundle
+- [`@monopi/cli`](../monopi__cli): interactive TUI configurator that uses these templates
+- [Pi AGENTS.md docs](https://github.com/badlogic/pi-mono): how AGENTS.md works in pi

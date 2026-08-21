@@ -44,5 +44,5 @@ pnpm --filter @monopi/cli typecheck
 
 ## Related packages
 
-- `@monopi/monopi` — one-command installer
-- `@monopi/core` — shared registries and types
+- `@monopi/monopi`: one-command installer
+- `@monopi/core`: shared registries and types

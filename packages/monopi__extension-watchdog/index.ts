@@ -145,7 +145,7 @@ function isStaleEventLoopSample(input: {
 	);
 }
 
-/** Amortized O(1) bounded push — trims with copyWithin only when array has doubled past limit. */
+/** Amortized O(1) bounded push: trims with copyWithin only when array has doubled past limit. */
 function pushBounded<T>(items: T[], item: T, limit: number): void {
 	items.push(item);
 	if (items.length > limit * 2) {
@@ -616,7 +616,7 @@ export default function watchdogExtension(pi: ExtensionAPI) {
 			alertNotificationCount += 1;
 			if (alertNotificationCount >= ALERT_NOTIFICATION_LIMIT) {
 				activeCtx.ui.notify(
-					`${formatWatchdogAlert(alert)} Further alerts suppressed — check status bar or /watchdog overlay.`,
+					`${formatWatchdogAlert(alert)} Further alerts suppressed. Check the status bar or /watchdog overlay.`,
 					levelForAlert(alert),
 				);
 			} else {

@@ -536,7 +536,7 @@ export function resolvePiCommand(
 function printHelp() {
 	console.log(
 		`
-monopi source switcher — toggle pi between local workspace packages and published npm packages
+monopi source switcher: toggle pi between local workspace packages and published npm packages
 
 Usage:
   pnpm pi:switch local [--path <repo>] [--pi-local] [--dry-run]
@@ -875,7 +875,7 @@ export function main(argv: string[] = process.argv) {
 
 	const nextSettings: SettingsFile = { ...settings, packages: nextEntries };
 	if (options.dryRun) {
-		console.log("\nDry run only — settings were not written and pi install/update was not run.");
+		console.log("\nDry run only. Settings were not written and pi install/update was not run.");
 		if (options.mode === "local") {
 			printLocalInstallHint(options.repoPath);
 		}

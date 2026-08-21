@@ -2741,7 +2741,7 @@ describe("dispatch timestamp bounds", () => {
 		task.pending = true;
 		runtime.dispatchTask(task);
 		runtime.stopScheduler();
-		// After stop, internal state should be clean — verify by checking
+		// After stop, internal state should be clean: verify by checking
 		// that a new start works without leftover state.
 		runtime.startScheduler();
 		runtime.stopScheduler();
@@ -2826,7 +2826,7 @@ describe("lease heartbeat refresh", () => {
 		});
 		runtime.setRuntimeContext(ctx as any);
 
-		// Tick — should still refresh the heartbeat even though pi is busy.
+		// Tick: should still refresh the heartbeat even though pi is busy.
 		writtenLeases.length = 0;
 		await runtime.tickScheduler();
 
@@ -3181,12 +3181,12 @@ describe("edge cases", () => {
 		});
 
 		runtime.dispatchTask(task);
-		// First check — should not match
+		// First check: should not match
 		runtime.handleAgentEnd({
 			messages: [{ role: "assistant", content: "still running" }],
 		});
 		expect(runtime.getTask(task.id)).toBeDefined();
-		// Second check — regex should be cached now, match on second attempt
+		// Second check: regex should be cached now, match on second attempt
 		runtime.dispatchTask(runtime.getTask(task.id)!);
 		runtime.handleAgentEnd({
 			messages: [{ role: "assistant", content: "Task completed!" }],
@@ -3244,7 +3244,7 @@ describe("schedulePersistTasks debounce", () => {
 		// Timer should be scheduled but not yet fired
 		expect(vi.mocked(writeFileSync)).not.toHaveBeenCalled();
 
-		// Advance past debounce — advance exactly to the timer to avoid
+		// Advance past debounce: advance exactly to the timer to avoid
 		// triggering the scheduler tick interval (1s) extra times.
 		vi.advanceTimersByTime(2_000);
 

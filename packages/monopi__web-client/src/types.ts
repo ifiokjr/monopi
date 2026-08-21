@@ -1,4 +1,4 @@
-// Self-contained types — no imports from pi packages.
+// Self-contained types: no imports from pi packages.
 // Mirrors pi's RPC protocol for use in browsers, React Native, and Node.js.
 
 export type ThinkingLevel = "off" | "minimal" | "low" | "medium" | "high" | "xhigh";

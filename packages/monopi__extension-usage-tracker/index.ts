@@ -1,5 +1,5 @@
 /**
-Usage Tracker Extension — Rate Limit & Cost Monitor for pi
+Usage Tracker Extension: Rate Limit & Cost Monitor for pi
 
 <!-- {=extensionsUsageTrackerOverview} -->
 
@@ -129,7 +129,7 @@ function ensureCtrlUUnbound(): void {
 			writeFileSync(keybindingsPath, `${JSON.stringify(config, null, 2)}\n`, "utf-8");
 		}
 	} catch {
-		// Non-critical — worst case the warning still shows
+		// Non-critical: worst case the warning still shows
 	}
 }
 
@@ -717,7 +717,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 			details.push("no session usage");
 		}
 
-		return [providerDisplayName(provider), ...details].join(" — ");
+		return [providerDisplayName(provider), ...details].join(": ");
 	}
 
 	function resolveUsageProviderFromArgs(ctx: ExtensionContext, args: string): ProviderKey | null {
@@ -1048,7 +1048,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 	/**
 	 * Probe a provider for rate limit data using pi-managed auth tokens.
 	 * Reads credentials from `~/.pi/agent/auth.json` and calls the provider
-	 * API directly — no external CLI tools required.
+	 * API directly: no external CLI tools required.
 	 */
 	// Biome-ignore lint/complexity/noExcessiveCognitiveComplexity: provider probe handles auth discovery, refresh, and stale window fallback semantics.
 	async function probeProvider(provider: ProviderKey, force = false): Promise<void> {
@@ -1093,7 +1093,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 					account: null,
 					credits: null,
 					error: null,
-					note: `No pi auth configured for ${providerDisplayName(provider)} — run pi login.`,
+					note: `No pi auth configured for ${providerDisplayName(provider)}. Run pi login.`,
 					plan: null,
 					probedAt: now,
 					provider,
@@ -1105,13 +1105,13 @@ export default function usageTracker(pi: ExtensionAPI) {
 				return;
 			}
 
-			// Ensure the token is fresh — auto-refresh expired OAuth tokens
+			// Ensure the token is fresh: auto-refresh expired OAuth tokens
 			const fresh = await ensureFreshToken(authKey, authEntry, auth);
 			if (!fresh) {
 				rateLimits.set(provider, {
 					account: null,
 					credits: null,
-					error: `${providerDisplayName(provider)} token refresh failed — re-authenticate with pi login.`,
+					error: `${providerDisplayName(provider)} token refresh failed. Re-authenticate with pi login.`,
 					note: null,
 					plan: null,
 					probedAt: now,
@@ -1157,7 +1157,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 			lastProbeTime.set(provider, Date.now());
 			requestUsageWidgetRender();
 		} catch {
-			// Probe failed — keep stale data if any
+			// Probe failed: keep stale data if any
 		} finally {
 			probeInFlight.delete(provider);
 		}
@@ -1278,7 +1278,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 			for (const w of windows) {
 				const bar = progressBar(w.percentLeft, 20);
 				const usedPercent = clampPercent(100 - w.percentLeft);
-				const reset = w.resetDescription ? ` — resets ${w.resetDescription}` : "";
+				const reset = w.resetDescription ? ` · resets ${w.resetDescription}` : "";
 				lines.push(`  ${w.label}: ${bar} ${w.percentLeft}% left (${usedPercent.toFixed(0)}% used)${reset}`);
 
 				const pace = computeWindowPace(w);
@@ -1342,7 +1342,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 				const bar = theme.fg(color, progressBar(w.percentLeft, 20));
 				const pct = theme.fg(color, `${w.percentLeft}% left`);
 				const used = theme.fg("dim", `(${usedPercent.toFixed(0)}% used)`);
-				const reset = w.resetDescription ? theme.fg("dim", ` — resets ${w.resetDescription}`) : "";
+				const reset = w.resetDescription ? theme.fg("dim", ` · resets ${w.resetDescription}`) : "";
 				lines.push(`    ${theme.fg("accent", w.label.padEnd(15))}${bar} ${pct} ${used}${reset}`);
 
 				const pace = computeWindowPace(w);
@@ -1439,7 +1439,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 			lines.push(rlText);
 		} else {
 			lines.push("=== Provider Rate Limits ===");
-			lines.push("(No rate limit data yet — will probe after next turn)");
+			lines.push("(No rate limit data yet; will probe after next turn)");
 			lines.push("");
 		}
 
@@ -1576,7 +1576,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 		if (rlLines.length > 0) {
 			lines.push(...rlLines);
 		} else {
-			lines.push(`  ${theme.fg("dim", "No rate limit data yet — will probe after next turn")}`);
+			lines.push(`  ${theme.fg("dim", "No rate limit data yet; will probe after next turn")}`);
 			lines.push("");
 		}
 
@@ -1954,7 +1954,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 	};
 }
 
-// Module-level flush function — set by usageTracker() for test access.
+// Module-level flush function: set by usageTracker() for test access.
 let flushPendingWritesFn: (() => void) | null = null;
 
 /** Flush any pending debounced writes to disk. For use in tests only. */

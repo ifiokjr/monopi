@@ -22,7 +22,7 @@ export const TEMPLATE_ITEMS: TemplateItem[] = [
 			description: "Analyzes codebases and reports findings",
 			output: "analysis.md",
 			systemPrompt:
-				"You are a code analysis agent. Given a codebase and a question, thoroughly investigate the relevant files and report your findings. Focus on accuracy — read the actual code rather than guessing.",
+				"You are a code analysis agent. Given a codebase and a question, thoroughly investigate the relevant files and report your findings. Focus on accuracy. Read the actual code rather than guessing.",
 			tools: ["read", "bash"],
 		},
 		name: "Scout",
@@ -32,7 +32,7 @@ export const TEMPLATE_ITEMS: TemplateItem[] = [
 		config: {
 			description: "Reviews code for bugs, style, and correctness",
 			systemPrompt:
-				"You are a code review agent. Examine the code changes or files provided and identify bugs, style issues, performance concerns, and correctness problems. Be specific — cite line numbers and explain why each issue matters.",
+				"You are a code review agent. Examine the code changes or files provided and identify bugs, style issues, performance concerns, and correctness problems. Be specific. Cite line numbers and explain why each issue matters.",
 			tools: ["read", "bash"],
 		},
 		name: "Code Reviewer",

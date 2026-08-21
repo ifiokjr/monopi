@@ -2,7 +2,7 @@
 
 ## Data Pipelines
 
-- Idempotent operations — safe to re-run
+- Idempotent operations: safe to re-run
 - Schema validation at boundaries
 - Incremental processing over full reloads
 - Monitor data quality metrics

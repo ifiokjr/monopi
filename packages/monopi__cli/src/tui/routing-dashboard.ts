@@ -193,7 +193,7 @@ function formatPackageState(pkg: OptionalRoutingPackageState): string {
 function buildOptionalPackageLines(packageStates: OptionalRoutingPackageState[]): string[] {
 	return packageStates.map((pkg) => {
 		const installHint = pkg.installed || pkg.selected ? "" : ` · install with pi install npm:${pkg.packageName}`;
-		return `- ${pkg.label}: ${formatPackageState(pkg)} — ${pkg.hint}${installHint}`;
+		return `- ${pkg.label}: ${formatPackageState(pkg)} · ${pkg.hint}${installHint}`;
 	});
 }
 

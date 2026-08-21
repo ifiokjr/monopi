@@ -30,12 +30,12 @@ You can also skip `/login` and set a supported provider env var directly when th
 
 ## Commands
 
-- `/providers status` — summarize configured providers from this package
-- `/providers list [query]` — list supported provider ids and env vars
-- `/providers login [provider]` — scroll through the full provider list, search in place, lazily register one, and prompt for its API key
-- `/providers info <provider>` — inspect a provider's API mode, URLs, env vars, and model count
-- `/providers models <provider>` — list the current or fallback model catalog for one provider
-- `/providers refresh-models [provider|all]` — refresh configured providers from live discovery when possible
+- `/providers status`: summarize configured providers from this package
+- `/providers list [query]`: list supported provider ids and env vars
+- `/providers login [provider]`: scroll through the full provider list, search in place, lazily register one, and prompt for its API key
+- `/providers info <provider>`: inspect a provider's API mode, URLs, env vars, and model count
+- `/providers models <provider>`: list the current or fallback model catalog for one provider
+- `/providers refresh-models [provider|all]`: refresh configured providers from live discovery when possible
 
 ## Highlights
 
@@ -56,4 +56,4 @@ This package includes providers the user explicitly asked about, including:
 
 ## Test hook
 
-- `PI_PROVIDER_CATALOG_URL` — override the `models.dev` catalog URL for tests or local debugging
+- `PI_PROVIDER_CATALOG_URL`: override the `models.dev` catalog URL for tests or local debugging

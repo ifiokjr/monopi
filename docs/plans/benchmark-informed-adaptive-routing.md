@@ -60,7 +60,7 @@ This project needs a benchmark suite that is explicitly built around real agent 
 - operating under different tool constraints
 - succeeding in small repos, medium repos, and large repos
 
-The goal is not to create a single leaderboard of “best model overall.”
+The goal is not to create a single leaderboard of "best model overall."
 
 The goal is to build a performance map that answers questions like:
 
@@ -117,11 +117,11 @@ Every serious task family should have multiple prompt-detail variants so the ben
 
 Suggested ladder:
 
-- **L1 — weak prompt**: vague request with little context
-- **L2 — light detail**: some clues, still ambiguous
-- **L3 — medium detail**: error context, expected outcome, likely area
-- **L4 — strong detail**: acceptance criteria and likely files
-- **L5 — scaffolded**: strong detail plus hints, suggested constraints, or plan framing
+- **L1: weak prompt**: vague request with little context
+- **L2: light detail**: some clues, still ambiguous
+- **L3: medium detail**: error context, expected outcome, likely area
+- **L4: strong detail**: acceptance criteria and likely files
+- **L5: scaffolded**: strong detail plus hints, suggested constraints, or plan framing
 
 This lets the benchmark measure how performance changes as prompt quality improves.
 
@@ -185,7 +185,7 @@ From those raw metrics, the platform should derive higher-level routing signals 
 
 ## 5.1 From model routing to strategy routing
 
-The routing engine should evolve from “pick a model” to “pick an execution strategy.”
+The routing engine should evolve from "pick a model" to "pick an execution strategy."
 
 A strategy might include:
 
@@ -253,7 +253,7 @@ The user should be able to prioritize:
 - **balanced**
 - eventually: **robustness under ambiguity**
 
-The router should not assume a single universal “best.”
+The router should not assume a single universal "best."
 
 A model that is best for weak prompts may be too expensive for routine tasks. A cheap fast model may be perfect for well-scaffolded work. The objective must shape the route.
 
@@ -427,7 +427,7 @@ That means the system needs strong UX around:
 
 ## 11. Proposed Phases
 
-## Phase 1 — MVP benchmark + basic objective routing
+## Phase 1: MVP benchmark + basic objective routing
 
 Build:
 
@@ -444,7 +444,7 @@ Success criteria:
 - can show benchmark-informed routing outperforming static model selection in at least some realistic task clusters
 - can explain why different routes win under different prompt-quality and tooling conditions
 
-## Phase 2 — stronger runtime feature extraction
+## Phase 2: stronger runtime feature extraction
 
 Add:
 
@@ -454,7 +454,7 @@ Add:
 - docs/context relevance estimation
 - better route explanation output
 
-## Phase 3 — strategy routing
+## Phase 3: strategy routing
 
 Expand from model-only routing to strategy routing:
 
@@ -463,7 +463,7 @@ Expand from model-only routing to strategy routing:
 - docs-context policy selection
 - skill bundle recommendations or auto-selection
 
-## Phase 4 — large benchmark corpus and dashboards
+## Phase 4: large benchmark corpus and dashboards
 
 Scale up to:
 
@@ -473,7 +473,7 @@ Scale up to:
 - benchmark snapshots for routing updates
 - dashboards for slice-based performance analysis
 
-## Phase 5 — community sandbox runners
+## Phase 5: community sandbox runners
 
 Only after the benchmark system is mature:
 

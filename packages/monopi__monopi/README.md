@@ -1,6 +1,6 @@
 # @monopi/monopi
 
-> All-in-one setup for pi-coding-agent — extensions, prompts, skills, themes, remote sharing, and dynamic subagent workflows.
+> All-in-one setup for pi-coding-agent: extensions, prompts, skills, themes, remote sharing, and dynamic subagent workflows.
 
 ## Install
 

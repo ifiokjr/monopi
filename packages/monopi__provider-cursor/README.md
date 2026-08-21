@@ -27,9 +27,9 @@ This package is intentionally separate from `@monopi/monopi` for now.
 
 ## Commands
 
-- `/cursor status` — show auth and runtime status
-- `/cursor refresh-models` — rediscover available Cursor models and refresh the provider registry
-- `/cursor clear-state` — clear in-memory conversation checkpoints and pending tool bridges
+- `/cursor status`: show auth and runtime status
+- `/cursor refresh-models`: rediscover available Cursor models and refresh the provider registry
+- `/cursor clear-state`: clear in-memory conversation checkpoints and pending tool bridges
 
 ## Notes
 

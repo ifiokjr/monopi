@@ -1,5 +1,5 @@
 /**
- * Resource path resolver — locates resource files from sibling workspace packages.
+ * Resource path resolver: locates resource files from sibling workspace packages.
  *
  * Uses createRequire to resolve installed package paths, which works both
  * in development (workspace:* links) and after publishing (real npm installs).
@@ -29,7 +29,7 @@ function resolvePackagePathWithFallback(pkg: string, subpath: string, fallbackRe
 	}
 }
 
-/** Resource path mapping — resolves paths into installed workspace packages. */
+/** Resource path mapping: resolves paths into installed workspace packages. */
 export const resources = {
 	agent: (name: string) => join(resolvePackagePath("@monopi/agents", "agents"), `${name}.md`),
 	diagnosticsDir: () => resolvePackagePathWithFallback("@monopi/diagnostics", ".", "../../../monopi__diagnostics"),

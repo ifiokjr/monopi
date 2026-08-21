@@ -76,7 +76,7 @@ export function runMigrations(): void {
 				.filter((f) => f.endsWith(".sql"))
 				.toSorted();
 		} catch {
-			// No migrations directory yet — initial creation
+			// No migrations directory yet: initial creation
 			return;
 		}
 

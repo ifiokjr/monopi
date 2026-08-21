@@ -16,12 +16,12 @@ monopi is a curated toolkit of Pi Coding Agent extensions, workflows, skills, ag
 
 ## Additional repository documentation
 
-- [Feature Catalog](feature-catalog.md) — long-form package and implementation inventory
-- [Contributing Guide](../CONTRIBUTING.md) — complete repository contribution process
-- [Engineering Rules](agent-rules/engineering.md) — implementation and validation standards
-- [Packaging and Release Rules](agent-rules/packaging-and-release.md) — package boundaries and publishing
-- [Git and PR Workflow](agent-rules/git-and-pr-workflow.md) — branch, commit, review, and merge policy
-- [Design and plan documents](plans/) — historical and forward-looking technical specifications
+- [Feature Catalog](feature-catalog.md): long-form package and implementation inventory
+- [Contributing Guide](../CONTRIBUTING.md): complete repository contribution process
+- [Engineering Rules](agent-rules/engineering.md): implementation and validation standards
+- [Packaging and Release Rules](agent-rules/packaging-and-release.md): package boundaries and publishing
+- [Git and PR Workflow](agent-rules/git-and-pr-workflow.md): branch, commit, review, and merge policy
+- [Design and plan documents](plans/): historical and forward-looking technical specifications
 
 ## Pi reference
 

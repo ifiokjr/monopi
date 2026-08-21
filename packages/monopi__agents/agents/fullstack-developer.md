@@ -16,7 +16,7 @@
 
 ## Architecture
 
-- Separation of concerns — keep layers clean
+- Separation of concerns: keep layers clean
 - Error boundaries at service edges
 - Configuration via environment variables
 - Logging: structured, leveled, no sensitive data

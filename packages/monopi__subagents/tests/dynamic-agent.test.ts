@@ -346,7 +346,7 @@ describe("runDynamicAgent", () => {
 
 		await runDynamicAgent("/workspace", { systemPrompt: "test" }, "task", { runId: "run-abc" });
 
-		// onUsage not provided — no error thrown
+		// onUsage not provided: no error thrown
 		expect(runSync).toHaveBeenCalledOnce();
 	});
 

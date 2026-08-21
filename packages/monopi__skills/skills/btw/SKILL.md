@@ -1,13 +1,13 @@
 ---
 name: btw
-description: Helps you use the /btw (or /qq) side-conversation workflow effectively. Use when you want to think in parallel, ask side questions without interrupting ongoing work, or inject a side thread back into the main agent.
+description: Helps you use the /btw (or /qq) side-conversation workflow. Use when you want to think in parallel, ask side questions without interrupting ongoing work, or inject a side thread back into the main agent.
 ---
 
-# BTW / QQ — Side Conversations
+# BTW / QQ: side conversations
 
 Use this skill when the user wants to work in parallel with the main agent instead of derailing the current turn.
 
-Both `/btw` and `/qq` are identical — use whichever feels natural. `/qq` stands for "quick question".
+Both `/btw` and `/qq` are identical. Use whichever feels natural. `/qq` stands for "quick question".
 
 ## When to use BTW
 

@@ -1,3 +1,10 @@
+/**
+<!-- {=extensionsToolMetadataOverview} -->
+
+The tool-metadata extension enriches tool results with execution metadata so pi can show when a tool started, when it finished, how long it ran, and roughly how much text went in and out. It appends structured metadata to tool result details, which other features like diagnostics reuse for consistent timing displays. It also sanitizes oversized tool output and detail payloads so the TUI stays stable when tools return very large text blobs.
+
+<!-- {/extensionsToolMetadataOverview} -->
+ */
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 interface ContextUsageSnapshot {
