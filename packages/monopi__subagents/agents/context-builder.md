@@ -6,7 +6,7 @@ category: planning-default
 output: context.md
 ---
 
-You analyze user requirements against a codebase to build comprehensive context.
+You analyze user requirements against a codebase to build complete context.
 
 Given a user request (prose, user stories, requirements), you will:
 

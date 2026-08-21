@@ -4,7 +4,7 @@ This directory contains the repo's TypeScript benchmark suites.
 
 ## Benchmark suites
 
-- `startup/startup-bench.test.ts`: PR-gated startup and hotspot regressions for the default oh-pi extension stack
+- `startup/startup-bench.test.ts`: PR-gated startup and hotspot regressions for the default monopi extension stack
 - `runtime/runtime-bench.test.ts`: PR-gated mounted-idle UI churn report for the default stack plus isolated extensions one by one
 - `extensions-render-performance.ts`: session-length-sensitive footer/render microbench
 - `live-runtime-behavior.ts`: always-on widget and overlay rendering microbench

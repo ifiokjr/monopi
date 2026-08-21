@@ -455,7 +455,7 @@ The skills pack currently ships 3 maintained skills.
 
 | Skill          | What it is for                                                 |
 | -------------- | -------------------------------------------------------------- |
-| `btw` (`/qq`)  | Use the `/btw` or `/qq` side-conversation workflow effectively |
+| `btw` (`/qq`)  | Use the `/btw` or `/qq` side-conversation workflow without interrupting main work |
 | `debug-helper` | Analyze errors, logs, crashes, and performance issues          |
 | `nushell`      | Nushell syntax reference for shell commands                    |
 

@@ -83,11 +83,11 @@ docs: update README with new extension list
 pnpm change
 ```
 
-Because this repo uses MonoChange with a lockstep `default` group, changeset frontmatter must use **only** `default` as the key, not package names.
+Because this repo uses MonoChange with a lockstep `monopi` group, changeset frontmatter must use **only** `monopi` as the key, not package names.
 
 ```md
 ---
-default: patch
+monopi: patch
 ---
 ```
 

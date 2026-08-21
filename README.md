@@ -4,7 +4,7 @@
 
 # 🐜 monopi
 
-**One command to supercharge [pi-coding-agent](https://github.com/badlogic/pi-mono).**
+**One command to install and configure [pi-coding-agent](https://github.com/badlogic/pi-mono).**
 
 Like oh-my-zsh for pi.
 
@@ -595,15 +595,15 @@ If you are changing one of the compiled contributor packages (`@monopi/core`, `@
 pnpm change
 ```
 
-This creates a file in `.changeset/` describing the change. Because this repo uses MonoChange with a lockstep `default` group, changeset frontmatter must use **only** `default` as the key:
+This creates a file in `.changeset/` describing the change. Because this repo uses MonoChange with a lockstep `monopi` group, changeset frontmatter must use **only** `monopi` as the key:
 
 ```md
 ---
-default: patch
+monopi: patch
 ---
 ```
 
-Do not use package names like `@monopi/monopi` or `@monopi/extension-worktree` in changeset frontmatter here. MonoChange validates changesets against the configured `default` release group.
+Do not use package names like `@monopi/monopi` or `@monopi/extension-worktree` in changeset frontmatter here. MonoChange validates changesets against the configured `monopi` release group.
 
 Choose the change type:
 
