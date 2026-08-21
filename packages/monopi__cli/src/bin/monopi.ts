@@ -12,7 +12,7 @@ if (process.platform === "win32") {
 	try {
 		execSync("chcp 65001", { stdio: "ignore" });
 	} catch {
-		// Chcp not available — best effort
+		// Chcp not available: best effort
 	}
 }
 

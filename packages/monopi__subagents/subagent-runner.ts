@@ -345,7 +345,7 @@ async function runSingleStep(
 			} else if (BUILTIN_TOOL_NAMES.has(tool)) {
 				builtinTools.push(tool);
 			}
-			// Else: extension-registered tool (e.g. read_full) — let the
+			// Else: extension-registered tool (e.g. read_full): let the
 			// Extension register it naturally; don't pass via --tools.
 		}
 		if (builtinTools.length > 0) {
@@ -375,7 +375,7 @@ async function runSingleStep(
 		args.push("--append-system-prompt", promptPath);
 	}
 
-	// Cache the placeholder regex — the placeholder is constant for the run
+	// Cache the placeholder regex: the placeholder is constant for the run
 	// So the regex only needs to be compiled once.
 	/* V8 ignore next 2 -- placeholder regex is runtime-only, tested via integration */
 	const placeholderPattern = ctx.placeholder.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`); // Patch-coverage-ignore
@@ -595,7 +595,7 @@ async function runSubagent(config: SubagentRunConfig): Promise<void> {
 					return {
 						agent: task.agent,
 						exitCode: -1 as number | null,
-						output: "(skipped — fail-fast)",
+						output: "(skipped: fail-fast)",
 						skipped: true,
 					};
 				}
@@ -952,7 +952,7 @@ function writeFailureResult(resultPath: string | undefined, id: string, error: u
 			}),
 		);
 	} catch {
-		// Last resort — at least log it
+		// Last resort: at least log it
 		console.error(`Failed to write failure result to ${resultPath}`);
 	}
 }

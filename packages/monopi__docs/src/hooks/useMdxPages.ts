@@ -27,7 +27,7 @@ function extractFrontmatter(modulePath: string): { title: string; order: number;
 	};
 }
 
-// Static frontmatter map — keeps MDX content clean while providing rich metadata.
+// Static frontmatter map: keeps MDX content clean while providing rich metadata.
 // Order matches the original docs numbering.
 const frontmatterMap: Record<string, { title: string; order: number; description: string }> = {
 	"01-overview": {

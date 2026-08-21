@@ -280,9 +280,9 @@ function renderStatus(): string {
 		const error = credential ? null : runtimeState.lastError.get(provider.id);
 		const refreshedAt = credential?.lastModelRefresh ?? runtimeState.lastRefresh.get(provider.id);
 		lines.push(
-			`- ${provider.id} — ${provider.name} (${source}, ${models.length} models${formatRefreshAge(
+			`- ${provider.id}: ${provider.name} (${source}, ${models.length} models${formatRefreshAge(
 				refreshedAt,
-			)})${error ? ` — last error: ${error}` : ""}`,
+			)})${error ? ` · last error: ${error}` : ""}`,
 		);
 	}
 
@@ -300,7 +300,7 @@ function renderProviderList(query: string): string {
 	}
 
 	return providers
-		.map((provider) => `- ${provider.id} — ${provider.name} · env: ${provider.env.join(" | ")} · api: ${provider.api}`)
+		.map((provider) => `- ${provider.id}: ${provider.name} · env: ${provider.env.join(" | ")} · api: ${provider.api}`)
 		.join("\n");
 }
 
@@ -312,7 +312,7 @@ async function renderProviderInfo(provider: SupportedProviderDefinition): Promis
 	const refreshedAt = credential?.lastModelRefresh ?? runtimeState.lastRefresh.get(provider.id);
 
 	return [
-		`${provider.id} — ${provider.name}`,
+		`${provider.id}: ${provider.name}`,
 		`API: ${provider.api}`,
 		`Base URL: ${provider.baseUrl}`,
 		`Auth URL: ${provider.authUrl}`,
@@ -338,7 +338,7 @@ async function renderProviderModels(provider: SupportedProviderDefinition): Prom
 			const badges = [model.reasoning ? "reasoning" : undefined, model.input.includes("image") ? "vision" : undefined]
 				.filter(Boolean)
 				.join(" · ");
-			return `  - ${model.id} — ${model.name}${
+			return `  - ${model.id}: ${model.name}${
 				badges ? ` [${badges}]` : ""
 			} · ${model.contextWindow.toLocaleString()} ctx`;
 		}),
@@ -450,7 +450,7 @@ async function selectProviderFromScrollableList(
 				const selected = i === selectedIndex;
 				const prefix = selected ? "→ " : "  ";
 				const status = hasStoredCredential(p.id) ? " ✓ logged in" : getEnvApiKey(p) ? " • env key" : "";
-				const line = `${prefix}${p.name} — ${p.id}${status}`;
+				const line = `${prefix}${p.name}: ${p.id}${status}`;
 				listContainer.addChild(new TruncatedText(line, 1, 0));
 			}
 

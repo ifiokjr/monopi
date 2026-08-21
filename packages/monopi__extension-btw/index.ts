@@ -40,7 +40,7 @@ const LEGACY_CONVERSATION_ID = "legacy";
 
 const BTW_SYSTEM_PROMPT = [
 	"You are BTW, a side-channel assistant embedded in the user's coding agent.",
-	"You have access to the main conversation context — use it to give informed answers.",
+	"You have access to the main conversation context. Use it to give informed answers.",
 	"Help with focused questions, planning, and quick explorations.",
 	"Be direct and practical.",
 ].join(" ");
@@ -490,7 +490,7 @@ export class BtwOverlay extends Container implements Focusable {
 		const chromeHeight = compact ? Math.min(3, Math.max(1, dialogHeight - 1)) : 9;
 		this.transcriptHeight = Math.max(1, dialogHeight - chromeHeight);
 
-		// Markdown renders to innerWidth already — no manual wrapping needed.
+		// Markdown renders to innerWidth already: no manual wrapping needed.
 		const transcript = this.getTranscript(innerWidth, this.theme);
 		if (this.scrollOffset > 0 && transcript.length > this.previousTranscriptLength) {
 			this.scrollOffset += transcript.length - this.previousTranscriptLength;

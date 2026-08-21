@@ -244,7 +244,7 @@ export async function setupProviders(env?: EnvInfo): Promise<ProviderSetupResult
 	const entries = Object.entries(PROVIDERS);
 	let providerStrategy: ProviderSetupStrategy = "replace";
 
-	// Detect existing providers — offer keep / replace / add
+	// Detect existing providers: offer keep / replace / add
 	const detected = env?.existingProviders ?? [];
 	if (detected.length > 0) {
 		const action = await p.select({

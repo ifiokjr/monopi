@@ -130,7 +130,7 @@ function terminalNotify(title: string, body: string): void {
 }
 
 /**
- * Extension entry point — registers hooks for dirty-repo detection, stash checkpoints,
+ * Extension entry point: registers hooks for dirty-repo detection, stash checkpoints,
  * and completion notifications.
  */
 export default function (pi: ExtensionAPI) {
@@ -152,7 +152,7 @@ export default function (pi: ExtensionAPI) {
 					ctx.ui.notify(`Dirty repo: ${lines} uncommitted change(s)`, "warning");
 				}
 			} catch {
-				// Not a git repo — nothing to warn about
+				// Not a git repo: nothing to warn about
 			}
 		}, DIRTY_REPO_CHECK_DELAY_MS);
 	};
@@ -183,7 +183,7 @@ export default function (pi: ExtensionAPI) {
 		try {
 			await pi.exec("git", ["stash", "create", "-m", `oh-pi-turn-${turnCount}`]);
 		} catch {
-			// Not a git repo — skip silently
+			// Not a git repo: skip silently
 		}
 	});
 

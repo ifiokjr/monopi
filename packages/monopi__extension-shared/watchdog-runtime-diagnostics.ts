@@ -113,7 +113,7 @@ function profileSourceToId(source: string): string {
 	return "unknown";
 }
 
-/** Compiled once at module scope — not re-created per stack walk. */
+/** Compiled once at module scope: not re-created per stack walk. */
 const STACK_FILE_RE = /((?:file:\/\/)?[^\s)]+\.(?:ts|js))/;
 
 function inferExtensionSourceFromStack(stack = new Error().stack): string {

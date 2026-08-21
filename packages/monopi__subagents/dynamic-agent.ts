@@ -1,5 +1,5 @@
 /**
- * Dynamic Agent Creation — Ephemeral agents without on-disk .md files
+ * Dynamic Agent Creation: Ephemeral agents without on-disk .md files
  *
  * Host creates agents on-the-fly by specifying systemPrompt, tools, skills,
  * extensions, model, etc. The agent is injected into the existing subagent
@@ -110,7 +110,7 @@ export function resolveDynamicModel(
 
 /**
  * Convert a dynamic spec into an AgentConfig compatible with the existing runner.
- * The resulting config is ephemeral — no .md file exists on disk.
+ * The resulting config is ephemeral: no .md file exists on disk.
  */
 export function createDynamicAgent(spec: DynamicAgentSpec): AgentConfig {
 	dynamicAgentCounter++;

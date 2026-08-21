@@ -234,7 +234,7 @@ describe("aggregateParallelOutputs", () => {
 	it("marks skipped tasks distinctly from failures", () => {
 		const result = aggregateParallelOutputs([
 			{ agent: "agent-a", output: "done", exitCode: 0 },
-			{ agent: "agent-b", output: "(skipped — fail-fast)", exitCode: -1 },
+			{ agent: "agent-b", output: "(skipped: fail-fast)", exitCode: -1 },
 		]);
 		expect(result).toContain("⏭️ SKIPPED");
 		expect(result).not.toContain("FAILED");

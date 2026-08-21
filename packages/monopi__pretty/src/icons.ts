@@ -1,6 +1,6 @@
 import { basename, extname } from "node:path";
 
-// Nerd Font icon mapping — hoisted module scope (performance rule #1)
+// Nerd Font icon mapping: hoisted module scope (performance rule #1)
 const ICON_MAP: Record<string, string> = {
 	".bash": "󰆍",
 	".c": "󰙱",

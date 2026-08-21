@@ -232,7 +232,7 @@ export function getDisplayItems(messages: Message[]): DisplayItem[] {
 export function detectSubagentError(messages: Message[]): ErrorInfo {
 	// Step 1: Find the last assistant message with text content.
 	// If the agent produced a text response after encountering errors,
-	// It had a chance to recover — only errors AFTER this point matter.
+	// It had a chance to recover: only errors AFTER this point matter.
 	let lastAssistantTextIndex = -1;
 	for (let i = messages.length - 1; i >= 0; i--) {
 		const msg = messages[i];

@@ -228,7 +228,7 @@ export interface RunSyncOptions {
 	modelCategory?: string;
 	/** Skills to inject (overrides agent default if provided) */
 	skills?: string[];
-	/** Idle timeout in ms — kill the agent if it produces no output for this long.
+	/** Idle timeout in ms: kill the agent if it produces no output for this long.
 	 *  Default: 15 min. Set to 0 to disable. Override per-agent via frontmatter: `idleTimeoutMs: 1800000`. */
 	idleTimeoutMs?: number;
 	/** Called when usage data is finalized (for budget tracking across subagent calls) */
@@ -264,7 +264,7 @@ export const MAX_PARALLEL = 8;
 export const MAX_CONCURRENCY = 4;
 
 /** Default idle timeout: kill a subagent if it produces no output for this long.
- *  15 min — enough for slow OCR/vision tasks but catches truly stuck agents.
+ *  15 min: enough for slow OCR/vision tasks but catches truly stuck agents.
  *  Override per-agent via frontmatter: `idleTimeoutMs: 1200000` (20 min). */
 export const DEFAULT_IDLE_TIMEOUT_MS = 15 * 60 * 1000;
 

@@ -2,7 +2,7 @@ import type { ModelCapabilities } from "./types.js";
 
 import { icon } from "./icons.js";
 
-/** Model capability lookup table — maps model IDs to their context window, output limits, and features. */
+/** Model capability lookup table: maps model IDs to their context window, output limits, and features. */
 export const MODEL_CAPABILITIES: Record<string, ModelCapabilities> = {
 	// Anthropic
 	"claude-sonnet-4-20250514": {
@@ -79,7 +79,7 @@ export const MODEL_CAPABILITIES: Record<string, ModelCapabilities> = {
 	},
 };
 
-/** Provider registry — maps provider names to their env var, label, and available models. */
+/** Provider registry: maps provider names to their env var, label, and available models. */
 export const PROVIDERS: Record<string, { env: string; label: string; models: string[] }> = {
 	anthropic: {
 		env: "ANTHROPIC_API_KEY",
@@ -119,7 +119,7 @@ export const PROVIDERS: Record<string, { env: string; label: string; models: str
 	xai: { env: "XAI_API_KEY", label: "xAI (Grok)", models: ["grok-3"] },
 };
 
-/** Available themes — each has a name, display label, and light/dark style. */
+/** Available themes: each has a name, display label, and light/dark style. */
 export const THEMES = [
 	{ label: "Pi Default Dark", name: "dark", style: "dark" },
 	{ label: "oh-pi Dark (Cyan+Purple)", name: "oh-p-dark", style: "dark" },
@@ -135,19 +135,19 @@ export const THEMES = [
 	{ label: "Pi Default Light", name: "light", style: "light" },
 ];
 
-/** Available extensions — each has a name, label function, and whether it's enabled by default. */
+/** Available extensions: each has a name, label function, and whether it's enabled by default. */
 export const EXTENSIONS = [
 	{
 		default: true,
 		get label() {
-			return `${icon("package")} Git Guard — Auto stash checkpoint + dirty repo warning + notify`;
+			return `${icon("package")} Git Guard: auto stash checkpoint + dirty repo warning + notify`;
 		},
 		name: "git-guard",
 	},
 	{
 		default: true,
 		get label() {
-			return `${icon("chart")} Custom Footer — Enhanced status bar with tokens, cost, time, git, cwd`;
+			return `${icon("chart")} Custom Footer: enhanced status bar with tokens, cost, time, git, cwd`;
 		},
 		name: "custom-footer",
 	},
@@ -156,41 +156,41 @@ export const EXTENSIONS = [
 		get label() {
 			return `${icon(
 				"clock",
-			)} Tool Metadata — Add completion timestamps, durations, and context snapshots to tool results`;
+			)} Tool Metadata: add completion timestamps, durations, and context snapshots to tool results`;
 		},
 		name: "tool-metadata",
 	},
 	{
 		default: true,
 		get label() {
-			return `${icon("chart")} Diagnostics — Log prompt completion timestamps, durations, and per-turn response timing`;
+			return `${icon("chart")} Diagnostics: log prompt completion timestamps, durations, and per-turn response timing`;
 		},
 		name: "diagnostics",
 	},
 	{
 		default: true,
 		get label() {
-			return `${icon("bolt")} Compact Header — Dense startup info replacing verbose output`;
+			return `${icon("bolt")} Compact Header: dense startup info replacing verbose output`;
 		},
 		name: "compact-header",
 	},
 	{
 		default: false,
 		get label() {
-			return `${icon("cost")} Usage Tracker — Real-time per-model token & cost monitoring with /usage command`;
+			return `${icon("cost")} Usage Tracker: real-time per-model token & cost monitoring with /usage command`;
 		},
 		name: "usage-tracker",
 	},
 	{
 		default: true,
 		get label() {
-			return `${icon("package")} Worktree — Centralized pi-owned git worktree status and cleanup`;
+			return `${icon("package")} Worktree: centralized pi-owned git worktree status and cleanup`;
 		},
 		name: "worktree",
 	},
 ];
 
-/** Keybinding schemes — default (no overrides), vim-style, and emacs-style. */
+/** Keybinding schemes: default (no overrides), vim-style, and emacs-style. */
 export const KEYBINDING_SCHEMES: Record<string, object> = {
 	default: {},
 	emacs: {

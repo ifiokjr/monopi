@@ -482,7 +482,7 @@ async function handleCleanup(pi: ExtensionAPI, args: string, ctx: ExtensionConte
 		if (skipped.length > 0) {
 			lines.push("## Skipped");
 			for (const entry of skipped) {
-				lines.push(`- ${entry.branch} — current session is running inside this worktree.`);
+				lines.push(`- ${entry.branch}: current session is running inside this worktree.`);
 			}
 		}
 		sendReport(pi, lines.join("\n"));

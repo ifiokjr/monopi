@@ -59,7 +59,7 @@ export function parseArgs(argv: string[]): CliOptions {
 
 export function formatHelp(): string {
 	return `
-pi-remote-tailscale — PTY launcher helper for remote pi sessions
+pi-remote-tailscale: PTY launcher helper for remote pi sessions
 
 Usage:
   pi-remote-tailscale [--cwd <path>] [--command <pi-bin>] [--print-env] [--help] [-- ...pi args]

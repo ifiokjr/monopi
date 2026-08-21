@@ -429,7 +429,7 @@ describe("pi source switcher helpers", () => {
 		expect(result.stdout).toContain(`Settings: ${resolvedSettingsPath}`);
 		expect(result.stdout).toContain(`Repo: ${repoDir}`);
 		expect(result.stdout).toContain(workspacePackages.get("@monopi/extension-worktree") ?? "");
-		expect(result.stdout).toContain("Dry run only — settings were not written");
+		expect(result.stdout).toContain("Dry run only. Settings were not written");
 		expect(result.stdout).toContain("run `pnpm install --frozen-lockfile` before restarting pi");
 		expect(result.stdout).toContain(
 			"pnpm pi:local refreshes compiled runtime dependencies like @monopi/core before switching",

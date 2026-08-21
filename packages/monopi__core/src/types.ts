@@ -39,7 +39,7 @@ export interface ProviderConfig {
 	multimodal?: boolean;
 }
 
-/** Complete monopi configuration — produced by the TUI wizard and applied to ~/.pi/agent/. */
+/** Complete monopi configuration: produced by the TUI wizard and applied to ~/.pi/agent/. */
 export interface OhPConfig {
 	/** Configured LLM providers. */
 	providers: ProviderConfig[];

@@ -395,7 +395,7 @@ const REVIEW_RUBRIC = `# Review Guidelines
 
 You are acting as a code reviewer for a proposed code change made by another engineer.
 
-Below are default guidelines for determining what to flag. These are not the final word — if you encounter more specific guidelines elsewhere (in a developer message, user message, file, or project review guidelines appended below), those override these general instructions.
+Below are default guidelines for determining what to flag. These are not the final word. If you encounter more specific guidelines elsewhere (in a developer message, user message, file, or project review guidelines appended below), those override these general instructions.
 
 ## Determining what to flag
 
@@ -406,7 +406,7 @@ Flag issues that:
 4. Were introduced in the changes being reviewed (not pre-existing bugs).
 5. The author would likely fix if aware of them.
 6. Don't rely on unstated assumptions about the codebase or author's intent.
-7. Have provable impact on other parts of the code — it is not enough to speculate that a change may disrupt another part, you must identify the parts that are provably affected.
+7. Have provable impact on other parts of the code. It is not enough to speculate that a change may disrupt another part, you must identify the parts that are provably affected.
 8. Are clearly not intentional changes by the author.
 9. Be particularly careful with untrusted user input and follow the specific guidelines to review.
 10. Treat silent local error recovery (especially parsing/IO/network fallbacks) as high-signal review candidates unless there is explicit boundary-level justification.
@@ -485,11 +485,11 @@ Tag each finding with a priority level in the title:
 
 Provide your findings in a clear, structured format:
 1. List each finding with its priority tag, file location, and explanation.
-2. Findings must reference locations that overlap with the actual diff — don't flag pre-existing code.
+2. Findings must reference locations that overlap with the actual diff. Don't flag pre-existing code.
 3. Keep line references as short as possible (avoid ranges over 5-10 lines; pick the most suitable subrange).
 4. Provide an overall verdict: "correct" (no blocking issues) or "needs attention" (has blocking issues).
 5. Ignore trivial style issues unless they obscure meaning or violate documented standards.
-6. Do not generate a full PR fix — only flag issues and optionally provide short suggestion blocks.
+6. Do not generate a full PR fix. Only flag issues and optionally provide short suggestion blocks.
 7. End with the required "Human Reviewer Callouts (Non-Blocking)" section and all applicable bold callouts (no yes/no).
 
 Output all findings the author would fix if they knew about them. If there are no qualifying findings, explicitly state the code looks good. Don't stop at the first finding - list every qualifying issue. Then append the required non-blocking callouts section.`;

@@ -29,7 +29,7 @@ export function recordRun(agent: string, task: string, exitCode: number, duratio
 		fs.mkdirSync(path.dirname(HISTORY_PATH), { recursive: true });
 		fs.appendFileSync(HISTORY_PATH, `${JSON.stringify(entry)}\n`);
 	} catch {
-		// Best-effort — never crash the execution flow for history recording
+		// Best-effort: never crash the execution flow for history recording
 	}
 }
 

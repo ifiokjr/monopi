@@ -33,7 +33,7 @@ export async function checkHealth(): Promise<FffStatus> {
 		const stats = cursor?.stats?.() ?? {};
 		return {
 			ok: true,
-			message: `FFF index healthy — ${stats.fileCount ?? "unknown"} files indexed`,
+			message: `FFF index healthy: ${stats.fileCount ?? "unknown"} files indexed`,
 			indexed: true,
 			fileCount: stats.fileCount,
 		};
@@ -67,7 +67,7 @@ export async function rescan(): Promise<FffStatus> {
 	} catch {
 		return {
 			ok: false,
-			message: "Failed to rescan — FFF module unavailable",
+			message: "Failed to rescan: FFF module unavailable",
 			indexed: false,
 		};
 	}

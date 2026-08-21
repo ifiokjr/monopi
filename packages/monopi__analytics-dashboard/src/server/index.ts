@@ -1,6 +1,6 @@
 /* C8 ignore file */
 /**
- * Pi Analytics Dashboard — API Server
+ * Pi Analytics Dashboard: API Server
  *
  * Lightweight Express server that reads from the SQLite database
  * and serves JSON API endpoints for the dashboard frontend.

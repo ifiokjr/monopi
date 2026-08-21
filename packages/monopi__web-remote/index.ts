@@ -46,7 +46,7 @@ export default function (pi: ExtensionAPI) {
 
 			// Attach the current session
 			// The ExtensionCommandContext provides access to the session indirectly.
-			// We cast through the pi API — the server uses a minimal AgentSessionLike interface.
+			// We cast through the pi API: the server uses a minimal AgentSessionLike interface.
 			// In practice this is wired via the session the extension is loaded into.
 
 			// Try to start tunnel

@@ -16,7 +16,7 @@ export interface WsHandlerOptions {
 	onClientDisconnect?: (clientId: string) => void;
 }
 
-// Minimal interface for AgentSession — avoids hard dependency on pi types at the module level
+// Minimal interface for AgentSession: avoids hard dependency on pi types at the module level
 export interface AgentSessionLike {
 	prompt(text: string, options?: { streamingBehavior?: "steer" | "followUp" }): Promise<void>;
 	steer(text: string): Promise<void>;
@@ -60,7 +60,7 @@ export function handleWebSocketConnection(ws: WebSocket, options: WsHandlerOptio
 			return;
 		}
 
-		// Auth handshake — must be first message
+		// Auth handshake: must be first message
 		if (!session.authenticated) {
 			if (msg.type === "auth" && typeof msg.token === "string") {
 				if (validateToken(msg.token, options.token)) {
@@ -99,7 +99,7 @@ export function handleWebSocketConnection(ws: WebSocket, options: WsHandlerOptio
 			return;
 		}
 
-		// Authenticated — dispatch RPC commands
+		// Authenticated: dispatch RPC commands
 		const agentSession = options.getSession();
 
 		if (!agentSession) {
@@ -224,7 +224,7 @@ async function dispatchCommand(
 		}
 
 		case "extension_ui_response": {
-			// These are relayed back into the session — the session handles them
+			// These are relayed back into the session: the session handles them
 			// Via its internal extension UI protocol
 			break;
 		}

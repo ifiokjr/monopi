@@ -45,7 +45,7 @@ export function appendTelemetryEvent(
 	const eventsPath = getAdaptiveRoutingEventsPath();
 	try {
 		mkdirSync(dirname(eventsPath), { recursive: true });
-		// Append-only write — never read the entire file back just to add one line.
+		// Append-only write: never read the entire file back just to add one line.
 		appendFileSync(eventsPath, `${JSON.stringify(event)}\n`, "utf8");
 
 		// Update in-memory stats incrementally instead of re-reading the whole file.

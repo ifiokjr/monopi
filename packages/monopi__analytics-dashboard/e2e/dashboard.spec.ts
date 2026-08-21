@@ -1,7 +1,7 @@
 import type { Page } from "@playwright/test";
 /* C8 ignore file */
 /**
- * Pi Analytics Dashboard — Playwright Test Suite
+ * Pi Analytics Dashboard: Playwright Test Suite
  *
  * All UI tests run in a real Chromium browser via Playwright.
  * Pure-logic tests (utils, API) stay in vitest.
@@ -350,7 +350,7 @@ test.describe("Navigation", () => {
 
 	test("clicking Providers nav stays on current view (not implemented)", async ({ page }) => {
 		await navigateTo(page, /Providers/);
-		// Providers page not implemented yet — should fall back to Overview
+		// Providers page not implemented yet: should fall back to Overview
 		await expect(page.getByText("Dashboard")).toBeVisible();
 	});
 
@@ -530,7 +530,7 @@ test.describe("Responsive Layout", () => {
 	test("mobile layout hides desktop sidebar", async ({ page }) => {
 		await page.setViewportSize({ height: 812, width: 375 });
 		await gotoDashboard(page);
-		// Desktop sidebar has `hidden lg:block` — on 375px it should be hidden
+		// Desktop sidebar has `hidden lg:block`: on 375px it should be hidden
 		const aside = page.locator("aside.fixed");
 		const isVisible = await aside.isVisible().catch(() => false);
 		// Sidebar should be hidden on mobile (lg breakpoint = 1024px)

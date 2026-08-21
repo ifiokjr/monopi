@@ -10,11 +10,11 @@ Run `pnpm docs:dev` to develop, `pnpm docs:build` to build, and `pnpm docs:sync`
 
 ## Scripts
 
-| Script          | What it does                                   |
-| --------------- | ---------------------------------------------- |
-| `pnpm docs:dev` | Start the Vite dev server.                     |
-| `pnpm docs:build` | Build the site for production.               |
-| `pnpm docs:sync` | Sync `docs/*.md` into `src/content/*.mdx`.     |
+| Script            | What it does                                   |
+| ----------------- | ---------------------------------------------- |
+| `pnpm docs:dev`   | Start the Vite dev server.                     |
+| `pnpm docs:build` | Build the site for production.                 |
+| `pnpm docs:sync`  | Sync `docs/*.md` into `src/content/*.mdx`.     |
 | `pnpm docs:check` | Verify all MDT consumer blocks are up to date. |
 
 ## Layout

@@ -1820,7 +1820,7 @@ describe("usage-tracker extension", () => {
 			expect(ctx.ui.select).toHaveBeenCalledWith(
 				expect.stringContaining("Type to search"),
 				expect.arrayContaining([
-					expect.stringContaining("Anthropic — current model"),
+					expect.stringContaining("Anthropic: current model"),
 					expect.stringContaining("OpenAI"),
 				]),
 			);
@@ -1895,7 +1895,7 @@ describe("usage-tracker extension", () => {
 			await runWithTimers(() => pi._commands.get("usage").handler("", ctx));
 
 			const pickerOptions = (ctx.ui.select as ReturnType<typeof vi.fn>).mock.calls[0]?.[1] as string[];
-			expect(pickerOptions).toEqual(expect.arrayContaining([expect.stringContaining("OpenAI — recently viewed")]));
+			expect(pickerOptions).toEqual(expect.arrayContaining([expect.stringContaining("OpenAI: recently viewed")]));
 		});
 
 		it("closes overlay with Escape via keybindings (tui.select.cancel)", async () => {
@@ -2135,7 +2135,7 @@ describe("usage-tracker extension", () => {
 			usageTracker(pi as any);
 			pi._emit("session_start", { type: "session_start" }, ctx);
 
-			// Trigger a turn_end with zero cost message — let's just invoke usage:query directly
+			// Trigger a turn_end with zero cost message: let's just invoke usage:query directly
 			(pi.events.emit as ReturnType<typeof vi.fn>).mockClear();
 			const onCalls = (pi.events.on as ReturnType<typeof vi.fn>).mock.calls;
 			const queryHandler = onCalls.find((c: unknown[]) => c[0] === "usage:query")?.[1] as () => void;

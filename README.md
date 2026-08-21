@@ -357,9 +357,9 @@ Claude [████████░░░░] 67% ↻in 3d 2h │ 💰$0.42 │ 
 ╭─ Usage Dashboard ──────────────────────────────────────╮
 
   ▸ Claude Rate Limits
-    Weekly (all)   [████████████░░░░░░░░] 67% left (33% used) — resets in 3d 2h
+    Weekly (all)   [████████████░░░░░░░░] 67% left (33% used) · resets in 3d 2h
       Pace: On pace | Expected 31% used | Lasts until reset
-    Session        [████████████████░░░░] 82% left (18% used) — resets in 2h 5m
+    Session        [████████████████░░░░] 82% left (18% used) · resets in 2h 5m
     Most constrained: Weekly (all) (67% left)
 
   ──────────────────────────────────────────────────────────
@@ -400,19 +400,19 @@ Continuously samples runtime health so heavy sessions stay usable.
 
 ## Setup Modes
 
-| Mode    | Steps | For                               |
-| ------- | ----- | --------------------------------- |
-| Quick   | 3     | Pick provider → enter key → done  |
-| Preset  | 2     | Choose a role profile → enter key |
-| Custom  | 6     | Pick everything yourself          |
+| Mode   | Steps | For                               |
+| ------ | ----- | --------------------------------- |
+| Quick  | 3     | Pick provider → enter key → done  |
+| Preset | 2     | Choose a role profile → enter key |
+| Custom | 6     | Pick everything yourself          |
 
 ### Presets
 
-|               | Theme       | Thinking | Includes                               |
-| ------------- | ----------- | -------- | -------------------------------------- |
-| Full Power    | monopi Dark | high     | Recommended extensions                 |
-| Clean         | Default     | off      | No extensions, just core               |
-| Subagents     | monopi Dark | medium   | Subagent chains and parallel execution |
+|            | Theme       | Thinking | Includes                               |
+| ---------- | ----------- | -------- | -------------------------------------- |
+| Full Power | monopi Dark | high     | Recommended extensions                 |
+| Clean      | Default     | off      | No extensions, just core               |
+| Subagents  | monopi Dark | medium   | Subagent chains and parallel execution |
 
 ### Providers
 
@@ -430,14 +430,14 @@ Anthropic · OpenAI · Google Gemini · Groq · OpenRouter · xAI · Mistral
 
 ## Themes
 
-| Theme               | Description                  |
-| ------------------- | ---------------------------- |
-| monopi Dark         | Cyan + purple, high contrast |
-| Cyberpunk           | Neon magenta + electric cyan |
-| Nord                | Arctic blue palette          |
-| Catppuccin Mocha    | Pastel on dark               |
-| Tokyo Night         | Blue + purple twilight       |
-| Gruvbox Dark        | Warm retro tones             |
+| Theme            | Description                  |
+| ---------------- | ---------------------------- |
+| monopi Dark      | Cyan + purple, high contrast |
+| Cyberpunk        | Neon magenta + electric cyan |
+| Nord             | Arctic blue palette          |
+| Catppuccin Mocha | Pastel on dark               |
+| Tokyo Night      | Blue + purple twilight       |
+| Gruvbox Dark     | Warm retro tones             |
 
 ---
 

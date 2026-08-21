@@ -47,7 +47,7 @@ export function loadOrCreateToken(filePath?: string): TokenInfo {
 				};
 			}
 		} catch {
-			// File doesn't exist or is unreadable — create new
+			// File doesn't exist or is unreadable: create new
 		}
 
 		const token = generateToken();

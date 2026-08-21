@@ -4,9 +4,9 @@
  * Resolves agent definitions from standard external configuration locations.
  * Supports three external agent protocols:
  *
- * 1. **VS Code method** — .vscode/agents.json with structured agent definitions
- * 2. **Claude Code method** — .claude/agents/<name>.md with agent system prompts
- * 3. **Open Code method** — .opencode/agents/<name>.md with agent system prompts
+ * 1. **VS Code method**: .vscode/agents.json with structured agent definitions
+ * 2. **Claude Code method**: .claude/agents/<name>.md with agent system prompts
+ * 3. **Open Code method**: .opencode/agents/<name>.md with agent system prompts
  *
  * Also checks .pi/agents/<name>.md for pi-specific project agents.
  */
@@ -365,14 +365,14 @@ function parseMarkdownAgentFile(name: string, filePath: string): DynamicAgentSpe
 		};
 	}
 
-	// No frontmatter — entire content is the system prompt
+	// No frontmatter: entire content is the system prompt
 	return {
 		name,
 		systemPrompt: raw.trim(),
 	};
 }
 
-/** Very basic frontmatter parser — handles key: value pairs and arrays like [a, b]. */
+/** Very basic frontmatter parser: handles key: value pairs and arrays like [a, b]. */
 function parseSimpleFrontmatter(raw: string): Record<string, string> {
 	const result: Record<string, string> = {};
 	const lines = raw.split("\n");
@@ -423,10 +423,10 @@ function resolveMarkdownDirAgent(
  * Try to resolve an agent from external configuration files.
  *
  * Search order (first match wins):
- * 1. .pi/agents/<name>.md — pi-specific project agents
- * 2. .vscode/agents.json — VS Code structured agent config
- * 3. .claude/agents/<name>.md — Claude Code agent prompts
- * 4. .opencode/agents/<name>.md — Open Code agent prompts
+ * 1. .pi/agents/<name>.md: pi-specific project agents
+ * 2. .vscode/agents.json: VS Code structured agent config
+ * 3. .claude/agents/<name>.md: Claude Code agent prompts
+ * 4. .opencode/agents/<name>.md: Open Code agent prompts
  *
  * Returns undefined if no external definition is found.
  */
@@ -512,7 +512,7 @@ function searchUp(startDir: string, targetName: string): string[] {
 				results.push(current);
 			}
 		} catch {
-			// stat failed — dir doesn't exist at this level
+			// stat failed: dir doesn't exist at this level
 		}
 
 		const parent = path.dirname(current);

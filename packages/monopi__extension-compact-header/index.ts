@@ -25,7 +25,7 @@ function loadPlainIconsSetting(): boolean {
 				return true;
 			}
 		} catch {
-			/* File missing or unparseable — skip */
+			/* File missing or unparseable: skip */
 		}
 	}
 	return false;

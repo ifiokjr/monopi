@@ -230,7 +230,7 @@ CHAIN DATA FLOW:
 
 Example: { chain: [{agent:"scout", task:"Analyze {task}"}, {agent:"planner", task:"Plan based on {previous}"}] }
 
-MANAGEMENT (use action field — omit agent/task/chain/tasks):
+MANAGEMENT (use action field, omit agent/task/chain/tasks):
 • { action: "list" } - discover available agents and chains
 • { action: "get", agent: "name" } - full agent detail with system prompt
 • { action: "create", config: { name, description, systemPrompt, ... } } - create agent/chain
