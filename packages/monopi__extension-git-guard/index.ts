@@ -1,13 +1,16 @@
 /**
- * Oh-pi Git Checkpoint Extension
- *
- * Provides four git-safety features for git-managed repositories:
- * 1. **Interactive git guard** — blocks git bash commands that are likely to open an editor and hang
- * 2. **Dirty repo warning** — notifies at session start if there are uncommitted changes
- * 3. **Turn checkpoints** — creates a git stash snapshot before each agent turn
- * 4. **Terminal notification** — sends a desktop/terminal notification when the agent finishes
- *
- * Supports Kitty (OSC 99) and generic terminal (OSC 777) notification protocols.
+<!-- {=extensionsGitGuardOverview} -->
+
+The git-guard extension adds four git safety features for git-managed repositories:
+
+- interactive git guard: blocks git shell commands that are likely to open an editor and hang
+- dirty repo warning: notifies you at session start when there are uncommitted changes
+- turn checkpoints: creates a git stash snapshot before each agent turn
+- terminal notification: sends a desktop or terminal notification when the agent finishes
+
+It supports the Kitty (OSC 99) and generic terminal (OSC 777) notification protocols.
+
+<!-- {/extensionsGitGuardOverview} -->
  */
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 

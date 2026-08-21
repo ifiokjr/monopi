@@ -1,3 +1,10 @@
+/**
+<!-- {=extensionsExternalEditorOverview} -->
+
+The external-editor extension adds an `/external-editor` command and a `ctrl+shift+e` shortcut for opening the current draft in your configured external editor (`$VISUAL` or `$EDITOR`). When you save the file, the updated text is synced back into pi's prompt input. It complements pi's built-in `app.editor.external` keybinding, which defaults to `Ctrl+G`.
+
+<!-- {/extensionsExternalEditorOverview} -->
+ */
 import type { ExtensionAPI, ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
 import type { Component, KeybindingsManager, TUI } from "@earendil-works/pi-tui";
 
