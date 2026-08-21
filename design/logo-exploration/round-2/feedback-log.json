@@ -1,0 +1,31 @@
+[
+	{
+		"receivedAt": "2026-08-21T14:13:48.030Z",
+		"type": "logo-exploration-round-2",
+		"favourite": null,
+		"ratings": {
+			"5": 4,
+			"7": 4,
+			"9": 4
+		},
+		"iterateRequests": [
+			{
+				"index": 5,
+				"name": "Pi orbit",
+				"request": "make this pixel art please"
+			},
+			{
+				"index": 7,
+				"name": "Pixel cluster",
+				"request": "add a pi symbol to this"
+			},
+			{
+				"index": 9,
+				"name": "Neon pi",
+				"request": "make this pixel art"
+			}
+		],
+		"globalChips": [],
+		"notes": "see feedback on the two standouts"
+	}
+]

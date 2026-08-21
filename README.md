@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./logo.svg" width="180" alt="monopi logo"/>
+<img src="./logo.png" width="180" alt="monopi logo"/>
 
 # 🐜 monopi
 

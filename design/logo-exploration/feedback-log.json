@@ -1,0 +1,16 @@
+[
+	{
+		"receivedAt": "2026-08-21T16:27:30.285Z",
+		"type": "logo-exploration-round-3",
+		"favourite": {
+			"index": 2,
+			"name": "Pixel cluster + pi"
+		},
+		"ratings": {
+			"2": 5
+		},
+		"iterateRequests": [],
+		"globalChips": [],
+		"notes": "use Pixel cluster + pi"
+	}
+]
