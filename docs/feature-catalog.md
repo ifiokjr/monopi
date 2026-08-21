@@ -475,6 +475,7 @@ The AGENTS template pack currently ships 5 templates.
 | Package                                                                  | Role                                                                                                   |
 | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
 | [`@monopi/monopi`](../packages/monopi__monopi)                           | Meta-installer that registers the default bundle with pi                                               |
+| [`monopi`](../packages/monopi)                                           | Unscoped npm alias that re-exports the `@monopi/monopi` binary                                         |
 | [`@monopi/cli`](../packages/monopi__cli)                                 | Interactive setup/configuration TUI with provider/model/routing/package selection flows                |
 | [`@monopi/core`](../packages/monopi__core)                               | Shared registries, icons, i18n helpers, and path helpers for the pi agent directory and shared storage |
 | [`@monopi/shared-qna`](../packages/monopi__shared-qna)                   | Reusable TUI Q&A helpers and shared `pi-tui` loading logic                                             |

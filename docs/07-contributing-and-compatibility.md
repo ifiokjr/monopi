@@ -68,11 +68,11 @@ Every non-release change needs a MonoChange changeset:
 pnpm mc create
 ```
 
-This repository is lockstep-versioned. Changeset frontmatter must use only the `monopi` group:
+This repository is lockstep-versioned. Changeset frontmatter must use only the `monopi-group`:
 
 ```md
 ---
-monopi: patch
+monopi-group: patch
 ---
 ```
 

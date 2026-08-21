@@ -98,6 +98,7 @@ This is a monorepo. Install everything at once with `npx @monopi/monopi`, or pic
 | Package                                                                 | Role                                                                       | Install                                      |
 | ----------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------- |
 | [`@monopi/monopi`](./packages/monopi__monopi)                           | Meta-installer for the default monopi bundle                               | `npx @monopi/monopi`                         |
+| [`monopi`](./packages/monopi)                                           | Unscoped npm alias for `@monopi/monopi`                                    | `npx monopi`                                 |
 | [`@monopi/cli`](./packages/monopi__cli)                                 | Interactive TUI configurator                                               | `npx @monopi/cli`                            |
 | [`@monopi/core`](./packages/monopi__core)                               | Shared types, registries, icons, i18n, and path helpers                    | (library, not installed directly)            |
 | [`@monopi/db`](./packages/monopi__db)                                   | Shared SQLite/Drizzle database for persistence-based extensions            | (library, not installed directly)            |
@@ -595,11 +596,11 @@ If you are changing one of the compiled contributor packages (`@monopi/core`, `@
 pnpm change
 ```
 
-This creates a file in `.changeset/` describing the change. Because this repo uses MonoChange with a lockstep `monopi` group, changeset frontmatter must use **only** `monopi` as the key:
+This creates a file in `.changeset/` describing the change. Because this repo uses MonoChange with a lockstep `monopi-group`, changeset frontmatter must use **only** `monopi-group` as the key:
 
 ```md
 ---
-monopi: patch
+monopi-group: patch
 ---
 ```
 

@@ -31,6 +31,7 @@ export const publishedPackages = [
 	{ dir: "packages/monopi__extension-worktree", name: "@monopi/extension-worktree" },
 	{ dir: "packages/monopi__extension-shared", name: "@monopi/extension-shared" },
 	{ dir: "packages/monopi__monopi", name: "@monopi/monopi" },
+	{ dir: "packages/monopi", name: "monopi" },
 	{ dir: "packages/monopi__provider-ollama", name: "@monopi/provider-ollama" },
 	{ dir: "packages/monopi__bash-live-view", name: "@monopi/bash-live-view" },
 	{ dir: "packages/monopi__pretty", name: "@monopi/pretty" },

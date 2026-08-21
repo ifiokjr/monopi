@@ -73,7 +73,8 @@ packages/
   analytics-dashboard/    → @monopi/analytics-dashboard (private React dashboard for visualizing AI usage)
   analytics-extension/    → @monopi/analytics-extension (raw .ts analytics tracking extension for pi)
   docs/                   → @monopi/docs (private documentation site for monopi)
-  monopi/                  → @monopi/monopi (installer CLI: `npx @monopi/monopi`)
+  monopi__monopi/         → @monopi/monopi (installer CLI: `npx @monopi/monopi`)
+  monopi/                  → monopi (unscoped npm alias re-exporting the installer CLI: `npx monopi`)
 ```
 
 ## Package conventions

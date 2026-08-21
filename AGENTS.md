@@ -15,7 +15,7 @@ Use MDT through `pnpm mdt ...`, not a globally installed `mdt` binary. This keep
 - Non-standard repo commands:
   - `pnpm typecheck`: type-checks the repo with `tsgo` (`@typescript/native-preview`)
   - `pnpm build`: runs every workspace package build script
-- Every non-release change must include a changeset created with `pnpm mc create`; changeset frontmatter must use only `monopi`.
+- Every non-release change must include a changeset created with `pnpm mc create`; changeset frontmatter must use only `monopi-group`.
 
 <!-- {=repoMdtCommandsDocs} -->
 

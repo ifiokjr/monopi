@@ -1,5 +1,5 @@
 ---
-monopi: patch
+monopi-group: patch
 ---
 
 # Preserve subagent failure output

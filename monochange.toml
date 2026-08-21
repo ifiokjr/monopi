@@ -130,6 +130,10 @@ type = "npm"
 path = "packages/monopi__monopi"
 type = "npm"
 
+[package.monopi]
+path = "packages/monopi"
+type = "npm"
+
 [package."@monopi/provider-ollama"]
 path = "packages/monopi__provider-ollama"
 type = "npm"
@@ -178,7 +182,7 @@ type = "npm"
 path = "packages/monopi__db"
 type = "npm"
 
-[group.monopi]
+[group.monopi-group]
 packages = [
 	"@monopi/adaptive-routing",
 	"@monopi/agents",
@@ -211,6 +215,7 @@ packages = [
 	"@monopi/extension-shared",
 	"@monopi/context",
 	"@monopi/monopi",
+	"monopi",
 	"@monopi/provider-ollama",
 	"@monopi/bash-live-view",
 	"@monopi/pretty",

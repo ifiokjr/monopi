@@ -10,11 +10,11 @@
 pnpm change
 ```
 
-This repo uses MonoChange with a lockstep `monopi` group, so every changeset frontmatter must use only `monopi` as the key.
+This repo uses MonoChange with a lockstep `monopi-group`, so every changeset frontmatter must use only `monopi-group` as the key.
 
 ```md
 ---
-monopi: patch
+monopi-group: patch
 ---
 ```
 

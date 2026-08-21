@@ -1,5 +1,5 @@
 ---
-monopi: patch
+monopi-group: patch
 ---
 
 # Fix shell dialect execution
