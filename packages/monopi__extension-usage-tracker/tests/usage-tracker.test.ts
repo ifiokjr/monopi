@@ -1263,7 +1263,7 @@ describe("usage-tracker extension", () => {
 			const text = result.content[0].text;
 
 			expect(text).toContain("No pi auth configured for OpenAI");
-			expect(text).toContain("run pi login");
+			expect(text).toContain("Run pi login");
 		});
 	});
 
