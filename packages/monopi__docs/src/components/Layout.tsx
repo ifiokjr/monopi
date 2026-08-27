@@ -63,10 +63,7 @@ export function Layout({ children, pages }: LayoutProps) {
 				`}
 			>
 				<div className="flex h-14 items-center gap-3 px-4 border-b border-zinc-800">
-					<svg className="h-7 w-7" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<rect width="32" height="32" rx="6" fill="#09090b" />
-						<path d="M8 10h4v12H8V10zm6 0h2l6 8V10h2v12h-2l-6-8v8h-2V10z" fill="#10b981" />
-					</svg>
+					<img src="/logo.png" alt="monopi logo" className="h-7 w-7 rounded-md" />
 					<span className="text-lg font-bold text-zinc-100">monopi</span>
 					<span className="text-xs text-zinc-500 font-mono ml-auto">docs</span>
 				</div>
