@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/pretty",
-	"version": "0.6.1",
+	"version": "0.6.0",
 	"description": "Pretty terminal output for pi — syntax-highlighted file reads, colored bash output, tree-view directory listings, and more.",
 	"keywords": [
 		"pi",

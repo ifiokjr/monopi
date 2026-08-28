@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/subagents",
-	"version": "0.6.1",
+	"version": "0.6.0",
 	"description": "Full-featured subagent orchestration extension for pi, built on top of nicobailon/pi-subagents.",
 	"keywords": [
 		"chains",
@@ -35,7 +35,7 @@
 	],
 	"type": "module",
 	"dependencies": {
-		"@monopi/core": "0.6.1"
+		"@monopi/core": "0.6.0"
 	},
 	"peerDependencies": {
 		"@earendil-works/pi-agent-core": ">=0.84.1",

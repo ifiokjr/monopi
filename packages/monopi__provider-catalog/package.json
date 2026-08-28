@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/provider-catalog",
-	"version": "0.6.1",
+	"version": "0.6.0",
 	"description": "Experimental multi-provider package for pi backed by the OpenCode models.dev catalog.",
 	"keywords": [
 		"experimental",
@@ -34,7 +34,7 @@
 		"test:worktree": "vitest run --config ./vitest.worktree.config.ts"
 	},
 	"dependencies": {
-		"@monopi/shared-qna": "0.6.1"
+		"@monopi/shared-qna": "0.6.0"
 	},
 	"peerDependencies": {
 		"@earendil-works/pi-agent-core": ">=0.84.1",

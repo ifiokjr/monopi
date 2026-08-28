@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/background-tasks",
-	"version": "0.6.1",
+	"version": "0.6.0",
 	"description": "Reactive background shell tasks for pi with /bg, Ctrl+Shift+B, log viewing, and agent wakeups on output.",
 	"keywords": [
 		"automation",

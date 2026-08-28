@@ -84,7 +84,7 @@ importers:
   packages/monopi:
     dependencies:
       '@monopi/monopi':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__monopi
 
   packages/monopi__adaptive-routing:
@@ -102,7 +102,7 @@ importers:
         specifier: '>=0.84.1'
         version: 0.84.1
       '@monopi/core':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__core
       typebox:
         specifier: ^1.1.24
@@ -113,7 +113,7 @@ importers:
   packages/monopi__analytics-dashboard:
     dependencies:
       '@monopi/analytics-db':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__analytics-db
       '@tanstack/react-query':
         specifier: ^5.101.2
@@ -250,7 +250,7 @@ importers:
         specifier: '>=0.84.1'
         version: 0.84.1
       '@monopi/analytics-db':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__analytics-db
       typebox:
         specifier: ^1.1.24
@@ -304,55 +304,55 @@ importers:
         specifier: ^1.7.0
         version: 1.7.0
       '@monopi/agents':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__agents
       '@monopi/core':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__core
       '@monopi/extension-answer':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-answer
       '@monopi/extension-btw':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-btw
       '@monopi/extension-compact-header':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-compact-header
       '@monopi/extension-custom-footer':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-custom-footer
       '@monopi/extension-external-editor':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-external-editor
       '@monopi/extension-git-guard':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-git-guard
       '@monopi/extension-scheduler':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-scheduler
       '@monopi/extension-shell-format':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-shell-format
       '@monopi/extension-tool-metadata':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-tool-metadata
       '@monopi/extension-usage-tracker':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-usage-tracker
       '@monopi/extension-watchdog':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-watchdog
       '@monopi/extension-worktree':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-worktree
       '@monopi/shared-qna':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__shared-qna
       '@monopi/skills':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__skills
       '@monopi/subagents':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__subagents
       chalk:
         specifier: ^5.6.2
@@ -494,7 +494,7 @@ importers:
         specifier: '>=0.84.1'
         version: 0.84.1
       '@monopi/shared-qna':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__shared-qna
       typebox:
         specifier: ^1.1.24
@@ -533,7 +533,7 @@ importers:
         specifier: '>=0.84.1'
         version: 0.84.1
       '@monopi/extension-shared':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-shared
       typebox:
         specifier: ^1.1.24
@@ -554,7 +554,7 @@ importers:
         specifier: '>=0.84.1'
         version: 0.84.1
       '@monopi/extension-shared':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-shared
       typebox:
         specifier: ^1.1.24
@@ -668,10 +668,10 @@ importers:
         specifier: '>=0.84.1'
         version: 0.84.1
       '@monopi/extension-shared':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-shared
       '@monopi/shared-qna':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__shared-qna
       croner:
         specifier: ^10.0.1
@@ -695,7 +695,7 @@ importers:
         specifier: '>=0.84.1'
         version: 0.84.1
       '@monopi/core':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__core
       typebox:
         specifier: ^1.1.24
@@ -770,7 +770,7 @@ importers:
         specifier: '>=0.84.1'
         version: 0.84.1
       '@monopi/extension-shared':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-shared
       typebox:
         specifier: ^1.1.24
@@ -791,7 +791,7 @@ importers:
         specifier: '>=0.84.1'
         version: 0.84.1
       '@monopi/extension-shared':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-shared
       typebox:
         specifier: ^1.1.24
@@ -812,7 +812,7 @@ importers:
         specifier: '>=0.84.1'
         version: 0.84.1
       '@monopi/extension-shared':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__extension-shared
       typebox:
         specifier: ^1.1.24
@@ -821,7 +821,7 @@ importers:
   packages/monopi__monopi:
     dependencies:
       '@monopi/cli':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__cli
 
   packages/monopi__pretty:
@@ -862,7 +862,7 @@ importers:
         specifier: '>=0.84.1'
         version: 0.84.1
       '@monopi/shared-qna':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__shared-qna
       typebox:
         specifier: ^1.1.24
@@ -922,7 +922,7 @@ importers:
         specifier: '>=0.84.1'
         version: 0.84.1
       '@monopi/web-server':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__web-server
       typebox:
         specifier: ^1.1.24
@@ -958,7 +958,7 @@ importers:
         specifier: '>=0.84.1'
         version: 0.84.1
       '@monopi/core':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__core
       typebox:
         specifier: ^1.1.24
@@ -972,7 +972,7 @@ importers:
         specifier: '>=0.84.1'
         version: 0.84.1(ws@8.21.0)(zod@4.4.3)
       '@monopi/web-server':
-        specifier: 0.6.1
+        specifier: 0.6.0
         version: link:../monopi__web-server
       typebox:
         specifier: ^1.1.24

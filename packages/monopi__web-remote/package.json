@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/web-remote",
-	"version": "0.6.1",
+	"version": "0.6.0",
 	"description": "Pi extension: /remote command for sharing sessions via web UI.",
 	"keywords": [
 		"browser",
@@ -28,7 +28,7 @@
 	],
 	"type": "module",
 	"dependencies": {
-		"@monopi/web-server": "0.6.1"
+		"@monopi/web-server": "0.6.0"
 	},
 	"peerDependencies": {
 		"@earendil-works/pi-coding-agent": ">=0.84.1",

@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/extension-scheduler",
-	"version": "0.6.1",
+	"version": "0.6.0",
 	"description": "Monopi scheduler pi extension.",
 	"keywords": [
 		"pi-package"
@@ -23,8 +23,8 @@
 	],
 	"type": "module",
 	"dependencies": {
-		"@monopi/extension-shared": "0.6.1",
-		"@monopi/shared-qna": "0.6.1",
+		"@monopi/extension-shared": "0.6.0",
+		"@monopi/shared-qna": "0.6.0",
 		"croner": "^10.0.1"
 	},
 	"peerDependencies": {

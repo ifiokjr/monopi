@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/extension-answer",
-	"version": "0.6.1",
+	"version": "0.6.0",
 	"description": "Monopi answer pi extension.",
 	"keywords": [
 		"pi-package"
@@ -23,7 +23,7 @@
 	],
 	"type": "module",
 	"dependencies": {
-		"@monopi/shared-qna": "0.6.1"
+		"@monopi/shared-qna": "0.6.0"
 	},
 	"peerDependencies": {
 		"@earendil-works/pi-agent-core": ">=0.84.1",

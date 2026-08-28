@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/skills",
-	"version": "0.6.1",
+	"version": "0.6.0",
 	"description": "On-demand skill packs for pi: web-search, debug-helper, shell syntax, and more.",
 	"keywords": [
 		"pi-package"

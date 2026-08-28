@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/bash-live-view",
-	"version": "0.6.1",
+	"version": "0.6.0",
 	"description": "PTY-backed live bash rendering for pi with a real-time terminal widget and /bash-pty command.",
 	"keywords": [
 		"bash",

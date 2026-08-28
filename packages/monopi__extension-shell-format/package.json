@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/extension-shell-format",
-	"version": "0.6.1",
+	"version": "0.6.0",
 	"description": "Monopi shell-format pi extension.",
 	"keywords": [
 		"pi-package"

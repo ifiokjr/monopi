@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/core",
-	"version": "0.6.1",
+	"version": "0.6.0",
 	"description": "Shared types, registries, and i18n for monopi packages.",
 	"keywords": [
 		"core",
