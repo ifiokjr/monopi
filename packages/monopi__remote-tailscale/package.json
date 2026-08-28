@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/remote-tailscale",
-	"version": "0.6.0",
+	"version": "0.6.1",
 	"description": "Pi extension for secure remote session sharing with Tailscale URLs, QR codes, and TUI status widgets.",
 	"keywords": [
 		"pi",
@@ -35,7 +35,7 @@
 		"test:package": "vitest run --config ./vitest.config.ts"
 	},
 	"dependencies": {
-		"@monopi/web-server": "0.6.0"
+		"@monopi/web-server": "0.6.1"
 	},
 	"peerDependencies": {
 		"@earendil-works/pi-agent-core": ">=0.84.1",

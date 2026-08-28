@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/provider-cursor",
-	"version": "0.6.0",
+	"version": "0.6.1",
 	"description": "Experimental Cursor provider for pi with OAuth login, model discovery, and direct AgentService streaming.",
 	"keywords": [
 		"cursor",

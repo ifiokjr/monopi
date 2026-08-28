@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/db",
-	"version": "0.6.0",
+	"version": "0.6.1",
 	"description": "Shared SQLite database for monopi extensions with Drizzle ORM, migration support, and schema module registration.",
 	"keywords": [
 		"database",

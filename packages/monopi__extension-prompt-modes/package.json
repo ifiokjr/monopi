@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/extension-prompt-modes",
-	"version": "0.6.0",
+	"version": "0.6.1",
 	"description": "Monopi prompt modes pi extension for switching prompt/model configurations.",
 	"keywords": [
 		"pi-package"

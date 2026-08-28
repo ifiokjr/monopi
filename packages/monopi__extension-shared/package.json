@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/extension-shared",
-	"version": "0.6.0",
+	"version": "0.6.1",
 	"description": "Shared helpers for monopi extension packages.",
 	"keywords": [
 		"pi-package"
@@ -27,7 +27,7 @@
 		"./package.json": "./package.json"
 	},
 	"dependencies": {
-		"@monopi/core": "0.6.0"
+		"@monopi/core": "0.6.1"
 	},
 	"peerDependencies": {
 		"@earendil-works/pi-agent-core": ">=0.84.1",
