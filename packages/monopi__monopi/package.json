@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/monopi",
-	"version": "0.6.0",
+	"version": "0.6.1",
 	"description": "One-click setup for pi-coding-agent — extensions, themes, skills, and agents. Like oh-my-zsh for pi.",
 	"keywords": [
 		"configuration",
@@ -27,6 +27,6 @@
 		"README.md"
 	],
 	"dependencies": {
-		"@monopi/cli": "0.6.0"
+		"@monopi/cli": "0.6.1"
 	}
 }

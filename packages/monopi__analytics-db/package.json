@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/analytics-db",
-	"version": "0.6.0",
+	"version": "0.6.1",
 	"description": "SQLite database layer for Pi analytics with migrations",
 	"license": "MIT",
 	"repository": {

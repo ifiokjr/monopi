@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/web-client",
-	"version": "0.6.0",
+	"version": "0.6.1",
 	"description": "Platform-agnostic TypeScript client for pi-web remote sessions. Zero dependencies.",
 	"keywords": [
 		"client",

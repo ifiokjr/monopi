@@ -1,6 +1,6 @@
 {
 	"name": "@monopi/agents",
-	"version": "0.6.0",
+	"version": "0.6.1",
 	"description": "AGENTS.md templates for pi: general-developer, fullstack, security-researcher, and more.",
 	"keywords": [
 		"agent-templates",
