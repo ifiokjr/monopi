@@ -1,0 +1,1302 @@
+{
+  "schema_version": "0.4",
+  "kind": "monochange.releaseRecord",
+  "created_at": "2026-08-28T14:29:44Z",
+  "command": "step prepare-release",
+  "version": "0.6.1",
+  "versions": {
+    "monopi-group": "0.6.1"
+  },
+  "release_targets": [
+    {
+      "id": "monopi-group",
+      "kind": "group",
+      "version": "0.6.1",
+      "version_format": "primary",
+      "tag": true,
+      "release": true,
+      "tag_name": "v0.6.1",
+      "members": [
+        "@monopi/adaptive-routing",
+        "@monopi/agents",
+        "@monopi/analytics-dashboard",
+        "@monopi/analytics-db",
+        "@monopi/analytics-extension",
+        "@monopi/background-tasks",
+        "@monopi/cli",
+        "@monopi/core",
+        "@monopi/provider-cursor",
+        "@monopi/diagnostics",
+        "@monopi/docs",
+        "@monopi/extension-answer",
+        "@monopi/extension-prompt-modes",
+        "@monopi/extension-files",
+        "@monopi/extension-goal",
+        "@monopi/extension-review",
+        "@monopi/extension-todos",
+        "@monopi/extension-watchdog",
+        "@monopi/extension-btw",
+        "@monopi/extension-compact-header",
+        "@monopi/extension-custom-footer",
+        "@monopi/extension-external-editor",
+        "@monopi/extension-git-guard",
+        "@monopi/extension-scheduler",
+        "@monopi/extension-shell-format",
+        "@monopi/extension-tool-metadata",
+        "@monopi/extension-usage-tracker",
+        "@monopi/extension-worktree",
+        "@monopi/extension-shared",
+        "@monopi/context",
+        "@monopi/monopi",
+        "monopi",
+        "@monopi/provider-ollama",
+        "@monopi/bash-live-view",
+        "@monopi/pretty",
+        "@monopi/remote-tailscale",
+        "@monopi/provider-catalog",
+        "@monopi/shared-qna",
+        "@monopi/skills",
+        "@monopi/subagents",
+        "@monopi/web-client",
+        "@monopi/web-remote",
+        "@monopi/web-server",
+        "@monopi/db"
+      ]
+    }
+  ],
+  "released_packages": [
+    "@monopi/adaptive-routing",
+    "@monopi/agents",
+    "@monopi/analytics-dashboard",
+    "@monopi/analytics-db",
+    "@monopi/analytics-extension",
+    "@monopi/background-tasks",
+    "@monopi/bash-live-view",
+    "@monopi/cli",
+    "@monopi/context",
+    "@monopi/core",
+    "@monopi/db",
+    "@monopi/diagnostics",
+    "@monopi/docs",
+    "@monopi/extension-answer",
+    "@monopi/extension-btw",
+    "@monopi/extension-compact-header",
+    "@monopi/extension-custom-footer",
+    "@monopi/extension-external-editor",
+    "@monopi/extension-files",
+    "@monopi/extension-git-guard",
+    "@monopi/extension-goal",
+    "@monopi/extension-prompt-modes",
+    "@monopi/extension-review",
+    "@monopi/extension-scheduler",
+    "@monopi/extension-shared",
+    "@monopi/extension-shell-format",
+    "@monopi/extension-todos",
+    "@monopi/extension-tool-metadata",
+    "@monopi/extension-usage-tracker",
+    "@monopi/extension-watchdog",
+    "@monopi/extension-worktree",
+    "@monopi/monopi",
+    "@monopi/pretty",
+    "@monopi/provider-catalog",
+    "@monopi/provider-cursor",
+    "@monopi/provider-ollama",
+    "@monopi/remote-tailscale",
+    "@monopi/shared-qna",
+    "@monopi/skills",
+    "@monopi/subagents",
+    "@monopi/web-client",
+    "@monopi/web-remote",
+    "@monopi/web-server",
+    "monopi"
+  ],
+  "changed_files": [
+    "packages/monopi/package.json",
+    "packages/monopi__adaptive-routing/package.json",
+    "packages/monopi__agents/package.json",
+    "packages/monopi__analytics-dashboard/package.json",
+    "packages/monopi__analytics-db/package.json",
+    "packages/monopi__analytics-extension/package.json",
+    "packages/monopi__background-tasks/package.json",
+    "packages/monopi__bash-live-view/package.json",
+    "packages/monopi__cli/package.json",
+    "packages/monopi__context/package.json",
+    "packages/monopi__core/package.json",
+    "packages/monopi__db/package.json",
+    "packages/monopi__diagnostics/package.json",
+    "packages/monopi__docs/package.json",
+    "packages/monopi__extension-answer/package.json",
+    "packages/monopi__extension-btw/package.json",
+    "packages/monopi__extension-compact-header/package.json",
+    "packages/monopi__extension-custom-footer/package.json",
+    "packages/monopi__extension-external-editor/package.json",
+    "packages/monopi__extension-files/package.json",
+    "packages/monopi__extension-git-guard/package.json",
+    "packages/monopi__extension-goal/package.json",
+    "packages/monopi__extension-prompt-modes/package.json",
+    "packages/monopi__extension-review/package.json",
+    "packages/monopi__extension-scheduler/package.json",
+    "packages/monopi__extension-shared/package.json",
+    "packages/monopi__extension-shell-format/package.json",
+    "packages/monopi__extension-todos/package.json",
+    "packages/monopi__extension-tool-metadata/package.json",
+    "packages/monopi__extension-usage-tracker/package.json",
+    "packages/monopi__extension-watchdog/package.json",
+    "packages/monopi__extension-worktree/package.json",
+    "packages/monopi__monopi/package.json",
+    "packages/monopi__pretty/package.json",
+    "packages/monopi__provider-catalog/package.json",
+    "packages/monopi__provider-cursor/package.json",
+    "packages/monopi__provider-ollama/package.json",
+    "packages/monopi__remote-tailscale/package.json",
+    "packages/monopi__shared-qna/package.json",
+    "packages/monopi__skills/package.json",
+    "packages/monopi__subagents/package.json",
+    "packages/monopi__web-client/package.json",
+    "packages/monopi__web-remote/package.json",
+    "packages/monopi__web-server/package.json"
+  ],
+  "package_publications": [
+    {
+      "package": "@monopi/adaptive-routing",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/agents",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/analytics-db",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/analytics-extension",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/background-tasks",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/bash-live-view",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/cli",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/context",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/core",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/db",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/diagnostics",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-answer",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-btw",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-compact-header",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-custom-footer",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-external-editor",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-files",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-git-guard",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-goal",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-prompt-modes",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-review",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-scheduler",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-shared",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-shell-format",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-todos",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-tool-metadata",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-usage-tracker",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-watchdog",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/extension-worktree",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/monopi",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/pretty",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/provider-catalog",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/provider-cursor",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/provider-ollama",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/remote-tailscale",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/shared-qna",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/skills",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/subagents",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/web-client",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/web-remote",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "@monopi/web-server",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "monopi",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    }
+  ],
+  "updated_changelogs": [],
+  "deleted_changesets": [],
+  "changesets": [
+    {
+      "path": ".changeset/1787912326-monopi-provider-ollama.md",
+      "summary": "Pin glm-5.3-flash Ollama Cloud metadata floor to the full 1M context window",
+      "details": "glm-5.3-flash was missing from the Ollama Cloud metadata override catalog (the list stopped at glm-5.2). Discovery normally picks up the correct 1,048,576-token context length from the /api/show endpoint, but without a floor entry a stale credential cache or an API metadata gap would silently fall back to the 128k default and trigger premature compaction. Adds the authoritative floor (contextWindow 1,048,576, maxTokens 131,072, reasoning) plus tests covering fresh normalization and stale-cache repair.",
+      "targets": [
+        {
+          "id": "monopi-group",
+          "kind": "group",
+          "bump": "patch",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "patch"
+        }
+      ],
+      "context": {
+        "provider": "github",
+        "host": "github.com",
+        "capabilities": {
+          "commit_web_urls": true,
+          "actor_profiles": true,
+          "review_request_lookup": true,
+          "related_issues": true,
+          "issue_comments": true
+        },
+        "introduced": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "56d679122a80157d799faaa8b3f6a86392eb5e32",
+            "short_sha": "56d6791",
+            "url": "https://github.com/ifiokjr/monopi/commit/56d679122a80157d799faaa8b3f6a86392eb5e32",
+            "authored_at": "2026-08-28T11:27:29+01:00",
+            "committed_at": "2026-08-28T11:27:29+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": null
+        },
+        "last_updated": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "14e4e013b1343084aaf9a504ce44a641d218ff43",
+            "short_sha": "14e4e01",
+            "url": "https://github.com/ifiokjr/monopi/commit/14e4e013b1343084aaf9a504ce44a641d218ff43",
+            "authored_at": "2026-08-28T14:29:35+01:00",
+            "committed_at": "2026-08-28T14:29:35+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "ifiokotung@gmail.com"
+          },
+          "review_request": null
+        },
+        "related_issues": []
+      }
+    },
+    {
+      "path": ".changeset/add-monopi-alias.md",
+      "summary": "Unscoped npm alias package",
+      "details": "Add the unscoped `monopi` npm package as a thin alias that re-exports the `@monopi/monopi` binary, so `npx monopi` works as an alternative to `npx @monopi/monopi`.",
+      "targets": [
+        {
+          "id": "monopi-group",
+          "kind": "group",
+          "bump": "minor",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "minor"
+        }
+      ],
+      "context": {
+        "provider": "github",
+        "host": "github.com",
+        "capabilities": {
+          "commit_web_urls": true,
+          "actor_profiles": true,
+          "review_request_lookup": true,
+          "related_issues": true,
+          "issue_comments": true
+        },
+        "introduced": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "0754b7a8720ecbedf2dc4b39cd553b78e9fcdb31",
+            "short_sha": "0754b7a",
+            "url": "https://github.com/ifiokjr/monopi/commit/0754b7a8720ecbedf2dc4b39cd553b78e9fcdb31",
+            "authored_at": "2026-08-21T05:08:46+01:00",
+            "committed_at": "2026-08-21T05:08:46+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "ifiokotung@gmail.com"
+          },
+          "review_request": null
+        },
+        "last_updated": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "14e4e013b1343084aaf9a504ce44a641d218ff43",
+            "short_sha": "14e4e01",
+            "url": "https://github.com/ifiokjr/monopi/commit/14e4e013b1343084aaf9a504ce44a641d218ff43",
+            "authored_at": "2026-08-28T14:29:35+01:00",
+            "committed_at": "2026-08-28T14:29:35+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "ifiokotung@gmail.com"
+          },
+          "review_request": null
+        },
+        "related_issues": []
+      }
+    },
+    {
+      "path": ".changeset/brand-logo-rollout.md",
+      "summary": "Brand logo rollout",
+      "details": "Docs site favicon and sidebar now use the new pixel cluster + pi logo.",
+      "targets": [
+        {
+          "id": "monopi-group",
+          "kind": "group",
+          "bump": "patch",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "patch"
+        }
+      ],
+      "context": {
+        "provider": "github",
+        "host": "github.com",
+        "capabilities": {
+          "commit_web_urls": true,
+          "actor_profiles": true,
+          "review_request_lookup": true,
+          "related_issues": true,
+          "issue_comments": true
+        },
+        "introduced": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "cbbdd4df4a7dcab4283e0746d6117ffb1080cc2f",
+            "short_sha": "cbbdd4d",
+            "url": "https://github.com/ifiokjr/monopi/commit/cbbdd4df4a7dcab4283e0746d6117ffb1080cc2f",
+            "authored_at": "2026-08-27T23:05:23+01:00",
+            "committed_at": "2026-08-27T23:05:23+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": null
+        },
+        "last_updated": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "14e4e013b1343084aaf9a504ce44a641d218ff43",
+            "short_sha": "14e4e01",
+            "url": "https://github.com/ifiokjr/monopi/commit/14e4e013b1343084aaf9a504ce44a641d218ff43",
+            "authored_at": "2026-08-28T14:29:35+01:00",
+            "committed_at": "2026-08-28T14:29:35+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "ifiokotung@gmail.com"
+          },
+          "review_request": null
+        },
+        "related_issues": []
+      }
+    },
+    {
+      "path": ".changeset/fix-ollama-cloud-suffixed-overrides.md",
+      "summary": "Fix Ollama Cloud model metadata overrides for cloud-suffixed model ids (e.g. `deepseek-v4-flash:cloud`). The override lookup now strips the `:cloud` suffix so cloud variants inherit the correct context window and max tokens, restoring `deepseek-v4-flash:cloud` to its 1M context window instead of falling back to the cloud API's 256k default.",
+      "details": null,
+      "targets": [
+        {
+          "id": "monopi-group",
+          "kind": "group",
+          "bump": "patch",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "patch"
+        }
+      ],
+      "context": {
+        "provider": "github",
+        "host": "github.com",
+        "capabilities": {
+          "commit_web_urls": true,
+          "actor_profiles": true,
+          "review_request_lookup": true,
+          "related_issues": true,
+          "issue_comments": true
+        },
+        "introduced": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "a033297478d8a1e085e57f7384abd9ddc322a1d3",
+            "short_sha": "a033297",
+            "url": "https://github.com/ifiokjr/monopi/commit/a033297478d8a1e085e57f7384abd9ddc322a1d3",
+            "authored_at": "2026-08-14T23:54:57+01:00",
+            "committed_at": "2026-08-14T23:54:57+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": null
+        },
+        "last_updated": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "14e4e013b1343084aaf9a504ce44a641d218ff43",
+            "short_sha": "14e4e01",
+            "url": "https://github.com/ifiokjr/monopi/commit/14e4e013b1343084aaf9a504ce44a641d218ff43",
+            "authored_at": "2026-08-28T14:29:35+01:00",
+            "committed_at": "2026-08-28T14:29:35+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "ifiokotung@gmail.com"
+          },
+          "review_request": null
+        },
+        "related_issues": []
+      }
+    },
+    {
+      "path": ".changeset/fix-shell-dialect-execution.md",
+      "summary": "Fix shell dialect execution",
+      "details": "Separate user-facing shell formatting from execution-tool dialects, add guarded native-shell execution, and recognize native-shell command failures.",
+      "targets": [
+        {
+          "id": "monopi-group",
+          "kind": "group",
+          "bump": "patch",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "patch"
+        }
+      ],
+      "context": {
+        "provider": "github",
+        "host": "github.com",
+        "capabilities": {
+          "commit_web_urls": true,
+          "actor_profiles": true,
+          "review_request_lookup": true,
+          "related_issues": true,
+          "issue_comments": true
+        },
+        "introduced": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "60bacff657096ac9eb59541c9ec9b1756c175a77",
+            "short_sha": "60bacff",
+            "url": "https://github.com/ifiokjr/monopi/commit/60bacff657096ac9eb59541c9ec9b1756c175a77",
+            "authored_at": "2026-08-17T08:11:35+01:00",
+            "committed_at": "2026-08-17T08:11:35+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": null
+        },
+        "last_updated": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "14e4e013b1343084aaf9a504ce44a641d218ff43",
+            "short_sha": "14e4e01",
+            "url": "https://github.com/ifiokjr/monopi/commit/14e4e013b1343084aaf9a504ce44a641d218ff43",
+            "authored_at": "2026-08-28T14:29:35+01:00",
+            "committed_at": "2026-08-28T14:29:35+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "ifiokotung@gmail.com"
+          },
+          "review_request": null
+        },
+        "related_issues": []
+      }
+    },
+    {
+      "path": ".changeset/fleet-inspector.md",
+      "summary": "Subagent fleet inspector",
+      "details": "Add a live fleet inspector for toggling between background subagent runs. Open it with `/fleet` or the new `ctrl+alt+f` shortcut (matching upstream pi-subagents). The list shows every async run with status, step progress, elapsed time, tokens and activity freshness; `enter` drills into a run to watch per-step status and a rolling output tail (`x` expands it), `esc` goes back, and the view auto-refreshes while open. The async widget header now hints the shortcut so the feature is discoverable.",
+      "targets": [
+        {
+          "id": "monopi-group",
+          "kind": "group",
+          "bump": "minor",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "minor"
+        }
+      ],
+      "context": {
+        "provider": "github",
+        "host": "github.com",
+        "capabilities": {
+          "commit_web_urls": true,
+          "actor_profiles": true,
+          "review_request_lookup": true,
+          "related_issues": true,
+          "issue_comments": true
+        },
+        "introduced": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "d2bce5f9add9c2ed8f47706ff391346497778459",
+            "short_sha": "d2bce5f",
+            "url": "https://github.com/ifiokjr/monopi/commit/d2bce5f9add9c2ed8f47706ff391346497778459",
+            "authored_at": "2026-08-21T15:15:22+01:00",
+            "committed_at": "2026-08-21T15:15:22+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": null
+        },
+        "last_updated": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "14e4e013b1343084aaf9a504ce44a641d218ff43",
+            "short_sha": "14e4e01",
+            "url": "https://github.com/ifiokjr/monopi/commit/14e4e013b1343084aaf9a504ce44a641d218ff43",
+            "authored_at": "2026-08-28T14:29:35+01:00",
+            "committed_at": "2026-08-28T14:29:35+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "ifiokotung@gmail.com"
+          },
+          "review_request": null
+        },
+        "related_issues": []
+      }
+    },
+    {
+      "path": ".changeset/preserve-subagent-failure-output.md",
+      "summary": "Preserve subagent failure output",
+      "details": "Preserve partial assistant output and real transcript paths when synchronous subagent runs fail.",
+      "targets": [
+        {
+          "id": "monopi-group",
+          "kind": "group",
+          "bump": "patch",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "patch"
+        }
+      ],
+      "context": {
+        "provider": "github",
+        "host": "github.com",
+        "capabilities": {
+          "commit_web_urls": true,
+          "actor_profiles": true,
+          "review_request_lookup": true,
+          "related_issues": true,
+          "issue_comments": true
+        },
+        "introduced": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "8746ef57eca13b116f8e079556c6b6fc5e2602b2",
+            "short_sha": "8746ef5",
+            "url": "https://github.com/ifiokjr/monopi/commit/8746ef57eca13b116f8e079556c6b6fc5e2602b2",
+            "authored_at": "2026-08-17T08:14:33+01:00",
+            "committed_at": "2026-08-17T08:14:33+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": null
+        },
+        "last_updated": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "14e4e013b1343084aaf9a504ce44a641d218ff43",
+            "short_sha": "14e4e01",
+            "url": "https://github.com/ifiokjr/monopi/commit/14e4e013b1343084aaf9a504ce44a641d218ff43",
+            "authored_at": "2026-08-28T14:29:35+01:00",
+            "committed_at": "2026-08-28T14:29:35+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "ifiokotung@gmail.com"
+          },
+          "review_request": null
+        },
+        "related_issues": []
+      }
+    },
+    {
+      "path": ".changeset/unslop-documentation.md",
+      "summary": "Unslop documentation",
+      "details": "Remove AI tells from comments, docs, and markdown; write distinct READMEs for stub extension packages; expand mdt documentation reuse into code comment headers.",
+      "targets": [
+        {
+          "id": "monopi-group",
+          "kind": "group",
+          "bump": "patch",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "patch"
+        }
+      ],
+      "context": {
+        "provider": "github",
+        "host": "github.com",
+        "capabilities": {
+          "commit_web_urls": true,
+          "actor_profiles": true,
+          "review_request_lookup": true,
+          "related_issues": true,
+          "issue_comments": true
+        },
+        "introduced": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "6cfac3e73840ea3f81346ce921d4a35c09bb1d12",
+            "short_sha": "6cfac3e",
+            "url": "https://github.com/ifiokjr/monopi/commit/6cfac3e73840ea3f81346ce921d4a35c09bb1d12",
+            "authored_at": "2026-08-21T04:49:48+01:00",
+            "committed_at": "2026-08-21T04:49:48+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": null
+        },
+        "last_updated": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "14e4e013b1343084aaf9a504ce44a641d218ff43",
+            "short_sha": "14e4e01",
+            "url": "https://github.com/ifiokjr/monopi/commit/14e4e013b1343084aaf9a504ce44a641d218ff43",
+            "authored_at": "2026-08-28T14:29:35+01:00",
+            "committed_at": "2026-08-28T14:29:35+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "ifiokotung@gmail.com"
+          },
+          "review_request": null
+        },
+        "related_issues": []
+      }
+    }
+  ],
+  "changelogs": [],
+  "provider": {
+    "kind": "github",
+    "owner": "ifiokjr",
+    "repo": "monopi",
+    "host": null
+  }
+}
