@@ -295,13 +295,13 @@ steps = [
 ]
 
 [cli.publish]
-help_text = "Build and publish all public packages to npm. Pass --otp <code> when npm 2FA is enabled"
-inputs = [{ name = "otp", type = "string", help_text = "npm one-time password for two-factor authentication" }]
+help_text = "Build and publish all public packages to npm. Pass --interactive so npm can prompt for 2FA"
+inputs = [{ name = "interactive", type = "boolean", default = false }]
 steps = [
 	{ type = "Command", name = "build packages", command = "pnpm build" },
 	{ type = "Command", name = "publish packages", inputs = [
-		"otp",
-	], command = "pnpm -r publish --access public --no-git-checks {% if inputs.otp %}--otp {{ inputs.otp }}{% endif %}" },
+		"interactive",
+	], command = "pnpm -r publish --access public --no-git-checks" },
 ]
 
 [cli.get-version]
