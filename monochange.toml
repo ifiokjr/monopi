@@ -299,7 +299,9 @@ help_text = "Build and publish all public packages to npm. Pass --interactive so
 inputs = [{ name = "interactive", type = "boolean", default = false }]
 steps = [
 	{ type = "Command", name = "build packages", command = "pnpm build" },
-	{ type = "Command", name = "publish packages", inputs = ["interactive"], command = "pnpm -r publish --access public --no-git-checks" },
+	{ type = "Command", name = "publish packages", inputs = [
+		"interactive",
+	], command = "pnpm -r publish --access public --no-git-checks" },
 ]
 
 [cli.get-version]
