@@ -27,6 +27,7 @@
 		"**/build/**",
 		"**/coverage/**",
 		"**/.changeset/**",
+		"**/.monochange/**",
 		"**/*.min.js",
 		"**/pnpm-lock.yaml",
 		"**/package-lock.json",
