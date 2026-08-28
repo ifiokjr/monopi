@@ -299,7 +299,9 @@ help_text = "Build and publish all public packages to npm. Pass --otp <code> whe
 inputs = [{ name = "otp", type = "string", help_text = "npm one-time password for two-factor authentication" }]
 steps = [
 	{ type = "Command", name = "build packages", command = "pnpm build" },
-	{ type = "Command", name = "publish packages", inputs = ["otp"], command = "pnpm -r publish --access public --no-git-checks {% if inputs.otp %}--otp {{ inputs.otp }}{% endif %}" },
+	{ type = "Command", name = "publish packages", inputs = [
+		"otp",
+	], command = "pnpm -r publish --access public --no-git-checks {% if inputs.otp %}--otp {{ inputs.otp }}{% endif %}" },
 ]
 
 [cli.get-version]
