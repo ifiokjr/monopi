@@ -9,8 +9,5 @@ coverage/
 .mdt/
 .playwright-cli/
 
-# Generated MonoChange release records (not required in commits)
-.monochange/releases/
-
 # npm lockfile (migrated to pnpm)
 package-lock.json
