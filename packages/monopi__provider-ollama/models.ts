@@ -77,6 +77,7 @@ const OLLAMA_CLOUD_METADATA_OVERRIDES: readonly OllamaCloudMetadataOverride[] = 
 	{ id: "glm-5", contextWindow: 202_752, maxTokens: 131_072, reasoning: true, family: "glm5" },
 	{ id: "glm-5.1", contextWindow: 202_752, maxTokens: 131_072, reasoning: true, family: "glm5.1" },
 	{ id: "glm-5.2", contextWindow: 1_000_000, maxTokens: 131_072, reasoning: true, family: "glm5.2" },
+	{ id: "glm-5.3-flash", contextWindow: 1_048_576, maxTokens: 131_072, reasoning: true, family: "glm5_next" },
 	{ id: "gpt-oss:120b", contextWindow: 131_072, maxTokens: 16_384, reasoning: true, family: "gptoss" },
 	{ id: "gpt-oss:20b", contextWindow: 131_072, maxTokens: 16_384, reasoning: true, family: "gptoss" },
 	{ id: "kimi-k2.5", contextWindow: 262_144, maxTokens: 32_768, reasoning: true, family: "kimi-k2" },

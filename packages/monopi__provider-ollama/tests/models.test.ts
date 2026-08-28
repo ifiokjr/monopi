@@ -126,6 +126,37 @@ describe("ollama models", () => {
 		expect(model.reasoning).toBe(true);
 	});
 
+	it("pins glm-5.3-flash cloud metadata to the full 1M context window", () => {
+		const model = toOllamaModel({ id: "glm-5.3-flash:cloud", source: "cloud" });
+
+		expect(model.contextWindow).toBe(1_048_576);
+		expect(model.maxTokens).toBe(131_072);
+		expect(model.reasoning).toBe(true);
+	});
+
+	it("raises stale cached glm-5.3-flash metadata to the authoritative context floor", () => {
+		const models = getCredentialModels({
+			access: "a",
+			expires: Date.now() + 1000,
+			refresh: "r",
+			models: [
+				{
+					...toOllamaModel({ id: "glm-5.3-flash", source: "cloud" }),
+					contextWindow: 524_288,
+					maxTokens: 8_192,
+					reasoning: false,
+				},
+			],
+		});
+
+		expect(models[0]).toMatchObject({
+			contextWindow: 1_048_576,
+			id: "glm-5.3-flash",
+			maxTokens: 131_072,
+			reasoning: true,
+		});
+	});
+
 	it("sanitizes credential models with authoritative cloud metadata floors", () => {
 		const models = getCredentialModels({
 			access: "a",
