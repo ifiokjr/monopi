@@ -2,7 +2,7 @@
 
 <img src="./logo.png" width="180" alt="monopi logo"/>
 
-# 🐜 monopi
+# monopi
 
 **One command to install and configure [pi-coding-agent](https://github.com/badlogic/pi-mono).**
 
