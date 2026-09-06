@@ -946,6 +946,69 @@ describe("usage-tracker extension", () => {
 			expect(text).toContain("Cloud usage endpoint reachable.");
 		});
 
+		it("ignores malformed Ollama usage entries", async () => {
+			process.env.OLLAMA_API_KEY = "test-key";
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("127.0.0.1:11434/v1/models")) {
+					return Promise.resolve(makeFetchResponse({ status: 503, ok: false }));
+				}
+				if (url.includes("ollama.com/api/usage")) {
+					return Promise.resolve(
+						makeFetchResponse({
+							body: {
+								limits: {
+									session: { usage: "not-a-number" },
+									weekly: 42,
+								},
+							},
+						}),
+					);
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const ollamaCtx = createMockCtx();
+			ollamaCtx.model = { id: "gpt-oss:20b", provider: "ollama-cloud" };
+
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ollamaCtx);
+
+			const tool = pi._tools.get("usage_report");
+			const result = await runWithTimers(() =>
+				tool.execute("id", { format: "detailed" }, undefined, undefined, ollamaCtx),
+			);
+			const text = result.content[0].text;
+			expect(text).toContain("Cloud usage endpoint reachable.");
+			expect(text).toContain("remaining account limits are unknown");
+		});
+
+		it("degrades gracefully when the Ollama Cloud usage endpoint is unreachable", async () => {
+			process.env.OLLAMA_API_KEY = "test-key";
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("127.0.0.1:11434/v1/models")) {
+					return Promise.resolve(makeFetchResponse({ status: 503, ok: false }));
+				}
+				if (url.includes("ollama.com/api/usage")) {
+					return Promise.reject(new Error("network down"));
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const ollamaCtx = createMockCtx();
+			ollamaCtx.model = { id: "gpt-oss:20b", provider: "ollama-cloud" };
+
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ollamaCtx);
+
+			const tool = pi._tools.get("usage_report");
+			const result = await runWithTimers(() =>
+				tool.execute("id", { format: "detailed" }, undefined, undefined, ollamaCtx),
+			);
+			const text = result.content[0].text;
+			expect(text).toContain("Cloud usage endpoint unavailable.");
+			expect(text).toContain("remaining account limits are unknown");
+		});
+
 		it("falls back to a note when the Ollama Cloud usage endpoint rejects auth", async () => {
 			process.env.OLLAMA_API_KEY = "test-key";
 			mockFetch.mockImplementation((url: string) => {

@@ -146,14 +146,10 @@ const OLLAMA_CLOUD_PRICING: readonly OllamaCloudPricing[] = [
  *
  * Pricing keys may themselves contain tags (`gpt-oss:120b`), so matching is:
  * exact id, then the longest key that prefixes the id at a tag boundary
- * (`deepseek-v4-flash:0731` inherits `deepseek-v4-flash` rates).
+ * (`deepseek-v4-flash:0731` inherits `deepseek-v4-flash` rates). Callers only
+ * invoke this for cloud models.
  */
-function getOllamaCloudPricing(
-	model: Partial<Pick<OllamaProviderModel, "id" | "source">>,
-): OllamaCloudPricing | undefined {
-	if (model.source !== "cloud") {
-		return undefined;
-	}
+function getOllamaCloudPricing(model: Partial<Pick<OllamaProviderModel, "id">>): OllamaCloudPricing | undefined {
 	const id = model.id
 		?.trim()
 		.toLowerCase()

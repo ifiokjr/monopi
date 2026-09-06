@@ -202,6 +202,12 @@ describe("ollama models", () => {
 		expect(unpricedNoCost.cost).toEqual({ input: 0, output: 0, cacheRead: 0, cacheWrite: 0 });
 	});
 
+	it("returns no pricing for blank cloud model ids", () => {
+		const model = toOllamaModel({ id: "  ", source: "cloud" });
+
+		expect(model.cost).toEqual({ input: 0, output: 0, cacheRead: 0, cacheWrite: 0 });
+	});
+
 	it("sanitizes credential models with authoritative cloud metadata floors", () => {
 		const models = getCredentialModels({
 			access: "a",
