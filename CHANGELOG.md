@@ -712,7 +712,6 @@ Explicit skills now resolve relative to the subagent task directory instead of t
 
 ### Fixes
 
-- harden nest lock recovery (#21)
 - move and clean up shared scheduler state (#22)
 - move repo-local runtime state to shared pi storage (#23)
 - handle older pi model registry in btw (#26)

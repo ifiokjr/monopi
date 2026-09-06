@@ -21,6 +21,7 @@ monopi is a curated toolkit of Pi Coding Agent extensions, workflows, skills, ag
 - [Engineering Rules](agent-rules/engineering.md): implementation and validation standards
 - [Packaging and Release Rules](agent-rules/packaging-and-release.md): package boundaries and publishing
 - [Git and PR Workflow](agent-rules/git-and-pr-workflow.md): branch, commit, review, and merge policy
+- [Agent Workflow Guides](agent-workflow/): cost-optimization and multimodal-ingestion playbooks for delegated work
 - [Design and plan documents](plans/): historical and forward-looking technical specifications
 
 ## Pi reference
