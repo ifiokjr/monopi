@@ -157,6 +157,51 @@ describe("ollama models", () => {
 		});
 	});
 
+	it("applies ollama cloud api pricing to cloud models", () => {
+		const model = toOllamaModel({ id: "glm-5.3-flash:cloud", source: "cloud" });
+
+		expect(model.cost).toEqual({ input: 0.15, output: 0.5, cacheRead: 0.03, cacheWrite: 0 });
+	});
+
+	it("inherits base model pricing for tagged cloud variants", () => {
+		const model = toOllamaModel({ id: "deepseek-v4-flash:0731", source: "cloud" });
+
+		expect(model.cost).toEqual({ input: 0.22, output: 0.66, cacheRead: 0.007, cacheWrite: 0 });
+	});
+
+	it("distinguishes tagged pricing keys like gpt-oss:20b from gpt-oss:120b", () => {
+		const small = toOllamaModel({ id: "gpt-oss:20b", source: "cloud" });
+		const large = toOllamaModel({ id: "gpt-oss:120b", source: "cloud" });
+
+		expect(small.cost).toEqual({ input: 0.07, output: 0.3, cacheRead: 0.035, cacheWrite: 0 });
+		expect(large.cost).toEqual({ input: 0.15, output: 0.6, cacheRead: 0.014, cacheWrite: 0 });
+	});
+
+	it("treats the pricing table as authoritative over stale cached cloud costs", () => {
+		const model = toOllamaModel({
+			id: "glm-5.3-flash",
+			source: "cloud",
+			cost: { input: 999, output: 999, cacheRead: 999, cacheWrite: 999 },
+		});
+
+		expect(model.cost).toEqual({ input: 0.15, output: 0.5, cacheRead: 0.03, cacheWrite: 0 });
+	});
+
+	it("keeps local models free and preserves explicit cost for unpriced cloud models", () => {
+		const local = toOllamaModel({ id: "glm-5.3-flash", source: "local" });
+		expect(local.cost).toEqual({ input: 0, output: 0, cacheRead: 0, cacheWrite: 0 });
+
+		const unpriced = toOllamaModel({
+			id: "glm-4.6",
+			source: "cloud",
+			cost: { input: 1.25, output: 2.5, cacheRead: 0.1, cacheWrite: 0 },
+		});
+		expect(unpriced.cost).toEqual({ input: 1.25, output: 2.5, cacheRead: 0.1, cacheWrite: 0 });
+
+		const unpricedNoCost = toOllamaModel({ id: "glm-4.6", source: "cloud" });
+		expect(unpricedNoCost.cost).toEqual({ input: 0, output: 0, cacheRead: 0, cacheWrite: 0 });
+	});
+
 	it("sanitizes credential models with authoritative cloud metadata floors", () => {
 		const models = getCredentialModels({
 			access: "a",

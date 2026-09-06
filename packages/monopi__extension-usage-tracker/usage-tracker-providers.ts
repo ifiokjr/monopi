@@ -818,6 +818,47 @@ function maybeAddGenericRateLimitWindow(
 	});
 }
 
+/** Shape of the undocumented-but-stable `GET /api/usage` payload from ollama.com. */
+interface OllamaUsagePayload {
+	activity?: {
+		cost?: unknown;
+		period?: { type?: unknown; starting_at?: unknown; ending_at?: unknown };
+		models?: { name?: unknown; request_count?: unknown; cost?: unknown }[];
+	};
+	limits?: {
+		session?: { usage?: unknown; models?: { name?: unknown; request_count?: unknown }[] };
+		weekly?: { usage?: unknown; models?: { name?: unknown; request_count?: unknown }[] };
+	};
+}
+
+/**
+ * Turn an Ollama Cloud usage window into a rate-limit window.
+ *
+ * `usage` is a normalized 0..1 fraction of the window's allowance, so remaining
+ * budget is `1 - usage` expressed as a percentage.
+ */
+function maybeAddOllamaUsageWindow(
+	result: ProviderRateLimits,
+	label: string,
+	windowMinutes: number,
+	entry: unknown,
+): void {
+	if (!entry || typeof entry !== "object") {
+		return;
+	}
+	const usedFraction = parseFiniteNumber((entry as { usage?: unknown }).usage);
+	if (usedFraction === null || usedFraction < 0) {
+		return;
+	}
+	const percentLeft = Math.round((100 - usedFraction * 100) * 10) / 10;
+	upsertWindow(result.windows, {
+		label,
+		percentLeft: clampPercent(percentLeft),
+		resetDescription: null,
+		windowMinutes,
+	});
+}
+
 export async function probeOllamaDirect(token: string | null): Promise<ProviderRateLimits> {
 	const result: ProviderRateLimits = {
 		account: null,
@@ -836,6 +877,7 @@ export async function probeOllamaDirect(token: string | null): Promise<ProviderR
 		PROVIDER_API_BASE.ollama,
 	);
 	const localOrigin = deriveOllamaOrigin(localBase, "http://127.0.0.1:11434");
+	const cloudOrigin = deriveOllamaOrigin(cloudBase, PROVIDER_API_BASE.ollama);
 
 	let localNote: string;
 	try {
@@ -854,34 +896,42 @@ export async function probeOllamaDirect(token: string | null): Promise<ProviderR
 	}
 
 	let cloudNote: string;
+	let usageNote: string | null = null;
 	if (token) {
 		try {
-			const response = await fetch(`${cloudBase}/models`, {
-				headers: { authorization: `Bearer ${token}` },
+			const response = await fetch(`${cloudOrigin}/api/usage`, {
+				headers: { accept: "application/json", authorization: `Bearer ${token}` },
 				method: "GET",
 				signal: AbortSignal.timeout(PROBE_TIMEOUT_MS),
 			});
 			if (response.status === 401) {
 				cloudNote = "Cloud auth was rejected. Run /login ollama-cloud again.";
 			} else if (response.ok) {
-				const payload = (await response.json()) as { data?: { id?: string }[] };
+				const payload = (await response.json()) as OllamaUsagePayload;
+				maybeAddOllamaUsageWindow(result, "Session (5h)", 300, payload.limits?.session);
+				maybeAddOllamaUsageWindow(result, "Weekly (7d)", 10_080, payload.limits?.weekly);
 				maybeAddGenericRateLimitWindow(result, response.headers);
-				cloudNote = `Cloud auth configured (${payload.data?.length ?? 0} model(s)).`;
+				const billedCost = parseFiniteNumber(payload.activity?.cost);
+				usageNote =
+					billedCost !== null
+						? `Ollama Cloud billed the API-equivalent of $${billedCost.toFixed(2)} over the last 4 weeks.`
+						: null;
+				cloudNote = "Cloud usage endpoint reachable.";
 			} else {
-				cloudNote = `Cloud API returned ${response.status}.`;
+				cloudNote = `Cloud usage endpoint returned ${response.status}.`;
 			}
 		} catch {
-			cloudNote = "Cloud API unavailable.";
+			cloudNote = "Cloud usage endpoint unavailable.";
 		}
 	} else {
 		cloudNote = "Cloud auth not configured.";
 	}
 
-	result.note = `${localNote} ${cloudNote}`;
+	result.note = appendNote(`${localNote} ${cloudNote}`, usageNote);
 	if (result.windows.length === 0) {
 		result.note = appendNote(
 			result.note,
-			"Ollama does not currently expose a documented quota endpoint to pi, so remaining account limits are unavailable.",
+			"Ollama Cloud usage data is unavailable, so remaining account limits are unknown.",
 		);
 	}
 	return result;

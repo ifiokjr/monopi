@@ -891,16 +891,16 @@ describe("usage-tracker extension", () => {
 			const text = result.content[0].text;
 			expect(text).toContain("Ollama Rate Limits:");
 			expect(text).toContain("Local daemon reachable");
-			expect(text).toContain("remaining account limits are unavailable");
+			expect(text).toContain("remaining account limits are unknown");
 		});
 
-		it("shows Ollama cloud rate headers when available", async () => {
+		it("shows Ollama Cloud usage windows, billed equivalent, and rate headers", async () => {
 			process.env.OLLAMA_API_KEY = "test-key";
 			mockFetch.mockImplementation((url: string) => {
 				if (url.includes("127.0.0.1:11434/v1/models")) {
 					return Promise.resolve(makeFetchResponse({ status: 503, ok: false }));
 				}
-				if (url.includes("ollama.com/v1/models")) {
+				if (url.includes("ollama.com/api/usage")) {
 					return Promise.resolve(
 						makeFetchResponse({
 							headers: {
@@ -908,7 +908,17 @@ describe("usage-tracker extension", () => {
 								"x-ratelimit-remaining": "75",
 								"x-ratelimit-reset": "60s",
 							},
-							body: { data: [{ id: "gpt-oss:20b" }] },
+							body: {
+								activity: {
+									cost: "20.00000",
+									period: { type: "last_4_weeks" },
+									models: [{ name: "glm-5.3-flash", request_count: 788, cost: "14.24810" }],
+								},
+								limits: {
+									session: { usage: 0.005, models: [{ name: "glm-5.3-flash", request_count: 6 }] },
+									weekly: { usage: 0.827, models: [{ name: "glm-5.3-flash", request_count: 8688 }] },
+								},
+							},
 						}),
 					);
 				}
@@ -927,8 +937,40 @@ describe("usage-tracker extension", () => {
 			);
 			const text = result.content[0].text;
 			expect(text).toContain("Ollama Rate Limits:");
+			expect(text).toContain("Session (5h)");
+			expect(text).toContain("99.5% left");
+			expect(text).toContain("Weekly (7d)");
+			expect(text).toContain("17.3% left");
 			expect(text).toContain("75% left");
-			expect(text).toContain("Cloud auth configured (1 model(s)).");
+			expect(text).toContain("billed the API-equivalent of $20.00 over the last 4 weeks");
+			expect(text).toContain("Cloud usage endpoint reachable.");
+		});
+
+		it("falls back to a note when the Ollama Cloud usage endpoint rejects auth", async () => {
+			process.env.OLLAMA_API_KEY = "test-key";
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("127.0.0.1:11434/v1/models")) {
+					return Promise.resolve(makeFetchResponse({ status: 503, ok: false }));
+				}
+				if (url.includes("ollama.com/api/usage")) {
+					return Promise.resolve(makeFetchResponse({ status: 401, ok: false }));
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const ollamaCtx = createMockCtx();
+			ollamaCtx.model = { id: "gpt-oss:20b", provider: "ollama-cloud" };
+
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ollamaCtx);
+
+			const tool = pi._tools.get("usage_report");
+			const result = await runWithTimers(() =>
+				tool.execute("id", { format: "detailed" }, undefined, undefined, ollamaCtx),
+			);
+			const text = result.content[0].text;
+			expect(text).toContain("Cloud auth was rejected");
+			expect(text).toContain("remaining account limits are unknown");
 		});
 
 		it("shows rate limit windows from Anthropic OAuth usage endpoint", async () => {
