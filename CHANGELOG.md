@@ -68,7 +68,6 @@ Document the packages that have been created since the last tagged release (`v0.
 - performance audit — fix hot-path issues and add benchmarks (#231)
 - reduce context noise, add bg task expiry, label scheduled runs (#233)
 - optimize scheduler hot paths — single-pass iterations and zero-alloc dispatch (#235)
-- remove explicit model overrides from ant_colony tool, use adaptive routing (#236)
 - highlight recommended options in QnA overlay (#238)
 - add Ctrl+O context expansion popup for question details (#244)
 - add @monopi/remote-tailscale, @monopi/bash-live-view, @monopi/pretty (#255)
@@ -81,9 +80,8 @@ Document the packages that have been created since the last tagged release (`v0.
 - Add client-side search (minisearch) and Cmd+K shortcut to the docs site
 - Add documentation website package (Vite + React + MDX) with GitHub Pages deployment
 - Add colon-style subcommand aliases across provider, routing, Ollama, scheduler, spec, and watchdog workflows, update related docs/help text, and keep provider picker search inside overlay UI so escape and typing no longer fall through to the editor.
-- Remove explicit model override parameters from ant_colony tool. Model selection now uses adaptive routing exclusively — scouts, workers, and soldiers each use the best available model for their task category (quick-discovery, implementation-default, review-critical). Configure via /route settings.
 - Add an `external-editor` oh-pi extension with a `/external-editor` command and `Ctrl+Shift+E` shortcut for opening the current draft in `$VISUAL` or `$EDITOR`, then syncing the saved text back into pi.
-- Extract adaptive routing into its own optional package, add delegated startup provider categories for subagents and ant-colony, and remove hard-coded Anthropic defaults from builtin subagents.
+- Extract adaptive routing into its own optional package, add delegated startup provider categories for subagents, and remove hard-coded Anthropic defaults from builtin subagents.
 - Implement `@monopi/bash-live-view` package for PTY-backed live terminal viewing of bash commands. Adds `usePTY` parameter to bash tool, live TUI widget with real-time output, and `/bash-pty` slash command.
 - Implement `@monopi/pretty` package for enhanced terminal output. Adds syntax highlighting via Shiki, file icons via Nerd Fonts, tree-view directory listings, colored bash exit summaries, and enhanced find/grep rendering.
 - Implement `@monopi/remote-tailscale` package for secure remote session sharing via Tailscale HTTPS. Provides PTY-based remote access, WebSocket terminal sharing, QR code display, token auth, discovery service, and optional TUI widget.
@@ -96,7 +94,7 @@ Document the packages that have been created since the last tagged release (`v0.
 - Add an experimental `@monopi/provider-catalog` package that registers a broad set of OpenCode-cataloged API-key providers, refreshes model catalogs from `models.dev` and live provider discovery, and adds `/providers` commands for inspecting and refreshing provider state.
 - Add a user/project install scope toggle when installing optional routing packages from the oh-pi routing dashboard.
 - Let the oh-pi routing dashboard install missing optional routing and provider packages directly from the setup flow.
-- Add a dedicated provider and routing dashboard to the oh-pi setup flow so users can review optional routing packages, available providers/models, delegated assignments, and effective routing for the main session, subagents, and ant-colony.
+- Add a dedicated provider and routing dashboard to the oh-pi setup flow so users can review optional routing packages, available providers/models, delegated assignments, and effective routing for the main session and subagents.
 - Add a default-on `tool-metadata` extension that appends completion timestamps, elapsed runtimes, approximate tool-context size, and session context snapshots to finished tool results.
 - Teach the watchdog to profile extension runtime activity, surface likely slowdown culprits in `/watchdog`, and emit scheduler task pressure diagnostics for faster blame and safe-mode triage.
 
@@ -155,11 +153,11 @@ npx oh-pi --yes
 
 #### Consolidate worktree registry into `@monopi/core` and add `worktree` tool
 
-- **Consolidate duplicated worktree implementations**: The worktree registry logic that was duplicated across `packages/monopi__extensions/extensions/worktree-shared.ts` and `packages/ant-colony/extensions/ant-colony/worktree-registry.ts` is now consolidated into `@monopi/core`. Both files are now thin re-exports from `@monopi/core`, eliminating code duplication and ensuring a single source of truth for worktree management.
+- **Consolidate duplicated worktree implementations**: The worktree registry logic that was duplicated across extension packages is now consolidated into `@monopi/core`. The affected modules are now thin re-exports from `@monopi/core`, eliminating code duplication and ensuring a single source of truth for worktree management.
 
 - **Add `RepoWorktreeContext` and caching to core**: The lightweight context probe (which uses only `git rev-parse` without `git worktree list --porcelain`) and the async cache-based refresh functions (`getRepoWorktreeContext`, `getCachedRepoWorktreeContext`, `refreshRepoWorktreeContext`, etc.) are now available in `@monopi/core`, matching the full feature set previously only in the extensions package.
 
-- **Add `worktree` tool**: Register a `worktree` tool alongside the existing `/worktree` command. The AI agent can now programmatically create, list, check status, and clean up pi-owned worktrees without needing to use the slash command. This addresses the problem where the `ant_colony` tool bypassed `/worktree` because commands are TUI-only. The tool supports `create`, `status`, `list`, and `cleanup` actions.
+- **Add `worktree` tool**: Register a `worktree` tool alongside the existing `/worktree` command. The AI agent can now programmatically create, list, check status, and clean up pi-owned worktrees without needing to use the slash command. The tool supports `create`, `status`, `list`, and `cleanup` actions.
 
 - **Fix `touchManagedWorktreeSeen` throttling**: The `saveWorktreeRegistry` function now clears the worktree snapshot cache after writes, and `touchManagedWorktreeSeen` now throttles updates to avoid excessive I/O (5-minute interval).
 
@@ -171,7 +169,7 @@ Three ways to enable plain icon mode (in priority order):
 2. **CLI flag**: `pi --plain-icons`
 3. **settings.json**: `{ "plainIcons": true }` (global `~/.pi/agent/settings.json` or project-local `.pi/settings.json`)
 
-This replaces all emoji icons (🐜, ✅, ❌, 🚀, etc.) with ASCII-safe equivalents (`[ant]`, `[ok]`, `[ERR]`, `[>>]`, etc.) across all oh-pi extensions — helpful for terminals or fonts that don't render Unicode emoji correctly.
+This replaces all emoji icons (✅, ❌, 🚀, etc.) with ASCII-safe equivalents (`[ok]`, `[ERR]`, `[>>]`, etc.) across all oh-pi extensions — helpful for terminals or fonts that don't render Unicode emoji correctly.
 
 Closes #24.
 
@@ -264,8 +262,6 @@ Closes #24.
 - discover cloud models at startup
 - fix: defer adaptive routing startup refresh
 - Add kimi-k2.6 to Ollama cloud fallback model catalog
-- Reduce ant-colony runtime churn by deduplicating repeated colony status-bar updates, replacing lock spin-waiting with sleeping lock retries, and skipping pre-review TypeScript checks unless worker output actually touched a detectable TS project.
-- fix: lazily resolve ant-colony storage options
 - Approve `@vitest/coverage-v8` in the dependency allowlist so the new coverage workflow passes repository security checks.
 - fix: stop auto session renames after a manual /name override
 - fix: make the auto-update extension check versions without blocking the event loop
@@ -278,7 +274,7 @@ Closes #24.
 - Reduce custom-footer idle redraw churn by letting the PR poll timer probe for changed PR state without forcing a footer rerender every minute when the visible footer content is unchanged.
 - fix: defer expensive custom-footer startup refresh work
 - Reduce diagnostics widget idle redraw churn by only running its elapsed-time refresh timer while a prompt is actively in progress. This removes the always-on one-second idle redraw loop that could multiply across several pi instances and contribute to watchdog event-loop warnings.
-- Add initial delegated-model routing research artifacts and runtime selection improvements for subagents and ant-colony, including a reproducible model-intelligence snapshot sourced from public benchmarks and provider catalogs.
+- Add initial delegated-model routing research artifacts and runtime selection improvements for subagents, including a reproducible model-intelligence snapshot sourced from public benchmarks and provider catalogs.
 - ci: run push and pull_request workflows for stacked prep branches
 - refactor: apply a repo-wide readability cleanup and stabilize a slow worktree test timeout
 - Fix the `@monopi/bash-live-view` package build by running the normal package test suite during `pnpm build` and keeping coverage behind a dedicated `test:coverage` script.
@@ -318,7 +314,7 @@ Closes #24.
 - Treat pnpm audit failures caused by npm's retired audit endpoints as a non-fatal upstream issue in repo security checks, while still preserving allowlist enforcement and real audit failures.
 - Add TypeScript startup benchmarks, convert the existing microbenchmarks to TypeScript, and run the benchmark suite on every pull request with uploaded reports and PR summaries.
 - Reduce idle startup status churn by skipping initial no-op status clear writes for unseen status-bar keys while preserving real clears after visible status text has been shown.
-- Add an RFC for clean-room subagent and ant-colony adaptive routing inspired by selected ideas from oh-my-openagent while preserving pi's minimal, user-owned extension model.
+- Add an RFC for clean-room subagent adaptive routing inspired by selected ideas from oh-my-openagent while preserving pi's minimal, user-owned extension model.
 - Validate subagent models against available models before passing to spawned pi process. Previously, subagents inherited the parent session model (e.g. `github-models/openai/gpt-4o-mini`) without checking whether it was actually available, causing "No models match pattern" warnings. Now, runtime overrides, frontmatter models, and session-default fallbacks are all validated against the available model registry. Invalid models are silently skipped, allowing fallback to delegated category routing or no model override.
 - fix: lazy-load subagent config
 - fix: defer subagents global startup cleanup
@@ -568,19 +564,7 @@ Explicit skills now resolve relative to the subagent task directory instead of t
 - include both the direct form (`pi --session <id>`) and an alias-path hint (`pi resume <id>`) in the emitted message
 - keep the existing compaction auto-continue and dynamic session title behavior intact
 
-#### Improve error reporting and robustness for ant colony and subagent swarms.
-
-**Ant Colony:**
-
-- Fix nest lock file crash (`ENOENT`) when colony storage directory is cleaned up mid-run — the lock now recreates the directory instead of crashing
-- Expand error messages from 80–120 chars to 200–500+ chars across queen, spawner, index, and ui
-- Include full stack traces in colony crash reports and task failure records
-- Surface task failures via `emitSignal` so they appear in the TUI instead of being silently swallowed
-- Include validation issues and scout intelligence in plan recovery failure messages
-- Budget-exceeded messages now report how many tasks completed before the limit
-- Failed tasks in `onAntDone` now include error context in the log entry
-- Model resolution errors now include provider and model details
-- Session dispose errors are logged instead of silently swallowed
+#### Improve error reporting and robustness for subagent swarms.
 
 **Subagent Swarms:**
 
@@ -679,11 +663,11 @@ Explicit skills now resolve relative to the subagent task directory instead of t
 ### Fixes
 
 - reduce long-session runtime UI churn
-- improve error reporting and robustness for ant colony and subagent swarms (#56)
+- improve error reporting and robustness for subagent swarms (#56)
 - prevent scheduler startup prompt replay (#59)
 - isolate scheduled tasks by instance
 - add shared pi agent-dir and mirrored storage path utilities to `@monopi/core` for consistent config and storage path resolution.
-- add a shared extension runtime smoke-test harness and initial smoke coverage for scheduler/btw, ant-colony, and subagents.
+- add a shared extension runtime smoke-test harness and initial smoke coverage for scheduler/btw and subagents.
 - add MDT-based documentation reuse, CI verification, and synchronized API docs for shared package helpers.
 - add missing package-level READMEs for published packages so npm and pi.dev package pages have package-specific documentation.
 - add repository, homepage, and bugs metadata to published package manifests so npm package pages link back to the correct monorepo locations.
@@ -717,10 +701,8 @@ Explicit skills now resolve relative to the subagent task directory instead of t
 - handle older pi model registry in btw (#26)
 - improve follow-up scheduling guidance (#29)
 - add and refine npm keywords across the remaining published packages to improve discovery on pi.dev/packages.
-- fix ant-colony nest lock recovery and ensure colony IDs stay unique under concurrent launches.
 - fix BTW API key resolution on older pi runtimes that do not expose `ctx.modelRegistry.getApiKey()`.
 - improve scheduler tool descriptions so pi is more likely to use scheduled follow-ups for PRs, CI, builds, deployments, and other future check-ins.
-- Move ant-colony runtime state and isolated worktree directories out of repository-local `.ant-colony/` folders into a shared pi agent storage root under `~/.pi/agent/ant-colony/...` by default. Legacy local colony state is migrated automatically, `.gitignore` is no longer modified in the default shared mode, and an explicit `storageMode: "project"` opt-in remains available for users who prefer the old repo-local behavior.
 - Move scheduler state out of repository-local `.pi/scheduler.json` files into a shared pi agent directory under `~/.pi/agent/scheduler/...`, using a path that mirrors each workspace path for uniqueness. Legacy repo-local scheduler files are migrated automatically when discovered, and defunct scheduler stores are cleaned up once all tasks expire or are removed.
 - Move subagent project-scope agent and chain definitions out of repo-local `.pi/agents/` folders into a shared pi agent directory under `~/.pi/agent/subagents/project-agents/...` by default. Legacy project-local definitions are migrated automatically when discovered, mirrored parent workspaces are still searched for project overrides, and a `projectAgentStorageMode: "project"` opt-in keeps the old repo-local behavior available.
 - Pin `picomatch` to `4.0.4` via pnpm overrides so CI security audits pass with the patched version of the transitive dependency used by the Vitest toolchain.
@@ -837,13 +819,6 @@ Also includes a headless daemon mode (`pi-web serve`) for long-running always-on
 
 - Fix remaining unscoped `npx oh-pi` references in `docs/DESIGN.md` to use `npx @monopi/monopi`.
 
-## 0.2.16 (2026-03-14)
-
-### Fixes
-
-- avoid shortcut conflict with subagents
-- Change the ant-colony details shortcut from `Ctrl+Shift+A` to `Ctrl+Shift+C` so it no longer conflicts with the subagents extension shortcut.
-
 ## 0.2.15 (2026-03-14)
 
 ### Features
@@ -866,14 +841,10 @@ Also includes a headless daemon mode (`pi-web serve`) for long-running always-on
 - add pi-plan planning mode package (#8)
 - add native /spec workflow package
 
-#### Improve colony isolation and cost visibility:
+#### Improve usage-tracker cost visibility:
 
-- run ant-colony executions in isolated git worktrees by default (with shared-cwd fallback when unavailable)
-- persist/report workspace metadata so users can see where colony edits were made
-- resume colonies with saved workspace hints, including worktree re-attachment when possible
-- emit ant inference usage events (`usage:record`) from colony workers/soldiers/scouts
 - aggregate external/background inference in usage-tracker reports, widget, and session totals
-- add tests for worktree isolation and external usage ingestion
+- add tests for external usage ingestion
 
 #### Add `/btw` and `/qq` side-conversation extension and skill:
 
@@ -894,7 +865,6 @@ Based on https://github.com/dbachelder/pi-btw by Dan Bachelder (MIT).
 - add cheap-first multimodal ingestion preprocessing and route metadata handling for worker tasks
 - add promote/finalize gate types + decision logic with confidence/coverage/risk/policy/SLO reasons
 - record routing telemetry (claimed/completed/failed/escalated, latency, reasons) and roll it into budget summary snapshots
-- expose new ant-colony tool model override parameters for worker classes
 - add focused tests for gate decisions, budget telemetry rollups, and index-level event-bus propagation
 - add deterministic completion verification harness (`pnpm verify:completion`) with slash-command completion tests
 
@@ -983,23 +953,6 @@ Based on pi-scheduler by @manojlds (MIT).
 - Make the CI dependency review job skip cleanly when GitHub dependency graph manifests are not yet available for the repository, instead of failing the whole pull request with a repository settings error.
 - Add missing `exports` to `pi-shared-qna` and `pi-spec` packages so `require.resolve` can find their `package.json`.
 
-#### Harden and align ant-colony runtime behavior:
-
-- fix final report signal emission to be status-aware (`COMPLETE` for success, failure status otherwise)
-- replace raw drone shell execution with an allowlisted `execFileSync` command policy
-- update `/colony-resume` to resume all resumable colonies by default when no ID is provided
-- add stable colony ID tracking alongside runtime IDs and support both in status/stop command resolution
-- share usage-limits tracker instances across runs to avoid listener buildup in runtimes without `off()`
-- add integration tests for multi-colony command workflows and signal consistency
-- refresh ant-colony README command and installation docs
-
-#### Fix ant-colony JSON task-plan parsing so malformed scout output no longer produces invalid execution plans:
-
-- only accept fenced JSON plans when they are task arrays, nested `tasks` arrays, or single task-like objects
-- ignore JSON entries that omit both `title` and `description`
-- normalize JSON task titles/descriptions consistently with markdown task parsing
-- add parser regression tests for nested JSON plans and missing task fields
-
 #### Improve project automation ergonomics:
 
 - fix pull-request conventional-commit validation to lint real PR commits instead of synthetic merge commit messages
@@ -1021,9 +974,9 @@ Based on pi-scheduler by @manojlds (MIT).
 
 #### Drop `bundledDependencies` and the `pi` resource manifest from the meta-package.
 
-Pi loads each package with its own module root, so extensions nested inside a meta-package's `node_modules/` cannot resolve peer-dep imports (`@mariozechner/pi-coding-agent`, etc.). This caused commands like `/colony` and `/loop` to silently fail to register.
+Pi loads each package with its own module root, so extensions nested inside a meta-package's `node_modules/` cannot resolve peer-dep imports (`@mariozechner/pi-coding-agent`, etc.). This caused commands like `/loop` to silently fail to register.
 
-Each sub-package (`@monopi/extensions`, `@monopi/monopi-ant-colony`, etc.) is already a fully self-contained pi package with its own `pi` field. Users should install them directly via `pi install npm:@monopi/monopi-<name>` so pi can load extensions with correct module resolution.
+Each sub-package (`@monopi/extensions`, etc.) is already a fully self-contained pi package with its own `pi` field. Users should install them directly via `pi install npm:@monopi/monopi-<name>` so pi can load extensions with correct module resolution.
 
 The `@monopi/monopi` npm package remains as a convenience dependency that pulls all sub-packages, but no longer declares pi resources itself.
 
@@ -1039,8 +992,6 @@ The `@monopi/monopi` npm package remains as a convenience dependency that pulls 
 
 - delete `README.zh.md` and `docs/DEMO-SCRIPT.zh.md`
 - remove `zh` locale from core types, i18n, and locales
-- remove Chinese keywords from ant-colony parser regex patterns
-- remove Chinese detection from colony status and scout quorum
 - translate Chinese JSDoc comments to English
 - update language selectors across all READMEs
 
@@ -1100,7 +1051,7 @@ preset, updating preset copy/docs, and adding a regression test for preset exten
 
 ### Features
 
-- isolate ant colonies in worktrees and track background inference (#1)
+- track background inference (#1)
 - add rust workspace bootstrap scaffolder (#3)
 - add flutter serverpod mvp bootstrap skill
 
@@ -1113,7 +1064,7 @@ preset, updating preset copy/docs, and adding a regression test for preset exten
 
 ### Fixes
 
-- enforce zero-warning lint and harden colony event bus
+- enforce zero-warning lint
 
 #### Zero-warning lint baseline + fail on warnings
 
@@ -1123,61 +1074,9 @@ preset, updating preset copy/docs, and adding a regression test for preset exten
   - `pnpm check` now runs `biome ci --error-on-warnings .`
 - Updated CI lint job to enforce `--error-on-warnings`.
 
-#### Ant colony runtime fix: event bus compatibility
+#### Usage limits event bus compatibility
 
-Fixed colony failures in environments where `pi.events.off` is not implemented.
-
-- `ColonyEventBus.off` is now optional.
 - Added `createUsageLimitsTracker()` to safely query usage-tracker limits with support for both `on/emit/off` and `on/emit` event buses.
-- Prevents `TypeError: opts.eventBus.off is not a function` during colony runs.
-- Added regression tests for event buses with and without `off()`.
-
-## 0.2.7 (2026-03-08)
-
-### Features
-
-- support multiple concurrent ant colonies
-
-#### Support multiple concurrent colonies
-
-The ant colony extension now supports running multiple colonies simultaneously. Each colony gets a short ID (`c1`, `c2`, ...) shown in all status output, signals, and the details panel.
-
-**New commands:**
-
-- `/colony-count` — shows how many colonies are active with their IDs and goals
-
-**Updated commands:**
-
-- `/colony <goal>` — launches a new colony (no longer blocked by existing ones)
-- `/colony-status [id]` — shows one colony by ID, or all if no ID given (with autocomplete)
-- `/colony-stop [id|all]` — stops a specific colony by ID, or all if no ID / `all` given (with autocomplete)
-- `/colony-resume [colonyId]` — resumes a specific persisted colony, or the most recent one
-- `ant_colony` tool — no longer rejects when a colony is already running
-
-**Details panel (Ctrl+Shift+A):**
-
-- Colony selector header when multiple are running
-- Press `n` to cycle between colonies
-
-**Backwards compatible:**
-
-- Existing `.ant-colony/` directories on disk are unmodified — `findResumable` still works
-- Single-colony usage is unchanged (commands auto-resolve when only one colony exists)
-- New `Nest.findAllResumable()` method finds all resumable colonies sorted by creation date
-
-## 0.2.6 (2026-03-08)
-
-### Features
-
-- add /colony slash command for direct colony launch
-
-### Fixes
-
-#### Add `/colony` slash command
-
-The ant colony can now be launched directly with `/colony <goal>` instead of relying solely on the LLM-callable `ant_colony` tool. The command appears in autocomplete alongside `/colony-status`, `/colony-stop`, and `/colony-resume`.
-
-Usage: `/colony refactor the auth module to use JWT tokens`
 
 ## 0.2.5 (2026-03-08)
 
@@ -1198,33 +1097,13 @@ The new `truncateAnsi()` helper walks the string character by character, skippin
 - rewrite configuration wizard UX
 - monorepo restructure under @ifi/\* scope
 - detailed changesets, markdown formatting, knope publish workflow
-- usage-aware budget planner for ant colony
 - auto-unbind deleteToLineStart from ctrl+u on extension load
-
-#### Usage-aware budget planner for ant colony
-
-The ant colony now queries the usage-tracker extension for real-time provider rate limits (Claude session/weekly %, Codex 5h/weekly %) and session cost data to intelligently allocate resources across scout, worker, and soldier castes.
-
-**New module: `budget-planner.ts`**
-
-- Classifies budget severity (comfortable → moderate → tight → critical) from rate limits and cost
-- Allocates per-caste budgets: scouts 10%, workers 70%, soldiers 20%, drones free
-- Caps concurrency based on severity (critical=1, tight=2, moderate=3, comfortable=6)
-- Reduces per-ant turn counts when budget is constrained
-- Generates budget-awareness prompt sections injected into ant system prompts
 
 **Usage-tracker event broadcasting**
 
 - `usage:limits` event broadcast after each turn with rate limit windows, session cost, per-model data
 - `usage:query` event listener responds with current data for on-demand queries
 - Other extensions can listen to `usage:limits` for dashboard/alerting
-
-**Integration points**
-
-- Queen refreshes budget plan before each phase (scouting, working, reviewing)
-- Adaptive concurrency controller respects budget-plan caps
-- Ant prompts include budget awareness when severity is moderate or worse
-- 66 tests for budget planner, 6 tests for event broadcasting (325 total)
 
 #### Fixed: usage-tracker shortcut conflict
 
@@ -1279,7 +1158,6 @@ The `@ifi` scope didn't exist as an npm organization. All packages are now publi
 - `@monopi/core` → `@monopi/core`
 - `@monopi/cli` → `@monopi/cli`
 - `@monopi/extensions` → `@monopi/extensions`
-- `@monopi/monopi-ant-colony` → `@monopi/monopi-ant-colony`
 - `@monopi/themes` → `@monopi/themes`
 - `@monopi/prompts` → `@monopi/prompts`
 - `@monopi/skills` → `@monopi/skills`
@@ -1301,27 +1179,8 @@ The `@ifi` scope didn't exist as an npm organization. All packages are now publi
 - **Full-Stack Developer** — Frontend, backend, and database conventions with framework-specific guidance
 - **Security Researcher** — Penetration testing, vulnerability assessment, and OWASP audit methodology
 - **Data & AI Engineer** — MLOps pipelines, data processing, model training, and experiment tracking
-- **Colony Operator** — Multi-agent orchestration guidelines for the ant-colony swarm system
 
 Each template is a markdown file placed at `~/.pi/agent/AGENTS.md` to guide the AI's behavior.
-
-#### `@monopi/monopi-ant-colony` — Initial release
-
-Multi-agent swarm extension modeled after real ant ecology.
-
-- **Colony lifecycle**: SCOUTING → PLANNING_RECOVERY → WORKING → REVIEWING → DONE with automatic phase transitions
-- **Three ant castes**: Scouts (fast/cheap models for exploration), Workers (capable models for code changes), Soldiers (thorough models for review)
-- **In-process agents**: Each ant is an `AgentSession` via pi SDK — zero startup overhead, shared auth and model registry
-- **Pheromone communication**: `.ant-colony/pheromone.jsonl` shared discovery log with 10-minute half-life decay
-- **Adaptive concurrency**: Auto-tunes parallelism based on throughput, CPU load (>85% reduction), and 429 rate limit backoff (2s→5s→10s cap)
-- **File locking**: One ant per file — conflicting tasks are blocked and resume when locks release
-- **Planning recovery**: When scouts return unstructured intel, colony enters `planning_recovery` instead of failing
-- **Plan validation gate**: Tasks are validated (title/description/caste/priority) before workers start
-- **Scout quorum**: Multi-step goals default to ≥2 scouts for better planning reliability
-- **Real-time UI**: Status bar with task progress, active ants, tool calls, cost; `Ctrl+Shift+A` overlay panel; `/colony-stop` abort command
-- **Signal protocol**: Structured `COLONY_SIGNAL:*` messages pushed to main conversation (LAUNCHED, SCOUTING, WORKING, REVIEWING, COMPLETE, FAILED, BUDGET_EXCEEDED)
-- **Turn budgets**: Scout: 8, Worker: 15, Soldier: 8 — prevents runaway execution
-- **Auto-trigger**: LLM deploys colony when ≥3 files need changes or parallel workstreams are possible
 
 #### `@monopi/cli` — Initial release
 
@@ -1344,7 +1203,7 @@ Shared foundation library for all oh-pi packages.
 - **Prompt registry**: 10 prompt template registrations (`/review`, `/fix`, `/explain`, `/refactor`, `/test`, `/commit`, `/pr`, `/security`, `/optimize`, `/document`)
 - **Skill registry**: 10 skill definitions across tool, UI-design, and workflow categories
 - **i18n module**: Bilingual (English/Chinese) translation system with locale detection and `t()` helper function
-- **Preset system**: Pre-configured profiles (Full Power, Clean, Colony Only) mapping to curated extension/theme/thinking-level combinations
+- **Preset system**: Pre-configured profiles (Full Power, Clean) mapping to curated extension/theme/thinking-level combinations
 
 #### `@monopi/extensions` — Initial release
 
@@ -1367,7 +1226,7 @@ Shared foundation library for all oh-pi packages.
 - **GitHub Actions CI**: lint → typecheck → test (Node 20 + 22) → build pipeline with changeset enforcement on PRs
 - **Knope**: Automated changelog generation, version bumping (lockstep across all packages), git tagging, and GitHub releases
 - **Vitest**: 254 tests across 21 test files with fake timers for fast execution
-- **All documentation translated to English**: 8 main docs, supplementary docs, benchmarks, ant-colony README, and 16+ source file comments
+- **All documentation translated to English**: 8 main docs, supplementary docs, benchmarks, and 16+ source file comments
 
 #### `@monopi/monopi` — Initial release
 
@@ -1376,7 +1235,7 @@ Meta-package that bundles all oh-pi packages for one-command installation.
 - **Single install**: `pi install npm:@monopi/monopi` adds all extensions, themes, prompts, skills, and agents templates
 - **Bundled dependencies**: All sub-packages are listed as `bundledDependencies` so pi gets everything in one `npm install`
 - **Pi package manifest**: Declares extension, theme, prompt, and skill paths via the `pi` field so pi auto-discovers all resources
-- **Transitive packages**: Pulls in `@monopi/extensions`, `@monopi/monopi-ant-colony`, `@monopi/themes`, `@monopi/prompts`, `@monopi/skills`, and `@monopi/agents`
+- **Transitive packages**: Pulls in `@monopi/extensions`, `@monopi/themes`, `@monopi/prompts`, `@monopi/skills`, and `@monopi/agents`
 
 #### `@monopi/prompts` — Initial release
 
