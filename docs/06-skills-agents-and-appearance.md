@@ -37,7 +37,7 @@ These templates are different from **subagent definitions**. `AGENTS.md` guides 
 
 ## Subagent definitions
 
-Open `/agents` or press `Ctrl+Shift+A` to browse and manage named specialists. The package includes built-in roles such as scout, planner, worker, reviewer, researcher, context builder, and frontend-oriented specialists.
+Open `/agents` or press `Ctrl+Shift+A` to browse and manage named specialists. The package includes built-in templates such as Scout, Code Reviewer, Planner, and Implementer.
 
 Definitions use Markdown with YAML frontmatter. Chains use `.chain.md` files. They can live at user or project scope and can specify tools, model overrides, skills, output files, and progress behavior.
 

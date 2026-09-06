@@ -112,7 +112,7 @@ This is a monorepo. Install everything at once with `npx @monopi/monopi`, or pic
 | [`@monopi/provider-cursor`](./packages/monopi__provider-cursor)         | Experimental Cursor OAuth provider                                         | `pi install npm:@monopi/provider-cursor`     |
 | [`@monopi/provider-ollama`](./packages/monopi__provider-ollama)         | Experimental Ollama local + cloud provider                                 | `pi install npm:@monopi/provider-ollama`     |
 | [`@monopi/skills`](./packages/monopi__skills)                           | 3 maintained skill packs                                                   | `pi install npm:@monopi/skills`              |
-| [`@monopi/agents`](./packages/monopi__agents)                           | 5 AGENTS.md templates                                                      | (used by CLI/templates)                      |
+| [`@monopi/agents`](./packages/monopi__agents)                           | 4 AGENTS.md templates                                                      | (used by CLI/templates)                      |
 | [`@monopi/shared-qna`](./packages/monopi__shared-qna)                   | Shared Q&A TUI helpers                                                     | (library, not installed directly)            |
 | [`@monopi/web-client`](./packages/monopi__web-client)                   | Platform-agnostic remote session client library                            | `pnpm add @monopi/web-client`                |
 | [`@monopi/web-server`](./packages/monopi__web-server)                   | Embeddable remote session server                                           | `pnpm add @monopi/web-server`                |
@@ -409,11 +409,10 @@ Continuously samples runtime health so heavy sessions stay usable.
 
 ### Presets
 
-|            | Theme       | Thinking | Includes                               |
-| ---------- | ----------- | -------- | -------------------------------------- |
-| Full Power | monopi Dark | high     | Recommended extensions                 |
-| Clean      | Default     | off      | No extensions, just core               |
-| Subagents  | monopi Dark | medium   | Subagent chains and parallel execution |
+| Preset     | Theme       | Thinking | Includes                 |
+| ---------- | ----------- | -------- | ------------------------ |
+| Full Power | monopi Dark | high     | Recommended extensions   |
+| Clean      | monopi Dark | off      | No extensions, just core |
 
 ### Providers
 
@@ -446,9 +445,9 @@ Anthropic · OpenAI · Google Gemini · Groq · OpenRouter · xAI · Mistral
 
 ### Prerequisites
 
-- Node.js ≥ 20
-- pnpm ≥ 10
-- MonoChange CLI (`pnpm mc:*` scripts) for releases
+- Node.js ≥ 22.19
+- pnpm ≥ 10.33
+- MonoChange CLI (`pnpm mc`, also wrapped as `pnpm change`, `pnpm release`, and `pnpm publish`) for changesets and releases
 
 ### Setup
 

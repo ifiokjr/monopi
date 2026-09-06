@@ -120,6 +120,7 @@ Most runtime packages in this repo ship raw TypeScript and can be loaded directl
 
 - [`@monopi/cli`](../packages/monopi__cli)
 - [`@monopi/core`](../packages/monopi__core)
+- [`@monopi/db`](../packages/monopi__db)
 - [`@monopi/shared-qna`](../packages/monopi__shared-qna)
 - [`@monopi/web-client`](../packages/monopi__web-client)
 - [`@monopi/web-server`](../packages/monopi__web-server)
@@ -127,40 +128,48 @@ Most runtime packages in this repo ship raw TypeScript and can be loaded directl
 
 ## Runtime feature map
 
-| Package                                                                  | Installs by default | Primary surfaces                                                                        | What it gives you                                                                                                                        |
-| ------------------------------------------------------------------------ | ------------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| [`@monopi/extension-worktree`](../packages/monopi__extension-worktree)   | Yes                 | commands, tools, widgets, footer, tool interception                                     | The core QoL extension pack: git safety, session naming, status UI, scheduling, usage, watchdog, worktrees, side-conversations, and more |
-| [`@monopi/background-tasks`](../packages/monopi__background-tasks)       | Yes                 | `bg_task`, `bg_status`, `/bg`, `Ctrl+Shift+B`                                           | Reactive background shell task management with log tails, watches, wakeups, and a richer tracked-task model                              |
-| [`@monopi/diagnostics`](../packages/monopi__diagnostics)                 | Yes                 | widget, session messages, `/diagnostics`, `Ctrl+Shift+D`                                | Prompt start/end timestamps, total duration, and per-turn timing                                                                         |
-| [`@monopi/subagents`](../packages/monopi__subagents)                     | Yes                 | `subagent`, `subagent_status`, `/run`, `/chain`, `/parallel`, `/agents`, `Ctrl+Shift+A` | Rich delegated execution with built-in agents, reusable chains, background runs, and a TUI manager                                       |
-| [`@monopi/web-remote`](../packages/monopi__web-remote)                   | Yes                 | `/remote`                                                                               | Share the current pi session through a remote web UI                                                                                     |
-| [`@monopi/adaptive-routing`](../packages/monopi__adaptive-routing)       | No                  | `/route*`                                                                               | Adaptive/shadow routing and delegated startup categories for subagents                                                                   |
-| [`@monopi/provider-catalog`](../packages/monopi__provider-catalog)       | No                  | `/providers*`                                                                           | Multi-provider catalog and lazy API-key login backed by `models.dev`                                                                     |
-| [`@monopi/provider-cursor`](../packages/monopi__provider-cursor)         | No                  | `/login cursor`, `/cursor*`                                                             | Experimental Cursor OAuth provider with model discovery and direct AgentService streaming                                                |
-| [`@monopi/provider-ollama`](../packages/monopi__provider-ollama)         | No                  | `/login ollama-cloud`, `/ollama*`, `/model`                                             | Experimental Ollama local + cloud provider integration                                                                                   |
-| [`@monopi/analytics-extension`](../packages/monopi__analytics-extension) | No                  | `/analytics`, `/analytics-dashboard`                                                    | Analytics tracking extension with SQLite persistence and browser dashboard                                                               |
-| [`@monopi/remote-tailscale`](../packages/monopi__remote-tailscale)       | No                  | `/remote`, `/remote widget`, `/remote stop`                                             | Secure remote session sharing via Tailscale HTTPS with PTY, WebSocket, QR codes, and token auth                                          |
-| [`@monopi/bash-live-view`](../packages/monopi__bash-live-view)           | No                  | `/bash-pty`, `bash_live_view` tool with `usePTY`                                        | PTY-backed live terminal viewing with real-time widget and `/xterm/headless` ANSI rendering                                              |
-| [`@monopi/pretty`](../packages/monopi__pretty)                           | No                  | wrapped `read`, `bash_pretty`, `ls`, `find`, `grep` tools                               | Syntax highlighting via Shiki, Nerd Font icons, tree-view listings, colored bash summaries, FFF search                                   |
+| Package                                                                  | Installs by default | Primary surfaces                                                                        | What it gives you                                                                                                |
+| ------------------------------------------------------------------------ | ------------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| [`@monopi/extension-worktree`](../packages/monopi__extension-worktree)   | Yes                 | `/worktree*`, `worktree` tool                                                           | Managed git worktree awareness with pi-owned worktree tracking, creation, and cleanup                            |
+| [`@monopi/background-tasks`](../packages/monopi__background-tasks)       | Yes                 | `bg_task`, `bg_status`, `/bg`, `Ctrl+Shift+B`                                           | Reactive background shell task management with log tails, watches, wakeups, and a richer tracked-task model      |
+| [`@monopi/diagnostics`](../packages/monopi__diagnostics)                 | Yes                 | widget, session messages, `/diagnostics`, `Ctrl+Shift+D`                                | Prompt start/end timestamps, total duration, and per-turn timing                                                 |
+| [`@monopi/subagents`](../packages/monopi__subagents)                     | Yes                 | `subagent`, `subagent_status`, `/run`, `/chain`, `/parallel`, `/agents`, `Ctrl+Shift+A` | Rich delegated execution with built-in agents, reusable chains, background runs, and a TUI manager               |
+| [`@monopi/web-remote`](../packages/monopi__web-remote)                   | Yes                 | `/remote`                                                                               | Share the current pi session through a remote web UI                                                             |
+| [`@monopi/context`](../packages/monopi__context)                         | No                  | `/ctx index`, `/ctx search`, `/ctx terse`, `/ctx stats`, `/ctx purge`                   | SQLite FTS5 knowledge base with auto-compression of large tool outputs, terse mode, and context-window analytics |
+| [`@monopi/adaptive-routing`](../packages/monopi__adaptive-routing)       | No                  | `/route*`                                                                               | Adaptive/shadow routing and delegated startup categories for subagents                                           |
+| [`@monopi/provider-catalog`](../packages/monopi__provider-catalog)       | No                  | `/providers*`                                                                           | Multi-provider catalog and lazy API-key login backed by `models.dev`                                             |
+| [`@monopi/provider-cursor`](../packages/monopi__provider-cursor)         | No                  | `/login cursor`, `/cursor*`                                                             | Experimental Cursor OAuth provider with model discovery and direct AgentService streaming                        |
+| [`@monopi/provider-ollama`](../packages/monopi__provider-ollama)         | No                  | `/login ollama-cloud`, `/ollama*`, `/model`                                             | Experimental Ollama local + cloud provider integration                                                           |
+| [`@monopi/analytics-extension`](../packages/monopi__analytics-extension) | No                  | `/analytics`, `/analytics-dashboard`                                                    | Analytics tracking extension with SQLite persistence and browser dashboard                                       |
+| [`@monopi/remote-tailscale`](../packages/monopi__remote-tailscale)       | No                  | `/remote`, `/remote widget`, `/remote stop`                                             | Secure remote session sharing via Tailscale HTTPS with PTY, WebSocket, QR codes, and token auth                  |
+| [`@monopi/bash-live-view`](../packages/monopi__bash-live-view)           | No                  | `/bash-pty`, `bash_live_view` tool with `usePTY`                                        | PTY-backed live terminal viewing with real-time widget and `/xterm/headless` ANSI rendering                      |
+| [`@monopi/pretty`](../packages/monopi__pretty)                           | No                  | wrapped `read`, `bash_pretty`, `ls`, `find`, `grep` tools                               | Syntax highlighting via Shiki, Nerd Font icons, tree-view listings, colored bash summaries, FFF search           |
 
-## `@monopi/extension-worktree`: split extension packages
+## Split extension packages
 
-This package is where most of the day-to-day ergonomics live.
+Each extension ships as its own independently installable package with one main responsibility. Together they cover most of the day-to-day ergonomics.
 
 ### Included extensions
 
-| Feature                  | Primary surfaces                                                                    | What it does                                                                                                                                  |
-| ------------------------ | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `git-guard`              | automatic stash checkpoints, guarded git invocations                                | Reduces accidental code loss and blocks interactive git commands that would hang an agent session                                             |
-| `custom-footer`          | live footer, `/status` overlay                                                      | Shows model, thinking level, token usage, cost, context %, cwd, branch, worktree state, and extension statuses                                |
-| `compact-header`         | startup UI                                                                          | Replaces the default startup banner with a denser one-line header                                                                             |
-| `tool-metadata`          | tool result details                                                                 | Adds start/end timestamps, duration, approximate I/O sizing, and context snapshots to tool results; also sanitizes huge outputs for UI safety |
-| `external-editor`        | `/external-editor`, `Ctrl+Shift+E`                                                  | Opens the current draft in `$VISUAL` or `$EDITOR`, then syncs the saved text back into pi                                                     |
-| `worktree`               | `/worktree`, `/worktree list`, `/worktree create`, `/worktree cleanup`              | Gives monopi first-class git worktree awareness and managed pi-owned worktrees under shared storage                                           |
-| `scheduler`              | `/remind`, `/loop`, `/schedule*`, `schedule_prompt` tool                            | Schedules one-time reminders and recurring follow-ups for builds, CI, deploys, PRs, and long-running checks                                   |
-| `usage-tracker`          | widget, `/usage`, `/usage-toggle`, `/usage-refresh`, `Ctrl+Shift+U`, `usage_report` | Tracks provider quotas, rolling cost history, and per-model/session usage                                                                     |
-| `btw` / `qq`             | `/btw*`, `/qq*`                                                                     | Runs side conversations in a widget above the editor, then injects the full thread or a summary back into the main agent                      |
-| `watchdog` / `safe-mode` | `/watchdog*`, `/safe-mode`                                                          | Samples runtime health, records alerts, shows startup/blame dashboards, and can reduce UI churn when the session gets too heavy               |
+| Package                             | Primary surfaces                                                                    | What it does                                                                                                                                  |
+| ----------------------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@monopi/extension-answer`          | `/answer`, `/answer:auto`                                                           | Extracts questions from the last assistant message and presents them in a QnA overlay                                                         |
+| `@monopi/extension-btw`             | `/btw*`, `/qq*`                                                                     | Runs side conversations in a widget above the editor, then injects the full thread or a summary back into the main agent                      |
+| `@monopi/extension-compact-header`  | startup UI                                                                          | Replaces the default startup banner with a denser one-line header                                                                             |
+| `@monopi/extension-custom-footer`   | live footer, `/status` overlay                                                      | Shows model, thinking level, token usage, cost, context %, cwd, branch, worktree state, and extension statuses                                |
+| `@monopi/extension-external-editor` | `/external-editor`, `Ctrl+Shift+E`                                                  | Opens the current draft in `$VISUAL` or `$EDITOR`, then syncs the saved text back into pi                                                     |
+| `@monopi/extension-files`           | `/files`                                                                            | File browser                                                                                                                                  |
+| `@monopi/extension-git-guard`       | automatic stash checkpoints, guarded git invocations                                | Reduces accidental code loss and blocks interactive git commands that would hang an agent session                                             |
+| `@monopi/extension-goal`            | `/goal`                                                                             | Long-running objective state                                                                                                                  |
+| `@monopi/extension-prompt-modes`    | `/prompt-mode`                                                                      | Prompt/model configuration profiles                                                                                                           |
+| `@monopi/extension-review`          | `/review`                                                                           | Code review workflow                                                                                                                          |
+| `@monopi/extension-scheduler`       | `/remind`, `/loop`, `/schedule*`, `schedule_prompt` tool                            | Schedules one-time reminders and recurring follow-ups for builds, CI, deploys, PRs, and long-running checks                                   |
+| `@monopi/extension-shell-format`    | `bash` tool override                                                                | Executes commands with the user's login shell syntax (for example Nushell) instead of plain bash                                              |
+| `@monopi/extension-todos`           | `/todos`                                                                            | File-backed todos                                                                                                                             |
+| `@monopi/extension-tool-metadata`   | tool result details                                                                 | Adds start/end timestamps, duration, approximate I/O sizing, and context snapshots to tool results; also sanitizes huge outputs for UI safety |
+| `@monopi/extension-usage-tracker`   | widget, `/usage`, `/usage-toggle`, `/usage-refresh`, `Ctrl+Shift+U`, `usage_report` | Tracks provider quotas, rolling cost history, and per-model/session usage                                                                     |
+| `@monopi/extension-watchdog`        | `/watchdog*`, `/safe-mode`                                                          | Samples runtime health, records alerts, shows startup/blame dashboards, and can reduce UI churn when the session gets too heavy               |
+| `@monopi/extension-worktree`        | `/worktree`, `/worktree list`, `/worktree create`, `/worktree cleanup`              | Gives monopi first-class git worktree awareness and managed pi-owned worktrees under shared storage                                           |
 
 ### Scheduler details
 
@@ -240,6 +249,8 @@ Use it when you want to answer questions like:
 - "Did the slowdown happen in one long turn or several short turns?"
 - "How long did this full interaction take end-to-end?"
 
+## `@monopi/subagents`: delegated execution
+
 Subagents is the primary execution system for coordinating multiple AI agents.
 
 ### Major capabilities
@@ -250,7 +261,7 @@ Subagents is the primary execution system for coordinating multiple AI agents.
 - reusable agent definitions stored as markdown with YAML frontmatter
 - reusable `.chain.md` pipelines
 - background execution with async status inspection
-- built-in agents such as `scout`, `planner`, `worker`, `reviewer`, `context-builder`, `researcher`, `artist`, `frontend-designer`, and `multimodal-summariser`
+- built-in agent templates such as `Scout`, `Code Reviewer`, `Planner`, and `Implementer`
 - TUI-based create/edit/browse/run flows in the Agents Manager
 - management actions for creating, updating, and deleting agents/chains
 - project-scope agent storage in shared pi storage by default, with legacy repo-local mode available as an opt-in
@@ -276,60 +287,6 @@ Prefer subagents when you want:
 - a controlled chain of reasoning between steps
 - agent definitions you can version and tweak directly
 - background execution that you can inspect as a single run
-
-Plan mode turns planning into a first-class session state instead of an informal prompt style.
-
-### What it adds
-
-- `/plan` to enter/exit plan mode
-- `Alt+P` shortcut
-- persistent plan file handling per session
-- branch-aware start location choices (`Empty branch` or `Current branch` when available)
-- resume/start-fresh flows when a plan already exists
-- an active plan banner while plan mode is enabled
-- end-of-plan summary with the plan file path and preview
-
-### Plan-only tools
-
-While active, plan mode exposes tools that are not available the rest of the time:
-
-- `task_agents`: read-only delegated research tasks
-- `steer_task_agent`: rerun a specific research task with extra guidance
-- `request_user_input`: gather structured clarification from the user
-- `set_plan`: overwrite the canonical plan file with the latest full plan
-
-Plan mode is best when you want structured planning without jumping directly into implementation.
-
-### Canonical `/spec` subcommands
-
-- `status`
-- `help`
-- `init`
-- `constitution`
-- `specify`
-- `clarify`
-- `checklist`
-- `plan`
-- `tasks`
-- `analyze`
-- `implement`
-- `list`
-- `next`
-
-### Filesystem contract
-
-The public API is not just the command surface. It is also the file layout created in the repo:
-
-- `.specify/` for reusable workflow state and editable templates
-- `specs/###-feature-name/` for per-feature artifacts such as `spec.md`, `plan.md`, `tasks.md`, research notes, data models, quickstart notes, contracts, and checklists
-
-### Why it matters
-
-- requirements before implementation
-- visible workflow state in git
-- deterministic scaffolding
-- project-owned templates you can customize after initialization
-- a spec/plan/tasks flow that feels native inside pi instead of shell-script-driven
 
 ## `@monopi/web-remote`: remote session sharing
 
@@ -461,7 +418,7 @@ The skills pack currently ships 3 maintained skills.
 
 ## `@monopi/agents`
 
-The AGENTS template pack currently ships 5 templates.
+The AGENTS template pack currently ships 4 templates.
 
 | Template              | Focus                                                             |
 | --------------------- | ----------------------------------------------------------------- |
@@ -481,6 +438,7 @@ The AGENTS template pack currently ships 5 templates.
 | [`@monopi/shared-qna`](../packages/monopi__shared-qna)                   | Reusable TUI Q&A helpers and shared `pi-tui` loading logic                                             |
 | [`@monopi/web-client`](../packages/monopi__web-client)                   | Platform-agnostic TypeScript client for custom remote session UIs                                      |
 | [`@monopi/web-server`](../packages/monopi__web-server)                   | Embeddable HTTP + WebSocket remote session server                                                      |
+| [`@monopi/db`](../packages/monopi__db)                                   | Shared SQLite/Drizzle persistence for extension authors                                                |
 | [`@monopi/analytics-db`](../packages/monopi__analytics-db)               | SQLite schema and Drizzle ORM client for analytics data                                                |
 | [`@monopi/analytics-dashboard`](../packages/monopi__analytics-dashboard) | React dashboard for visualizing AI usage (private package)                                             |
 | [`@monopi/docs`](../packages/monopi__docs)                               | Documentation site for monopi (private package)                                                        |
