@@ -1388,7 +1388,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 		return lines;
 	}
 
-	/** Compact rate limit line for the widget. */
+	/** Compact rate limit line for the widget. Shows the consumed quota percentage, matching provider dashboards. */
 	function renderRateLimitsWidget(
 		theme: { fg: (c: string, t: string) => string },
 		provider: ProviderKey | null,
@@ -1400,14 +1400,15 @@ export default function usageTracker(pi: ExtensionAPI) {
 			}
 			const name = providerDisplayName(rl.provider);
 			const most = rl.windows.reduce((a, b) => (a.percentLeft < b.percentLeft ? a : b));
+			const usedPercent = clampPercent(100 - most.percentLeft);
 			const color = pctColor(most.percentLeft);
-			const bar = theme.fg(color, progressBar(most.percentLeft, 8));
+			const bar = theme.fg(color, progressBar(usedPercent, 8));
 			const reset = most.resetDescription ? theme.fg("dim", ` ↻${most.resetDescription}`) : "";
 			parts.push(
 				`${theme.fg("accent", name)} ${theme.fg(
 					"dim",
 					`${most.label}:`,
-				)} ${bar} ${theme.fg(color, `${most.percentLeft}%`)}${reset}`,
+				)} ${bar} ${theme.fg(color, `${usedPercent}% used`)}${reset}`,
 			);
 		}
 		return parts.join(theme.fg("dim", "  "));

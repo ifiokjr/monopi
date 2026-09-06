@@ -1036,6 +1036,52 @@ describe("usage-tracker extension", () => {
 			expect(text).toContain("remaining account limits are unknown");
 		});
 
+		it("shows consumed quota percentage in the widget", async () => {
+			process.env.OLLAMA_API_KEY = "test-key";
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("127.0.0.1:11434/v1/models")) {
+					return Promise.resolve(makeFetchResponse({ status: 503, ok: false }));
+				}
+				if (url.includes("ollama.com/api/usage")) {
+					return Promise.resolve(
+						makeFetchResponse({
+							body: {
+								limits: {
+									session: { usage: 0.005 },
+									weekly: { usage: 0.838 },
+								},
+							},
+						}),
+					);
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const ollamaCtx = createMockCtx();
+			ollamaCtx.model = { id: "gpt-oss:20b", provider: "ollama-cloud" };
+
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ollamaCtx);
+
+			const widgetFactory = ollamaCtx._widgets.get("usage-tracker") as
+				| ((
+						tui: { requestRender: () => void },
+						theme: { fg: (_color: string, text: string) => string },
+				  ) => { render: (width: number) => string[] })
+				| undefined;
+			expect(widgetFactory).toBeTypeOf("function");
+
+			await runWithTimers(() => Promise.resolve());
+
+			const widget = widgetFactory?.({ requestRender: vi.fn() }, { fg: (_color: string, text: string) => text }).render(
+				160,
+			);
+			const widgetText = widget.join(" ");
+			expect(widgetText).toContain("Weekly (7d)");
+			expect(widgetText).toContain("83.8% used");
+			expect(widgetText).not.toContain("16.2%");
+		});
+
 		it("shows rate limit windows from Anthropic OAuth usage endpoint", async () => {
 			mockFetch.mockResolvedValue(
 				makeFetchResponse({
@@ -1769,7 +1815,7 @@ describe("usage-tracker extension", () => {
 			);
 			const rendered = component?.render(200).join("\n") ?? "";
 			expect(rendered).toContain("Anthropic");
-			expect(rendered).toContain("72%");
+			expect(rendered).toContain("28% used");
 		});
 
 		it("shows only the current provider in the widget when multiple providers have cached usage", async () => {
@@ -1818,7 +1864,7 @@ describe("usage-tracker extension", () => {
 			);
 			const rendered = component?.render(200).join("\n") ?? "";
 			expect(rendered).toContain("OpenAI");
-			expect(rendered).toContain("61%");
+			expect(rendered).toContain("39% used");
 			expect(rendered).not.toContain("Anthropic");
 		});
 
