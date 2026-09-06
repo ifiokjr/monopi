@@ -141,6 +141,9 @@ const OLLAMA_CLOUD_PRICING: readonly OllamaCloudPricing[] = [
 	{ id: "qwen3.5:397b", input: 0.6, cachedInput: null, output: 3.6 },
 ];
 
+/** Longest ids first so the most specific pricing key wins for shared tag prefixes. */
+const OLLAMA_CLOUD_PRICING_BY_SPECIFICITY = OLLAMA_CLOUD_PRICING.toSorted((a, b) => b.id.length - a.id.length);
+
 /**
  * Look up Ollama Cloud pricing for a model id.
  *
@@ -161,13 +164,7 @@ function getOllamaCloudPricing(model: Partial<Pick<OllamaProviderModel, "id">>):
 	if (exact) {
 		return exact;
 	}
-	let best: OllamaCloudPricing | undefined;
-	for (const pricing of OLLAMA_CLOUD_PRICING) {
-		if (id.startsWith(`${pricing.id}:`) && (best === undefined || pricing.id.length > best.id.length)) {
-			best = pricing;
-		}
-	}
-	return best;
+	return OLLAMA_CLOUD_PRICING_BY_SPECIFICITY.find((pricing) => id.startsWith(`${pricing.id}:`));
 }
 
 const OLLAMA_ZERO_COST: OllamaProviderModel["cost"] = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
