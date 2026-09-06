@@ -208,6 +208,12 @@ describe("ollama models", () => {
 		expect(model.cost).toEqual({ input: 0, output: 0, cacheRead: 0, cacheWrite: 0 });
 	});
 
+	it("maps null cached-input rates to zero cacheRead cost", () => {
+		const model = toOllamaModel({ id: "mistral-large-3", source: "cloud" });
+
+		expect(model.cost).toEqual({ input: 0.5, output: 1.5, cacheRead: 0, cacheWrite: 0 });
+	});
+
 	it("sanitizes credential models with authoritative cloud metadata floors", () => {
 		const models = getCredentialModels({
 			access: "a",
