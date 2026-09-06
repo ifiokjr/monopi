@@ -3,7 +3,7 @@ Usage Tracker Extension: Rate Limit & Cost Monitor for pi
 
 <!-- {=extensionsUsageTrackerOverview} -->
 
-The usage-tracker extension is a CodexBar-inspired provider quota and cost monitor for pi. It shows provider-level rate limits for Anthropic, OpenAI, and Google using pi-managed auth, while also tracking per-model token usage and session costs locally.
+The usage-tracker extension is a CodexBar-inspired provider quota and cost monitor for pi. It shows provider-level rate limits and usage windows for Anthropic, OpenAI, Google, and Ollama Cloud using pi-managed auth, while also tracking per-model token usage and session costs locally, with Ollama Cloud requests costed at Ollama's published per-token API rates.
 
 <!-- {/extensionsUsageTrackerOverview} -->
 
@@ -1874,7 +1874,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 
 	pi.registerTool({
 		description:
-			"Generate a rate limit status and token usage report. Shows provider rate limits (Anthropic, OpenAI, Google) and best-effort Ollama status, plus per-model costs. Use when the user asks about spending, rate limits, quotas, or remaining usage.",
+			"Generate a rate limit status and token usage report. Shows provider rate limits and usage windows (Anthropic, OpenAI, Google, Ollama Cloud), plus per-model token usage and API-equivalent costs. Use when the user asks about spending, rate limits, quotas, or remaining usage.",
 		async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
 			await loadPersistedState();
 			// Force a probe of all configured providers before reporting

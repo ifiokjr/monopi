@@ -104,6 +104,90 @@ const OLLAMA_CLOUD_METADATA_OVERRIDES: readonly OllamaCloudMetadataOverride[] = 
 	{ id: "qwen3.5:397b", contextWindow: 262_144, maxTokens: 32_768, reasoning: true, family: "qwen3.5" },
 ];
 
+/**
+ * Ollama Cloud per-token pricing (USD per 1M tokens), from https://ollama.com/pricing.
+ *
+ * Applied as model cost metadata so usage and cost tracking show the API-equivalent
+ * spend of cloud requests. Peak pricing (2x for deepseek-v4-* between 12:00-18:00 UTC
+ * Mon-Fri) is not modeled here; Ollama's own `/api/usage` cost accounting remains the
+ * authoritative billed figure. Models not listed have no published rate and stay free.
+ */
+interface OllamaCloudPricing {
+	id: string;
+	input: number;
+	cachedInput: number | null;
+	output: number;
+}
+
+const OLLAMA_CLOUD_PRICING: readonly OllamaCloudPricing[] = [
+	{ id: "deepseek-v4-flash", input: 0.22, cachedInput: 0.007, output: 0.66 },
+	{ id: "deepseek-v4-pro", input: 0.66, cachedInput: 0.022, output: 1.98 },
+	{ id: "gemma4", input: 0.14, cachedInput: 0.05, output: 0.4 },
+	{ id: "glm-5.3", input: 1.4, cachedInput: 0.26, output: 4.4 },
+	{ id: "glm-5.3-flash", input: 0.15, cachedInput: 0.03, output: 0.5 },
+	{ id: "glm-5.2", input: 1.4, cachedInput: 0.26, output: 4.4 },
+	{ id: "glm-5.1", input: 1.0, cachedInput: 0.2, output: 3.2 },
+	{ id: "gpt-oss:120b", input: 0.15, cachedInput: 0.014, output: 0.6 },
+	{ id: "gpt-oss:20b", input: 0.07, cachedInput: 0.035, output: 0.3 },
+	{ id: "kimi-k2.6", input: 0.95, cachedInput: 0.16, output: 4.0 },
+	{ id: "kimi-k2.7-code", input: 0.95, cachedInput: 0.19, output: 4.0 },
+	{ id: "kimi-k3", input: 3.0, cachedInput: 0.3, output: 15.0 },
+	{ id: "minimax-m2.7", input: 0.3, cachedInput: 0.06, output: 1.2 },
+	{ id: "minimax-m3", input: 0.6, cachedInput: 0.12, output: 2.4 },
+	{ id: "mistral-large-3", input: 0.5, cachedInput: null, output: 1.5 },
+	{ id: "nemotron-3-nano", input: 0.06, cachedInput: null, output: 0.24 },
+	{ id: "nemotron-3-super", input: 0.015, cachedInput: 0.015, output: 0.6 },
+	{ id: "nemotron-3-ultra", input: 0.1, cachedInput: 0.1, output: 3.0 },
+	{ id: "qwen3.5:397b", input: 0.6, cachedInput: null, output: 3.6 },
+];
+
+/** Longest ids first so the most specific pricing key wins for shared tag prefixes. */
+const OLLAMA_CLOUD_PRICING_BY_SPECIFICITY = OLLAMA_CLOUD_PRICING.toSorted((a, b) => b.id.length - a.id.length);
+
+/**
+ * Look up Ollama Cloud pricing for a model id.
+ *
+ * Pricing keys may themselves contain tags (`gpt-oss:120b`), so matching is:
+ * exact id, then the longest key that prefixes the id at a tag boundary
+ * (`deepseek-v4-flash:0731` inherits `deepseek-v4-flash` rates). Callers only
+ * invoke this for cloud models.
+ */
+function getOllamaCloudPricing(model: Partial<Pick<OllamaProviderModel, "id">>): OllamaCloudPricing | undefined {
+	const id = model.id
+		?.trim()
+		.toLowerCase()
+		.replace(/:cloud$/, "");
+	if (!id) {
+		return undefined;
+	}
+	const exact = OLLAMA_CLOUD_PRICING.find((pricing) => pricing.id === id);
+	if (exact) {
+		return exact;
+	}
+	return OLLAMA_CLOUD_PRICING_BY_SPECIFICITY.find((pricing) => id.startsWith(`${pricing.id}:`));
+}
+
+const OLLAMA_ZERO_COST: OllamaProviderModel["cost"] = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
+
+/**
+ * Resolve model cost metadata. Ollama Cloud models with published pricing use the
+ * pricing table as the authoritative source (so refreshed rates propagate to cached
+ * credentials on every read); everything else keeps whatever cost it already has.
+ */
+function resolveOllamaCloudCost(
+	model: Partial<OllamaProviderModel> & Pick<OllamaProviderModel, "id">,
+): OllamaProviderModel["cost"] {
+	if (model.source !== "cloud") {
+		// Local models run on the user's own hardware and are always free.
+		return { ...OLLAMA_ZERO_COST };
+	}
+	const pricing = getOllamaCloudPricing(model);
+	if (pricing) {
+		return { input: pricing.input, output: pricing.output, cacheRead: pricing.cachedInput ?? 0, cacheWrite: 0 };
+	}
+	return model.cost ? { ...model.cost } : { ...OLLAMA_ZERO_COST };
+}
+
 const OLLAMA_OPENAI_COMPAT: NonNullable<OllamaProviderModel["compat"]> = {
 	maxTokensField: "max_tokens",
 	supportsDeveloperRole: false,
@@ -318,7 +402,7 @@ export function toOllamaModel(
 			...(normalizedModel.compat ?? {}),
 		},
 		contextWindow,
-		cost: normalizedModel.cost ? { ...normalizedModel.cost } : { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+		cost: resolveOllamaCloudCost(normalizedModel),
 		family: sanitizeOptionalString(normalizedModel.family),
 		id: normalizedModel.id,
 		input: sanitizeInput(normalizedModel.input),

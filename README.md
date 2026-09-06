@@ -2,7 +2,7 @@
 
 <img src="./logo.png" width="180" alt="monopi logo"/>
 
-# 🐜 monopi
+# monopi
 
 **One command to install and configure [pi-coding-agent](https://github.com/badlogic/pi-mono).**
 
@@ -336,7 +336,7 @@ It adds `/route` controls, local routing telemetry, and delegated startup catego
 
 <!-- {=extensionsUsageTrackerOverview} -->
 
-The usage-tracker extension is a CodexBar-inspired provider quota and cost monitor for pi. It shows provider-level rate limits for Anthropic, OpenAI, and Google using pi-managed auth, while also tracking per-model token usage and session costs locally.
+The usage-tracker extension is a CodexBar-inspired provider quota and cost monitor for pi. It shows provider-level rate limits and usage windows for Anthropic, OpenAI, Google, and Ollama Cloud using pi-managed auth, while also tracking per-model token usage and session costs locally, with Ollama Cloud requests costed at Ollama's published per-token API rates.
 
 <!-- {/extensionsUsageTrackerOverview} -->
 

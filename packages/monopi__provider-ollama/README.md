@@ -14,6 +14,7 @@ Experimental Ollama provider package for pi with both local and cloud support.
 - Exposes cloud models in `/model` as `ollama-cloud/<model-id>`
 - Prompts to download a missing local model when you select `ollama/<model-id>` and uses the Ollama CLI to pull it
 - Adds `/ollama status|refresh-models|models|info|pull` for a unified local + cloud workflow
+- Applies Ollama Cloud's published per-token pricing (ollama.com/pricing) as model cost metadata so usage and cost tracking show API-equivalent spend
 
 ## Install
 
