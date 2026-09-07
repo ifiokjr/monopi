@@ -56,6 +56,7 @@ import {
 	fmtTokens,
 	formatPaceLeft,
 	formatPaceRight,
+	formatPercent,
 	pctColor,
 	progressBar,
 	truncateAnsi,
@@ -1279,7 +1280,9 @@ export default function usageTracker(pi: ExtensionAPI) {
 				const bar = progressBar(w.percentLeft, 20);
 				const usedPercent = clampPercent(100 - w.percentLeft);
 				const reset = w.resetDescription ? ` · resets ${w.resetDescription}` : "";
-				lines.push(`  ${w.label}: ${bar} ${w.percentLeft}% left (${usedPercent.toFixed(0)}% used)${reset}`);
+				lines.push(
+					`  ${w.label}: ${bar} ${formatPercent(w.percentLeft)}% left (${usedPercent.toFixed(0)}% used)${reset}`,
+				);
 
 				const pace = computeWindowPace(w);
 				if (pace) {
@@ -1293,7 +1296,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 
 			const most = windows[0];
 			if (most) {
-				lines.push(`  Most constrained: ${most.label} (${most.percentLeft}% left)`);
+				lines.push(`  Most constrained: ${most.label} (${formatPercent(most.percentLeft)}% left)`);
 			} else if (!rl.error) {
 				lines.push("  Windows: unavailable from current CLI output");
 			}
@@ -1340,7 +1343,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 				const color = pctColor(w.percentLeft);
 				const usedPercent = clampPercent(100 - w.percentLeft);
 				const bar = theme.fg(color, progressBar(w.percentLeft, 20));
-				const pct = theme.fg(color, `${w.percentLeft}% left`);
+				const pct = theme.fg(color, `${formatPercent(w.percentLeft)}% left`);
 				const used = theme.fg("dim", `(${usedPercent.toFixed(0)}% used)`);
 				const reset = w.resetDescription ? theme.fg("dim", ` · resets ${w.resetDescription}`) : "";
 				lines.push(`    ${theme.fg("accent", w.label.padEnd(15))}${bar} ${pct} ${used}${reset}`);
@@ -1361,7 +1364,9 @@ export default function usageTracker(pi: ExtensionAPI) {
 
 			const most = windows[0];
 			if (most) {
-				lines.push(`    ${theme.fg("dim", `Most constrained: ${most.label} (${most.percentLeft}% left)`)}`);
+				lines.push(
+					`    ${theme.fg("dim", `Most constrained: ${most.label} (${formatPercent(most.percentLeft)}% left)`)}`,
+				);
 			} else if (!rl.error) {
 				lines.push(`    ${theme.fg("dim", "Windows unavailable from current CLI output")}`);
 			}
@@ -1408,7 +1413,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 				`${theme.fg("accent", name)} ${theme.fg(
 					"dim",
 					`${most.label}:`,
-				)} ${bar} ${theme.fg(color, `${usedPercent}% used`)}${reset}`,
+				)} ${bar} ${theme.fg(color, `${formatPercent(usedPercent)}% used`)}${reset}`,
 			);
 		}
 		return parts.join(theme.fg("dim", "  "));
