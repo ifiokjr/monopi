@@ -64,6 +64,11 @@ export function clampPercent(value: number): number {
 	return Math.max(0, Math.min(100, value));
 }
 
+/** Format a percentage with at most one decimal place (e.g. 33.33333 → 33.3, 50 → 50). */
+export function formatPercent(value: number): string {
+	return String(Number(value.toFixed(1)));
+}
+
 // Biome-ignore lint/suspicious/noControlCharactersInRegex: ANSI escape codes use control chars by definition
 const ANSI_RE = /\x1B\[[0-9;]*[A-Za-z]|\x1B\][^\x07]*\x07|\x1B\(B/g;
 const RESET_COUNTDOWN_RE = /(\d+(?:\.\d+)?)\s*(weeks?|w|days?|d|hours?|hrs?|hr|h|minutes?|mins?|min|m)\b/g;

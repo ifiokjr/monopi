@@ -1082,6 +1082,39 @@ describe("usage-tracker extension", () => {
 			expect(widgetText).not.toContain("16.2%");
 		});
 
+		it("caps widget used-percent precision to one decimal", async () => {
+			mockFetch.mockResolvedValue(
+				makeFetchResponse({
+					body: {
+						five_hour: {
+							utilization: 16.666,
+							resets_at: new Date(Date.now() + 30_000).toISOString(),
+						},
+					},
+				}),
+			);
+
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ctx);
+
+			const widgetFactory = ctx._widgets.get("usage-tracker") as
+				| ((
+						tui: { requestRender: () => void },
+						theme: { fg: (_color: string, text: string) => string },
+				  ) => { render: (width: number) => string[] })
+				| undefined;
+			expect(widgetFactory).toBeTypeOf("function");
+
+			await runWithTimers(() => Promise.resolve());
+
+			const widget = widgetFactory?.({ requestRender: vi.fn() }, { fg: (_color: string, text: string) => text }).render(
+				160,
+			);
+			const widgetText = widget.join(" ");
+			expect(widgetText).toContain("16.7% used");
+			expect(widgetText).not.toContain("16.665");
+		});
+
 		it("shows rate limit windows from Anthropic OAuth usage endpoint", async () => {
 			mockFetch.mockResolvedValue(
 				makeFetchResponse({
