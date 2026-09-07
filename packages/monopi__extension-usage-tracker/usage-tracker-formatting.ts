@@ -64,9 +64,9 @@ export function clampPercent(value: number): number {
 	return Math.max(0, Math.min(100, value));
 }
 
-/** Format a percentage with exactly two decimal places (e.g. 33.33333 → 33.33, 50 → 50.00). */
+/** Format a percentage with at most two decimal places (trailing zeros trimmed; e.g. 33.33333 → 33.33, 16.7 → 16.7, 50 → 50). */
 export function formatPercent(value: number): string {
-	return value.toFixed(2);
+	return String(Number(value.toFixed(2)));
 }
 
 // Biome-ignore lint/suspicious/noControlCharactersInRegex: ANSI escape codes use control chars by definition

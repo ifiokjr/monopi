@@ -938,10 +938,10 @@ describe("usage-tracker extension", () => {
 			const text = result.content[0].text;
 			expect(text).toContain("Ollama Rate Limits:");
 			expect(text).toContain("Session (5h)");
-			expect(text).toContain("99.50% left");
+			expect(text).toContain("99.5% left");
 			expect(text).toContain("Weekly (7d)");
-			expect(text).toContain("17.30% left");
-			expect(text).toContain("75.00% left");
+			expect(text).toContain("17.3% left");
+			expect(text).toContain("75% left");
 			expect(text).toContain("billed the API-equivalent of $20.00 over the last 4 weeks");
 			expect(text).toContain("Cloud usage endpoint reachable.");
 		});
@@ -1078,11 +1078,11 @@ describe("usage-tracker extension", () => {
 			);
 			const widgetText = widget.join(" ");
 			expect(widgetText).toContain("Weekly (7d)");
-			expect(widgetText).toContain("83.80% used");
+			expect(widgetText).toContain("83.8% used");
 			expect(widgetText).not.toContain("16.2%");
 		});
 
-		it("renders widget used-percent with two decimal places", async () => {
+		it("never renders widget used-percent with more than two decimal places", async () => {
 			mockFetch.mockResolvedValue(
 				makeFetchResponse({
 					body: {
@@ -1113,6 +1113,7 @@ describe("usage-tracker extension", () => {
 			const widgetText = widget.join(" ");
 			expect(widgetText).toContain("16.67% used");
 			expect(widgetText).not.toContain("16.665");
+			expect(widgetText).not.toContain(".00%");
 		});
 
 		it("shows rate limit windows from Anthropic OAuth usage endpoint", async () => {
@@ -1180,7 +1181,7 @@ describe("usage-tracker extension", () => {
 			const result = await runWithTimers(() => tool.execute("id", { format: "detailed" }, undefined, undefined, ctx));
 			const text = result.content[0].text;
 			expect(text).toContain("7-day Sonnet");
-			expect(text).toContain("99.00% left");
+			expect(text).toContain("99% left");
 			expect(text).toContain("(1% used)");
 		});
 
@@ -1220,7 +1221,7 @@ describe("usage-tracker extension", () => {
 			const text = result.content[0].text;
 
 			expect(text).toContain("5-hour");
-			expect(text).toContain("60.00% left");
+			expect(text).toContain("60% left");
 		});
 
 		it("restores cached Anthropic windows across restarts when the live probe is rate-limited", async () => {
@@ -1254,7 +1255,7 @@ describe("usage-tracker extension", () => {
 
 			expect(text).toContain("Anthropic Rate Limits:");
 			expect(text).toContain("7-day Sonnet");
-			expect(text).toContain("72.00% left");
+			expect(text).toContain("72% left");
 			expect(text).toContain("Showing last known window values");
 		});
 
@@ -1370,7 +1371,7 @@ describe("usage-tracker extension", () => {
 			const result = await runWithTimers(() => tool.execute("id", { format: "detailed" }, undefined, undefined, ctx));
 			const text = result.content[0].text;
 			expect(text).toContain("Subscription quota");
-			expect(text).toContain("100.00% left");
+			expect(text).toContain("100% left");
 			expect(text).toContain("Tier reports unlimited coding assistant capacity");
 		});
 
@@ -1848,7 +1849,7 @@ describe("usage-tracker extension", () => {
 			);
 			const rendered = component?.render(200).join("\n") ?? "";
 			expect(rendered).toContain("Anthropic");
-			expect(rendered).toContain("28.00% used");
+			expect(rendered).toContain("28% used");
 		});
 
 		it("shows only the current provider in the widget when multiple providers have cached usage", async () => {
@@ -1897,7 +1898,7 @@ describe("usage-tracker extension", () => {
 			);
 			const rendered = component?.render(200).join("\n") ?? "";
 			expect(rendered).toContain("OpenAI");
-			expect(rendered).toContain("39.00% used");
+			expect(rendered).toContain("39% used");
 			expect(rendered).not.toContain("Anthropic");
 		});
 
