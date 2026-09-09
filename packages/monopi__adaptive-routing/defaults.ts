@@ -3,6 +3,7 @@ import type {
 	AdaptiveRoutingExplanationCode,
 	FallbackGroupPolicy,
 	IntentRoutingPolicy,
+	QuotaFailoverConfig,
 	RouteIntent,
 } from "./types.js";
 
@@ -87,6 +88,17 @@ export const DEFAULT_FALLBACK_GROUPS: Record<string, FallbackGroupPolicy> = {
 	},
 };
 
+export const DEFAULT_QUOTA_FAILOVER_CONFIG: QuotaFailoverConfig = {
+	autoMirror: true,
+	enabled: false,
+	mirrorSets: [],
+	onUnknownQuota: "stay",
+	requireMirrorAbovePct: 20,
+	returnHome: true,
+	staleAfterMinutes: 10,
+	switchBelowPct: 5,
+};
+
 export const DEFAULT_ADAPTIVE_ROUTING_CONFIG: AdaptiveRoutingConfig = {
 	delegatedModelSelection: {
 		allowSmallContextForSmallTasks: true,
@@ -154,6 +166,7 @@ export const DEFAULT_ADAPTIVE_ROUTING_CONFIG: AdaptiveRoutingConfig = {
 		excluded: [],
 		ranked: [],
 	},
+	quotaFailover: { ...DEFAULT_QUOTA_FAILOVER_CONFIG },
 	providerReserves: {
 		"cursor-agent": {
 			allowOverrideForPeak: true,

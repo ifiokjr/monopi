@@ -5,6 +5,23 @@ export type AdaptiveRoutingTelemetryMode = "off" | "local" | "export";
 export type AdaptiveRoutingPrivacyLevel = "minimal" | "redacted" | "full-local";
 export type QuotaConfidence = "authoritative" | "estimated" | "unknown";
 
+export type QuotaFailoverUnknownPolicy = "stay" | "switch";
+
+export type QuotaFailoverAction =
+	| {
+			type: "keep";
+			reason: "no-set" | "quota-unknown" | "healthy" | "no-mirror" | "locked";
+	  }
+	| {
+			type: "switch";
+			reason: "exhausted" | "return-home";
+			from: string;
+			to: string;
+			fromRemainingPct?: number;
+			toRemainingPct?: number;
+			windowLabel?: string;
+	  };
+
 export type RouteIntent =
 	| "quick-qna"
 	| "planning"
@@ -114,6 +131,31 @@ export interface DelegatedModelSelectionConfig {
 	roleOverrides: Record<string, DelegatedSelectionOverride>;
 }
 
+/**
+ * Same-model-different-provider failover.
+ *
+ * When the active model belongs to a mirror set and its provider's most
+ * constrained quota window drops to `switchBelowPct`, switch to a mirror on a
+ * provider that still has at least `requireMirrorAbovePct` remaining.
+ */
+export interface QuotaFailoverConfig {
+	enabled: boolean;
+	/** Ordered mirror sets of full model ids (`provider/model`). First entry is home. */
+	mirrorSets: string[][];
+	/** Derive extra mirror sets from identical model ids across providers. */
+	autoMirror: boolean;
+	/** Switch away when the active provider's most-constrained window is at or below this. */
+	switchBelowPct: number;
+	/** A mirror only qualifies when its provider has at least this remaining. */
+	requireMirrorAbovePct: number;
+	/** Switch back to the set home once it recovers above `requireMirrorAbovePct`. */
+	returnHome: boolean;
+	/** "stay" keeps the current model when quota data is missing or stale. */
+	onUnknownQuota: QuotaFailoverUnknownPolicy;
+	/** Quota snapshots older than this count as unknown. */
+	staleAfterMinutes: number;
+}
+
 export interface AdaptiveRoutingConfig {
 	mode: AdaptiveRoutingMode;
 	routerModels: string[];
@@ -124,6 +166,7 @@ export interface AdaptiveRoutingConfig {
 	taskClasses: Record<string, TaskClassPolicy>;
 	providerReserves: Partial<Record<string, ProviderReservePolicy>>;
 	fallbackGroups: Record<string, FallbackGroupPolicy>;
+	quotaFailover: QuotaFailoverConfig;
 	delegatedRouting: DelegatedRoutingConfig;
 	delegatedModelSelection: DelegatedModelSelectionConfig;
 }
@@ -192,6 +235,10 @@ export interface ProviderUsageState {
 		{
 			confidence: QuotaConfidence;
 			remainingPct?: number;
+			/** Epoch ms of the last successful probe; used for staleness checks. */
+			probedAt?: number;
+			/** Label of the most-constrained window (e.g. "Session (5h)"). */
+			windowLabel?: string;
 		}
 	>;
 	sessionCost?: number;
@@ -296,12 +343,25 @@ export interface RouteShadowDisagreementTelemetryEvent extends TelemetryEventBas
 	};
 }
 
+export interface RouteQuotaFailoverTelemetryEvent extends TelemetryEventBase {
+	type: "route_quota_failover";
+	from: string;
+	to: string;
+	fromRemainingPct?: number;
+	toRemainingPct?: number;
+	windowLabel?: string;
+	reason: "exhausted" | "return-home";
+	/** False when the switch was suggested in shadow mode but not applied. */
+	applied: boolean;
+}
+
 export type AdaptiveRoutingTelemetryEvent =
 	| RouteDecisionTelemetryEvent
 	| RouteOverrideTelemetryEvent
 	| RouteFeedbackTelemetryEvent
 	| RouteOutcomeTelemetryEvent
-	| RouteShadowDisagreementTelemetryEvent;
+	| RouteShadowDisagreementTelemetryEvent
+	| RouteQuotaFailoverTelemetryEvent;
 
 export interface AdaptiveRoutingStats {
 	decisions: number;
