@@ -3,7 +3,7 @@ Usage Tracker Extension: Rate Limit & Cost Monitor for pi
 
 <!-- {=extensionsUsageTrackerOverview} -->
 
-The usage-tracker extension is a CodexBar-inspired provider quota and cost monitor for pi. It shows provider-level rate limits and usage windows for Anthropic, OpenAI, Google, and Ollama Cloud using pi-managed auth, while also tracking per-model token usage and session costs locally, with Ollama Cloud requests costed at Ollama's published per-token API rates.
+The usage-tracker extension is a CodexBar-inspired provider quota and cost monitor for pi. It shows provider-level rate limits and usage windows for Anthropic, OpenAI, Google, Ollama Cloud, and Z.AI (GLM Coding Plan) using pi-managed auth, while also tracking per-model token usage and session costs locally, with Ollama Cloud requests costed at Ollama's published per-token API rates.
 
 <!-- {/extensionsUsageTrackerOverview} -->
 
@@ -69,6 +69,7 @@ import {
 	probeGoogleDirect,
 	probeOllamaDirect,
 	probeOpenAIDirect,
+	probeZaiDirect,
 	providerDisplayName,
 	readPiAuth,
 	shouldPreserveStaleWindows,
@@ -548,6 +549,12 @@ export default function usageTracker(pi: ExtensionAPI) {
 			case "ollama-cloud": {
 				return "ollama";
 			}
+			case "zai":
+			case "zai-coding-plan":
+			case "zhipuai":
+			case "zhipuai-coding-plan": {
+				return "zai";
+			}
 			default: {
 				return null;
 			}
@@ -558,6 +565,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 	const OPENAI_MODEL_RE = /gpt|o1|o3|o4|codex/;
 	const GOOGLE_MODEL_RE = /gemini|flash|pro-exp|antigravity/;
 	const OLLAMA_MODEL_RE = /ollama/;
+	const ZAI_MODEL_RE = /zai|zhipu/;
 
 	function inferProviderFromModel(model: { id?: unknown; provider?: unknown } | null | undefined): ProviderKey | null {
 		const explicitProvider = normalizeProviderKey(model?.provider);
@@ -584,6 +592,10 @@ export default function usageTracker(pi: ExtensionAPI) {
 
 		if (OLLAMA_MODEL_RE.test(id)) {
 			return "ollama";
+		}
+
+		if (ZAI_MODEL_RE.test(id)) {
+			return "zai";
 		}
 
 		return null;
@@ -1077,6 +1089,20 @@ export default function usageTracker(pi: ExtensionAPI) {
 				return;
 			}
 
+			if (provider === "zai") {
+				// Z.AI coding plan keys are stored as api_key entries without OAuth
+				// access tokens, so resolve the raw key from auth.json or env vars.
+				const zaiEntry = auth["zai"];
+				const envToken = process.env.ZAI_API_KEY?.trim() || process.env.ZHIPU_API_KEY?.trim() || null;
+				const token = envToken ?? zaiEntry?.key?.trim() ?? null;
+				const limits = await probeZaiDirect(token || null);
+				rateLimits.set(provider, limits);
+				scheduleRateLimitCacheSave();
+				lastProbeTime.set(provider, Date.now());
+				requestUsageWidgetRender();
+				return;
+			}
+
 			let authKey: string | null = null;
 			let authEntry: PiAuthEntry | undefined;
 
@@ -1201,6 +1227,13 @@ export default function usageTracker(pi: ExtensionAPI) {
 		if (shouldProbeOllama && !seen.has("ollama")) {
 			seen.add("ollama");
 			probeProvider("ollama", force);
+		}
+
+		const shouldProbeZai =
+			Boolean(process.env.ZAI_API_KEY?.trim() || process.env.ZHIPU_API_KEY?.trim()) || activeProvider === "zai";
+		if (shouldProbeZai && !seen.has("zai")) {
+			seen.add("zai");
+			probeProvider("zai", force);
 		}
 	}
 

@@ -19,6 +19,7 @@ export const AUTH_KEY_TO_PROVIDER: Record<string, ProviderKey> = {
 	"google-gemini-cli": "google",
 	"ollama-cloud": "ollama",
 	"openai-codex": "openai",
+	zai: "zai",
 };
 
 /** Provider API base URLs used by direct usage/rate-limit probes. */
@@ -27,6 +28,7 @@ const PROVIDER_API_BASE: Record<ProviderKey, string> = {
 	google: "https://cloudcode-pa.googleapis.com",
 	ollama: "https://ollama.com",
 	openai: "https://chatgpt.com/backend-api",
+	zai: "https://api.z.ai",
 };
 
 /**
@@ -937,6 +939,208 @@ export async function probeOllamaDirect(token: string | null): Promise<ProviderR
 	return result;
 }
 
+// ─── Z.AI (GLM Coding Plan) ───────────────────────────────────────────────────
+
+/** Z.AI monitor origins, tried in order until one accepts the API key. */
+const ZAI_MONITOR_ORIGINS = [PROVIDER_API_BASE.zai, "https://open.bigmodel.cn"] as const;
+
+const ZAI_MONITOR_QUOTA_PATH = "/api/monitor/usage/quota/limit";
+
+/** Undocumented-but-stable `unit` enums used by Z.AI quota limit entries. */
+const ZAI_UNIT_HOURS = 3;
+const ZAI_UNIT_WEEKS = 6;
+
+const ZAI_HOURS_PER_WEEK = 168;
+
+/**
+ * Shape of the `GET /api/monitor/usage/quota/limit` payload from Z.AI.
+ *
+ * Each `limits` entry describes one subscription quota window: `usage` is the
+ * window's total allowance, `currentValue` the consumed amount, `percentage`
+ * the used percent, and `nextResetTime` an epoch-millisecond timestamp.
+ */
+interface ZaiQuotaLimitEntry {
+	type?: unknown;
+	unit?: unknown;
+	number?: unknown;
+	usage?: unknown;
+	remaining?: unknown;
+	percentage?: unknown;
+	nextResetTime?: unknown;
+}
+
+interface ZaiQuotaPayload {
+	data?: { level?: unknown; limits?: unknown };
+}
+
+/** Map a quota entry's `unit`/`number` pair to a tracker window, or null when unrecognized. */
+function zaiWindowFromUnit(entry: ZaiQuotaLimitEntry): { label: string; windowMinutes: number } | null {
+	const count = parseFiniteNumber(entry.number);
+	if (count === null || count <= 0) {
+		return null;
+	}
+
+	const unit = parseFiniteNumber(entry.unit);
+	if (unit === ZAI_UNIT_HOURS) {
+		return {
+			label: `Session (${count}h)`,
+			windowMinutes: Math.max(1, Math.round(count * 60)),
+		};
+	}
+	if (unit === ZAI_UNIT_WEEKS) {
+		const days = Math.round(count * 7);
+		return {
+			label: `Weekly (${days}d)`,
+			windowMinutes: Math.max(1, Math.round(count * ZAI_HOURS_PER_WEEK * 60)),
+		};
+	}
+	return null;
+}
+
+/** Turn one Z.AI quota entry into a rate-limit window, or skip it when unusable. */
+function maybeAddZaiQuotaWindow(result: ProviderRateLimits, entry: unknown): void {
+	if (!entry || typeof entry !== "object") {
+		return;
+	}
+
+	const typed = entry as ZaiQuotaLimitEntry;
+
+	// Coding plans meter credits (CREDIT_LIMIT) or tokens (TOKENS_LIMIT); other
+	// types (e.g. TIME_LIMIT monthly tool budgets) are out of scope here.
+	if (typed.type !== "CREDIT_LIMIT" && typed.type !== "TOKENS_LIMIT") {
+		return;
+	}
+
+	const window = zaiWindowFromUnit(typed);
+	if (!window) {
+		return;
+	}
+
+	const allowance = parseFiniteNumber(typed.usage);
+	const remaining = parseFiniteNumber(typed.remaining);
+	const usedPercent = parseFiniteNumber(typed.percentage);
+
+	// Prefer the precise remaining/allowance ratio over the coarse integer
+	// percentage Z.AI reports.
+	let percentLeft: number | null = null;
+	if (allowance !== null && remaining !== null && allowance > 0) {
+		percentLeft = Math.round((remaining / allowance) * 1000) / 10;
+	} else if (usedPercent !== null) {
+		percentLeft = Math.round((100 - usedPercent) * 10) / 10;
+	}
+	if (percentLeft === null) {
+		return;
+	}
+
+	const resetAtMs = parseFiniteNumber(typed.nextResetTime);
+	const resetDescription =
+		resetAtMs !== null && resetAtMs > Date.now() ? countdownFromSeconds((resetAtMs - Date.now()) / 1000) : null;
+
+	upsertWindow(result.windows, {
+		label: window.label,
+		percentLeft: clampPercent(percentLeft),
+		resetDescription,
+		windowMinutes: window.windowMinutes,
+	});
+}
+
+function titleCaseZaiLevel(level: unknown): string | null {
+	if (typeof level !== "string" || level.trim().length === 0) {
+		return null;
+	}
+	const trimmed = level.trim().toLowerCase();
+	return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+}
+
+async function fetchZaiQuota(origin: string, token: string): Promise<Response> {
+	return fetch(`${origin}${ZAI_MONITOR_QUOTA_PATH}`, {
+		headers: { accept: "application/json", authorization: `Bearer ${token}` },
+		method: "GET",
+		signal: AbortSignal.timeout(PROBE_TIMEOUT_MS),
+	});
+}
+
+/**
+ * Probe Z.AI (GLM Coding Plan) quota usage.
+ *
+ * Queries the monitor endpoint Z.AI's subscription UI uses. Keys are
+ * region-specific: the global origin is tried first, and the China origin
+ * (open.bigmodel.cn) is retried when the global one rejects the key.
+ */
+// Biome-ignore lint/complexity/noExcessiveCognitiveComplexity: handles regional fallback plus per-window payload parsing.
+export async function probeZaiDirect(token: string | null): Promise<ProviderRateLimits> {
+	const result: ProviderRateLimits = {
+		account: null,
+		credits: null,
+		error: null,
+		note: null,
+		plan: token ? "Coding Plan" : null,
+		probedAt: Date.now(),
+		provider: "zai",
+		windows: [],
+	};
+
+	if (!token) {
+		result.note = "Z.AI auth not configured. Set ZAI_API_KEY or run pi login.";
+		return result;
+	}
+
+	try {
+		// Keys are region-specific: try the global origin first and retry the
+		// China origin only when the global one rejects or can't serve the key.
+		let response: Response | null = null;
+		for (const origin of ZAI_MONITOR_ORIGINS) {
+			let attempt: Response | null = null;
+			try {
+				attempt = await fetchZaiQuota(origin, token);
+			} catch {
+				attempt = null;
+			}
+			if (attempt) {
+				response = attempt;
+				if (attempt.status !== 401 && attempt.status !== 403 && attempt.status !== 404) {
+					break;
+				}
+			}
+		}
+
+		if (!response) {
+			result.note = "Z.AI quota endpoint unavailable.";
+		} else if (response.status === 401 || response.status === 403) {
+			result.error = "Z.AI auth was rejected. Check the coding plan API key.";
+		} else if (!response.ok) {
+			result.note = `Z.AI quota endpoint returned ${response.status}.`;
+		} else {
+			const payload = (await response.json()) as ZaiQuotaPayload;
+			const limits = payload.data?.limits;
+			if (Array.isArray(limits)) {
+				for (const entry of limits) {
+					maybeAddZaiQuotaWindow(result, entry);
+				}
+			}
+
+			const level = titleCaseZaiLevel(payload.data?.level);
+			if (level) {
+				result.plan = level;
+			}
+
+			result.note = "Z.AI quota endpoint reachable.";
+		}
+
+		if (result.windows.length === 0 && !result.error) {
+			result.note = appendNote(result.note, "Z.AI quota data is unavailable, so remaining plan limits are unknown.");
+		}
+	} catch (error) {
+		if (error instanceof Error && error.name === "TimeoutError") {
+			result.error = "Z.AI quota probe timed out";
+		} else {
+			result.error = error instanceof Error ? error.message : String(error);
+		}
+	}
+
+	return result;
+}
+
 export function hasProviderDisplayData(rl: ProviderRateLimits): boolean {
 	return rl.windows.length > 0 || rl.credits !== null || Boolean(rl.account || rl.plan || rl.note || rl.error);
 }
@@ -966,6 +1170,9 @@ export function providerDisplayName(provider: ProviderKey): string {
 		}
 		case "ollama": {
 			return "Ollama";
+		}
+		case "zai": {
+			return "Z.AI";
 		}
 	}
 }
