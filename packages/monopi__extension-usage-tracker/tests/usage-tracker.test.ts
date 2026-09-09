@@ -297,6 +297,7 @@ import { resetSafeModeStateForTests, setSafeModeState } from "@monopi/extension-
 import { existsSync, mkdirSync, promises as fsPromises, readFileSync, writeFileSync } from "node:fs";
 
 import usageTracker, { flushPendingWrites } from "../index.js";
+import { probeZaiDirect } from "../usage-tracker-providers.js";
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
@@ -805,6 +806,21 @@ describe("usage-tracker extension", () => {
 			expect(mockFetch.mock.calls.length).toBeGreaterThanOrEqual(initialCallCount);
 		});
 
+		it("infers the Z.AI provider from a GLM model id without an explicit provider", async () => {
+			process.env.ZAI_API_KEY = "test-key";
+			ctx.model = { id: "zai/glm-5.1" } as any;
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ctx);
+
+			await vi.advanceTimersByTimeAsync(500);
+
+			const fetchCalls = mockFetch.mock.calls;
+			const zaiCall = fetchCalls.find((c: any[]) => String(c[0]).includes("api.z.ai/api/monitor/usage/quota/limit"));
+			expect(zaiCall).toBeDefined();
+
+			delete process.env.ZAI_API_KEY;
+		});
+
 		it("shows no-auth note when auth.json has no entry for provider", async () => {
 			(readFileSync as ReturnType<typeof vi.fn>).mockImplementation((path: string) => {
 				if (String(path).includes("auth.json")) {
@@ -820,6 +836,21 @@ describe("usage-tracker extension", () => {
 			const result = await runWithTimers(() => tool.execute("id", { format: "detailed" }, undefined, undefined, ctx));
 			const text = result.content[0].text;
 			expect(text).toContain("No pi auth configured for Anthropic");
+		});
+
+		it("triggers Z.AI quota probe when using a GLM coding plan model", async () => {
+			process.env.ZAI_API_KEY = "test-key";
+			ctx.model = { id: "zai-coding-plan/glm-5.1", provider: "zai-coding-plan" } as any;
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ctx);
+
+			await vi.advanceTimersByTimeAsync(500);
+
+			const fetchCalls = mockFetch.mock.calls;
+			const zaiCall = fetchCalls.find((c: any[]) => String(c[0]).includes("api.z.ai/api/monitor/usage/quota/limit"));
+			expect(zaiCall).toBeDefined();
+
+			delete process.env.ZAI_API_KEY;
 		});
 	});
 
@@ -1034,6 +1065,150 @@ describe("usage-tracker extension", () => {
 			const text = result.content[0].text;
 			expect(text).toContain("Cloud auth was rejected");
 			expect(text).toContain("remaining account limits are unknown");
+		});
+
+		const makeZaiQuotaBody = () => ({
+			code: 200,
+			msg: "Operation successful",
+			success: true,
+			data: {
+				level: "max",
+				limits: [
+					{
+						type: "CREDIT_LIMIT",
+						unit: 3,
+						number: 5,
+						usage: 28_000,
+						currentValue: 816,
+						remaining: 27_183,
+						percentage: 2,
+						nextResetTime: Date.now() + 3_600_000,
+					},
+					{
+						type: "CREDIT_LIMIT",
+						unit: 6,
+						number: 1,
+						usage: 140_000,
+						currentValue: 816,
+						remaining: 139_183,
+						percentage: 1,
+						nextResetTime: Date.now() + 600_000_000,
+					},
+				],
+			},
+		});
+
+		it("shows Z.AI coding plan 5-hour and weekly quota windows", async () => {
+			delete process.env.ZAI_API_KEY;
+			delete process.env.ZHIPU_API_KEY;
+			(readFileSync as ReturnType<typeof vi.fn>).mockImplementation((path: string) => {
+				if (String(path).includes("auth.json")) {
+					return makeAuthJson({ zai: { type: "api_key", key: "test-zai-key" } });
+				}
+				return "{}";
+			});
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("api.z.ai/api/monitor/usage/quota/limit")) {
+					return Promise.resolve(makeFetchResponse({ body: makeZaiQuotaBody() }));
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const zaiCtx = createMockCtx();
+			zaiCtx.model = { id: "glm-5.1", provider: "zai-coding-plan" };
+
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, zaiCtx);
+
+			const zaiCall = mockFetch.mock.calls.find((c: any[]) =>
+				String(c[0]).includes("api.z.ai/api/monitor/usage/quota/limit"),
+			);
+			expect(zaiCall).toBeDefined();
+			expect((zaiCall as any[])?.[1]?.headers?.authorization).toBe("Bearer test-zai-key");
+
+			const tool = pi._tools.get("usage_report");
+			const result = await runWithTimers(() =>
+				tool.execute("id", { format: "detailed" }, undefined, undefined, zaiCtx),
+			);
+			const text = result.content[0].text;
+			expect(text).toContain("Z.AI Rate Limits:");
+			expect(text).toContain("Session (5h)");
+			expect(text).toContain("97.1% left");
+			expect(text).toContain("Weekly (7d)");
+			expect(text).toContain("99.4% left");
+			expect(text).toContain("resets in ");
+			expect(text).toContain("Z.AI quota endpoint reachable.");
+		});
+
+		it("falls back to the China monitor endpoint when the global one rejects the key", async () => {
+			process.env.ZAI_API_KEY = "test-key";
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("open.bigmodel.cn/api/monitor/usage/quota/limit")) {
+					return Promise.resolve(makeFetchResponse({ body: makeZaiQuotaBody() }));
+				}
+				if (url.includes("api.z.ai/api/monitor/usage/quota/limit")) {
+					return Promise.resolve(makeFetchResponse({ status: 401, ok: false }));
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const zaiCtx = createMockCtx();
+			zaiCtx.model = { id: "glm-5.1", provider: "zai-coding-plan" };
+
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, zaiCtx);
+
+			const tool = pi._tools.get("usage_report");
+			const result = await runWithTimers(() =>
+				tool.execute("id", { format: "detailed" }, undefined, undefined, zaiCtx),
+			);
+			const text = result.content[0].text;
+			expect(text).toContain("Z.AI Rate Limits:");
+			expect(text).toContain("Session (5h)");
+			expect(text).toContain("Weekly (7d)");
+
+			delete process.env.ZAI_API_KEY;
+		});
+
+		it("reports rejected Z.AI credentials after both regions fail", async () => {
+			process.env.ZAI_API_KEY = "test-key";
+			mockFetch.mockResolvedValue(makeFetchResponse({ status: 401, ok: false }));
+
+			const zaiCtx = createMockCtx();
+			zaiCtx.model = { id: "glm-5.1", provider: "zai-coding-plan" };
+
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, zaiCtx);
+
+			const tool = pi._tools.get("usage_report");
+			const result = await runWithTimers(() =>
+				tool.execute("id", { format: "detailed" }, undefined, undefined, zaiCtx),
+			);
+			const text = result.content[0].text;
+			expect(text).toContain("Z.AI auth was rejected");
+
+			delete process.env.ZAI_API_KEY;
+		});
+
+		it("degrades gracefully when the Z.AI quota endpoints are unreachable", async () => {
+			process.env.ZAI_API_KEY = "test-key";
+			mockFetch.mockRejectedValue(new Error("network down"));
+
+			const zaiCtx = createMockCtx();
+			zaiCtx.model = { id: "glm-5.1", provider: "zai-coding-plan" };
+
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, zaiCtx);
+
+			const tool = pi._tools.get("usage_report");
+			const result = await runWithTimers(() =>
+				tool.execute("id", { format: "detailed" }, undefined, undefined, zaiCtx),
+			);
+			const text = result.content[0].text;
+			expect(text).toContain("Z.AI quota endpoint unavailable.");
+			expect(text).toContain("remaining plan limits are unknown");
+
+			delete process.env.ZAI_API_KEY;
 		});
 
 		it("shows consumed quota percentage in the widget", async () => {
@@ -1529,6 +1704,121 @@ describe("usage-tracker extension", () => {
 
 			expect(text).toContain("OpenAI usage endpoint returned 502");
 			expect(text).toContain("rate limit details unavailable");
+		});
+	});
+
+	describe("Z.AI quota probe (unit)", () => {
+		it("reports missing auth without probing", async () => {
+			const result = await probeZaiDirect(null);
+			expect(result.note).toContain("Z.AI auth not configured");
+			expect(result.plan).toBeNull();
+			expect(result.windows).toHaveLength(0);
+		});
+
+		it("falls back to the reported percentage when credit counts are missing", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("api.z.ai/api/monitor/usage/quota/limit")) {
+					return Promise.resolve(
+						makeFetchResponse({
+							body: {
+								data: {
+									level: "pro",
+									limits: [{ type: "TOKENS_LIMIT", unit: 3, number: 5, percentage: 25 }],
+								},
+							},
+						}),
+					);
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeZaiDirect("test-key");
+			expect(result.windows).toHaveLength(1);
+			expect(result.windows[0]?.label).toBe("Session (5h)");
+			expect(result.windows[0]?.percentLeft).toBe(75);
+			expect(result.plan).toBe("Pro");
+		});
+
+		it("skips unsupported limit entries and reports unknown quotas", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("api.z.ai/api/monitor/usage/quota/limit")) {
+					return Promise.resolve(
+						makeFetchResponse({
+							body: {
+								data: {
+									level: "lite",
+									limits: [
+										42, // not an object
+										{ type: "TIME_LIMIT", unit: 3, number: 1, usage: 10, remaining: 5, percentage: 50 },
+										{ type: "CREDIT_LIMIT", unit: 9, number: 5, usage: 10, remaining: 5, percentage: 50 },
+										{ type: "CREDIT_LIMIT", unit: 3, number: 0, usage: 10, remaining: 5, percentage: 50 },
+										{ type: "CREDIT_LIMIT", unit: 3, number: 5 },
+									],
+								},
+							},
+						}),
+					);
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeZaiDirect("test-key");
+			expect(result.windows).toHaveLength(0);
+			expect(result.plan).toBe("Lite");
+			expect(result.note).toContain("Z.AI quota data is unavailable");
+		});
+
+		it("reports non-ok responses that are not auth rejections", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("api.z.ai/api/monitor/usage/quota/limit")) {
+					return Promise.resolve(makeFetchResponse({ status: 503, ok: false }));
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeZaiDirect("test-key");
+			expect(result.note).toContain("Z.AI quota endpoint returned 503");
+			expect(result.note).toContain("Z.AI quota data is unavailable");
+		});
+
+		it("surfaces a timeout error when the payload cannot be read", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("api.z.ai/api/monitor/usage/quota/limit")) {
+					const timeoutError = new Error("timed out");
+					timeoutError.name = "TimeoutError";
+					return Promise.resolve({
+						ok: true,
+						status: 200,
+						headers: { get: () => null },
+						json: async () => {
+							throw timeoutError;
+						},
+					});
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeZaiDirect("test-key");
+			expect(result.error).toBe("Z.AI quota probe timed out");
+		});
+
+		it("surfaces unexpected payload failures as probe errors", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("api.z.ai/api/monitor/usage/quota/limit")) {
+					return Promise.resolve({
+						ok: true,
+						status: 200,
+						headers: { get: () => null },
+						json: async () => {
+							throw new Error("bad payload");
+						},
+					});
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeZaiDirect("test-key");
+			expect(result.error).toBe("bad payload");
 		});
 	});
 

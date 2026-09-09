@@ -59,7 +59,7 @@ export interface WindowPace {
 	willLastToReset: boolean;
 }
 
-export type ProviderKey = "anthropic" | "openai" | "google" | "ollama";
+export type ProviderKey = "anthropic" | "openai" | "google" | "ollama" | "zai";
 
 export interface ProviderRateLimits {
 	provider: ProviderKey;
@@ -80,6 +80,8 @@ export interface PiAuthEntry {
 	accountId?: string;
 	projectId?: string;
 	email?: string;
+	/** Raw API key for `api_key`-style entries (e.g. Z.AI coding plan keys). */
+	key?: string;
 }
 
 export const COST_THRESHOLDS = [0.5, 1, 2, 5, 10, 25, 50];
