@@ -297,6 +297,7 @@ import { resetSafeModeStateForTests, setSafeModeState } from "@monopi/extension-
 import { existsSync, mkdirSync, promises as fsPromises, readFileSync, writeFileSync } from "node:fs";
 
 import usageTracker, { flushPendingWrites } from "../index.js";
+import { probeZaiDirect } from "../usage-tracker-providers.js";
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
@@ -803,6 +804,21 @@ describe("usage-tracker extension", () => {
 
 			// Should have made new probe calls
 			expect(mockFetch.mock.calls.length).toBeGreaterThanOrEqual(initialCallCount);
+		});
+
+		it("infers the Z.AI provider from a GLM model id without an explicit provider", async () => {
+			process.env.ZAI_API_KEY = "test-key";
+			ctx.model = { id: "zai/glm-5.1" } as any;
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ctx);
+
+			await vi.advanceTimersByTimeAsync(500);
+
+			const fetchCalls = mockFetch.mock.calls;
+			const zaiCall = fetchCalls.find((c: any[]) => String(c[0]).includes("api.z.ai/api/monitor/usage/quota/limit"));
+			expect(zaiCall).toBeDefined();
+
+			delete process.env.ZAI_API_KEY;
 		});
 
 		it("shows no-auth note when auth.json has no entry for provider", async () => {
@@ -1688,6 +1704,121 @@ describe("usage-tracker extension", () => {
 
 			expect(text).toContain("OpenAI usage endpoint returned 502");
 			expect(text).toContain("rate limit details unavailable");
+		});
+	});
+
+	describe("Z.AI quota probe (unit)", () => {
+		it("reports missing auth without probing", async () => {
+			const result = await probeZaiDirect(null);
+			expect(result.note).toContain("Z.AI auth not configured");
+			expect(result.plan).toBeNull();
+			expect(result.windows).toHaveLength(0);
+		});
+
+		it("falls back to the reported percentage when credit counts are missing", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("api.z.ai/api/monitor/usage/quota/limit")) {
+					return Promise.resolve(
+						makeFetchResponse({
+							body: {
+								data: {
+									level: "pro",
+									limits: [{ type: "TOKENS_LIMIT", unit: 3, number: 5, percentage: 25 }],
+								},
+							},
+						}),
+					);
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeZaiDirect("test-key");
+			expect(result.windows).toHaveLength(1);
+			expect(result.windows[0]?.label).toBe("Session (5h)");
+			expect(result.windows[0]?.percentLeft).toBe(75);
+			expect(result.plan).toBe("Pro");
+		});
+
+		it("skips unsupported limit entries and reports unknown quotas", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("api.z.ai/api/monitor/usage/quota/limit")) {
+					return Promise.resolve(
+						makeFetchResponse({
+							body: {
+								data: {
+									level: "lite",
+									limits: [
+										42, // not an object
+										{ type: "TIME_LIMIT", unit: 3, number: 1, usage: 10, remaining: 5, percentage: 50 },
+										{ type: "CREDIT_LIMIT", unit: 9, number: 5, usage: 10, remaining: 5, percentage: 50 },
+										{ type: "CREDIT_LIMIT", unit: 3, number: 0, usage: 10, remaining: 5, percentage: 50 },
+										{ type: "CREDIT_LIMIT", unit: 3, number: 5 },
+									],
+								},
+							},
+						}),
+					);
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeZaiDirect("test-key");
+			expect(result.windows).toHaveLength(0);
+			expect(result.plan).toBe("Lite");
+			expect(result.note).toContain("Z.AI quota data is unavailable");
+		});
+
+		it("reports non-ok responses that are not auth rejections", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("api.z.ai/api/monitor/usage/quota/limit")) {
+					return Promise.resolve(makeFetchResponse({ status: 503, ok: false }));
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeZaiDirect("test-key");
+			expect(result.note).toContain("Z.AI quota endpoint returned 503");
+			expect(result.note).toContain("Z.AI quota data is unavailable");
+		});
+
+		it("surfaces a timeout error when the payload cannot be read", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("api.z.ai/api/monitor/usage/quota/limit")) {
+					const timeoutError = new Error("timed out");
+					timeoutError.name = "TimeoutError";
+					return Promise.resolve({
+						ok: true,
+						status: 200,
+						headers: { get: () => null },
+						json: async () => {
+							throw timeoutError;
+						},
+					});
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeZaiDirect("test-key");
+			expect(result.error).toBe("Z.AI quota probe timed out");
+		});
+
+		it("surfaces unexpected payload failures as probe errors", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("api.z.ai/api/monitor/usage/quota/limit")) {
+					return Promise.resolve({
+						ok: true,
+						status: 200,
+						headers: { get: () => null },
+						json: async () => {
+							throw new Error("bad payload");
+						},
+					});
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeZaiDirect("test-key");
+			expect(result.error).toBe("bad payload");
 		});
 	});
 
