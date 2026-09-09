@@ -16,6 +16,32 @@ This package is intentionally separate from `@monopi/monopi` so users can opt in
 - persists local routing telemetry
 - exposes delegated routing categories that subagents can read from startup config
 - lets you describe provider assignments by category instead of hard-coding Anthropic/OpenAI defaults into agents
+- switches to an identical model on another provider when the active provider's quota runs out (`quotaFailover`)
+
+## Quota failover
+
+When the active model belongs to a mirror set and its provider's most-constrained quota window (5h or weekly, whichever is lower — from the usage tracker's `usage:limits` broadcast) drops to `switchBelowPct`, adaptive routing switches to the same model on a provider that still has at least `requireMirrorAbovePct` remaining, and returns to the home entry once it recovers. Switches apply at turn start in `auto` mode; `shadow` only suggests. A manual `/route lock` pins the model and suspends failover.
+
+```json
+{
+	"quotaFailover": {
+		"enabled": true,
+		"autoMirror": false,
+		"mirrorSets": [["ollama-cloud/glm-5.3-flash", "zai/glm-5.3-flash", "opencode-go/glm-5.3-flash"]],
+		"switchBelowPct": 5,
+		"requireMirrorAbovePct": 20,
+		"returnHome": true,
+		"onUnknownQuota": "stay",
+		"staleAfterMinutes": 10
+	}
+}
+```
+
+- `mirrorSets` — ordered sets of full model ids; the first entry is home. With `autoMirror: true`, additional sets are derived automatically from identical model ids across authenticated providers.
+- `switchBelowPct` / `requireMirrorAbovePct` — the exhaustion cliff and the minimum quota a mirror must have.
+- `onUnknownQuota: "stay"` — never fail over on missing or stale quota snapshots (`staleAfterMinutes`).
+
+Inspect the current state with `/route failover`.
 
 ## Config
 

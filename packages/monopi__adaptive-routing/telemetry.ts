@@ -7,6 +7,7 @@ import type {
 	AdaptiveRoutingStats,
 	AdaptiveRoutingTelemetryConfig,
 	AdaptiveRoutingTelemetryEvent,
+	QuotaFailoverAction,
 	RouteDecision,
 	RouteFeedbackCategory,
 } from "./types.js";
@@ -223,6 +224,25 @@ export function createFeedbackEvent(
 		sessionId,
 		timestamp: Date.now(),
 		type: "route_feedback",
+	};
+}
+
+export function createQuotaFailoverEvent(
+	action: Extract<QuotaFailoverAction, { type: "switch" }>,
+	applied: boolean,
+	sessionId?: string,
+): AdaptiveRoutingTelemetryEvent {
+	return {
+		applied,
+		from: action.from,
+		fromRemainingPct: action.fromRemainingPct,
+		reason: action.reason,
+		sessionId,
+		timestamp: Date.now(),
+		to: action.to,
+		toRemainingPct: action.toRemainingPct,
+		type: "route_quota_failover",
+		windowLabel: action.windowLabel,
 	};
 }
 

@@ -18,6 +18,8 @@ import type {
 	FallbackGroupPolicy,
 	IntentRoutingPolicy,
 	ProviderReservePolicy,
+	QuotaFailoverConfig,
+	QuotaFailoverUnknownPolicy,
 	RouteIntent,
 	RouteThinkingLevel,
 	RouteTier,
@@ -46,6 +48,7 @@ const DELEGATED_TASK_PROFILES = new Set<DelegatedTaskProfile>(["design", "planni
 const ROUTING_MODES = new Set<AdaptiveRoutingMode>(["off", "shadow", "auto"]);
 const TELEMETRY_MODES = new Set<AdaptiveRoutingTelemetryMode>(["off", "local", "export"]);
 const PRIVACY_LEVELS = new Set<AdaptiveRoutingPrivacyLevel>(["minimal", "redacted", "full-local"]);
+const QUOTA_FAILOVER_UNKNOWN_POLICIES = new Set<QuotaFailoverUnknownPolicy>(["stay", "switch"]);
 const warnedConfigMessages = new Set<string>();
 
 function warnAdaptiveRoutingConfig(configPath: string, message: string): void {
@@ -95,6 +98,7 @@ function normalizeAdaptiveRoutingConfigWithWarnings(raw: unknown): NormalizedCon
 			mode: normalizeMode(cfg.mode, fallback.mode, warnings, "mode"),
 			models: normalizeModelPreferences(cfg.models, fallback.models, warnings),
 			providerReserves: normalizeProviderReserves(cfg.providerReserves, fallback.providerReserves),
+			quotaFailover: normalizeQuotaFailover(cfg.quotaFailover, fallback.quotaFailover, warnings),
 			routerModels: normalizeStringArray(cfg.routerModels, fallback.routerModels),
 			stickyTurns: normalizeStickyTurns(cfg.stickyTurns, fallback.stickyTurns),
 			taskClasses: normalizeTaskClasses(cfg.taskClasses, fallback.taskClasses),
@@ -158,6 +162,56 @@ function normalizeModelPreferences(
 	return {
 		excluded: normalizeStringArray(cfg.excluded, fallback.excluded),
 		ranked: normalizeStringArray(cfg.ranked, fallback.ranked),
+	};
+}
+
+function normalizeQuotaFailover(
+	value: unknown,
+	fallback: QuotaFailoverConfig,
+	warnings?: string[],
+): QuotaFailoverConfig {
+	if (!value || typeof value !== "object") {
+		if (value !== undefined) {
+			warnings?.push("Skipped invalid quotaFailover section; using fallback.");
+		}
+		return { ...fallback, mirrorSets: fallback.mirrorSets.map((set) => [...set]) };
+	}
+	const cfg = value as Record<string, unknown>;
+
+	const mirrorSets: string[][] = [];
+	if (Array.isArray(cfg.mirrorSets)) {
+		for (const entry of cfg.mirrorSets) {
+			if (!Array.isArray(entry)) {
+				warnings?.push("Skipped a non-array quotaFailover.mirrorSets entry.");
+				continue;
+			}
+			const ids = entry
+				.filter((id): id is string => typeof id === "string" && id.trim().length > 0)
+				.map((id) => id.trim());
+			if (ids.length < 2) {
+				warnings?.push("Skipped a quotaFailover.mirrorSets entry with fewer than two model ids.");
+				continue;
+			}
+			mirrorSets.push(ids);
+		}
+	}
+
+	return {
+		autoMirror: typeof cfg.autoMirror === "boolean" ? cfg.autoMirror : fallback.autoMirror,
+		enabled: typeof cfg.enabled === "boolean" ? cfg.enabled : fallback.enabled,
+		mirrorSets,
+		onUnknownQuota:
+			typeof cfg.onUnknownQuota === "string" &&
+			QUOTA_FAILOVER_UNKNOWN_POLICIES.has(cfg.onUnknownQuota as QuotaFailoverUnknownPolicy)
+				? (cfg.onUnknownQuota as QuotaFailoverUnknownPolicy)
+				: fallback.onUnknownQuota,
+		requireMirrorAbovePct: normalizePercent(cfg.requireMirrorAbovePct, fallback.requireMirrorAbovePct),
+		returnHome: typeof cfg.returnHome === "boolean" ? cfg.returnHome : fallback.returnHome,
+		staleAfterMinutes:
+			typeof cfg.staleAfterMinutes === "number" && Number.isFinite(cfg.staleAfterMinutes) && cfg.staleAfterMinutes >= 1
+				? cfg.staleAfterMinutes
+				: fallback.staleAfterMinutes,
+		switchBelowPct: normalizePercent(cfg.switchBelowPct, fallback.switchBelowPct),
 	};
 }
 

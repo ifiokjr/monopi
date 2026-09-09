@@ -310,6 +310,7 @@ Purpose:
 - shadow-routing or auto-routing decisions for prompts
 - delegated startup categories for subagents when no explicit model override is set
 - telemetry and explainability around why a model/provider was picked
+- quota failover to identical models on other providers when the active provider's window is exhausted
 
 Primary commands:
 
@@ -318,6 +319,7 @@ Primary commands:
 - `/route shadow`
 - `/route off`
 - `/route explain`
+- `/route failover`
 - `/route assignments`
 - `/route why <category|role-override> [task text]`
 - `/route stats`

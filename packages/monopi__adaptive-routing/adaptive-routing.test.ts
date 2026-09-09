@@ -53,6 +53,7 @@ vi.mock("@earendil-works/pi-ai/compat", () => ({
 	})),
 }));
 
+import { DEFAULT_QUOTA_FAILOVER_CONFIG } from "./defaults.js";
 import adaptiveRoutingExtension, { resolveDelegatedAssignmentModel } from "./index.js";
 
 function sampleModel(provider: string, id: string, name = id) {
@@ -408,6 +409,7 @@ describe("adaptive routing extension", () => {
 				stickyTurns: 1,
 				telemetry: { mode: "local", privacy: "minimal" },
 				models: { ranked: [], excluded: [] },
+				quotaFailover: { ...DEFAULT_QUOTA_FAILOVER_CONFIG },
 				intents: {},
 				taskClasses: {},
 				providerReserves: {},
@@ -448,6 +450,7 @@ describe("adaptive routing extension", () => {
 				stickyTurns: 1,
 				telemetry: { mode: "local", privacy: "minimal" },
 				models: { ranked: [], excluded: [] },
+				quotaFailover: { ...DEFAULT_QUOTA_FAILOVER_CONFIG },
 				intents: {},
 				taskClasses: {},
 				providerReserves: {},
@@ -512,5 +515,400 @@ describe("adaptive routing extension", () => {
 				expect.stringContaining("openai/gpt-5.4"),
 			]),
 		);
+	});
+
+	const glmModel = (provider: string) => sampleModel(provider, "glm-5.3-flash");
+
+	function emitUsageLimits(harness: ReturnType<typeof createExtensionHarness>, providers: Record<string, unknown>) {
+		harness.pi.events.emit("usage:limits", {
+			providers,
+			sessionCost: 0,
+			rolling30dCost: 0,
+			perModel: {},
+			perSource: {},
+		});
+	}
+
+	const healthyMirrorQuota = {
+		"ollama-cloud": {
+			provider: "ollama",
+			probedAt: Date.now(),
+			windows: [
+				{ label: "Session (5h)", percentLeft: 0.4, resetDescription: "in 3h", windowMinutes: 300 },
+				{ label: "Weekly (7d)", percentLeft: 12, resetDescription: "in 2d", windowMinutes: 10_080 },
+			],
+		},
+		zai: {
+			provider: "zai",
+			probedAt: Date.now(),
+			windows: [{ label: "Session (5h)", percentLeft: 97.1, resetDescription: "in 2h", windowMinutes: 300 }],
+		},
+	};
+
+	it("switches to a mirror provider when the active model's quota is exhausted", async () => {
+		writeFileSync(
+			join(tempAgentDir, "extensions", "adaptive-routing", "config.json"),
+			`${JSON.stringify(
+				{
+					mode: "auto",
+					models: { ranked: ["ollama-cloud/glm-5.3-flash"] },
+					quotaFailover: {
+						enabled: true,
+						autoMirror: false,
+						mirrorSets: [["ollama-cloud/glm-5.3-flash", "zai/glm-5.3-flash", "opencode-go/glm-5.3-flash"]],
+					},
+				},
+				null,
+				2,
+			)}\n`,
+		);
+		const harness = createExtensionHarness();
+		harness.ctx.model = glmModel("ollama-cloud") as never;
+		harness.ctx.modelRegistry = {
+			getAvailable: () => [glmModel("ollama-cloud"), glmModel("zai"), glmModel("opencode-go")],
+			getApiKeyForProvider: async () => "key",
+		} as never;
+
+		adaptiveRoutingExtension(harness.pi as never);
+		emitUsageLimits(harness, healthyMirrorQuota);
+
+		await harness.emitAsync(
+			"before_agent_start",
+			{ type: "before_agent_start", prompt: "Continue the refactor.", systemPrompt: "system" },
+			harness.ctx,
+		);
+
+		expect(harness.ctx.model).toMatchObject({ id: "glm-5.3-flash", provider: "zai" });
+		expect(
+			harness.notifications.some((n) => n.msg.includes("Quota failover:") && n.msg.includes("zai/glm-5.3-flash")),
+		).toBe(true);
+	});
+
+	it("suggests but does not switch in shadow mode", async () => {
+		writeFileSync(
+			join(tempAgentDir, "extensions", "adaptive-routing", "config.json"),
+			`${JSON.stringify(
+				{
+					mode: "shadow",
+					quotaFailover: {
+						enabled: true,
+						autoMirror: false,
+						mirrorSets: [["ollama-cloud/glm-5.3-flash", "zai/glm-5.3-flash"]],
+					},
+				},
+				null,
+				2,
+			)}\n`,
+		);
+		const harness = createExtensionHarness();
+		harness.ctx.model = glmModel("ollama-cloud") as never;
+		harness.ctx.modelRegistry = {
+			getAvailable: () => [glmModel("ollama-cloud"), glmModel("zai")],
+			getApiKeyForProvider: async () => "key",
+		} as never;
+
+		adaptiveRoutingExtension(harness.pi as never);
+		emitUsageLimits(harness, healthyMirrorQuota);
+
+		await harness.emitAsync(
+			"before_agent_start",
+			{ type: "before_agent_start", prompt: "Continue the refactor.", systemPrompt: "system" },
+			harness.ctx,
+		);
+
+		expect(harness.ctx.model).toMatchObject({ id: "glm-5.3-flash", provider: "ollama-cloud" });
+		expect(
+			harness.notifications.some(
+				(n) => n.msg.includes("Quota failover suggestion:") && n.msg.includes("zai/glm-5.3-flash"),
+			),
+		).toBe(true);
+	});
+
+	it("keeps the current model when no quota data has arrived", async () => {
+		writeFileSync(
+			join(tempAgentDir, "extensions", "adaptive-routing", "config.json"),
+			`${JSON.stringify(
+				{
+					mode: "auto",
+					models: { ranked: ["ollama-cloud/glm-5.3-flash"] },
+					quotaFailover: { enabled: true, mirrorSets: [["ollama-cloud/glm-5.3-flash", "zai/glm-5.3-flash"]] },
+				},
+				null,
+				2,
+			)}\n`,
+		);
+		const harness = createExtensionHarness();
+		harness.ctx.model = glmModel("ollama-cloud") as never;
+		harness.ctx.modelRegistry = {
+			getAvailable: () => [glmModel("ollama-cloud"), glmModel("zai")],
+			getApiKeyForProvider: async () => "key",
+		} as never;
+
+		adaptiveRoutingExtension(harness.pi as never);
+
+		await harness.emitAsync(
+			"before_agent_start",
+			{ type: "before_agent_start", prompt: "Continue the refactor.", systemPrompt: "system" },
+			harness.ctx,
+		);
+
+		expect(harness.ctx.model).toMatchObject({ id: "glm-5.3-flash", provider: "ollama-cloud" });
+	});
+
+	it("renders mirror set status in /route failover", async () => {
+		writeFileSync(
+			join(tempAgentDir, "extensions", "adaptive-routing", "config.json"),
+			`${JSON.stringify(
+				{
+					mode: "auto",
+					quotaFailover: {
+						enabled: true,
+						autoMirror: false,
+						mirrorSets: [["ollama-cloud/glm-5.3-flash", "zai/glm-5.3-flash", "opencode-go/glm-5.3-flash"]],
+					},
+				},
+				null,
+				2,
+			)}\n`,
+		);
+		const harness = createExtensionHarness();
+		harness.ctx.model = glmModel("ollama-cloud") as never;
+		harness.ctx.modelRegistry = {
+			getAvailable: () => [glmModel("ollama-cloud"), glmModel("zai"), glmModel("opencode-go")],
+			getApiKeyForProvider: async () => "key",
+		} as never;
+
+		let renderedLines: string[] = [];
+		harness.ctx.ui.custom = vi.fn(async (factory) => {
+			const component = factory({ requestRender() {} }, null, null, () => undefined);
+			renderedLines = component.render(120);
+			return null;
+		}) as never;
+
+		adaptiveRoutingExtension(harness.pi as never);
+		emitUsageLimits(harness, healthyMirrorQuota);
+
+		await harness.commands.get("route failover")?.handler?.("", harness.ctx as never);
+
+		expect(renderedLines).toEqual(
+			expect.arrayContaining([
+				expect.stringContaining("Quota failover: switch ≤5%"),
+				expect.stringContaining("ollama-cloud/glm-5.3-flash — 0.4% left · Session (5h) ← active"),
+				expect.stringContaining("zai/glm-5.3-flash — 97.1% left"),
+				expect.stringContaining("opencode-go/glm-5.3-flash — quota unknown"),
+				expect.stringContaining("Decision now: switch → zai/glm-5.3-flash (exhausted)"),
+			]),
+		);
+	});
+
+	it("returns home once the home provider recovers and clears failover state on manual switch", async () => {
+		writeFileSync(
+			join(tempAgentDir, "extensions", "adaptive-routing", "config.json"),
+			`${JSON.stringify(
+				{
+					mode: "auto",
+					models: { ranked: ["zai/glm-5.3-flash"] },
+					quotaFailover: {
+						enabled: true,
+						autoMirror: false,
+						mirrorSets: [["ollama-cloud/glm-5.3-flash", "zai/glm-5.3-flash"]],
+					},
+				},
+				null,
+				2,
+			)}\n`,
+		);
+		const harness = createExtensionHarness();
+		harness.ctx.model = glmModel("zai") as never;
+		harness.ctx.modelRegistry = {
+			getAvailable: () => [glmModel("ollama-cloud"), glmModel("zai")],
+			getApiKeyForProvider: async () => "key",
+		} as never;
+
+		adaptiveRoutingExtension(harness.pi as never);
+		emitUsageLimits(harness, {
+			"ollama-cloud": {
+				probedAt: Date.now(),
+				windows: [{ label: "Session (5h)", percentLeft: 80, resetDescription: "in 1h", windowMinutes: 300 }],
+			},
+			zai: {
+				probedAt: Date.now(),
+				windows: [{ label: "Session (5h)", percentLeft: 40, resetDescription: "in 2h", windowMinutes: 300 }],
+			},
+		});
+
+		await harness.emitAsync(
+			"before_agent_start",
+			{ type: "before_agent_start", prompt: "Continue the refactor.", systemPrompt: "system" },
+			harness.ctx,
+		);
+
+		expect(harness.ctx.model).toMatchObject({ id: "glm-5.3-flash", provider: "ollama-cloud" });
+		expect(harness.notifications.some((n) => n.msg.includes("recovered"))).toBe(true);
+		expect(harness.statusMap.get("adaptive-routing")).toContain("\u27f2 ollama-cloud/glm-5.3-flash");
+
+		// A manual model switch clears the failover marker.
+		await harness.emitAsync("model_select", { model: { id: "glm-5.3-flash", provider: "zai" } }, harness.ctx);
+		expect(harness.statusMap.get("adaptive-routing")).not.toContain("\u27f2");
+	});
+
+	it("keeps a healthy model and reports no failover", async () => {
+		writeFileSync(
+			join(tempAgentDir, "extensions", "adaptive-routing", "config.json"),
+			`${JSON.stringify(
+				{
+					mode: "auto",
+					models: { ranked: ["ollama-cloud/glm-5.3-flash"] },
+					quotaFailover: {
+						enabled: true,
+						autoMirror: false,
+						mirrorSets: [["ollama-cloud/glm-5.3-flash", "zai/glm-5.3-flash"]],
+					},
+				},
+				null,
+				2,
+			)}\n`,
+		);
+		const harness = createExtensionHarness();
+		harness.ctx.model = glmModel("ollama-cloud") as never;
+		harness.ctx.modelRegistry = {
+			getAvailable: () => [glmModel("ollama-cloud"), glmModel("zai")],
+			getApiKeyForProvider: async () => "key",
+		} as never;
+
+		adaptiveRoutingExtension(harness.pi as never);
+		emitUsageLimits(harness, {
+			"ollama-cloud": {
+				probedAt: Date.now(),
+				windows: [{ label: "Session (5h)", percentLeft: 42, resetDescription: "in 1h", windowMinutes: 300 }],
+			},
+		});
+
+		await harness.emitAsync(
+			"before_agent_start",
+			{ type: "before_agent_start", prompt: "Continue the refactor.", systemPrompt: "system" },
+			harness.ctx,
+		);
+
+		expect(harness.ctx.model).toMatchObject({ id: "glm-5.3-flash", provider: "ollama-cloud" });
+		expect(harness.notifications.some((n) => n.msg.startsWith("Quota failover:"))).toBe(false);
+	});
+
+	it("reports failures when the mirror switch is rejected", async () => {
+		writeFileSync(
+			join(tempAgentDir, "extensions", "adaptive-routing", "config.json"),
+			`${JSON.stringify(
+				{
+					mode: "auto",
+					models: { ranked: ["ollama-cloud/glm-5.3-flash"] },
+					quotaFailover: {
+						enabled: true,
+						autoMirror: false,
+						mirrorSets: [["ollama-cloud/glm-5.3-flash", "zai/glm-5.3-flash"]],
+					},
+				},
+				null,
+				2,
+			)}\n`,
+		);
+		const harness = createExtensionHarness();
+		harness.ctx.model = glmModel("ollama-cloud") as never;
+		harness.ctx.modelRegistry = {
+			getAvailable: () => [glmModel("ollama-cloud"), glmModel("zai")],
+			getApiKeyForProvider: async () => "key",
+		} as never;
+		harness.pi.setModel = async () => false;
+
+		adaptiveRoutingExtension(harness.pi as never);
+		emitUsageLimits(harness, healthyMirrorQuota);
+
+		await harness.emitAsync(
+			"before_agent_start",
+			{ type: "before_agent_start", prompt: "Continue the refactor.", systemPrompt: "system" },
+			harness.ctx,
+		);
+
+		expect(harness.notifications.some((n) => n.msg.includes("Failed to switch to zai/glm-5.3-flash"))).toBe(true);
+	});
+
+	it("ignores malformed usage payload entries", async () => {
+		writeFileSync(
+			join(tempAgentDir, "extensions", "adaptive-routing", "config.json"),
+			`${JSON.stringify({ mode: "shadow" }, null, 2)}\n`,
+		);
+		const harness = createExtensionHarness();
+		harness.ctx.model = glmModel("zai") as never;
+		harness.ctx.modelRegistry = {
+			getAvailable: () => [glmModel("zai")],
+			getApiKeyForProvider: async () => "key",
+		} as never;
+
+		adaptiveRoutingExtension(harness.pi as never);
+		emitUsageLimits(harness, {
+			empty: { windows: [] },
+			junk: { windows: [42, { percentLeft: "not-a-number" }, { label: "no-pct" }] },
+			staleOnly: { stale: true },
+			weird: "not-an-object",
+		});
+
+		await harness.emitAsync(
+			"before_agent_start",
+			{ type: "before_agent_start", prompt: "Continue the refactor.", systemPrompt: "system" },
+			harness.ctx,
+		);
+
+		expect(harness.ctx.model).toMatchObject({ id: "glm-5.3-flash", provider: "zai" });
+	});
+
+	it("renders the disabled notice in /route failover", async () => {
+		writeFileSync(
+			join(tempAgentDir, "extensions", "adaptive-routing", "config.json"),
+			`${JSON.stringify({ mode: "auto" }, null, 2)}\n`,
+		);
+		const harness = createExtensionHarness();
+
+		let renderedLines: string[] = [];
+		harness.ctx.ui.custom = vi.fn(async (factory) => {
+			const component = factory({ requestRender() {} }, null, null, () => undefined);
+			renderedLines = component.render(120);
+			return null;
+		}) as never;
+
+		adaptiveRoutingExtension(harness.pi as never);
+		await harness.commands.get("route failover")?.handler?.("", harness.ctx as never);
+
+		expect(renderedLines).toEqual(expect.arrayContaining([expect.stringContaining("Quota failover: disabled")]));
+	});
+
+	it("renders the no-sets notice in /route failover", async () => {
+		writeFileSync(
+			join(tempAgentDir, "extensions", "adaptive-routing", "config.json"),
+			`${JSON.stringify(
+				{
+					mode: "auto",
+					quotaFailover: { enabled: true, autoMirror: false, mirrorSets: [["a/x", "b/x"]] },
+				},
+				null,
+				2,
+			)}\n`,
+		);
+		const harness = createExtensionHarness();
+		harness.ctx.model = glmModel("zai") as never;
+		harness.ctx.modelRegistry = {
+			getAvailable: () => [glmModel("zai")],
+			getApiKeyForProvider: async () => "key",
+		} as never;
+
+		let renderedLines: string[] = [];
+		harness.ctx.ui.custom = vi.fn(async (factory) => {
+			const component = factory({ requestRender() {} }, null, null, () => undefined);
+			renderedLines = component.render(120);
+			return null;
+		}) as never;
+
+		adaptiveRoutingExtension(harness.pi as never);
+		await harness.commands.get("route failover")?.handler?.("", harness.ctx as never);
+
+		expect(renderedLines).toEqual(expect.arrayContaining([expect.stringContaining("No mirror sets resolved")]));
 	});
 });

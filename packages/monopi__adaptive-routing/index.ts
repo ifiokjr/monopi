@@ -4,7 +4,10 @@ import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@e
 import type {
 	AdaptiveRoutingMode,
 	AdaptiveRoutingState,
+	NormalizedRouteCandidate,
 	ProviderUsageState,
+	QuotaFailoverAction,
+	QuotaFailoverConfig,
 	RouteDecision,
 	RouteFeedbackCategory,
 	RouteThinkingLevel,
@@ -15,12 +18,14 @@ import { readAdaptiveRoutingConfig } from "./config.js";
 import { inspectDelegatedSelection } from "./delegated-runtime.js";
 import { decideRoute } from "./engine.js";
 import { normalizeRouteCandidates } from "./normalize.js";
+import { deriveMirrorSets, resolveQuotaFailover } from "./quota-failover.js";
 import { readAdaptiveRoutingState, writeAdaptiveRoutingState } from "./state.js";
 import {
 	appendTelemetryEvent,
 	computeStats,
 	createDecisionId,
 	createFeedbackEvent,
+	createQuotaFailoverEvent,
 	formatStats,
 	hashPrompt,
 	readTelemetryEvents,
@@ -38,6 +43,10 @@ interface RuntimeState {
 	lastDecisionOverridden: boolean;
 	lastDecisionStartedAt?: number;
 	applyingRoute: boolean;
+	/** Last applied quota-failover switch, for status display. */
+	lastFailover?: { from: string; to: string; at: number };
+	/** Dedupe key for shadow-mode failover suggestions. */
+	failoverNoticeKey?: string;
 }
 
 export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
@@ -48,6 +57,8 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 		lastDecisionPromptHash: undefined,
 		lastDecisionStartedAt: undefined,
 		lastDecisionTurnCount: 0,
+		lastFailover: undefined,
+		failoverNoticeKey: undefined,
 		state: readAdaptiveRoutingState(),
 		usage: undefined,
 	};
@@ -70,10 +81,11 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 			return undefined;
 		}
 		const lockLabel = runtime.state.lock ? ` 🔒 ${runtime.state.lock.model}:${runtime.state.lock.thinking}` : "";
+		const failoverLabel = runtime.lastFailover ? ` ⟲ ${runtime.lastFailover.to}` : "";
 		const decision = runtime.lastDecision;
 		return decision
-			? `${mode} → ${decision.selectedModel}:${decision.selectedThinking}${lockLabel}`
-			: `${mode}${lockLabel}`;
+			? `${mode} → ${decision.selectedModel}:${decision.selectedThinking}${failoverLabel}${lockLabel}`
+			: `${mode}${failoverLabel}${lockLabel}`;
 	}
 
 	function updateStatus(ctx: ExtensionContext): void {
@@ -92,10 +104,7 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 		const providers: ProviderUsageState["providers"] = {};
 		if (providerPayload && typeof providerPayload === "object") {
 			for (const [provider, value] of Object.entries(providerPayload)) {
-				providers[provider] = {
-					confidence: extractQuotaConfidence(value),
-					remainingPct: extractRemainingPct(value),
-				};
+				providers[provider] = extractProviderQuota(value);
 			}
 		}
 		runtime.usage = {
@@ -151,6 +160,9 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 	});
 
 	pi.on("model_select", async (event, ctx) => {
+		if (!runtime.applyingRoute) {
+			runtime.lastFailover = undefined;
+		}
 		if (!runtime.applyingRoute && shouldRecordOverride(event, runtime.lastDecision)) {
 			appendTelemetryEvent(readAdaptiveRoutingConfig().telemetry, {
 				decisionId: runtime.lastDecision?.id,
@@ -276,17 +288,19 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 				});
 			}
 			ctx.ui.notify(`Adaptive route suggestion: ${decision.selectedModel} · ${decision.selectedThinking}`, "info");
+			await applyQuotaFailover(pi, ctx, currentModel ?? decision.selectedModel, candidates, mode, runtime);
 			updateStatus(ctx);
 			return;
 		}
 
 		await applyDecision(pi, ctx, decision, candidates, runtime);
+		await applyQuotaFailover(pi, ctx, decision.selectedModel, candidates, mode, runtime);
 		updateStatus(ctx);
 	});
 
 	const routeCommand = {
 		description:
-			"Adaptive routing controls: /route [status|on|off|shadow|auto|explain|assignments|delegated|why|lock|unlock|refresh|feedback|stats] and /route:<subcommand> aliases",
+			"Adaptive routing controls: /route [status|on|off|shadow|auto|explain|failover|assignments|delegated|why|lock|unlock|refresh|feedback|stats] and /route:<subcommand> aliases",
 		async handler(args: string, ctx: ExtensionCommandContext) {
 			const command = args.trim();
 			const [head, ...rest] = command.split(/\s+/).filter(Boolean);
@@ -377,6 +391,10 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 					await openOverlay(ctx, buildDelegatedWhyLines(readAdaptiveRoutingConfig(), ctx, rest));
 					return;
 				}
+				case "failover": {
+					await openOverlay(ctx, buildQuotaFailoverLines(readAdaptiveRoutingConfig(), ctx, runtime));
+					return;
+				}
 				case "explain": {
 					await openOverlay(ctx, buildExplanationLines(runtime.lastDecision, runtime.usage));
 					return;
@@ -424,6 +442,11 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 			description: "Explain the latest adaptive route decision.",
 			name: "route explain",
 			subcommand: "explain",
+		},
+		{
+			description: "Show quota failover mirror sets and the current failover decision.",
+			name: "route failover",
+			subcommand: "failover",
 		},
 		{
 			description: "Show delegated routing assignments.",
@@ -513,6 +536,77 @@ async function applyDecision(
 	}
 }
 
+function formatPctLeft(pct: number | undefined): string {
+	return typeof pct === "number" ? `${Math.round(pct * 10) / 10}% left` : "quota unknown";
+}
+
+function describeFailoverSwitch(action: Extract<QuotaFailoverAction, { type: "switch" }>): string {
+	const fromWindow = action.windowLabel ? ` ${action.windowLabel}` : "";
+	if (action.reason === "return-home") {
+		return `${action.from} recovered (${formatPctLeft(action.toRemainingPct)}) → returning to ${action.to}`;
+	}
+	return `${action.from}${fromWindow} at ${formatPctLeft(action.fromRemainingPct)} → ${action.to} (${formatPctLeft(action.toRemainingPct)})`;
+}
+
+async function applyQuotaFailover(
+	pi: ExtensionAPI,
+	ctx: ExtensionContext,
+	effectiveFullId: string,
+	candidates: NormalizedRouteCandidate[],
+	mode: AdaptiveRoutingMode,
+	runtime: RuntimeState,
+): Promise<void> {
+	const config = readAdaptiveRoutingConfig();
+	const failoverConfig = config.quotaFailover;
+	if (!failoverConfig.enabled || !runtime.usage) {
+		return;
+	}
+
+	const action = resolveQuotaFailover({
+		config: failoverConfig,
+		currentFullId: effectiveFullId,
+		locked: Boolean(runtime.state.lock),
+		now: Date.now(),
+		quota: runtime.usage.providers,
+		sets: deriveMirrorSets(candidates, failoverConfig),
+	});
+
+	if (action.type === "keep") {
+		if (action.reason === "healthy" || action.reason === "no-set") {
+			runtime.failoverNoticeKey = undefined;
+			runtime.lastFailover = undefined;
+		}
+		return;
+	}
+
+	const noticeKey = `${action.from}->${action.to}:${action.reason}`;
+	if (mode === "shadow") {
+		if (runtime.failoverNoticeKey !== noticeKey) {
+			runtime.failoverNoticeKey = noticeKey;
+			ctx.ui.notify(`Quota failover suggestion: ${describeFailoverSwitch(action)}`, "info");
+			appendTelemetryEvent(config.telemetry, createQuotaFailoverEvent(action, false));
+		}
+		return;
+	}
+
+	const target = candidates.find((candidate) => candidate.fullId === action.to);
+
+	runtime.applyingRoute = true;
+	try {
+		const ok = target ? await pi.setModel(target.model) : false;
+		if (!ok) {
+			ctx.ui.notify(`Failed to switch to ${action.to}.`, "error");
+			return;
+		}
+		runtime.lastFailover = { at: Date.now(), from: action.from, to: action.to };
+		runtime.failoverNoticeKey = undefined;
+		ctx.ui.notify(`Quota failover: ${describeFailoverSwitch(action)}`, "info");
+		appendTelemetryEvent(config.telemetry, createQuotaFailoverEvent(action, true));
+	} finally {
+		runtime.applyingRoute = false;
+	}
+}
+
 function shouldRecordOverride(
 	event: { model?: { provider: string; id: string } },
 	lastDecision: RouteDecision | undefined,
@@ -523,37 +617,46 @@ function shouldRecordOverride(
 	return `${event.model.provider}/${event.model.id}` !== lastDecision.selectedModel;
 }
 
-function extractQuotaConfidence(value: unknown): ProviderUsageState["providers"][string]["confidence"] {
+/**
+ * Summarize one provider's `usage:limits` entry.
+ *
+ * Reads the usage-tracker's `ProviderRateLimits` shape: `windows[].percentLeft`
+ * plus `probedAt`. `remainingPct` is the most-constrained window, with its label.
+ */
+function extractProviderQuota(value: unknown): ProviderUsageState["providers"][string] {
 	if (!value || typeof value !== "object") {
-		return "unknown";
+		return { confidence: "unknown" };
 	}
-	const typedValue = value as { windows?: unknown[]; stale?: boolean };
-	if (Array.isArray(typedValue.windows) && typedValue.windows.length > 0) {
-		return "authoritative";
+	const typed = value as { windows?: unknown[]; stale?: unknown; probedAt?: unknown };
+	if (!Array.isArray(typed.windows) || typed.windows.length === 0) {
+		return { confidence: typed.stale ? "estimated" : "unknown" };
 	}
-	if (typedValue.stale) {
-		return "estimated";
-	}
-	return "unknown";
-}
 
-function extractRemainingPct(value: unknown): number | undefined {
-	if (!value || typeof value !== "object") {
-		return undefined;
+	let minPct = Number.POSITIVE_INFINITY;
+	let windowLabel: string | undefined;
+	for (const window of typed.windows) {
+		if (!window || typeof window !== "object") {
+			continue;
+		}
+		const entry = window as { percentLeft?: unknown; label?: unknown };
+		const pct = typeof entry.percentLeft === "number" ? entry.percentLeft : Number(entry.percentLeft);
+		if (!Number.isFinite(pct)) {
+			continue;
+		}
+		if (pct < minPct) {
+			minPct = pct;
+			windowLabel = typeof entry.label === "string" ? entry.label : windowLabel;
+		}
 	}
-	const typedValue = value as { windows?: unknown[] };
-	if (!Array.isArray(typedValue.windows)) {
-		return undefined;
+	if (!Number.isFinite(minPct)) {
+		return { confidence: "unknown" };
 	}
-	const percentages = typedValue.windows
-		.map((window: unknown) =>
-			window && typeof window === "object" ? Number((window as { remainingPct?: unknown }).remainingPct) : Number.NaN,
-		)
-		.filter((pct: number) => Number.isFinite(pct));
-	if (percentages.length === 0) {
-		return undefined;
-	}
-	return Math.min(...percentages);
+	return {
+		confidence: "authoritative",
+		probedAt: typeof typed.probedAt === "number" ? typed.probedAt : undefined,
+		remainingPct: minPct,
+		windowLabel,
+	};
 }
 
 function normalizeFeedbackCategory(value: string | undefined): RouteFeedbackCategory | undefined {
@@ -571,6 +674,66 @@ function normalizeFeedbackCategory(value: string | undefined): RouteFeedbackCate
 			return undefined;
 		}
 	}
+}
+
+function buildQuotaFailoverLines(
+	config: ReturnType<typeof readAdaptiveRoutingConfig>,
+	ctx: ExtensionCommandContext,
+	runtime: RuntimeState,
+): string[] {
+	const failover = config.quotaFailover;
+	const lines: string[] = [];
+	if (!failover.enabled) {
+		lines.push("Quota failover: disabled (set quotaFailover.enabled=true in config.json)");
+		return lines;
+	}
+
+	lines.push(
+		`Quota failover: switch ≤${failover.switchBelowPct}% · mirror ≥${failover.requireMirrorAbovePct}% · returnHome ${failover.returnHome ? "on" : "off"} · unknown ${failover.onUnknownQuota} · stale ≤${failover.staleAfterMinutes}m${failover.autoMirror ? " · autoMirror on" : ""}`,
+	);
+
+	const currentFullId = ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : undefined;
+	const candidates = normalizeRouteCandidates(ctx.modelRegistry.getAvailable());
+	const sets = deriveMirrorSets(candidates, failover);
+	if (sets.length === 0) {
+		lines.push("No mirror sets resolved from the available models.");
+		return lines;
+	}
+
+	const providers = runtime.usage?.providers ?? {};
+	for (const [index, set] of sets.entries()) {
+		const origin = set.explicit ? "config" : "auto";
+		const home = set.home ? ` · home ${set.home}` : "";
+		lines.push(``);
+		lines.push(`Set ${index + 1} (${origin}${home}):`);
+		for (const member of set.members) {
+			const provider = member.slice(0, member.indexOf("/")) || member;
+			const quota = providers[provider];
+			const pct =
+				typeof quota?.remainingPct === "number" ? `${Math.round(quota.remainingPct * 10) / 10}% left` : "quota unknown";
+			const window = quota?.windowLabel ? ` · ${quota.windowLabel}` : "";
+			const active = currentFullId === member ? " ← active" : "";
+			lines.push(`  • ${member} — ${pct}${window}${active}`);
+		}
+	}
+
+	if (currentFullId) {
+		const action = resolveQuotaFailover({
+			config: failover,
+			currentFullId,
+			locked: Boolean(runtime.state.lock),
+			now: Date.now(),
+			quota: providers,
+			sets,
+		});
+		const summary =
+			action.type === "switch"
+				? `switch → ${action.to} (${action.reason})`
+				: `keep (${action.reason}${action.reason === "locked" ? " — /route lock pins the model" : ""})`;
+		lines.push(``);
+		lines.push(`Decision now: ${summary}`);
+	}
+	return lines;
 }
 
 function buildStatusLine(
