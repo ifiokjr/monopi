@@ -890,6 +890,24 @@ describe("usage-tracker extension", () => {
 
 			delete process.env.OPENCODE_API_KEY;
 		});
+
+		it("probes OpenCode Go from /usage-refresh without a stored auth entry", async () => {
+			process.env.OPENCODE_API_KEY = "test-key";
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ctx);
+
+			// Let the session_start probe settle so the refresh probe is not skipped as in-flight.
+			await vi.advanceTimersByTimeAsync(500);
+			mockFetch.mockClear();
+
+			pi._commands.get("usage-refresh").handler("", ctx);
+			await vi.advanceTimersByTimeAsync(100);
+
+			const usageCall = mockFetch.mock.calls.find((c: any[]) => String(c[0]).includes("opencode.ai/zen/go/v1/usage"));
+			expect(usageCall).toBeDefined();
+
+			delete process.env.OPENCODE_API_KEY;
+		});
 	});
 
 	describe("tool: usage_report", () => {
@@ -2007,6 +2025,47 @@ describe("usage-tracker extension", () => {
 
 			const result = await probeOpencodeDirect("test-key");
 			expect(result.error).toBe("OpenCode Go usage probe timed out");
+		});
+
+		it("skips windows that do not report a numeric percent", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("opencode.ai/zen/go/v1/usage")) {
+					return Promise.resolve(
+						makeFetchResponse({
+							body: {
+								usage: {
+									monthly: { percent: 12, status: "ok" },
+									rolling: { status: "ok" },
+									weekly: { percent: "nope", status: "ok" },
+								},
+							},
+						}),
+					);
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeOpencodeDirect("test-key");
+			expect(result.windows.map((window) => window.label)).toEqual(["Monthly (30d)"]);
+		});
+
+		it("surfaces unexpected payload failures as probe errors", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("opencode.ai/zen/go/v1/usage")) {
+					return Promise.resolve({
+						headers: { get: () => null },
+						json: async () => {
+							throw new Error("bad payload");
+						},
+						ok: true,
+						status: 200,
+					});
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeOpencodeDirect("test-key");
+			expect(result.error).toBe("bad payload");
 		});
 
 		it("restores persisted OpenCode and Z.AI windows in the report", async () => {

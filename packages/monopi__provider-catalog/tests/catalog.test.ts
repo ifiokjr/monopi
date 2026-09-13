@@ -39,6 +39,8 @@ const sampleCatalog = {
 							cache_write: 2.5,
 							tier: { type: "context", size: 256000 },
 						},
+						// Models.dev occasionally omits `tier.size`; those entries are skipped.
+						{ input: 9, output: 9, tier: { type: "context" } },
 					],
 				},
 				limit: { context: 1000000, output: 65536 },
