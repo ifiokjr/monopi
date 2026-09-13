@@ -5,7 +5,7 @@ Experimental multi-provider package for pi backed by the OpenCode `models.dev` c
 ## What it does
 
 - Registers configured API-key providers from the OpenCode catalog without flooding pi's global `/login` picker
-- Keeps provider model lists, context windows, reasoning flags, and vision support aligned with `models.dev`
+- Keeps provider model lists, context windows, reasoning flags, vision support, and per-million-token pricing (including request-wide context tiers) aligned with `models.dev`
 - Reuses live provider discovery when a provider exposes a model-list endpoint
 - Adds a scrollable `/providers login` picker with in-place search for lazy provider registration and API-key login
 - Adds `/providers ...` commands for status, listing, inspection, and catalog refreshes

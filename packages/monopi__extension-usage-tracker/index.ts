@@ -3,7 +3,7 @@ Usage Tracker Extension: Rate Limit & Cost Monitor for pi
 
 <!-- {=extensionsUsageTrackerOverview} -->
 
-The usage-tracker extension is a CodexBar-inspired provider quota and cost monitor for pi. It shows provider-level rate limits and usage windows for Anthropic, OpenAI, Google, Ollama Cloud, and Z.AI (GLM Coding Plan) using pi-managed auth, while also tracking per-model token usage and session costs locally, with Ollama Cloud requests costed at Ollama's published per-token API rates.
+The usage-tracker extension is a CodexBar-inspired provider quota and cost monitor for pi. It shows provider-level rate limits and usage windows for Anthropic, OpenAI, Google, Ollama Cloud, OpenCode Go, and Z.AI (GLM Coding Plan) using pi-managed auth, while also tracking per-model token usage and session costs locally, with Ollama Cloud and OpenCode Go requests costed at the providers' published per-token API rates.
 
 <!-- {/extensionsUsageTrackerOverview} -->
 
@@ -68,6 +68,7 @@ import {
 	probeAnthropicDirect,
 	probeGoogleDirect,
 	probeOllamaDirect,
+	probeOpencodeDirect,
 	probeOpenAIDirect,
 	probeZaiDirect,
 	providerDisplayName,
@@ -350,7 +351,9 @@ export default function usageTracker(pi: ExtensionAPI) {
 				candidate.provider === "anthropic" ||
 				candidate.provider === "openai" ||
 				candidate.provider === "google" ||
-				candidate.provider === "ollama"
+				candidate.provider === "ollama" ||
+				candidate.provider === "opencode" ||
+				candidate.provider === "zai"
 			)
 		) {
 			return null;
@@ -549,6 +552,10 @@ export default function usageTracker(pi: ExtensionAPI) {
 			case "ollama-cloud": {
 				return "ollama";
 			}
+			case "opencode":
+			case "opencode-go": {
+				return "opencode";
+			}
 			case "zai":
 			case "zai-coding-plan":
 			case "zhipuai":
@@ -565,6 +572,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 	const OPENAI_MODEL_RE = /gpt|o1|o3|o4|codex/;
 	const GOOGLE_MODEL_RE = /gemini|flash|pro-exp|antigravity/;
 	const OLLAMA_MODEL_RE = /ollama/;
+	const OPENCODE_MODEL_RE = /opencode/;
 	const ZAI_MODEL_RE = /zai|zhipu/;
 
 	function inferProviderFromModel(model: { id?: unknown; provider?: unknown } | null | undefined): ProviderKey | null {
@@ -594,6 +602,10 @@ export default function usageTracker(pi: ExtensionAPI) {
 			return "ollama";
 		}
 
+		if (OPENCODE_MODEL_RE.test(id)) {
+			return "opencode";
+		}
+
 		if (ZAI_MODEL_RE.test(id)) {
 			return "zai";
 		}
@@ -601,13 +613,21 @@ export default function usageTracker(pi: ExtensionAPI) {
 		return null;
 	}
 
-	function hasOllamaModel(models: Map<string, ModelUsage>): boolean {
+	function hasModelForProvider(models: Map<string, ModelUsage>, provider: ProviderKey): boolean {
 		for (const model of models.values()) {
-			if (normalizeProviderKey(model.provider) === "ollama") {
+			if (normalizeProviderKey(model.provider) === provider) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	/** Persist a provider probe result and refresh consumers. */
+	function storeProviderRateLimits(provider: ProviderKey, limits: ProviderRateLimits): void {
+		rateLimits.set(provider, limits);
+		scheduleRateLimitCacheSave();
+		lastProbeTime.set(provider, Date.now());
+		requestUsageWidgetRender();
 	}
 
 	function getActiveProvider(ctx: ExtensionContext | null | undefined = activeCtx): ProviderKey | null {
@@ -1082,10 +1102,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 						? await ensureFreshToken("ollama-cloud", ollamaEntry, auth)
 						: null;
 				const limits = await probeOllamaDirect(fresh?.token ?? null);
-				rateLimits.set(provider, limits);
-				scheduleRateLimitCacheSave();
-				lastProbeTime.set(provider, Date.now());
-				requestUsageWidgetRender();
+				storeProviderRateLimits(provider, limits);
 				return;
 			}
 
@@ -1096,10 +1113,27 @@ export default function usageTracker(pi: ExtensionAPI) {
 				const envToken = process.env.ZAI_API_KEY?.trim() || process.env.ZHIPU_API_KEY?.trim() || null;
 				const token = envToken ?? zaiEntry?.key?.trim() ?? null;
 				const limits = await probeZaiDirect(token || null);
-				rateLimits.set(provider, limits);
-				scheduleRateLimitCacheSave();
-				lastProbeTime.set(provider, Date.now());
-				requestUsageWidgetRender();
+				storeProviderRateLimits(provider, limits);
+				return;
+			}
+
+			if (provider === "opencode") {
+				// OpenCode Zen and Go share the same workspace key. provider-catalog
+				// stores it as an OAuth-style credential; pi's own login stores an
+				// api_key entry, so accept either shape plus the env var.
+				const goEntry = auth["opencode-go"];
+				const zenEntry = auth["opencode"];
+				const oauthKey = goEntry?.access ? "opencode-go" : zenEntry?.access ? "opencode" : null;
+				const oauthEntry = oauthKey === "opencode-go" ? goEntry : oauthKey === "opencode" ? zenEntry : undefined;
+				const refreshed = oauthKey && oauthEntry ? await ensureFreshToken(oauthKey, oauthEntry, auth) : null;
+				const token =
+					process.env.OPENCODE_API_KEY?.trim() ||
+					refreshed?.token ||
+					goEntry?.key?.trim() ||
+					zenEntry?.key?.trim() ||
+					null;
+				const limits = await probeOpencodeDirect(token || null);
+				storeProviderRateLimits(provider, limits);
 				return;
 			}
 
@@ -1179,10 +1213,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 					: "Showing last known window values.";
 			}
 
-			rateLimits.set(provider, limits);
-			scheduleRateLimitCacheSave();
-			lastProbeTime.set(provider, Date.now());
-			requestUsageWidgetRender();
+			storeProviderRateLimits(provider, limits);
 		} catch {
 			// Probe failed: keep stale data if any
 		} finally {
@@ -1223,7 +1254,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 				process.env.OLLAMA_API_KEY?.trim() || process.env.OLLAMA_HOST?.trim() || process.env.OLLAMA_HOST_CLOUD?.trim(),
 			) ||
 			activeProvider === "ollama" ||
-			hasOllamaModel(models);
+			hasModelForProvider(models, "ollama");
 		if (shouldProbeOllama && !seen.has("ollama")) {
 			seen.add("ollama");
 			probeProvider("ollama", force);
@@ -1235,6 +1266,15 @@ export default function usageTracker(pi: ExtensionAPI) {
 			seen.add("zai");
 			probeProvider("zai", force);
 		}
+
+		const shouldProbeOpencode =
+			Boolean(process.env.OPENCODE_API_KEY?.trim()) ||
+			activeProvider === "opencode" ||
+			hasModelForProvider(models, "opencode");
+		if (shouldProbeOpencode && !seen.has("opencode")) {
+			seen.add("opencode");
+			probeProvider("opencode", force);
+		}
 	}
 
 	// ─── Inter-extension event broadcasting ──────────────────────────────
@@ -1243,7 +1283,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 	 * Broadcast current usage/rate-limit data to other extensions via `pi.events`.
 	 *
 	 * Delegated-routing consumers listen on `"usage:limits"` to receive:
-	 * - Provider rate limit windows (Anthropic, OpenAI, Google rate limits)
+	 * - Provider rate limit windows (Anthropic, OpenAI, Google, Ollama Cloud, OpenCode Go, Z.AI)
 	 * - Aggregate session cost
 	 * - Per-model usage snapshots
 	 *
@@ -1913,7 +1953,7 @@ export default function usageTracker(pi: ExtensionAPI) {
 
 	pi.registerTool({
 		description:
-			"Generate a rate limit status and token usage report. Shows provider rate limits and usage windows (Anthropic, OpenAI, Google, Ollama Cloud), plus per-model token usage and API-equivalent costs. Use when the user asks about spending, rate limits, quotas, or remaining usage.",
+			"Generate a rate limit status and token usage report. Shows provider rate limits and usage windows (Anthropic, OpenAI, Google, Ollama Cloud, OpenCode Go, Z.AI), plus per-model token usage and API-equivalent costs. Use when the user asks about spending, rate limits, quotas, or remaining usage.",
 		async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
 			await loadPersistedState();
 			// Force a probe of all configured providers before reporting

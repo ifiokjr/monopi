@@ -1,4 +1,4 @@
-import type { Api, Model, OAuthCredentials } from "@earendil-works/pi-ai";
+import type { Api, Model, ModelCost, ModelCostTier, OAuthCredentials } from "@earendil-works/pi-ai";
 
 import type { SupportedProviderDefinition } from "./config.js";
 
@@ -9,12 +9,8 @@ export interface ProviderCatalogModel {
 	name: string;
 	reasoning: boolean;
 	input: ("text" | "image")[];
-	cost: {
-		input: number;
-		output: number;
-		cacheRead: number;
-		cacheWrite: number;
-	};
+	/** Per-million-token rates, including request-wide input pricing tiers when the provider publishes them. */
+	cost: ModelCost;
 	contextWindow: number;
 	maxTokens: number;
 	compat?: Model<Api>["compat"];
@@ -31,19 +27,25 @@ interface ModelsDevCatalogProvider {
 	models?: Record<string, ModelsDevCatalogModel>;
 }
 
+interface ModelsDevCatalogCostRates {
+	input?: number;
+	output?: number;
+	// Biome-ignore lint/style/useNamingConvention: External API field name.
+	cache_read?: number;
+	// Biome-ignore lint/style/useNamingConvention: External API field name.
+	cache_write?: number;
+}
+
+interface ModelsDevCatalogCostTier extends ModelsDevCatalogCostRates {
+	tier?: { type?: string; size?: number };
+}
+
 interface ModelsDevCatalogModel {
 	id?: string;
 	name?: string;
 	reasoning?: boolean;
 	attachment?: boolean;
-	cost?: {
-		input?: number;
-		output?: number;
-		// Biome-ignore lint/style/useNamingConvention: External API field name.
-		cache_read?: number;
-		// Biome-ignore lint/style/useNamingConvention: External API field name.
-		cache_write?: number;
-	};
+	cost?: ModelsDevCatalogCostRates & { tiers?: ModelsDevCatalogCostTier[] };
 	limit?: {
 		context?: number;
 		output?: number;
@@ -130,10 +132,11 @@ export async function getCatalogModels(provider: SupportedProviderDefinition): P
 			toProviderCatalogModel({
 				contextWindow: positiveNumber(model.limit?.context) ?? DEFAULT_CONTEXT_WINDOW,
 				cost: {
-					cacheRead: positiveNumber(model.cost?.cache_read) ?? 0,
-					cacheWrite: positiveNumber(model.cost?.cache_write) ?? 0,
-					input: positiveNumber(model.cost?.input) ?? 0,
-					output: positiveNumber(model.cost?.output) ?? 0,
+					cacheRead: nonNegativeNumber(model.cost?.cache_read) ?? 0,
+					cacheWrite: nonNegativeNumber(model.cost?.cache_write) ?? 0,
+					input: nonNegativeNumber(model.cost?.input) ?? 0,
+					output: nonNegativeNumber(model.cost?.output) ?? 0,
+					tiers: toModelCostTiers(model.cost?.tiers),
 				},
 				id: model.id ?? "",
 				input: model.modalities?.input?.includes("image") || model.attachment ? ["text", "image"] : ["text"],
@@ -171,7 +174,7 @@ export async function resolveProviderModels(
 	}
 
 	if (options.previous && options.previous.length > 0) {
-		return sanitizeStoredModels(options.previous);
+		return applyCatalogCost(sanitizeStoredModels(options.previous), catalogModels);
 	}
 
 	return catalogModels;
@@ -201,6 +204,28 @@ export function discoverProviderModels(
 	return discoverOpenAICompatibleModels(provider, apiKey, options);
 }
 
+/**
+ * Overlay catalog costs onto models that were persisted or discovered locally.
+ *
+ * Models saved before a pricing fix keep their old rates until the provider is
+ * refreshed, and live discovery never reports prices. Returning catalog-priced
+ * copies keeps session costs accurate whenever the catalog is available.
+ */
+function applyCatalogCost(
+	models: readonly ProviderCatalogModel[],
+	catalogModels: readonly ProviderCatalogModel[],
+): ProviderCatalogModel[] {
+	if (models.length === 0 || catalogModels.length === 0) {
+		return [...models];
+	}
+
+	const catalogById = new Map(catalogModels.map((model) => [model.id, model]));
+	return models.map((model) => {
+		const catalogModel = catalogById.get(model.id);
+		return catalogModel ? toProviderCatalogModel({ ...model, cost: catalogModel.cost }) : model;
+	});
+}
+
 export function toProviderCatalogModel(
 	model: Partial<ProviderCatalogModel> & Pick<ProviderCatalogModel, "id">,
 ): ProviderCatalogModel {
@@ -212,20 +237,63 @@ export function toProviderCatalogModel(
 	return {
 		compat: model.compat ? { ...model.compat } : undefined,
 		contextWindow,
-		cost: model.cost
-			? { ...model.cost }
-			: {
-					input: 0,
-					output: 0,
-					cacheRead: 0,
-					cacheWrite: 0,
-				},
+		cost: cloneModelCost(model.cost),
 		id: model.id,
 		input: [...input],
 		maxTokens,
 		name: model.name?.trim() || formatDisplayName(model.id),
 		reasoning: Boolean(model.reasoning),
 	};
+}
+
+/**
+ * Copy a per-million-token cost, defaulting missing rates to zero and keeping
+ * fractional prices intact. `models.dev` reports sub-cent rates (e.g. `0.003`),
+ * so integer-only helpers must never be used here.
+ */
+function cloneModelCost(cost: Partial<ModelCost> | undefined): ModelCost {
+	const tiers = cost?.tiers
+		?.filter((tier) => Number.isFinite(tier.inputTokensAbove) && tier.inputTokensAbove > 0)
+		.map((tier) => ({
+			cacheRead: tier.cacheRead,
+			cacheWrite: tier.cacheWrite,
+			input: tier.input,
+			inputTokensAbove: tier.inputTokensAbove,
+			output: tier.output,
+		}));
+
+	return {
+		cacheRead: cost?.cacheRead ?? 0,
+		cacheWrite: cost?.cacheWrite ?? 0,
+		input: cost?.input ?? 0,
+		output: cost?.output ?? 0,
+		...(tiers && tiers.length > 0 ? { tiers } : {}),
+	};
+}
+
+/** Map `models.dev` context tiers onto pi's request-wide pricing tiers. */
+function toModelCostTiers(tiers: readonly ModelsDevCatalogCostTier[] | undefined): ModelCostTier[] | undefined {
+	if (!Array.isArray(tiers) || tiers.length === 0) {
+		return undefined;
+	}
+
+	const mapped: ModelCostTier[] = [];
+	for (const tier of tiers) {
+		const inputTokensAbove = positiveNumber(tier.tier?.size);
+		if (inputTokensAbove === undefined) {
+			continue;
+		}
+
+		mapped.push({
+			cacheRead: nonNegativeNumber(tier.cache_read) ?? 0,
+			cacheWrite: nonNegativeNumber(tier.cache_write) ?? 0,
+			input: nonNegativeNumber(tier.input) ?? 0,
+			inputTokensAbove,
+			output: nonNegativeNumber(tier.output) ?? 0,
+		});
+	}
+
+	return mapped.length > 0 ? mapped : undefined;
 }
 
 function sanitizeStoredModels(models: readonly ProviderCatalogModel[]): ProviderCatalogModel[] {
@@ -420,6 +488,14 @@ function positiveNumber(value: number | undefined): number | undefined {
 		return undefined;
 	}
 	return Math.floor(value);
+}
+
+/** Keep fractional values (for per-token prices); only reject non-numbers and negatives. */
+function nonNegativeNumber(value: number | undefined): number | undefined {
+	if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
+		return undefined;
+	}
+	return value;
 }
 
 function guessReasoning(id: string): boolean {

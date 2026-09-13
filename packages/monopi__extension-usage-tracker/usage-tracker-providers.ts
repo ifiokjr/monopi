@@ -18,6 +18,8 @@ export const AUTH_KEY_TO_PROVIDER: Record<string, ProviderKey> = {
 	"google-antigravity": "google",
 	"google-gemini-cli": "google",
 	"ollama-cloud": "ollama",
+	opencode: "opencode",
+	"opencode-go": "opencode",
 	"openai-codex": "openai",
 	zai: "zai",
 };
@@ -27,6 +29,7 @@ const PROVIDER_API_BASE: Record<ProviderKey, string> = {
 	anthropic: "https://api.anthropic.com",
 	google: "https://cloudcode-pa.googleapis.com",
 	ollama: "https://ollama.com",
+	opencode: "https://opencode.ai/zen/go",
 	openai: "https://chatgpt.com/backend-api",
 	zai: "https://api.z.ai",
 };
@@ -1141,6 +1144,156 @@ export async function probeZaiDirect(token: string | null): Promise<ProviderRate
 	return result;
 }
 
+// ─── OpenCode Go ────────────────────────────────────────────────────────────
+
+/** Path of the OpenCode Go subscription usage endpoint, relative to the Go API base. */
+const OPENCODE_USAGE_PATH = "/v1/usage";
+
+/**
+ * Shape of `GET https://opencode.ai/zen/go/v1/usage`.
+ *
+ * Each window reports the *used* percentage and the timestamp it resets at.
+ * Reachability is reported through `status` (`ok` or `rate-limited`).
+ */
+interface OpencodeUsageWindow {
+	status?: unknown;
+	percent?: unknown;
+	resetsAt?: unknown;
+}
+
+interface OpencodeUsagePayload {
+	usage?: {
+		rolling?: unknown;
+		weekly?: unknown;
+		monthly?: unknown;
+	};
+}
+
+/** Window labels mirror the OpenCode Go console (rolling 5h, weekly, monthly). */
+const OPENCODE_USAGE_WINDOWS: readonly {
+	key: "rolling" | "weekly" | "monthly";
+	label: string;
+	windowMinutes: number;
+}[] = [
+	{ key: "rolling", label: "Session (5h)", windowMinutes: 300 },
+	{ key: "weekly", label: "Weekly (7d)", windowMinutes: 10_080 },
+	{ key: "monthly", label: "Monthly (30d)", windowMinutes: 43_200 },
+];
+
+/** Turn one OpenCode Go window into a rate-limit window, or skip it when unusable. */
+function maybeAddOpencodeUsageWindow(
+	result: ProviderRateLimits,
+	entry: unknown,
+	label: string,
+	windowMinutes: number,
+): "ok" | "rate-limited" | null {
+	if (!entry || typeof entry !== "object") {
+		return null;
+	}
+
+	const typed = entry as OpencodeUsageWindow;
+	const usedPercent = parseFiniteNumber(typed.percent);
+	if (usedPercent === null) {
+		return null;
+	}
+
+	// The endpoint pads `resetsAt` with a placeholder (now + window) when nothing
+	// has been used, so only show a countdown for windows with actual usage.
+	const resetRaw = typed.resetsAt;
+	const resetDescription = usedPercent > 0 && typeof resetRaw === "string" ? resetCountdown(resetRaw) : null;
+
+	upsertWindow(result.windows, {
+		label,
+		percentLeft: clampPercent(100 - usedPercent),
+		resetDescription,
+		windowMinutes,
+	});
+
+	return typed.status === "rate-limited" ? "rate-limited" : "ok";
+}
+
+/**
+ * Probe the OpenCode Go subscription quota.
+ *
+ * `GET /zen/go/v1/usage` accepts the same workspace API key as inference and
+ * returns the rolling 5-hour, weekly, and monthly subscription windows. Zen
+ * (pay-as-you-go) keys share the endpoint and receive a 403 when the workspace
+ * has no Go subscription.
+ */
+export async function probeOpencodeDirect(token: string | null): Promise<ProviderRateLimits> {
+	const result: ProviderRateLimits = {
+		account: null,
+		credits: null,
+		error: null,
+		note: null,
+		plan: null,
+		probedAt: Date.now(),
+		provider: "opencode",
+		windows: [],
+	};
+
+	if (!token) {
+		result.note = "OpenCode Go auth not configured. Set OPENCODE_API_KEY or run /login opencode-go.";
+		return result;
+	}
+
+	try {
+		const response = await fetch(`${PROVIDER_API_BASE.opencode}${OPENCODE_USAGE_PATH}`, {
+			headers: { accept: "application/json", authorization: `Bearer ${token}` },
+			method: "GET",
+			signal: AbortSignal.timeout(PROBE_TIMEOUT_MS),
+		});
+
+		if (response.status === 401) {
+			result.error = "OpenCode auth was rejected. Re-authenticate with /login opencode-go.";
+			return result;
+		}
+
+		// Zen and Go share workspace keys: a valid key without a Go subscription is 403.
+		if (response.status === 403) {
+			result.note = "OpenCode Go subscription required; the key is valid for OpenCode Zen only.";
+			return result;
+		}
+
+		if (!response.ok) {
+			result.note = `OpenCode Go usage endpoint returned ${response.status}.`;
+			return result;
+		}
+
+		const payload = (await response.json()) as OpencodeUsagePayload;
+		let rateLimited = false;
+		for (const window of OPENCODE_USAGE_WINDOWS) {
+			const status = maybeAddOpencodeUsageWindow(
+				result,
+				payload.usage?.[window.key],
+				window.label,
+				window.windowMinutes,
+			);
+			if (status === "rate-limited") {
+				rateLimited = true;
+			}
+		}
+
+		if (result.windows.length === 0) {
+			result.note = "OpenCode Go usage response did not include window data.";
+			return result;
+		}
+
+		result.plan = "Go";
+		result.note = rateLimited
+			? "OpenCode Go usage endpoint reachable; at least one window is rate-limited."
+			: "OpenCode Go usage endpoint reachable.";
+	} catch (error) {
+		if (error instanceof Error && error.name === "TimeoutError") {
+			result.error = "OpenCode Go usage probe timed out";
+		} else {
+			result.error = error instanceof Error ? error.message : String(error);
+		}
+	}
+
+	return result;
+}
+
 export function hasProviderDisplayData(rl: ProviderRateLimits): boolean {
 	return rl.windows.length > 0 || rl.credits !== null || Boolean(rl.account || rl.plan || rl.note || rl.error);
 }
@@ -1170,6 +1323,9 @@ export function providerDisplayName(provider: ProviderKey): string {
 		}
 		case "ollama": {
 			return "Ollama";
+		}
+		case "opencode": {
+			return "OpenCode";
 		}
 		case "zai": {
 			return "Z.AI";

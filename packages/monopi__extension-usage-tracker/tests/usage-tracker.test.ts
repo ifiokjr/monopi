@@ -297,7 +297,7 @@ import { resetSafeModeStateForTests, setSafeModeState } from "@monopi/extension-
 import { existsSync, mkdirSync, promises as fsPromises, readFileSync, writeFileSync } from "node:fs";
 
 import usageTracker, { flushPendingWrites } from "../index.js";
-import { probeZaiDirect } from "../usage-tracker-providers.js";
+import { probeOpencodeDirect, probeZaiDirect } from "../usage-tracker-providers.js";
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
@@ -851,6 +851,62 @@ describe("usage-tracker extension", () => {
 			expect(zaiCall).toBeDefined();
 
 			delete process.env.ZAI_API_KEY;
+		});
+
+		it("triggers the OpenCode Go usage probe when using an opencode-go model", async () => {
+			(readFileSync as ReturnType<typeof vi.fn>).mockImplementation((path: string) => {
+				if (String(path).includes("auth.json")) {
+					return makeAuthJson({
+						"opencode-go": {
+							access: "sk-opencode-test",
+							expires: Date.now() + 86_400_000,
+							refresh: "sk-opencode-test",
+							type: "oauth",
+						},
+					});
+				}
+				return "{}";
+			});
+			ctx.model = { id: "glm-5", provider: "opencode-go" } as any;
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ctx);
+
+			await vi.advanceTimersByTimeAsync(500);
+
+			const usageCall = mockFetch.mock.calls.find((c: any[]) => String(c[0]).includes("opencode.ai/zen/go/v1/usage"));
+			expect(usageCall).toBeDefined();
+		});
+
+		it("infers the OpenCode provider from a model id without an explicit provider", async () => {
+			process.env.OPENCODE_API_KEY = "test-key";
+			ctx.model = { id: "opencode-go/glm-5" } as any;
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ctx);
+
+			await vi.advanceTimersByTimeAsync(500);
+
+			const usageCall = mockFetch.mock.calls.find((c: any[]) => String(c[0]).includes("opencode.ai/zen/go/v1/usage"));
+			expect(usageCall).toBeDefined();
+
+			delete process.env.OPENCODE_API_KEY;
+		});
+
+		it("probes OpenCode Go from /usage-refresh without a stored auth entry", async () => {
+			process.env.OPENCODE_API_KEY = "test-key";
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ctx);
+
+			// Let the session_start probe settle so the refresh probe is not skipped as in-flight.
+			await vi.advanceTimersByTimeAsync(500);
+			mockFetch.mockClear();
+
+			pi._commands.get("usage-refresh").handler("", ctx);
+			await vi.advanceTimersByTimeAsync(100);
+
+			const usageCall = mockFetch.mock.calls.find((c: any[]) => String(c[0]).includes("opencode.ai/zen/go/v1/usage"));
+			expect(usageCall).toBeDefined();
+
+			delete process.env.OPENCODE_API_KEY;
 		});
 	});
 
@@ -1819,6 +1875,239 @@ describe("usage-tracker extension", () => {
 
 			const result = await probeZaiDirect("test-key");
 			expect(result.error).toBe("bad payload");
+		});
+	});
+
+	describe("OpenCode Go usage probe (unit)", () => {
+		it("reports missing auth without probing", async () => {
+			const result = await probeOpencodeDirect(null);
+			expect(result.note).toContain("OpenCode Go auth not configured");
+			expect(result.plan).toBeNull();
+			expect(result.windows).toHaveLength(0);
+			expect(mockFetch).not.toHaveBeenCalled();
+		});
+
+		it("maps rolling, weekly, and monthly windows with reset countdowns", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("opencode.ai/zen/go/v1/usage")) {
+					return Promise.resolve(
+						makeFetchResponse({
+							body: {
+								usage: {
+									monthly: { percent: 1, resetsAt: new Date(Date.now() + 86_400_000).toISOString(), status: "ok" },
+									rolling: { percent: 4, resetsAt: new Date(Date.now() + 3_600_000).toISOString(), status: "ok" },
+									weekly: { percent: 3, resetsAt: new Date(Date.now() + 172_800_000).toISOString(), status: "ok" },
+								},
+							},
+						}),
+					);
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeOpencodeDirect("test-key");
+			expect(result.plan).toBe("Go");
+			expect(result.error).toBeNull();
+			expect(result.windows.map((window) => window.label)).toEqual(["Session (5h)", "Weekly (7d)", "Monthly (30d)"]);
+			expect(result.windows.map((window) => window.percentLeft)).toEqual([96, 97, 99]);
+			expect(result.windows.map((window) => window.windowMinutes)).toEqual([300, 10_080, 43_200]);
+			expect(result.windows[0]?.resetDescription).toContain("in ");
+			expect(result.note).toContain("OpenCode Go usage endpoint reachable");
+
+			const usageCall = mockFetch.mock.calls.find((call: any[]) => String(call[0]).includes("zen/go/v1/usage"));
+			expect((usageCall?.[1] as { headers?: Record<string, string> })?.headers?.authorization).toBe("Bearer test-key");
+		});
+
+		it("drops the placeholder reset time when a window has no usage", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("opencode.ai/zen/go/v1/usage")) {
+					return Promise.resolve(
+						makeFetchResponse({
+							body: {
+								usage: {
+									rolling: { percent: 0, resetsAt: new Date(Date.now() + 18_000_000).toISOString(), status: "ok" },
+								},
+							},
+						}),
+					);
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeOpencodeDirect("test-key");
+			expect(result.windows).toHaveLength(1);
+			expect(result.windows[0]?.percentLeft).toBe(100);
+			expect(result.windows[0]?.resetDescription).toBeNull();
+		});
+
+		it("treats a 403 as a missing Go subscription rather than an auth failure", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("opencode.ai/zen/go/v1/usage")) {
+					return Promise.resolve(makeFetchResponse({ ok: false, status: 403 }));
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeOpencodeDirect("test-key");
+			expect(result.error).toBeNull();
+			expect(result.windows).toHaveLength(0);
+			expect(result.note).toContain("OpenCode Go subscription required");
+		});
+
+		it("reports a rejected key as an auth error", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("opencode.ai/zen/go/v1/usage")) {
+					return Promise.resolve(makeFetchResponse({ ok: false, status: 401 }));
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeOpencodeDirect("test-key");
+			expect(result.error).toContain("OpenCode auth was rejected");
+		});
+
+		it("reports unexpected statuses and missing window data", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("opencode.ai/zen/go/v1/usage")) {
+					return Promise.resolve(makeFetchResponse({ ok: false, status: 503 }));
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const unavailable = await probeOpencodeDirect("test-key");
+			expect(unavailable.note).toContain("OpenCode Go usage endpoint returned 503");
+
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("opencode.ai/zen/go/v1/usage")) {
+					return Promise.resolve(makeFetchResponse({ body: { usage: {} } }));
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const empty = await probeOpencodeDirect("test-key");
+			expect(empty.note).toContain("did not include window data");
+		});
+
+		it("flags rate-limited windows in the note", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("opencode.ai/zen/go/v1/usage")) {
+					return Promise.resolve(
+						makeFetchResponse({
+							body: {
+								usage: {
+									rolling: {
+										percent: 100,
+										resetsAt: new Date(Date.now() + 60_000).toISOString(),
+										status: "rate-limited",
+									},
+								},
+							},
+						}),
+					);
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeOpencodeDirect("test-key");
+			expect(result.windows[0]?.percentLeft).toBe(0);
+			expect(result.note).toContain("rate-limited");
+		});
+
+		it("surfaces probe timeouts as errors", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("opencode.ai/zen/go/v1/usage")) {
+					const timeoutError = new Error("timed out");
+					timeoutError.name = "TimeoutError";
+					return Promise.reject(timeoutError);
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeOpencodeDirect("test-key");
+			expect(result.error).toBe("OpenCode Go usage probe timed out");
+		});
+
+		it("skips windows that do not report a numeric percent", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("opencode.ai/zen/go/v1/usage")) {
+					return Promise.resolve(
+						makeFetchResponse({
+							body: {
+								usage: {
+									monthly: { percent: 12, status: "ok" },
+									rolling: { status: "ok" },
+									weekly: { percent: "nope", status: "ok" },
+								},
+							},
+						}),
+					);
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeOpencodeDirect("test-key");
+			expect(result.windows.map((window) => window.label)).toEqual(["Monthly (30d)"]);
+		});
+
+		it("surfaces unexpected payload failures as probe errors", async () => {
+			mockFetch.mockImplementation((url: string) => {
+				if (url.includes("opencode.ai/zen/go/v1/usage")) {
+					return Promise.resolve({
+						headers: { get: () => null },
+						json: async () => {
+							throw new Error("bad payload");
+						},
+						ok: true,
+						status: 200,
+					});
+				}
+				return Promise.resolve(makeFetchResponse());
+			});
+
+			const result = await probeOpencodeDirect("test-key");
+			expect(result.error).toBe("bad payload");
+		});
+
+		it("restores persisted OpenCode and Z.AI windows in the report", async () => {
+			(mockFsReadFile as ReturnType<typeof vi.fn>).mockImplementation(async (path: string) => {
+				if (String(path) === RATE_LIMIT_CACHE_PATH) {
+					return makeRateLimitCacheJson({
+						opencode: {
+							account: null,
+							credits: null,
+							error: null,
+							note: null,
+							plan: "Go",
+							probedAt: Date.now() - 1000,
+							provider: "opencode",
+							windows: [{ label: "Session (5h)", percentLeft: 88, resetDescription: "in 2h", windowMinutes: 300 }],
+						},
+						zai: {
+							account: null,
+							credits: null,
+							error: null,
+							note: null,
+							plan: "Pro",
+							probedAt: Date.now() - 1000,
+							provider: "zai",
+							windows: [{ label: "Weekly (7d)", percentLeft: 40, resetDescription: "in 3d", windowMinutes: 10_080 }],
+						},
+					});
+				}
+				return "{}";
+			});
+			mockFetch.mockResolvedValue(makeFetchResponse({ headers: { "retry-after": "120" }, ok: false, status: 429 }));
+
+			usageTracker(pi as any);
+			pi._emit("session_start", { type: "session_start" }, ctx);
+
+			const tool = pi._tools.get("usage_report");
+			const result = await runWithTimers(() => tool.execute("id", { format: "detailed" }, undefined, undefined, ctx));
+			const text = result.content[0].text;
+			expect(text).toContain("OpenCode");
+			expect(text).toContain("Session (5h)");
+			expect(text).toContain("Z.AI");
+			expect(text).toContain("Weekly (7d)");
 		});
 	});
 
