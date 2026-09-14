@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 📥 checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@v7.0.1 # v7
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -63,7 +63,7 @@ jobs:
     if: "!startsWith(github.event.head_commit.message, 'chore: release') && !startsWith(github.event.head_commit.message, 'chore(release):')"
     steps:
       - name: 📥 checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@v7.0.1 # v7
         with:
           persist-credentials: false
       - name: 📝 check for changeset
@@ -155,7 +155,7 @@ jobs:
       contents: read
     steps:
       - name: 📥 checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@v7.0.1 # v7
         with:
           persist-credentials: false
       - name: 🕸️ check dependency graph availability
@@ -183,7 +183,7 @@ jobs:
           fi
       - name: 🔍 review dependency changes
         if: steps.dependency-graph.outputs.available == 'true'
-        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        uses: actions/dependency-review-action@v5.0.0 # v5
         with:
           fail-on-severity: moderate
   actions-security:
@@ -194,24 +194,24 @@ jobs:
       contents: read # required for checkout and private-repo workflow reads
     steps:
       - name: 📥 checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@v7.0.1 # v7
         with:
           persist-credentials: false
       - name: 📦 setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        uses: pnpm/action-setup@v6.1.0 # v6
       - name: 🟢 setup node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        uses: actions/setup-node@v6.5.0 # v6
         with:
           node-version: 22
       - name: 🐹 setup go
-        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        uses: actions/setup-go@v6.5.0 # v6
         with:
           cache: false
           go-version: stable
       - name: 🧹 lint GitHub Actions workflows
         run: pnpm actions:lint
       - name: 🔐 audit GitHub Actions workflows
-        uses: zizmorcore/zizmor-action@192e21d79ab29983730a13d1382995c2307fbcaa # v0.5.7
+        uses: zizmorcore/zizmor-action@v0.6.4 # v0
         with:
           advanced-security: false
           annotations: true
@@ -225,13 +225,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 📥 checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@v7.0.1 # v7
         with:
           persist-credentials: false
       - name: 📦 setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        uses: pnpm/action-setup@v6.1.0 # v6
       - name: 🟢 setup node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        uses: actions/setup-node@v6.5.0 # v6
         with:
           node-version: 22
           cache: pnpm
@@ -244,13 +244,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 📥 checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@v7.0.1 # v7
         with:
           persist-credentials: false
       - name: 📦 setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        uses: pnpm/action-setup@v6.1.0 # v6
       - name: 🟢 setup node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        uses: actions/setup-node@v6.5.0 # v6
         with:
           node-version: 22
           cache: pnpm
@@ -263,13 +263,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 📥 checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@v7.0.1 # v7
         with:
           persist-credentials: false
       - name: 📦 setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        uses: pnpm/action-setup@v6.1.0 # v6
       - name: 🟢 setup node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        uses: actions/setup-node@v6.5.0 # v6
         with:
           node-version: 22
           cache: pnpm
@@ -284,13 +284,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 📥 checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@v7.0.1 # v7
         with:
           persist-credentials: false
       - name: 📦 setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        uses: pnpm/action-setup@v6.1.0 # v6
       - name: 🟢 setup node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        uses: actions/setup-node@v6.5.0 # v6
         with:
           node-version: 22
           cache: pnpm
@@ -310,13 +310,13 @@ jobs:
           - 24
     steps:
       - name: 📥 checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@v7.0.1 # v7
         with:
           persist-credentials: false
       - name: 📦 setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        uses: pnpm/action-setup@v6.1.0 # v6
       - name: 🟢 setup node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        uses: actions/setup-node@v6.5.0 # v6
         with:
           node-version: ${{ matrix.node }}
           cache: pnpm
@@ -334,14 +334,14 @@ jobs:
       id-token: write # required for Codecov OIDC upload
     steps:
       - name: 📥 checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@v7.0.1 # v7
         with:
           persist-credentials: false
           fetch-depth: 0
       - name: 📦 setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        uses: pnpm/action-setup@v6.1.0 # v6
       - name: 🟢 setup node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        uses: actions/setup-node@v6.5.0 # v6
         with:
           node-version: 22
           cache: pnpm
@@ -358,13 +358,13 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: pnpm tsx ./scripts/check-patch-coverage.ts --threshold 95 --lcov coverage/lcov.info
       - name: 📤 upload coverage artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@v7.0.1 # v7
         with:
           name: coverage-report
           path: coverage/
           if-no-files-found: error
       - name: 📈 upload coverage to codecov
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        uses: codecov/codecov-action@v7.0.0 # v7
         with:
           files: coverage/lcov.info
           flags: repo
@@ -382,13 +382,13 @@ jobs:
             version: 0.84.1
     steps:
       - name: 📥 checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@v7.0.1 # v7
         with:
           persist-credentials: false
       - name: 📦 setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        uses: pnpm/action-setup@v6.1.0 # v6
       - name: 🟢 setup node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        uses: actions/setup-node@v6.5.0 # v6
         with:
           node-version: 22
           cache: pnpm
@@ -401,14 +401,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 📥 checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@v7.0.1 # v7
         with:
           persist-credentials: false
           fetch-depth: 0
       - name: 📦 setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        uses: pnpm/action-setup@v6.1.0 # v6
       - name: 🟢 setup node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        uses: actions/setup-node@v6.5.0 # v6
         with:
           node-version: 22
           cache: pnpm
@@ -464,7 +464,7 @@ jobs:
           cat coverage/benchmarks/live-runtime.txt >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
       - name: 📤 upload benchmark artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@v7.0.1 # v7
         with:
           name: benchmark-report
           path: coverage/benchmarks/
@@ -486,13 +486,13 @@ jobs:
     if: "!failure() && !cancelled()"
     steps:
       - name: 📥 checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@v7.0.1 # v7
         with:
           persist-credentials: false
       - name: 📦 setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        uses: pnpm/action-setup@v6.1.0 # v6
       - name: 🟢 setup node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        uses: actions/setup-node@v6.5.0 # v6
         with:
           node-version: 22
           cache: pnpm
