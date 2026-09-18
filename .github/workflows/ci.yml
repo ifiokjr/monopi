@@ -364,7 +364,7 @@ jobs:
           path: coverage/
           if-no-files-found: error
       - name: 📈 upload coverage to codecov
-        uses: codecov/codecov-action@v7.0.0 # v7
+        uses: codecov/codecov-action@v7.1.1 # v7
         with:
           files: coverage/lcov.info
           flags: repo
