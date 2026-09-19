@@ -24,7 +24,7 @@ jobs:
       - name: 📦 setup pnpm
         uses: pnpm/action-setup@v6.1.0 # v6
       - name: 🟢 setup node
-        uses: actions/setup-node@v6.5.0 # v6
+        uses: actions/setup-node@v7.0.0 # v7
         with:
           node-version: 22
           cache: pnpm
