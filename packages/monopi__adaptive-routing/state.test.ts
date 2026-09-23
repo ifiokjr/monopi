@@ -11,7 +11,12 @@ vi.mock("@earendil-works/pi-coding-agent", () => ({
 	getAgentDir,
 }));
 
-import { getAdaptiveRoutingStatePath, readAdaptiveRoutingState, writeAdaptiveRoutingState } from "./state.js";
+import {
+	flushAdaptiveRoutingState,
+	getAdaptiveRoutingStatePath,
+	readAdaptiveRoutingState,
+	writeAdaptiveRoutingState,
+} from "./state.js";
 
 describe("adaptive routing state", () => {
 	it("reads default state when file does not exist", () => {
@@ -56,6 +61,38 @@ describe("adaptive routing state", () => {
 			const parsed = JSON.parse(raw);
 			// Should contain the last value written
 			expect(parsed.mode).toBe("off");
+		} finally {
+			vi.useRealTimers();
+			rmSync(tempDir, { recursive: true, force: true });
+		}
+	});
+
+	it("flushes a pending write immediately instead of waiting out the debounce", () => {
+		vi.useFakeTimers();
+		const tempDir = mkdtempSync(join(tmpdir(), "adaptive-routing-state-"));
+		getAgentDir.mockReturnValue(tempDir);
+
+		try {
+			writeAdaptiveRoutingState({ lock: { model: "zai/glm-5.3-flash", setAt: 1, thinking: "high" } });
+			flushAdaptiveRoutingState();
+
+			// The value is on disk before any timer fires.
+			const parsed = JSON.parse(readFileSync(getAdaptiveRoutingStatePath(), "utf-8"));
+			expect(parsed.lock.model).toBe("zai/glm-5.3-flash");
+		} finally {
+			vi.useRealTimers();
+			rmSync(tempDir, { recursive: true, force: true });
+		}
+	});
+
+	it("flushing with no pending write is a no-op", () => {
+		vi.useFakeTimers();
+		const tempDir = mkdtempSync(join(tmpdir(), "adaptive-routing-state-"));
+		getAgentDir.mockReturnValue(tempDir);
+
+		try {
+			flushAdaptiveRoutingState();
+			expect(() => readFileSync(getAdaptiveRoutingStatePath(), "utf-8")).toThrow();
 		} finally {
 			vi.useRealTimers();
 			rmSync(tempDir, { recursive: true, force: true });
