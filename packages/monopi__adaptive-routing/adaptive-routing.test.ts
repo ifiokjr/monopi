@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -1173,5 +1173,43 @@ describe("adaptive routing manual selection pinning", () => {
 
 		expect(harness.ctx.model).toMatchObject({ id: "glm-5.3-flash", provider: "ollama-cloud" });
 		expect(harness.notifications.some((n) => n.msg.startsWith("Quota failover:"))).toBe(false);
+	});
+
+	it("keeps a /route off decision made moments before the next turn", async () => {
+		writeConfig(AUTO_CONFIG);
+		const harness = createHarness();
+
+		// The mode write is debounced; a prompt arriving before the timer fires must still
+		// observe "off" and must not persist the stale "auto" back over it.
+		await harness.commands.get("route off")?.handler?.("", harness.ctx as never);
+		await startTurn(harness, "Design a better settings page UI.");
+
+		expect(harness.ctx.model).toMatchObject({ id: "gemini-2.5-flash", provider: "google" });
+		expect(harness.statusMap.has("adaptive-routing")).toBe(false);
+	});
+
+	it("persists /route on and /route shadow before the next turn reads them", async () => {
+		const statePath = join(tempAgentDir, "extensions", "adaptive-routing", "state.json");
+
+		for (const [command, expectedMode] of [
+			["route on", "auto"],
+			["route shadow", "shadow"],
+		] as const) {
+			writeConfig({ mode: "off", models: { ranked: ["anthropic/claude-opus-4.6"] } });
+			const harness = createHarness();
+
+			await harness.commands.get(command)?.handler?.("", harness.ctx as never);
+
+			// The mode must be on disk immediately, not queued behind the debounce.
+			expect(JSON.parse(readFileSync(statePath, "utf8")).mode).toBe(expectedMode);
+
+			// And the very next turn must already act on the new mode.
+			await startTurn(harness, "Design a better settings page UI.");
+			if (expectedMode === "auto") {
+				expect(harness.ctx.model).toMatchObject({ id: "claude-opus-4.6", provider: "anthropic" });
+			} else {
+				expect(harness.notifications.some((n) => n.msg.includes("Adaptive route suggestion"))).toBe(true);
+			}
+		}
 	});
 });
