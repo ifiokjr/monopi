@@ -912,3 +912,266 @@ describe("adaptive routing extension", () => {
 		expect(renderedLines).toEqual(expect.arrayContaining([expect.stringContaining("No mirror sets resolved")]));
 	});
 });
+
+describe("adaptive routing manual selection pinning", () => {
+	let tempAgentDir: string;
+
+	beforeEach(() => {
+		tempAgentDir = mkdtempSync(join(tmpdir(), "adaptive-routing-pin-"));
+		getAgentDir.mockReturnValue(tempAgentDir);
+		mkdirSync(join(tempAgentDir, "extensions", "adaptive-routing"), {
+			recursive: true,
+		});
+	});
+
+	afterEach(() => {
+		rmSync(tempAgentDir, { recursive: true, force: true });
+		vi.clearAllMocks();
+	});
+
+	function writeConfig(config: Record<string, unknown>): void {
+		writeFileSync(
+			join(tempAgentDir, "extensions", "adaptive-routing", "config.json"),
+			`${JSON.stringify(config, null, 2)}\n`,
+		);
+	}
+
+	const AUTO_CONFIG = { mode: "auto", models: { ranked: ["anthropic/claude-opus-4.6"] } };
+
+	function createHarness() {
+		const harness = createExtensionHarness();
+		harness.ctx.model = sampleModel("google", "gemini-2.5-flash", "Gemini 2.5 Flash") as never;
+		harness.ctx.modelRegistry = {
+			getAvailable: () => [
+				sampleModel("google", "gemini-2.5-flash", "Gemini 2.5 Flash"),
+				sampleModel("anthropic", "claude-opus-4.6", "Claude Opus 4.6"),
+			],
+			getApiKeyForProvider: async () => "key",
+		} as never;
+		adaptiveRoutingExtension(harness.pi as never);
+		return harness;
+	}
+
+	/** Real pi emits `model_select` from `setModel`; mirror that so the guard is exercised. */
+	function emitModelSelectOnSetModel(harness: ReturnType<typeof createExtensionHarness>) {
+		harness.pi.setModel = async (model: unknown) => {
+			const typed = model as { provider: string; id: string };
+			harness.ctx.model = typed as never;
+			await harness.emitAsync("model_select", { model: { id: typed.id, provider: typed.provider } }, harness.ctx);
+			return true;
+		};
+	}
+
+	async function startTurn(harness: ReturnType<typeof createExtensionHarness>, prompt: string) {
+		await harness.emitAsync(
+			"before_agent_start",
+			{ type: "before_agent_start", prompt, systemPrompt: "system" },
+			harness.ctx,
+		);
+	}
+
+	it("keeps a manually selected model instead of re-routing it on the next prompt", async () => {
+		writeConfig(AUTO_CONFIG);
+		const harness = createHarness();
+
+		// The user picks a model outside routing (model picker / another extension).
+		await harness.emitAsync("model_select", { model: { id: "gemini-2.5-flash", provider: "google" } }, harness.ctx);
+		await startTurn(harness, "Design a better settings page UI.");
+
+		// Without the pin the router moves this to anthropic/claude-opus-4.6.
+		expect(harness.ctx.model).toMatchObject({ id: "gemini-2.5-flash", provider: "google" });
+		expect(harness.notifications.some((n) => n.msg.includes("pinned to google/gemini-2.5-flash"))).toBe(true);
+		expect(harness.statusMap.get("adaptive-routing")).toContain("google/gemini-2.5-flash");
+	});
+
+	it("pins a selection made before any route decision exists", async () => {
+		writeConfig(AUTO_CONFIG);
+		const harness = createHarness();
+
+		await harness.emitAsync("model_select", { model: { id: "gemini-2.5-flash", provider: "google" } }, harness.ctx);
+		await startTurn(harness, "Design a better settings page UI.");
+
+		expect(harness.ctx.model).toMatchObject({ id: "gemini-2.5-flash", provider: "google" });
+	});
+
+	it("resumes automatic routing after /route unlock", async () => {
+		writeConfig(AUTO_CONFIG);
+		const harness = createHarness();
+
+		await harness.emitAsync("model_select", { model: { id: "gemini-2.5-flash", provider: "google" } }, harness.ctx);
+		await harness.commands.get("route unlock")?.handler?.("", harness.ctx as never);
+		await startTurn(harness, "Design a better settings page UI.");
+
+		expect(harness.ctx.model).toMatchObject({ id: "claude-opus-4.6", provider: "anthropic" });
+	});
+
+	it("ignores a session-restore model event", async () => {
+		writeConfig(AUTO_CONFIG);
+		const harness = createHarness();
+
+		await harness.emitAsync(
+			"model_select",
+			{ model: { id: "gemini-2.5-flash", provider: "google" }, source: "restore" },
+			harness.ctx,
+		);
+
+		expect(harness.notifications.some((n) => n.msg.includes("pinned to"))).toBe(false);
+	});
+
+	it("does not pin selections in shadow mode, which never applies a decision", async () => {
+		writeConfig({ ...AUTO_CONFIG, mode: "shadow" });
+		const harness = createHarness();
+
+		await harness.emitAsync("model_select", { model: { id: "gemini-2.5-flash", provider: "google" } }, harness.ctx);
+
+		expect(harness.notifications.some((n) => n.msg.includes("pinned to"))).toBe(false);
+	});
+
+	it("does not pin the model the router switched to itself", async () => {
+		writeConfig(AUTO_CONFIG);
+		const harness = createHarness();
+		emitModelSelectOnSetModel(harness);
+
+		await startTurn(harness, "Design a better settings page UI.");
+
+		// The router's own switch must not read as a manual selection.
+		expect(harness.ctx.model).toMatchObject({ id: "claude-opus-4.6", provider: "anthropic" });
+		expect(harness.statusMap.get("adaptive-routing")).not.toContain("\u{1f512}");
+		expect(harness.notifications.some((n) => n.msg.includes("pinned to"))).toBe(false);
+
+		// A genuine manual pick afterwards does pin.
+		await harness.emitAsync("model_select", { model: { id: "gemini-2.5-flash", provider: "google" } }, harness.ctx);
+		expect(harness.statusMap.get("adaptive-routing")).toContain("\u{1f512}");
+	});
+
+	it("keeps a pinned model even when config excludes it from routing candidates", async () => {
+		writeConfig({ mode: "auto", models: { excluded: ["google/gemini-2.5-flash"], ranked: [] } });
+		const harness = createHarness();
+
+		await harness.emitAsync("model_select", { model: { id: "gemini-2.5-flash", provider: "google" } }, harness.ctx);
+		await startTurn(harness, "Design a better settings page UI.");
+
+		expect(harness.ctx.model).toMatchObject({ id: "gemini-2.5-flash", provider: "google" });
+	});
+
+	it("does not pin a selection while routing is off", async () => {
+		writeConfig({ ...AUTO_CONFIG, mode: "off" });
+		const harness = createHarness();
+
+		await harness.emitAsync("model_select", { model: { id: "gemini-2.5-flash", provider: "google" } }, harness.ctx);
+
+		expect(harness.notifications.some((n) => n.msg.includes("pinned to"))).toBe(false);
+		expect(harness.statusMap.has("adaptive-routing")).toBe(false);
+	});
+
+	it("records a repeated selection of the same model only once", async () => {
+		writeConfig(AUTO_CONFIG);
+		const harness = createHarness();
+
+		await harness.emitAsync("model_select", { model: { id: "gemini-2.5-flash", provider: "google" } }, harness.ctx);
+		await harness.emitAsync("model_select", { model: { id: "gemini-2.5-flash", provider: "google" } }, harness.ctx);
+
+		expect(harness.notifications.filter((n) => n.msg.includes("pinned to google/gemini-2.5-flash"))).toHaveLength(1);
+	});
+
+	it("pins the active model via /route lock and clears it on unlock", async () => {
+		writeConfig(AUTO_CONFIG);
+		const harness = createHarness();
+
+		await harness.commands.get("route lock")?.handler?.("", harness.ctx as never);
+		expect(harness.notifications.some((n) => n.msg.includes("locked to google/gemini-2.5-flash"))).toBe(true);
+		expect(harness.statusMap.get("adaptive-routing")).toContain("\u{1f512}");
+
+		await startTurn(harness, "Design a better settings page UI.");
+		expect(harness.ctx.model).toMatchObject({ id: "gemini-2.5-flash", provider: "google" });
+
+		await harness.commands.get("route unlock")?.handler?.("", harness.ctx as never);
+		expect(harness.notifications.some((n) => n.msg.includes("lock cleared"))).toBe(true);
+
+		await startTurn(harness, "Design a better settings page UI.");
+		expect(harness.ctx.model).toMatchObject({ id: "claude-opus-4.6", provider: "anthropic" });
+	});
+
+	it("warns when /route lock has no active model", async () => {
+		writeConfig(AUTO_CONFIG);
+		const harness = createHarness();
+		harness.ctx.model = undefined as never;
+
+		await harness.commands.get("route lock")?.handler?.("", harness.ctx as never);
+
+		expect(harness.notifications.some((n) => n.msg.includes("No active model to lock."))).toBe(true);
+	});
+
+	it("lets a manual pick replace an older /route lock", async () => {
+		writeConfig(AUTO_CONFIG);
+		const harness = createHarness();
+
+		// `/route lock` pins the current model first.
+		await harness.commands.get("route lock")?.handler?.("", harness.ctx as never);
+
+		// A later manual pick is the more recent intent and must win.
+		await harness.emitAsync("model_select", { model: { id: "gemini-2.5-flash", provider: "google" } }, harness.ctx);
+		await startTurn(harness, "Design a better settings page UI.");
+
+		expect(harness.ctx.model).toMatchObject({ id: "gemini-2.5-flash", provider: "google" });
+	});
+
+	it("keeps an explicit /route lock that is newer than a manual pick", async () => {
+		writeConfig(AUTO_CONFIG);
+		const harness = createHarness();
+
+		await harness.emitAsync("model_select", { model: { id: "gemini-2.5-flash", provider: "google" } }, harness.ctx);
+		// A lock taken after the manual pick re-asserts the explicit choice.
+		await harness.commands.get("route lock")?.handler?.("", harness.ctx as never);
+
+		// Switch away, then confirm the newer lock still governs.
+		harness.ctx.model = sampleModel("anthropic", "claude-opus-4.6", "Claude Opus 4.6") as never;
+		await startTurn(harness, "Design a better settings page UI.");
+
+		expect(harness.ctx.model).toMatchObject({ id: "gemini-2.5-flash", provider: "google" });
+	});
+
+	it("suspends quota failover while a manual selection is pinned", async () => {
+		writeConfig({
+			mode: "auto",
+			models: { ranked: ["ollama-cloud/glm-5.3-flash"] },
+			quotaFailover: {
+				enabled: true,
+				autoMirror: false,
+				mirrorSets: [["ollama-cloud/glm-5.3-flash", "zai/glm-5.3-flash"]],
+			},
+		});
+		const harness = createExtensionHarness();
+		const glmModel = (provider: string) => sampleModel(provider, "glm-5.3-flash");
+		harness.ctx.model = glmModel("ollama-cloud") as never;
+		harness.ctx.modelRegistry = {
+			getAvailable: () => [glmModel("ollama-cloud"), glmModel("zai")],
+			getApiKeyForProvider: async () => "key",
+		} as never;
+
+		adaptiveRoutingExtension(harness.pi as never);
+		harness.pi.events.emit("usage:limits", {
+			perModel: {},
+			perSource: {},
+			providers: {
+				"ollama-cloud": {
+					probedAt: Date.now(),
+					windows: [{ label: "Session (5h)", percentLeft: 0.4, resetDescription: "in 3h", windowMinutes: 300 }],
+				},
+				zai: {
+					probedAt: Date.now(),
+					windows: [{ label: "Session (5h)", percentLeft: 97.1, resetDescription: "in 2h", windowMinutes: 300 }],
+				},
+			},
+			rolling30dCost: 0,
+			sessionCost: 0,
+		});
+
+		// The user deliberately re-selects the exhausted home model.
+		await harness.emitAsync("model_select", { model: { id: "glm-5.3-flash", provider: "ollama-cloud" } }, harness.ctx);
+		await startTurn(harness, "Continue the refactor.");
+
+		expect(harness.ctx.model).toMatchObject({ id: "glm-5.3-flash", provider: "ollama-cloud" });
+		expect(harness.notifications.some((n) => n.msg.startsWith("Quota failover:"))).toBe(false);
+	});
+});

@@ -10,6 +10,7 @@ import type {
 	QuotaFailoverConfig,
 	RouteDecision,
 	RouteFeedbackCategory,
+	RouteLock,
 	RouteThinkingLevel,
 } from "./types.js";
 
@@ -17,9 +18,9 @@ import { classifyPrompt } from "./classifier.js";
 import { readAdaptiveRoutingConfig } from "./config.js";
 import { inspectDelegatedSelection } from "./delegated-runtime.js";
 import { decideRoute } from "./engine.js";
-import { normalizeRouteCandidates } from "./normalize.js";
+import { matchesModelRef, normalizeRouteCandidates } from "./normalize.js";
 import { deriveMirrorSets, resolveQuotaFailover } from "./quota-failover.js";
-import { readAdaptiveRoutingState, writeAdaptiveRoutingState } from "./state.js";
+import { flushAdaptiveRoutingState, readAdaptiveRoutingState, writeAdaptiveRoutingState } from "./state.js";
 import {
 	appendTelemetryEvent,
 	computeStats,
@@ -47,6 +48,33 @@ interface RuntimeState {
 	lastFailover?: { from: string; to: string; at: number };
 	/** Dedupe key for shadow-mode failover suggestions. */
 	failoverNoticeKey?: string;
+	/**
+	 * Model the user selected outside routing, pinned for this process only.
+	 *
+	 * Kept out of the persisted state on purpose: `state.json` is shared by every running
+	 * session, so persisting a pick made in one session would silently pin the model in
+	 * the others.
+	 */
+	sessionPin?: RouteLock;
+}
+
+/**
+ * The lock governing this session.
+ *
+ * `/route lock` persists a lock, while a manual model selection pins one for this process
+ * only. Whichever happened most recently wins, so a manual pick can override an older
+ * `/route lock` instead of being fought over on every turn.
+ */
+function getEffectiveLock(current: RuntimeState): RouteLock | undefined {
+	const persisted = current.state.lock;
+	const pinned = current.sessionPin;
+	if (!persisted) {
+		return pinned;
+	}
+	if (!pinned) {
+		return persisted;
+	}
+	return pinned.setAt >= persisted.setAt ? pinned : persisted;
 }
 
 export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
@@ -59,6 +87,7 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 		lastDecisionTurnCount: 0,
 		lastFailover: undefined,
 		failoverNoticeKey: undefined,
+		sessionPin: undefined,
 		state: readAdaptiveRoutingState(),
 		usage: undefined,
 	};
@@ -75,12 +104,57 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 		return runtime.state.mode ?? config.mode;
 	}
 
+	/**
+	 * Pin a model the user selected outside adaptive routing.
+	 *
+	 * Route decisions run at the start of every turn, so a model chosen from the model
+	 * picker (or by another extension, such as a prompt mode) would otherwise be replaced
+	 * on the very next prompt. The pin is held in memory for this process and applied as a
+	 * `RouteLock` for subsequent decisions, so `/route unlock` (or a restart) resumes
+	 * automatic routing.
+	 *
+	 * Only `auto` mode is pinned: `shadow` never applies a decision, and `off` does not route.
+	 */
+	function pinManualSelection(
+		event: { model: { provider: string; id: string }; source?: string },
+		ctx: ExtensionContext,
+	): void {
+		if (getEffectiveMode() !== "auto" || event.source === "restore") {
+			return;
+		}
+		const fullId = `${event.model.provider}/${event.model.id}`;
+		if (runtime.sessionPin && matchesModelRef(runtime.sessionPin.model, { fullId, modelId: event.model.id })) {
+			return;
+		}
+
+		const thinking = pi.getThinkingLevel() as RouteThinkingLevel;
+		runtime.sessionPin = { model: fullId, setAt: Date.now(), thinking };
+
+		appendTelemetryEvent(readAdaptiveRoutingConfig().telemetry, {
+			decisionId: runtime.lastDecision?.id,
+			from: {
+				model: runtime.lastDecision?.selectedModel ?? "unknown",
+				thinking: runtime.lastDecision?.selectedThinking ?? "off",
+			},
+			reason: "manual",
+			timestamp: Date.now(),
+			to: { model: fullId, thinking },
+			type: "route_override",
+		});
+		runtime.lastDecisionOverridden = true;
+		ctx.ui.notify(
+			`Adaptive routing pinned to ${fullId} · ${thinking}. Run /route unlock to resume automatic routing.`,
+			"info",
+		);
+	}
+
 	function currentRouteLabel(): string | undefined {
 		const mode = getEffectiveMode();
 		if (mode === "off") {
 			return undefined;
 		}
-		const lockLabel = runtime.state.lock ? ` 🔒 ${runtime.state.lock.model}:${runtime.state.lock.thinking}` : "";
+		const lock = getEffectiveLock(runtime);
+		const lockLabel = lock ? ` 🔒 ${lock.model}:${lock.thinking}` : "";
 		const failoverLabel = runtime.lastFailover ? ` ⟲ ${runtime.lastFailover.to}` : "";
 		const decision = runtime.lastDecision;
 		return decision
@@ -162,23 +236,10 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 	pi.on("model_select", async (event, ctx) => {
 		if (!runtime.applyingRoute) {
 			runtime.lastFailover = undefined;
-		}
-		if (!runtime.applyingRoute && shouldRecordOverride(event, runtime.lastDecision)) {
-			appendTelemetryEvent(readAdaptiveRoutingConfig().telemetry, {
-				decisionId: runtime.lastDecision?.id,
-				from: {
-					model: runtime.lastDecision?.selectedModel ?? "unknown",
-					thinking: runtime.lastDecision?.selectedThinking ?? "off",
-				},
-				reason: "manual",
-				timestamp: Date.now(),
-				to: {
-					model: `${event.model.provider}/${event.model.id}`,
-					thinking: pi.getThinkingLevel() as RouteThinkingLevel,
-				},
-				type: "route_override",
-			});
-			runtime.lastDecisionOverridden = true;
+			// Any model change made outside routing is the user's explicit choice — including
+			// the first pick of a session, before any route decision exists. Pin it so the next
+			// route decision cannot silently swap it back out from under them.
+			pinManualSelection(event, ctx);
 		}
 		updateStatus(ctx);
 	});
@@ -227,21 +288,49 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 			return;
 		}
 
-		const classification = await classifyPrompt(event.prompt, config, ctx, candidates);
 		const currentModel = ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : undefined;
 		const currentThinking = pi.getThinkingLevel() as RouteThinkingLevel;
-		const decision = decideRoute({
-			candidates,
-			classification,
-			config,
-			currentModel,
-			currentThinking,
-			lock: runtime.state.lock,
-			usage: runtime.usage,
-		});
-		if (!decision) {
-			ctx.ui.setStatus(STATUS_KEY, `${mode} → no route`);
-			return;
+
+		// A session pin is authoritative when it is the effective lock: skip classification and
+		// scoring entirely so nothing can route away from it, even if config excludes it from
+		// candidates. Any other lock (a newer `/route lock`) still goes through `decideRoute`.
+		const pin = runtime.sessionPin;
+		const pinnedModel =
+			pin &&
+			getEffectiveLock(runtime) === pin &&
+			currentModel &&
+			matchesModelRef(pin.model, { fullId: currentModel, modelId: ctx.model?.id ?? "" })
+				? pin.model
+				: undefined;
+
+		let decision: RouteDecision | undefined;
+		if (pinnedModel) {
+			decision = {
+				explanation: {
+					codes: ["manual_lock_applied"],
+					summary: `pinned to ${pinnedModel} · ${currentThinking}`,
+				},
+				fallbacks: [],
+				selectedModel: pinnedModel,
+				selectedThinking: currentThinking,
+			};
+		} else {
+			const classification = await classifyPrompt(event.prompt, config, ctx, candidates);
+			decision = decideRoute({
+				candidates,
+				classification,
+				config,
+				currentModel,
+				currentThinking,
+				lock: getEffectiveLock(runtime),
+				usage: runtime.usage,
+			});
+			if (!decision) {
+				// patch-coverage-ignore -- unreachable: candidates is non-empty here, so decideRoute always selects.
+				ctx.ui.setStatus(STATUS_KEY, `${mode} → no route`);
+				return;
+			}
+			decision.explanation.classification = classification;
 		}
 
 		decision.id = createDecisionId();
@@ -255,7 +344,7 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 
 		appendTelemetryEvent(config.telemetry, {
 			candidates: decision.explanation.candidates,
-			classifier: classification,
+			classifier: decision.explanation.classification,
 			decisionId: decision.id,
 			explanationCodes: decision.explanation.codes,
 			fallbacks: decision.fallbacks,
@@ -340,7 +429,9 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 						setAt: Date.now(),
 						thinking: pi.getThinkingLevel() as RouteThinkingLevel,
 					};
+					runtime.sessionPin = undefined;
 					persistState();
+					flushAdaptiveRoutingState();
 					updateStatus(ctx);
 					ctx.ui.notify(
 						`Adaptive routing locked to ${runtime.state.lock.model}:${runtime.state.lock.thinking}.`,
@@ -350,7 +441,9 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 				}
 				case "unlock": {
 					runtime.state.lock = undefined;
+					runtime.sessionPin = undefined;
 					persistState();
+					flushAdaptiveRoutingState();
 					updateStatus(ctx);
 					ctx.ui.notify("Adaptive routing lock cleared.", "info");
 					return;
@@ -565,7 +658,7 @@ async function applyQuotaFailover(
 	const action = resolveQuotaFailover({
 		config: failoverConfig,
 		currentFullId: effectiveFullId,
-		locked: Boolean(runtime.state.lock),
+		locked: Boolean(getEffectiveLock(runtime)),
 		now: Date.now(),
 		quota: runtime.usage.providers,
 		sets: deriveMirrorSets(candidates, failoverConfig),
@@ -605,16 +698,6 @@ async function applyQuotaFailover(
 	} finally {
 		runtime.applyingRoute = false;
 	}
-}
-
-function shouldRecordOverride(
-	event: { model?: { provider: string; id: string } },
-	lastDecision: RouteDecision | undefined,
-): boolean {
-	if (!(lastDecision && event.model)) {
-		return false;
-	}
-	return `${event.model.provider}/${event.model.id}` !== lastDecision.selectedModel;
 }
 
 /**
@@ -721,7 +804,7 @@ function buildQuotaFailoverLines(
 		const action = resolveQuotaFailover({
 			config: failover,
 			currentFullId,
-			locked: Boolean(runtime.state.lock),
+			locked: Boolean(getEffectiveLock(runtime)),
 			now: Date.now(),
 			quota: providers,
 			sets,
@@ -729,7 +812,7 @@ function buildQuotaFailoverLines(
 		const summary =
 			action.type === "switch"
 				? `switch → ${action.to} (${action.reason})`
-				: `keep (${action.reason}${action.reason === "locked" ? " — /route lock pins the model" : ""})`;
+				: `keep (${action.reason}${action.reason === "locked" ? " — the model is locked or manually pinned" : ""})`;
 		lines.push(``);
 		lines.push(`Decision now: ${summary}`);
 	}

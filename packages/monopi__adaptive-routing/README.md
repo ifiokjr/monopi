@@ -18,6 +18,12 @@ This package is intentionally separate from `@monopi/monopi` so users can opt in
 - lets you describe provider assignments by category instead of hard-coding Anthropic/OpenAI defaults into agents
 - switches to an identical model on another provider when the active provider's quota runs out (`quotaFailover`)
 
+## Manual model selection
+
+In `auto` mode a route decision runs at the start of every turn, so it would otherwise replace a model you picked yourself. Selecting a model outside adaptive routing — from the model picker, or through another extension such as a prompt mode — pins that model for the session, and the router keeps it instead of re-routing. The pin also suspends quota failover.
+
+The status line shows `🔒 <model>:<thinking>` while pinned. Run `/route unlock` to hand control back to the router; a later selection replaces the previous pin. Pins live in memory for the running session only, and `shadow` mode never pins because it never applies a decision.
+
 ## Quota failover
 
 When the active model belongs to a mirror set and its provider's most-constrained quota window (5h or weekly, whichever is lower — from the usage tracker's `usage:limits` broadcast) drops to `switchBelowPct`, adaptive routing switches to the same model on a provider that still has at least `requireMirrorAbovePct` remaining, and returns to the home entry once it recovers. Switches apply at turn start in `auto` mode; `shadow` only suggests. A manual `/route lock` pins the model and suspends failover.
