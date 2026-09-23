@@ -221,6 +221,10 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 	};
 
 	pi.on("session_start", async (_event, ctx) => {
+		// pi rebuilds extension factories per session runtime, so a fresh closure already
+		// starts unpinned. Clearing here keeps that explicit and survives any future
+		// session replacement that reuses this closure.
+		runtime.sessionPin = undefined;
 		cancelStartupRefresh();
 		startupRefreshTimer = setTimeout(() => {
 			startupRefreshTimer = undefined;
@@ -230,6 +234,8 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 	});
 
 	pi.on("session_shutdown", async () => {
+		runtime.sessionPin = undefined;
+		runtime.lastFailover = undefined;
 		cancelStartupRefresh();
 	});
 
@@ -401,6 +407,7 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 				case "auto": {
 					runtime.state.mode = "auto";
 					persistState();
+					flushAdaptiveRoutingState();
 					updateStatus(ctx);
 					ctx.ui.notify("Adaptive routing set to auto mode.", "info");
 					return;
@@ -408,6 +415,7 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 				case "off": {
 					runtime.state.mode = "off";
 					persistState();
+					flushAdaptiveRoutingState();
 					updateStatus(ctx);
 					ctx.ui.notify("Adaptive routing disabled.", "warning");
 					return;
@@ -415,6 +423,7 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 				case "shadow": {
 					runtime.state.mode = "shadow";
 					persistState();
+					flushAdaptiveRoutingState();
 					updateStatus(ctx);
 					ctx.ui.notify("Adaptive routing set to shadow mode.", "info");
 					return;
