@@ -163,3 +163,81 @@ describe("todo tool", () => {
 		}),
 	);
 });
+
+describe("/todos overlay editor prompt", () => {
+	beforeEach(() => {
+		vi.useRealTimers();
+	});
+
+	const createSingleTodo = async (harness: ReturnType<typeof createExtensionHarness>) => {
+		const todo = harness.tools.get("todo");
+		const created = await todo.execute(
+			"call-1",
+			{ action: "create", title: "Write tests" },
+			new AbortController().signal,
+			() => {},
+			harness.ctx,
+		);
+		return created.details.todo;
+	};
+
+	const driveQuickAction = async (harness: ReturnType<typeof createExtensionHarness>, keyData: string) => {
+		harness.ctx.ui.custom = vi.fn(async (factory: any) => {
+			return await new Promise((resolve) => {
+				const component = factory(
+					{ requestRender() {} },
+					{ fg: (_key: string, text: string) => text, bold: (text: string) => text },
+					{ matches: () => false },
+					() => resolve(undefined),
+				);
+				component.handleInput(keyData);
+			});
+		}) as never;
+
+		const command = harness.commands.get("todos");
+		await command.handler("", harness.ctx);
+	};
+
+	it(
+		"fills the editor with the work prompt when the editor is empty",
+		withTempTodoDir(async () => {
+			const harness = createExtensionHarness();
+			todosExtension(harness.pi);
+			const created = await createSingleTodo(harness);
+
+			// Ctrl+Shift+W triggers the "work" quick action on the selected todo.
+			await driveQuickAction(harness, "\x1b[119;6u");
+
+			expect(harness.editorState.text).toBe(`work on todo TODO-${created.id} "Write tests"`);
+		}),
+	);
+
+	it(
+		"fills the editor with the refine prompt when the editor is empty",
+		withTempTodoDir(async () => {
+			const harness = createExtensionHarness();
+			todosExtension(harness.pi);
+			const created = await createSingleTodo(harness);
+
+			// Ctrl+Shift+R triggers the "refine" quick action on the selected todo.
+			await driveQuickAction(harness, "\x1b[114;6u");
+
+			expect(harness.editorState.text).toContain(`let's refine task TODO-${created.id} "Write tests":`);
+		}),
+	);
+
+	it(
+		"does not clobber text the user already typed",
+		withTempTodoDir(async () => {
+			const harness = createExtensionHarness();
+			todosExtension(harness.pi);
+			await createSingleTodo(harness);
+			harness.editorState.text = "user is mid-thought";
+
+			// Ctrl+Shift+W triggers the "work" quick action on the selected todo.
+			await driveQuickAction(harness, "\x1b[119;6u");
+
+			expect(harness.editorState.text).toBe("user is mid-thought");
+		}),
+	);
+});

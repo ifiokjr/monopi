@@ -187,6 +187,7 @@ import schedulerExtension, {
 	parseLoopScheduleArgs,
 	parseRemindScheduleArgs,
 	SCHEDULER_DISPATCHED_MESSAGE_TYPE,
+	SCHEDULER_LEASE_STALE_AFTER_MS,
 	SCHEDULER_SAFE_MODE_HEARTBEAT_MS,
 	SchedulerRuntime,
 	THREE_DAYS,
@@ -2834,6 +2835,200 @@ describe("lease heartbeat refresh", () => {
 		expect(writtenLeases.length).toBeGreaterThanOrEqual(1);
 		const lastLease = JSON.parse(writtenLeases[writtenLeases.length - 1]);
 		expect(lastLease.instanceId).toBe(instanceId);
+	});
+});
+
+// ─── Observer lease recovery ────────────────────────────────────────────────
+
+describe("observer lease recovery", () => {
+	let pi: ReturnType<typeof createMockPi>;
+	let runtime: SchedulerRuntime;
+	let writtenLeases: string[];
+	let foreignHeartbeatAt: number;
+
+	beforeEach(() => {
+		vi.useFakeTimers();
+		pi = createMockPi();
+		runtime = new SchedulerRuntime(pi as any);
+		writtenLeases = [];
+		foreignHeartbeatAt = Date.now();
+
+		// Track lease writes.
+		(writeFileSync as ReturnType<typeof vi.fn>).mockImplementation((_path: string, data: string) => {
+			if (typeof _path === "string" && _path.endsWith(".lease.json.tmp")) {
+				writtenLeases.push(data);
+			}
+		});
+		(renameSync as ReturnType<typeof vi.fn>).mockImplementation(() => {});
+		(mkdirSync as ReturnType<typeof vi.fn>).mockImplementation(() => {});
+		(rmSync as ReturnType<typeof vi.fn>).mockImplementation(() => {});
+	});
+
+	afterEach(() => {
+		runtime.stopScheduler();
+		vi.useRealTimers();
+		(existsSync as ReturnType<typeof vi.fn>).mockReturnValue(false);
+		(readFileSync as ReturnType<typeof vi.fn>).mockReturnValue("{}");
+	});
+
+	function mockForeignOwnedStore() {
+		(existsSync as ReturnType<typeof vi.fn>).mockImplementation(
+			(file: string) =>
+				typeof file === "string" && (file.endsWith("scheduler.json") || file.endsWith("scheduler.lease.json")),
+		);
+		(readFileSync as ReturnType<typeof vi.fn>).mockImplementation((file: string) => {
+			if (typeof file === "string" && file.endsWith("scheduler.lease.json")) {
+				return JSON.stringify({
+					version: 1,
+					instanceId: "foreign-instance",
+					sessionId: null,
+					pid: 123,
+					cwd: "/mock-project",
+					heartbeatAt: foreignHeartbeatAt,
+				});
+			}
+			return JSON.stringify({
+				version: 1,
+				tasks: [
+					{
+						id: "foreign1",
+						prompt: "check foreign task",
+						kind: "once",
+						enabled: true,
+						createdAt: foreignHeartbeatAt - ONE_MINUTE,
+						nextRunAt: foreignHeartbeatAt + ONE_MINUTE,
+						jitterMs: 0,
+						runCount: 0,
+						pending: false,
+						scope: "instance",
+						ownerInstanceId: "foreign-instance",
+						ownerSessionId: null,
+					},
+					{
+						id: "mine0001",
+						prompt: "check build",
+						kind: "once",
+						enabled: true,
+						createdAt: foreignHeartbeatAt - ONE_MINUTE,
+						nextRunAt: foreignHeartbeatAt + ONE_MINUTE,
+						jitterMs: 0,
+						runCount: 0,
+						pending: false,
+						scope: "instance",
+						ownerInstanceId: runtime.currentInstanceId,
+						ownerSessionId: null,
+					},
+				],
+			});
+		});
+	}
+
+	async function enterObserverMode() {
+		const ctx = createMockCtx({
+			select: vi.fn().mockResolvedValue("Leave tasks in the other instance"),
+		});
+		runtime.setRuntimeContext(ctx as any);
+		await runtime.handleStartupOwnership(ctx as any);
+		return ctx;
+	}
+
+	it("explains that observing falls back to dispatching when the foreign lease goes stale", async () => {
+		mockForeignOwnedStore();
+		const ctx = await enterObserverMode();
+
+		expect(ctx.ui.select).toHaveBeenCalled();
+		expect(ctx._notifications.some((n: any) => n.msg.includes("observe scheduler tasks"))).toBe(true);
+		expect(ctx._notifications.some((n: any) => n.msg.includes("resumes dispatching automatically"))).toBe(true);
+	});
+
+	it("stays in observer mode while the foreign lease is live", async () => {
+		mockForeignOwnedStore();
+		const ctx = await enterObserverMode();
+
+		writtenLeases.length = 0;
+		await runtime.tickScheduler();
+
+		expect(ctx._notifications.some((n: any) => n.msg.includes("can dispatch tasks again"))).toBe(false);
+		expect(writtenLeases).toHaveLength(0);
+		expect(getDispatchedPrompts(pi)).toHaveLength(0);
+	});
+
+	it("recovers to auto mode and dispatches its own due tasks once the foreign lease goes stale", async () => {
+		mockForeignOwnedStore();
+		const ctx = await enterObserverMode();
+
+		// The foreign instance dies: its heartbeat stops being refreshed.
+		await vi.advanceTimersByTimeAsync(ONE_MINUTE + SCHEDULER_LEASE_STALE_AFTER_MS);
+		foreignHeartbeatAt = Date.now() - SCHEDULER_LEASE_STALE_AFTER_MS - 1;
+
+		writtenLeases.length = 0;
+		await runtime.tickScheduler();
+
+		expect(ctx._notifications.some((n: any) => n.msg.includes("can dispatch tasks again"))).toBe(true);
+		// The recovered instance acquires the lease for itself.
+		expect(writtenLeases.length).toBeGreaterThanOrEqual(1);
+		const lastLease = JSON.parse(writtenLeases[writtenLeases.length - 1]);
+		expect(lastLease.instanceId).toBe(runtime.currentInstanceId);
+		// The observer's own task runs; the foreign-owned task still needs review.
+		expect(getDispatchedPrompts(pi)).toContain("check build");
+		expect(runtime.getTask("foreign1")?.resumeReason).toBe("stale_owner");
+	});
+
+	it("recovers even when every task needs review", async () => {
+		mockForeignOwnedStore();
+		// Replace the store with only foreign-owned tasks so nothing is dispatchable.
+		(readFileSync as ReturnType<typeof vi.fn>).mockImplementation((file: string) => {
+			if (typeof file === "string" && file.endsWith("scheduler.lease.json")) {
+				return JSON.stringify({
+					version: 1,
+					instanceId: "foreign-instance",
+					sessionId: null,
+					pid: 123,
+					cwd: "/mock-project",
+					heartbeatAt: foreignHeartbeatAt,
+				});
+			}
+			return JSON.stringify({
+				version: 1,
+				tasks: [
+					{
+						id: "foreign1",
+						prompt: "check foreign task",
+						kind: "once",
+						enabled: true,
+						createdAt: foreignHeartbeatAt - ONE_MINUTE,
+						nextRunAt: foreignHeartbeatAt + ONE_MINUTE,
+						jitterMs: 0,
+						runCount: 0,
+						pending: false,
+						scope: "instance",
+						ownerInstanceId: "foreign-instance",
+						ownerSessionId: null,
+					},
+				],
+			});
+		});
+		const ctx = await enterObserverMode();
+
+		await vi.advanceTimersByTimeAsync(ONE_MINUTE + SCHEDULER_LEASE_STALE_AFTER_MS);
+		foreignHeartbeatAt = Date.now() - SCHEDULER_LEASE_STALE_AFTER_MS - 1;
+
+		await runtime.tickScheduler();
+
+		expect(ctx._notifications.some((n: any) => n.msg.includes("can dispatch tasks again"))).toBe(true);
+		// Nothing dispatches yet: the only task is foreign-owned and needs review.
+		expect(getDispatchedPrompts(pi)).toHaveLength(0);
+
+		// The instance is no longer latched: once the user adopts the stale task,
+		// the next tick acquires the lease and dispatches it.
+		runtime.adoptTasks();
+		writtenLeases.length = 0;
+		await runtime.tickScheduler();
+
+		expect(writtenLeases.length).toBeGreaterThanOrEqual(1);
+		const lastLease = JSON.parse(writtenLeases[writtenLeases.length - 1]);
+		expect(lastLease.instanceId).toBe(runtime.currentInstanceId);
+		expect(getDispatchedPrompts(pi)).toContain("check foreign task");
 	});
 });
 

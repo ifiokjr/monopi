@@ -2995,79 +2995,21 @@ describe("usage-tracker extension", () => {
 	});
 
 	describe("keybinding auto-configuration", () => {
-		it("writes keybindings.json to unbind deleteToLineStart when file does not exist", async () => {
-			(existsSync as ReturnType<typeof vi.fn>).mockReturnValue(false);
-			usageTracker(pi as any);
-			await vi.advanceTimersByTimeAsync(500);
-
-			expect(writeFileSync).toHaveBeenCalledWith(
-				expect.stringContaining("keybindings.json"),
-				expect.stringContaining('"deleteToLineStart"'),
-				"utf-8",
-			);
-		});
-
-		it("writes keybindings.json when file exists but deleteToLineStart is not configured", async () => {
+		it("never reads or writes the user's keybindings.json", async () => {
 			(existsSync as ReturnType<typeof vi.fn>).mockReturnValue(true);
-			(readFileSync as ReturnType<typeof vi.fn>).mockReturnValue('{"cursorUp": ["up"]}');
+			(readFileSync as ReturnType<typeof vi.fn>).mockReturnValue('{"deleteToLineStart": ["ctrl+u"]}');
 
 			usageTracker(pi as any);
 			await vi.advanceTimersByTimeAsync(500);
 
-			expect(writeFileSync).toHaveBeenCalledWith(
-				expect.stringContaining("keybindings.json"),
-				expect.stringContaining('"deleteToLineStart": []'),
-				"utf-8",
+			const keybindingsReads = (readFileSync as ReturnType<typeof vi.fn>).mock.calls.filter(
+				(c: unknown[]) => typeof c[0] === "string" && (c[0] as string).includes("keybindings.json"),
 			);
-		});
-
-		it("does not overwrite keybindings.json when deleteToLineStart is configured without ctrl+u", async () => {
-			(existsSync as ReturnType<typeof vi.fn>).mockReturnValue(true);
-			(readFileSync as ReturnType<typeof vi.fn>).mockReturnValue('{"deleteToLineStart": ["ctrl+shift+u"]}');
-
-			(writeFileSync as ReturnType<typeof vi.fn>).mockClear();
-			usageTracker(pi as any);
-			await vi.advanceTimersByTimeAsync(500);
-
-			// writeFileSync should not be called for keybindings (may be called for other things)
 			const keybindingWrites = (writeFileSync as ReturnType<typeof vi.fn>).mock.calls.filter(
 				(c: unknown[]) => typeof c[0] === "string" && (c[0] as string).includes("keybindings.json"),
 			);
+			expect(keybindingsReads).toHaveLength(0);
 			expect(keybindingWrites).toHaveLength(0);
-		});
-
-		it("removes ctrl+u from existing deleteToLineStart bindings", async () => {
-			(existsSync as ReturnType<typeof vi.fn>).mockReturnValue(true);
-			(readFileSync as ReturnType<typeof vi.fn>).mockReturnValue(
-				'{"deleteToLineStart": ["ctrl+u", "ctrl+shift+u"], "cursorUp": ["up"]}',
-			);
-
-			usageTracker(pi as any);
-			await vi.advanceTimersByTimeAsync(500);
-
-			const writeCalls = (writeFileSync as ReturnType<typeof vi.fn>).mock.calls.filter(
-				(c: unknown[]) => typeof c[0] === "string" && (c[0] as string).includes("keybindings.json"),
-			);
-			expect(writeCalls).toHaveLength(1);
-			const written = JSON.parse(writeCalls[0][1] as string);
-			expect(written.deleteToLineStart).toEqual(["ctrl+shift+u"]);
-			expect(written.cursorUp).toEqual(["up"]);
-		});
-
-		it("preserves existing keybindings when adding deleteToLineStart", async () => {
-			(existsSync as ReturnType<typeof vi.fn>).mockReturnValue(true);
-			(readFileSync as ReturnType<typeof vi.fn>).mockReturnValue('{"cursorUp": ["up", "ctrl+p"]}');
-
-			usageTracker(pi as any);
-			await vi.advanceTimersByTimeAsync(500);
-
-			const writeCalls = (writeFileSync as ReturnType<typeof vi.fn>).mock.calls.filter(
-				(c: unknown[]) => typeof c[0] === "string" && (c[0] as string).includes("keybindings.json"),
-			);
-			expect(writeCalls).toHaveLength(1);
-			const written = JSON.parse(writeCalls[0][1] as string);
-			expect(written.cursorUp).toEqual(["up", "ctrl+p"]);
-			expect(written.deleteToLineStart).toEqual([]);
 		});
 	});
 

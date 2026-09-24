@@ -602,6 +602,18 @@ export default function adaptiveRoutingExtension(pi: ExtensionAPI) {
 	}
 }
 
+/**
+ * Announce a routed model switch window on the shared extension event bus.
+ *
+ * Other extensions (such as prompt-modes) observe `model_select` but cannot see
+ * `applyingRoute`, so without this signal every routed switch looks like a manual model
+ * change. The window must wrap the awaited `pi.setModel()` call: pi emits `model_select`
+ * synchronously inside it.
+ */
+function emitRoutingSwitch(pi: ExtensionAPI, active: boolean): void {
+	pi.events.emit("routing:applying", { active });
+}
+
 async function applyDecision(
 	pi: ExtensionAPI,
 	ctx: ExtensionContext,
@@ -622,6 +634,7 @@ async function applyDecision(
 	}
 
 	runtime.applyingRoute = true;
+	emitRoutingSwitch(pi, true);
 	let savedDefaults: RoutedDefaultsSnapshot | undefined;
 	try {
 		savedDefaults = captureRoutedDefaults();
@@ -641,6 +654,7 @@ async function applyDecision(
 		// switch; put the configured defaults back so routing stays per-session.
 		await restoreRoutedDefaults(savedDefaults);
 		runtime.applyingRoute = false;
+		emitRoutingSwitch(pi, false);
 	}
 }
 
@@ -700,6 +714,7 @@ async function applyQuotaFailover(
 	const target = candidates.find((candidate) => candidate.fullId === action.to);
 
 	runtime.applyingRoute = true;
+	emitRoutingSwitch(pi, true);
 	let savedDefaults: RoutedDefaultsSnapshot | undefined;
 	try {
 		savedDefaults = captureRoutedDefaults();
@@ -716,6 +731,7 @@ async function applyQuotaFailover(
 		// A failover switch must not become the user's startup model either.
 		await restoreRoutedDefaults(savedDefaults);
 		runtime.applyingRoute = false;
+		emitRoutingSwitch(pi, false);
 	}
 }
 

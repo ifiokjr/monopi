@@ -84,57 +84,9 @@ import {
 
 // ─── Extension entry point ──────────────────────────────────────────────────
 
-const KEYBINDINGS_SYNC_DELAY_MS = 250;
 const STARTUP_REFRESH_DELAY_MS = 250;
 const STARTUP_DEFER_ENTRY_THRESHOLD = 250;
 const PERSISTED_STATE_LOAD_DELAY_MS = 250;
-
-/**
- * Ensure `ctrl+u` is unbound from the built-in `deleteToLineStart` action
- * so the usage-tracker shortcut takes priority without a conflict warning.
- *
- * Reads `~/.pi/agent/keybindings.json`, sets `deleteToLineStart: []` if not
- * already configured, and writes back. This is a one-time idempotent operation.
- */
-function ensureCtrlUUnbound(): void {
-	const keybindingsPath = join(getAgentDir(), "keybindings.json");
-	try {
-		let config: Record<string, unknown> = {};
-		if (existsSync(keybindingsPath)) {
-			config = JSON.parse(readFileSync(keybindingsPath, "utf-8"));
-		}
-
-		let shouldWrite = false;
-		const existing = config.deleteToLineStart;
-
-		if (existing === undefined) {
-			// Explicitly set [] so built-in default ctrl+u does not conflict.
-			config.deleteToLineStart = [];
-			shouldWrite = true;
-		} else if (Array.isArray(existing)) {
-			const filtered = existing.filter((binding) => {
-				if (typeof binding !== "string") {
-					return true;
-				}
-				return binding.trim().toLowerCase() !== "ctrl+u";
-			});
-			if (filtered.length !== existing.length) {
-				config.deleteToLineStart = filtered;
-				shouldWrite = true;
-			}
-		} else {
-			// Malformed config; normalize to an explicit empty binding list.
-			config.deleteToLineStart = [];
-			shouldWrite = true;
-		}
-
-		if (shouldWrite) {
-			writeFileSync(keybindingsPath, `${JSON.stringify(config, null, 2)}\n`, "utf-8");
-		}
-	} catch {
-		// Non-critical: worst case the warning still shows
-	}
-}
 
 function getUsageHistoryPath(): string {
 	return join(getAgentDir(), "usage-tracker-history.json");
@@ -152,7 +104,6 @@ function getRateLimitCachePath(): string {
 }
 
 export default function usageTracker(pi: ExtensionAPI) {
-	let keybindingsSyncScheduled = false;
 	let persistedStateLoadPromise: Promise<void> | null = null;
 	let persistedStateLoadScheduled = false;
 	let persistedStateLoadTimer: ReturnType<typeof setTimeout> | null = null;
@@ -204,21 +155,6 @@ export default function usageTracker(pi: ExtensionAPI) {
 		lastWidgetSignature = nextSignature;
 		requestWidgetRender?.();
 	};
-
-	const scheduleCtrlUUnbound = () => {
-		if (keybindingsSyncScheduled) {
-			return;
-		}
-
-		keybindingsSyncScheduled = true;
-		setTimeout(() => {
-			keybindingsSyncScheduled = false;
-			ensureCtrlUUnbound();
-		}, KEYBINDINGS_SYNC_DELAY_MS);
-	};
-
-	// Unbind ctrl+u from deleteToLineStart without doing sync fs work on extension load.
-	scheduleCtrlUUnbound();
 
 	/** Per-model accumulated usage. Key = model ID. */
 	const models = new Map<string, ModelUsage>();
