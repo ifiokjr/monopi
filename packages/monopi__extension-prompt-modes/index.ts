@@ -456,6 +456,12 @@ type ModeRuntime = {
 	currentMode: string;
 	// guard against feedback loops when we switch model ourselves
 	applying: boolean;
+	/**
+	 * True while another extension (adaptive-routing) has announced a routed model switch
+	 * on the shared event bus ("routing:applying"). Such switches are not manual changes,
+	 * so they must not drop the selected mode into the "custom" overlay.
+	 */
+	routedSwitch: boolean;
 };
 
 const runtime: ModeRuntime = {
@@ -466,6 +472,7 @@ const runtime: ModeRuntime = {
 	lastRealMode: "default",
 	currentMode: "default",
 	applying: false,
+	routedSwitch: false,
 };
 
 // Updated by setEditor() when the custom editor is instantiated.
@@ -1337,6 +1344,14 @@ export default function (pi: ExtensionAPI) {
 		applyEditor(pi, ctx);
 	});
 
+	// adaptive-routing (and possibly other extensions) announce routed model switches on
+	// the shared event bus, because their internal apply guards are not visible to us.
+	// Switches inside such a window are not manual changes and must keep the current mode.
+	pi.events.on("routing:applying", (payload: unknown) => {
+		runtime.routedSwitch =
+			typeof payload === "object" && payload !== null && (payload as { active?: unknown }).active === true;
+	});
+
 	pi.on("model_select", async (event, ctx) => {
 		// Always track the last observed model for overlay/store correctness.
 		lastObservedModel = { provider: event.model.provider, modelId: event.model.id };
@@ -1344,6 +1359,10 @@ export default function (pi: ExtensionAPI) {
 		// Skip mode switching triggered by applyMode() itself, otherwise we'd jump to "custom"
 		// while we are in the middle of applying a mode.
 		if (runtime.applying) return;
+
+		// Routed model switches (e.g. adaptive routing picking a model for the turn) are not
+		// manual changes; keep the selected mode instead of falling back to "custom".
+		if (runtime.routedSwitch) return;
 
 		// Manual model changes always go into the overlay "custom" mode.
 		await ensureRuntime(pi, ctx);
