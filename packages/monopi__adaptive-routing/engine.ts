@@ -52,7 +52,11 @@ export function decideRoute(input: RoutingDecisionInput): RouteDecision | undefi
 	}
 
 	const scores = candidates.map((candidate) => scoreCandidate(candidate, input));
-	scores.sort((a, b) => b.score - a.score || a.model.localeCompare(b.model));
+	const candidateOrder = new Map(candidates.map((candidate, index) => [candidate.fullId, index]));
+	// Equal scores resolve by the caller's candidate order (the model registry's
+	// configured order), which is a defined preference, instead of the alphabetical
+	// model id that `localeCompare` used to prefer.
+	scores.sort((a, b) => b.score - a.score || (candidateOrder.get(a.model) ?? 0) - (candidateOrder.get(b.model) ?? 0));
 	const best = scores[0];
 	if (!best) {
 		return undefined;
@@ -63,8 +67,17 @@ export function decideRoute(input: RoutingDecisionInput): RouteDecision | undefi
 		return undefined;
 	}
 
-	const selectedThinking = clampThinking(resolveRequestedThinking(config, classification), selected.maxThinkingLevel);
-	const explanation = buildExplanation(selected, selectedThinking, best, scores.slice(0, 3), classification, usage);
+	const requestedThinking = resolveRequestedThinking(config, classification);
+	const selectedThinking = clampThinking(requestedThinking, selected.maxThinkingLevel);
+	const explanation = buildExplanation(
+		selected,
+		selectedThinking,
+		requestedThinking,
+		best,
+		scores.slice(0, 3),
+		classification,
+		usage,
+	);
 
 	return {
 		explanation,
@@ -133,6 +146,14 @@ function scoreCandidate(candidate: NormalizedRouteCandidate, input: RoutingDecis
 		reasons.push("sticky");
 	}
 
+	// A task that needs a wide context must not land on a small-window model just
+	// because the rest of its score ties or beats wider candidates.
+	const minContextWindow = MIN_CONTEXT_WINDOWS[classification.contextBreadth];
+	if (typeof candidate.contextWindow === "number" && candidate.contextWindow < minContextWindow) {
+		score -= 20;
+		reasons.push("context-short");
+	}
+
 	const reserve = config.providerReserves[candidate.provider];
 	const providerQuota = usage?.providers[candidate.provider];
 	if (reserve && shouldApplyReserve(reserve.applyToTiers, candidate.tier)) {
@@ -166,15 +187,22 @@ function scoreCandidate(candidate: NormalizedRouteCandidate, input: RoutingDecis
 	};
 }
 
+/** Minimum usable context window per classification breadth, in tokens. */
+const MIN_CONTEXT_WINDOWS: Record<PromptRouteClassification["contextBreadth"], number> = {
+	large: 128000,
+	medium: 64000,
+	small: 32000,
+};
+
 function buildExplanation(
 	selected: NormalizedRouteCandidate,
 	selectedThinking: RouteThinkingLevel,
+	requestedThinking: RouteThinkingLevel,
 	best: RouteCandidateScore,
 	topCandidates: RouteCandidateScore[],
 	classification: PromptRouteClassification,
 	usage?: ProviderUsageState,
 ): RouteExplanation {
-	const requestedThinking = classification.recommendedThinking;
 	const codes = new Set<RouteExplanation["codes"][number]>();
 	for (const reason of best.reasons) {
 		if (reason === "design-fit") {
@@ -192,10 +220,15 @@ function buildExplanation(
 		if (reason === "quota-unknown") {
 			codes.add("quota_unknown");
 		}
+		if (reason === "context-short") {
+			codes.add("context_short");
+		}
 	}
 	if (topCandidates.some((candidate) => candidate.reasons.includes("reserve-low"))) {
 		codes.add("premium_reserved");
 	}
+	// `requestedThinking` is the policy level `clampThinking` actually received (the
+	// intent's configured default when set), not the classifier's raw recommendation.
 	if (selectedThinking !== requestedThinking) {
 		codes.add("thinking_clamped");
 	}
@@ -220,9 +253,14 @@ function buildFallbacks(
 	config: AdaptiveRoutingConfig,
 	classification: PromptRouteClassification,
 ): string[] {
+	const candidateOrder = new Map(candidates.map((candidate, index) => [candidate.fullId, index]));
 	return candidates
 		.filter((candidate) => candidate.fullId !== excludedModel)
-		.toSorted((a, b) => tierOrder(b.tier) - tierOrder(a.tier) || a.fullId.localeCompare(b.fullId))
+		.toSorted(
+			(a, b) =>
+				tierOrder(b.tier) - tierOrder(a.tier) ||
+				(candidateOrder.get(a.fullId) ?? 0) - (candidateOrder.get(b.fullId) ?? 0),
+		)
 		.filter((candidate) => !config.models.excluded.some((entry) => matchesModelRef(entry, candidate)))
 		.filter(
 			(candidate) => matchesTier(candidate.tier, classification.recommendedTier) || candidate.fallbackGroups.length > 0,
