@@ -299,4 +299,270 @@ describe("handleWebSocketConnection", () => {
 		ws.emit("error", new Error("socket error"));
 		expect((session.subscribe as ReturnType<typeof vi.fn>).mock.results[0]?.value).toHaveBeenCalledTimes(1);
 	});
+
+	describe("model commands", () => {
+		const availableModels = [
+			{ id: "gpt-5-mini", provider: "openai" },
+			{ id: "glm-5.1", provider: "zai" },
+		];
+
+		it("switches models by resolving provider/modelId against the session's models", async () => {
+			const ws = new MockWebSocket();
+			const resolved = availableModels[1];
+			const session = createSession({
+				getAvailableModels: vi.fn(async () => availableModels),
+				setModel: vi.fn(async (model: unknown) => model === resolved),
+			});
+
+			handleWebSocketConnection(ws as never, {
+				token: "test-token",
+				instanceId: "instance-1",
+				getSession: () => session,
+			});
+
+			await authenticateSocket(ws);
+			await ws.emitMessage(JSON.stringify({ id: "cmd-1", type: "set_model", provider: "zai", modelId: "glm-5.1" }));
+
+			expect(session.setModel).toHaveBeenCalledWith(resolved);
+			expect(ws.sent.at(-1)).toEqual({
+				type: "response",
+				command: "set_model",
+				success: true,
+				data: { model: resolved },
+				id: "cmd-1",
+			});
+		});
+
+		it("matches models case-insensitively", async () => {
+			const ws = new MockWebSocket();
+			const session = createSession({
+				getAvailableModels: vi.fn(() => availableModels),
+				setModel: vi.fn(async () => true),
+			});
+
+			handleWebSocketConnection(ws as never, {
+				token: "test-token",
+				instanceId: "instance-1",
+				getSession: () => session,
+			});
+
+			await authenticateSocket(ws);
+			await ws.emitMessage(
+				JSON.stringify({ id: "cmd-1", type: "set_model", provider: "OpenAI", modelId: "GPT-5-MINI" }),
+			);
+
+			expect(session.setModel).toHaveBeenCalledWith(availableModels[0]);
+		});
+
+		it("rejects set_model for models the session does not expose", async () => {
+			const ws = new MockWebSocket();
+			const session = createSession({
+				getAvailableModels: vi.fn(async () => availableModels),
+			});
+
+			handleWebSocketConnection(ws as never, {
+				token: "test-token",
+				instanceId: "instance-1",
+				getSession: () => session,
+			});
+
+			await authenticateSocket(ws);
+			await ws.emitMessage(
+				JSON.stringify({ id: "cmd-1", type: "set_model", provider: "anthropic", modelId: "claude-opus-4-7" }),
+			);
+
+			expect(session.setModel).not.toHaveBeenCalled();
+			expect(ws.sent.at(-1)).toEqual({
+				type: "response",
+				command: "set_model",
+				success: false,
+				error: "Model not found: anthropic/claude-opus-4-7",
+				id: "cmd-1",
+			});
+		});
+
+		it("passes a provider/modelId reference when the session cannot enumerate models", async () => {
+			const ws = new MockWebSocket();
+			const session = createSession();
+
+			handleWebSocketConnection(ws as never, {
+				token: "test-token",
+				instanceId: "instance-1",
+				getSession: () => session,
+			});
+
+			await authenticateSocket(ws);
+			await ws.emitMessage(JSON.stringify({ id: "cmd-1", type: "set_model", provider: "zai", modelId: "glm-5.1" }));
+
+			expect(session.setModel).toHaveBeenCalledWith({ id: "glm-5.1", provider: "zai" });
+			expect(ws.sent.at(-1)).toMatchObject({ command: "set_model", success: true, id: "cmd-1" });
+		});
+
+		it("reports a failed model switch", async () => {
+			const ws = new MockWebSocket();
+			const session = createSession({
+				getAvailableModels: vi.fn(async () => availableModels),
+				setModel: vi.fn(async () => false),
+			});
+
+			handleWebSocketConnection(ws as never, {
+				token: "test-token",
+				instanceId: "instance-1",
+				getSession: () => session,
+			});
+
+			await authenticateSocket(ws);
+			await ws.emitMessage(JSON.stringify({ id: "cmd-1", type: "set_model", provider: "zai", modelId: "glm-5.1" }));
+
+			expect(ws.sent.at(-1)).toEqual({
+				type: "response",
+				command: "set_model",
+				success: false,
+				error: "Failed to switch to zai/glm-5.1",
+				id: "cmd-1",
+			});
+		});
+
+		it("validates set_model fields", async () => {
+			const ws = new MockWebSocket();
+			const session = createSession();
+
+			handleWebSocketConnection(ws as never, {
+				token: "test-token",
+				instanceId: "instance-1",
+				getSession: () => session,
+			});
+
+			await authenticateSocket(ws);
+			await ws.emitMessage(JSON.stringify({ id: "cmd-1", type: "set_model", provider: "zai" }));
+
+			expect(session.setModel).not.toHaveBeenCalled();
+			expect(ws.sent.at(-1)).toMatchObject({ command: "set_model", success: false, id: "cmd-1" });
+		});
+	});
+
+	describe("introspection commands", () => {
+		it("merges real session stats with the client contract fields", async () => {
+			const ws = new MockWebSocket();
+			const session = createSession({
+				getSessionStats: vi.fn(() => ({ cost: 0.42, sessionId: "stats-session", totalMessages: 7 })),
+			});
+
+			handleWebSocketConnection(ws as never, {
+				token: "test-token",
+				instanceId: "instance-1",
+				getSession: () => session,
+			});
+
+			await authenticateSocket(ws);
+			await ws.emitMessage(JSON.stringify({ id: "cmd-1", type: "get_session_stats" }));
+
+			expect(ws.sent.at(-1)).toEqual({
+				type: "response",
+				command: "get_session_stats",
+				success: true,
+				data: {
+					cost: 0.42,
+					isStreaming: false,
+					messageCount: 1,
+					sessionId: "session-1",
+					totalMessages: 7,
+				},
+				id: "cmd-1",
+			});
+		});
+
+		it("derives session stats when the session does not expose them", async () => {
+			const ws = new MockWebSocket();
+			const session = createSession();
+
+			handleWebSocketConnection(ws as never, {
+				token: "test-token",
+				instanceId: "instance-1",
+				getSession: () => session,
+			});
+
+			await authenticateSocket(ws);
+			await ws.emitMessage(JSON.stringify({ id: "cmd-1", type: "get_session_stats" }));
+
+			expect(ws.sent.at(-1)).toEqual({
+				type: "response",
+				command: "get_session_stats",
+				success: true,
+				data: { isStreaming: false, messageCount: 1, sessionId: "session-1" },
+				id: "cmd-1",
+			});
+		});
+
+		it("returns commands from the session when available", async () => {
+			const ws = new MockWebSocket();
+			const commands = [{ description: "Share session", name: "remote", source: "extension" }];
+			const session = createSession({ getCommands: vi.fn(() => commands) });
+
+			handleWebSocketConnection(ws as never, {
+				token: "test-token",
+				instanceId: "instance-1",
+				getSession: () => session,
+			});
+
+			await authenticateSocket(ws);
+			await ws.emitMessage(JSON.stringify({ id: "cmd-1", type: "get_commands" }));
+
+			expect(ws.sent.at(-1)).toEqual({
+				type: "response",
+				command: "get_commands",
+				success: true,
+				data: { commands },
+				id: "cmd-1",
+			});
+		});
+
+		it("normalizes a wrapped commands object and falls back to an empty list", async () => {
+			const ws = new MockWebSocket();
+			const commands = [{ name: "plan", source: "prompt" }];
+			const session = createSession({ getCommands: vi.fn(() => ({ commands })) });
+
+			handleWebSocketConnection(ws as never, {
+				token: "test-token",
+				instanceId: "instance-1",
+				getSession: () => session,
+			});
+
+			await authenticateSocket(ws);
+			await ws.emitMessage(JSON.stringify({ id: "cmd-1", type: "get_commands" }));
+			expect(ws.sent.at(-1)).toMatchObject({ command: "get_commands", data: { commands }, id: "cmd-1" });
+
+			await ws.emitMessage(JSON.stringify({ id: "cmd-2", type: "get_available_models" }));
+			expect(ws.sent.at(-1)).toEqual({
+				type: "response",
+				command: "get_available_models",
+				success: true,
+				data: { models: [] },
+				id: "cmd-2",
+			});
+		});
+
+		it("returns available models from the session", async () => {
+			const ws = new MockWebSocket();
+			const models = [{ id: "gpt-5-mini", provider: "openai" }];
+			const session = createSession({ getAvailableModels: vi.fn(async () => models) });
+
+			handleWebSocketConnection(ws as never, {
+				token: "test-token",
+				instanceId: "instance-1",
+				getSession: () => session,
+			});
+
+			await authenticateSocket(ws);
+			await ws.emitMessage(JSON.stringify({ id: "cmd-1", type: "get_available_models" }));
+
+			expect(ws.sent.at(-1)).toEqual({
+				type: "response",
+				command: "get_available_models",
+				success: true,
+				data: { models },
+				id: "cmd-1",
+			});
+		});
+	});
 });

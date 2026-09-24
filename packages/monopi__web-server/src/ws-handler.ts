@@ -34,6 +34,10 @@ export interface AgentSessionLike {
 	sessionFile: string | undefined;
 	agent: { state: { systemPrompt: string; tools: unknown[] } };
 	newSession(options?: { parentSession?: string }): Promise<{ cancelled: boolean }>;
+	// Optional capabilities: probed at runtime so older sessions still work.
+	getSessionStats?(): unknown;
+	getCommands?(): unknown;
+	getAvailableModels?(): Promise<unknown[]> | unknown[];
 }
 
 let clientCounter = 0;
@@ -211,6 +215,81 @@ async function dispatchCommand(
 			break;
 		}
 
+		case "set_model": {
+			const provider = typeof msg.provider === "string" ? msg.provider.trim() : "";
+			const modelId = typeof msg.modelId === "string" ? msg.modelId.trim() : "";
+
+			if (!provider || !modelId) {
+				respond({
+					command: "set_model",
+					error: 'set_model requires string fields "provider" and "modelId"',
+					success: false,
+				});
+				break;
+			}
+
+			let model: unknown;
+
+			if (typeof agentSession.getAvailableModels === "function") {
+				model = await resolveModel(agentSession.getAvailableModels(), provider, modelId);
+
+				if (!model) {
+					respond({
+						command: "set_model",
+						error: `Model not found: ${provider}/${modelId}`,
+						success: false,
+					});
+					break;
+				}
+			} else {
+				// Session cannot enumerate models: pass a best-effort reference.
+				model = { id: modelId, provider };
+			}
+
+			const ok = await agentSession.setModel(model);
+
+			if (!ok) {
+				respond({
+					command: "set_model",
+					error: `Failed to switch to ${provider}/${modelId}`,
+					success: false,
+				});
+				break;
+			}
+
+			respond({ command: "set_model", data: { model }, success: true });
+			break;
+		}
+
+		case "get_session_stats": {
+			const base = {
+				isStreaming: agentSession.isStreaming,
+				messageCount: agentSession.messages.length,
+				sessionId: agentSession.sessionId,
+			};
+			const stats = agentSession.getSessionStats?.();
+			respond({
+				command: "get_session_stats",
+				data: isRecord(stats) ? { ...stats, ...base } : base,
+				success: true,
+			});
+			break;
+		}
+
+		case "get_commands": {
+			const raw = agentSession.getCommands?.();
+			const commands = Array.isArray(raw) ? raw : isRecord(raw) && Array.isArray(raw.commands) ? raw.commands : [];
+			respond({ command: "get_commands", data: { commands }, success: true });
+			break;
+		}
+
+		case "get_available_models": {
+			const raw = await agentSession.getAvailableModels?.();
+			const models = Array.isArray(raw) ? raw : [];
+			respond({ command: "get_available_models", data: { models }, success: true });
+			break;
+		}
+
 		case "compact": {
 			const result = await agentSession.compact(msg.customInstructions as string | undefined);
 			respond({ command: "compact", data: result, success: true });
@@ -237,4 +316,25 @@ async function dispatchCommand(
 			});
 		}
 	}
+}
+
+/**
+ * Resolve a provider/modelId pair against the session's available models.
+ * The real setModel implementation expects a full model object, not a reference.
+ */
+async function resolveModel(
+	available: Promise<unknown[]> | unknown[],
+	provider: string,
+	modelId: string,
+): Promise<unknown> {
+	const models = Array.isArray(available) ? available : await available;
+	const needle = `${provider}/${modelId}`.toLowerCase();
+
+	return models.find(
+		(model) => isRecord(model) && `${String(model.provider)}/${String(model.id)}`.toLowerCase() === needle,
+	);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null;
 }
