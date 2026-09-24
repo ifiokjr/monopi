@@ -584,6 +584,50 @@ describe("adaptive routing extension", () => {
 		).toBe(true);
 	});
 
+	it("announces routed switches on the shared event bus so other extensions can ignore them", async () => {
+		writeFileSync(
+			join(tempAgentDir, "extensions", "adaptive-routing", "config.json"),
+			`${JSON.stringify(
+				{
+					mode: "auto",
+					models: { ranked: ["ollama-cloud/glm-5.3-flash"] },
+					quotaFailover: {
+						enabled: true,
+						autoMirror: false,
+						mirrorSets: [["ollama-cloud/glm-5.3-flash", "zai/glm-5.3-flash"]],
+					},
+				},
+				null,
+				2,
+			)}\n`,
+		);
+		const harness = createExtensionHarness();
+		harness.ctx.model = glmModel("ollama-cloud") as never;
+		harness.ctx.modelRegistry = {
+			getAvailable: () => [glmModel("ollama-cloud"), glmModel("zai")],
+			getApiKeyForProvider: async () => "key",
+		} as never;
+
+		adaptiveRoutingExtension(harness.pi as never);
+		emitUsageLimits(harness, healthyMirrorQuota);
+		const routingEvents: unknown[] = [];
+		harness.pi.events.on("routing:applying", (payload: unknown) => {
+			routingEvents.push(payload);
+		});
+
+		await harness.emitAsync(
+			"before_agent_start",
+			{ type: "before_agent_start", prompt: "Continue the refactor.", systemPrompt: "system" },
+			harness.ctx,
+		);
+
+		// Both routed switches (the decision and the quota failover) must be wrapped in an
+		// applying window on the bus, mirroring the internal applyingRoute guard so
+		// prompt-modes can tell them from a manual change.
+		expect(routingEvents).toEqual([{ active: true }, { active: false }, { active: true }, { active: false }]);
+		expect(harness.ctx.model).toMatchObject({ id: "glm-5.3-flash", provider: "zai" });
+	});
+
 	it("suggests but does not switch in shadow mode", async () => {
 		writeFileSync(
 			join(tempAgentDir, "extensions", "adaptive-routing", "config.json"),
@@ -1042,6 +1086,27 @@ describe("adaptive routing manual selection pinning", () => {
 		// A genuine manual pick afterwards does pin.
 		await harness.emitAsync("model_select", { model: { id: "gemini-2.5-flash", provider: "google" } }, harness.ctx);
 		expect(harness.statusMap.get("adaptive-routing")).toContain("\u{1f512}");
+	});
+
+	it("wraps the routed setModel call in a routing:applying window on the event bus", async () => {
+		writeConfig(AUTO_CONFIG);
+		const harness = createHarness();
+		const timeline: string[] = [];
+		harness.pi.setModel = async (model: unknown) => {
+			const typed = model as { provider: string; id: string };
+			harness.ctx.model = typed as never;
+			timeline.push("model_select");
+			await harness.emitAsync("model_select", { model: { id: typed.id, provider: typed.provider } }, harness.ctx);
+			return true;
+		};
+		harness.pi.events.on("routing:applying", (payload: unknown) => {
+			timeline.push(`applying:${(payload as { active?: unknown }).active === true}`);
+		});
+
+		await startTurn(harness, "Design a better settings page UI.");
+
+		// pi emits model_select inside setModel, so the window must be open across it.
+		expect(timeline).toEqual(["applying:true", "model_select", "applying:false"]);
 	});
 
 	it("keeps a pinned model even when config excludes it from routing candidates", async () => {
