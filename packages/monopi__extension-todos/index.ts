@@ -1995,7 +1995,7 @@ export default function todosExtension(pi: ExtensionAPI) {
 				return rootComponent;
 			});
 
-			if (nextPrompt) {
+			if (nextPrompt && !ctx.ui.getEditorText().trim()) {
 				ctx.ui.setEditorText(nextPrompt);
 				rootTui?.requestRender();
 			}
