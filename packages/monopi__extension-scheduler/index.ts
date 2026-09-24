@@ -807,6 +807,9 @@ export class SchedulerRuntime {
 
 		const now = Date.now();
 		let mutated = this.reconcileTaskOwnership();
+		// Recover observer mode before any early-return path so a stale foreign
+		// lease never leaves this instance latched as a silent observer.
+		this.recoverObserverMode(now);
 
 		const expiredIds: string[] = [];
 		for (const task of this.tasks.values()) {
@@ -938,7 +941,10 @@ export class SchedulerRuntime {
 				break;
 			}
 			default: {
-				ctx.ui.notify("This instance will observe scheduler tasks without dispatching them.", "info");
+				ctx.ui.notify(
+					"This instance will observe scheduler tasks without dispatching them. It resumes dispatching automatically if the other instance's lease goes stale.",
+					"info",
+				);
 			}
 		}
 
@@ -1750,7 +1756,9 @@ export class SchedulerRuntime {
 	}
 
 	private refreshLeaseHeartbeat(now = Date.now()) {
-		if (this.dispatchMode === "observer") {
+		// Observer mode is transient: recover to auto as soon as the foreign lease
+		// is no longer live so this instance can resume dispatching.
+		if (this.dispatchMode === "observer" && !this.recoverObserverMode(now)) {
 			return;
 		}
 		const status = this.getLeaseStatus(now);
@@ -1761,7 +1769,7 @@ export class SchedulerRuntime {
 	}
 
 	private ensureDispatchLease(now = Date.now()): { canDispatch: boolean } {
-		if (this.dispatchMode === "observer") {
+		if (this.dispatchMode === "observer" && !this.recoverObserverMode(now)) {
 			return { canDispatch: false };
 		}
 		const status = this.getLeaseStatus(now);
@@ -1772,6 +1780,26 @@ export class SchedulerRuntime {
 			return { canDispatch: false };
 		}
 		return { canDispatch: this.writeLease(now) };
+	}
+
+	/**
+	 * Return from observer mode to auto once the foreign lease goes stale or
+	 * disappears. Without this, an instance that started as an observer stays
+	 * latched forever after the owning instance dies, and scheduled tasks
+	 * silently never run until restart or manual takeover.
+	 */
+	private recoverObserverMode(now = Date.now()): boolean {
+		if (this.dispatchMode !== "observer") {
+			return false;
+		}
+		if (this.getLeaseStatus(now).activeForeign) {
+			return false;
+		}
+		this.dispatchMode = "auto";
+		if (this.runtimeCtx?.hasUI && !this.safeModeEnabled) {
+			this.runtimeCtx.ui.notify("Foreign scheduler lease went stale; this instance can dispatch tasks again.", "info");
+		}
+		return true;
 	}
 
 	private takeOverScheduler(adoptForeignTasks: boolean): number {
