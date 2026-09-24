@@ -20,6 +20,7 @@ import { inspectDelegatedSelection } from "./delegated-runtime.js";
 import { decideRoute } from "./engine.js";
 import { matchesModelRef, normalizeRouteCandidates } from "./normalize.js";
 import { deriveMirrorSets, resolveQuotaFailover } from "./quota-failover.js";
+import { captureRoutedDefaults, restoreRoutedDefaults, type RoutedDefaultsSnapshot } from "./settings-defaults.js";
 import { flushAdaptiveRoutingState, readAdaptiveRoutingState, writeAdaptiveRoutingState } from "./state.js";
 import {
 	appendTelemetryEvent,
@@ -634,7 +635,9 @@ async function applyDecision(
 
 	runtime.applyingRoute = true;
 	emitRoutingSwitch(pi, true);
+	let savedDefaults: RoutedDefaultsSnapshot | undefined;
 	try {
+		savedDefaults = captureRoutedDefaults();
 		if (currentModel !== decision.selectedModel) {
 			const ok = await pi.setModel(target.model);
 			if (!ok) {
@@ -647,6 +650,9 @@ async function applyDecision(
 		}
 		ctx.ui.notify(`Adaptive route applied: ${decision.selectedModel} · ${decision.selectedThinking}`, "info");
 	} finally {
+		// pi persists the routed pick into the user's global startup defaults on every
+		// switch; put the configured defaults back so routing stays per-session.
+		await restoreRoutedDefaults(savedDefaults);
 		runtime.applyingRoute = false;
 		emitRoutingSwitch(pi, false);
 	}
@@ -709,7 +715,9 @@ async function applyQuotaFailover(
 
 	runtime.applyingRoute = true;
 	emitRoutingSwitch(pi, true);
+	let savedDefaults: RoutedDefaultsSnapshot | undefined;
 	try {
+		savedDefaults = captureRoutedDefaults();
 		const ok = target ? await pi.setModel(target.model) : false;
 		if (!ok) {
 			ctx.ui.notify(`Failed to switch to ${action.to}.`, "error");
@@ -720,6 +728,8 @@ async function applyQuotaFailover(
 		ctx.ui.notify(`Quota failover: ${describeFailoverSwitch(action)}`, "info");
 		appendTelemetryEvent(config.telemetry, createQuotaFailoverEvent(action, true));
 	} finally {
+		// A failover switch must not become the user's startup model either.
+		await restoreRoutedDefaults(savedDefaults);
 		runtime.applyingRoute = false;
 		emitRoutingSwitch(pi, false);
 	}
