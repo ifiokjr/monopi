@@ -7,8 +7,14 @@ import type {
 	AdaptiveRoutingConfig,
 	NormalizedRouteCandidate,
 	PromptRouteClassification,
+	RouteComplexity,
+	RouteContextBreadth,
+	RouteExpectedTurns,
 	RouteIntent,
+	RouteRisk,
 	RouteThinkingLevel,
+	RouteTier,
+	RouteToolIntensity,
 } from "./types.js";
 
 import { buildFallbackClassification } from "./engine.js";
@@ -227,25 +233,72 @@ function buildClassifierPrompt(prompt: string): string {
 	].join("\n");
 }
 
-function parseClassifierResponse(text: string): PromptRouteClassification | undefined {
+const VALID_INTENTS = new Set<RouteIntent>([
+	"quick-qna",
+	"planning",
+	"research",
+	"implementation",
+	"debugging",
+	"design",
+	"architecture",
+	"review",
+	"refactor",
+	"autonomous",
+]);
+const VALID_TIERS = new Set<RouteTier>(["cheap", "balanced", "premium", "peak"]);
+const VALID_THINKING = new Set<RouteThinkingLevel>(["off", "minimal", "low", "medium", "high", "xhigh"]);
+const VALID_RISKS = new Set<RouteRisk>(["low", "medium", "high"]);
+const VALID_TURNS = new Set<RouteExpectedTurns>(["one", "few", "many"]);
+const VALID_TOOL_INTENSITY = new Set<RouteToolIntensity>(["low", "medium", "high"]);
+const VALID_CONTEXT_BREADTH = new Set<RouteContextBreadth>(["small", "medium", "large"]);
+
+/**
+ * Parse the classifier's answer, rejecting values that would silently poison routing.
+ *
+ * An unrecognized intent would look up to `undefined` in the intent policy table and
+ * disable that intent's configured routing, so an unknown intent rejects the whole
+ * response and classification falls back to heuristics. Other enum fields fall back to
+ * the deterministic intent-derived defaults instead of trusting the LLM verbatim.
+ */
+export function parseClassifierResponse(text: string): PromptRouteClassification | undefined {
 	try {
 		const match = text.match(/\{[\s\S]*\}/);
 		if (!match) {
 			return undefined;
 		}
 		const parsed = JSON.parse(match[0]) as Partial<PromptRouteClassification>;
-		if (!(parsed.intent && parsed.recommendedTier && parsed.recommendedThinking)) {
+		if (!(typeof parsed.intent === "string" && VALID_INTENTS.has(parsed.intent as RouteIntent))) {
 			return undefined;
 		}
+		const base = buildFallbackClassification(parsed.intent as RouteIntent);
+		const complexity = parseComplexity(parsed.complexity);
 		return {
-			...buildFallbackClassification(parsed.intent),
+			...base,
 			...parsed,
+			complexity: complexity ?? base.complexity,
 			confidence: clampConfidence(parsed.confidence),
+			contextBreadth: enumOrFallback(parsed.contextBreadth, VALID_CONTEXT_BREADTH, base.contextBreadth),
+			expectedTurns: enumOrFallback(parsed.expectedTurns, VALID_TURNS, base.expectedTurns),
+			intent: base.intent,
+			recommendedTier: enumOrFallback(parsed.recommendedTier, VALID_TIERS, base.recommendedTier),
+			recommendedThinking: enumOrFallback(parsed.recommendedThinking, VALID_THINKING, base.recommendedThinking),
 			reason: typeof parsed.reason === "string" && parsed.reason.trim() ? parsed.reason.trim() : "llm classification",
+			risk: enumOrFallback(parsed.risk, VALID_RISKS, base.risk),
+			toolIntensity: enumOrFallback(parsed.toolIntensity, VALID_TOOL_INTENSITY, base.toolIntensity),
 		};
 	} catch {
 		return undefined;
 	}
+}
+
+function enumOrFallback<T extends string>(value: unknown, allowed: Set<T>, fallback: T): T {
+	return typeof value === "string" && (allowed as Set<string>).has(value) ? (value as T) : fallback;
+}
+
+function parseComplexity(value: unknown): RouteComplexity | undefined {
+	return typeof value === "number" && Number.isInteger(value) && value >= 1 && value <= 5
+		? (value as RouteComplexity)
+		: undefined;
 }
 
 function extractAnswer(message: AssistantMessage): string {

@@ -16,6 +16,7 @@ export const ADAPTIVE_ROUTING_EXPLANATION_CODES: AdaptiveRoutingExplanationCode[
 	"quota_unknown",
 	"thinking_clamped",
 	"current_model_sticky",
+	"context_short",
 	"fallback_group_applied",
 ];
 

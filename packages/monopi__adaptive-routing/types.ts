@@ -277,6 +277,7 @@ export type AdaptiveRoutingExplanationCode =
 	| "quota_unknown"
 	| "thinking_clamped"
 	| "current_model_sticky"
+	| "context_short"
 	| "fallback_group_applied"
 	| "manual_lock_applied"
 	| "shadow_disagreement"
