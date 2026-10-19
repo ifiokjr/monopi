@@ -52,8 +52,8 @@ importers:
         specifier: ^0.7.0
         version: 0.7.0
       '@monochange/cli':
-        specifier: ^0.8.3
-        version: 0.8.3
+        specifier: ^0.19.0
+        version: 0.19.0
       '@types/node':
         specifier: ^26.1.0
         version: 26.1.0
@@ -1281,11 +1281,11 @@ packages:
 
   '@esbuild-kit/core-utils@3.3.2':
     resolution: {integrity: sha512-sPRAnw9CdSsRmEtnsl2WXWdyquogVpB3yZ3dgwJfe8zrOzTsV7cJvmwrKVa+0ma5BoiGJ+BoqkMvawbayKUsqQ==}
-    deprecated: 'Merged into tsx: https://tsx.is'
+    deprecated: 'Merged into tsx: https://tsx.hirok.io'
 
   '@esbuild-kit/esm-loader@2.6.5':
     resolution: {integrity: sha512-FxEMIkJKnodyA1OaCUoEvbYRkoZlLZ4d/eXFu9Fh8CbBBgP5EmZxrfTRyN0qpXZ4vOvqnE5YdRdcrmUUXuU+dA==}
-    deprecated: 'Merged into tsx: https://tsx.is'
+    deprecated: 'Merged into tsx: https://tsx.hirok.io'
 
   '@esbuild/aix-ppc64@0.25.12':
     resolution: {integrity: sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA==}
@@ -1822,52 +1822,52 @@ packages:
       '@opentelemetry/api':
         optional: true
 
-  '@monochange/cli-darwin-arm64@0.8.3':
-    resolution: {integrity: sha512-zw5YB0dqB8WJHAkrhehTf9+iTSodvcJjn9r61GTgtpphU0Lha3YNUR7vKrsDe++Ya8lGEssP+CGFVZkUXK8o0Q==}
+  '@monochange/cli-darwin-arm64@0.19.0':
+    resolution: {integrity: sha512-N01e3oDE/GQcQdt1u6GvddQsRbvU/xA6INgu3Yd0bXgiUZ4M9fOcKHch6ZmB2OLUMhjF1hidwG4upu0SCYpcMA==}
     cpu: [arm64]
     os: [darwin]
 
-  '@monochange/cli-darwin-x64@0.8.3':
-    resolution: {integrity: sha512-ez1/3vwZS5q4xHrQ7S+7OSFYac+1ntROtuoe/rTyYzX530QrzFYhwIGvmTb8Fp0+4GUjyDuPiZ5oZms6quFlUg==}
+  '@monochange/cli-darwin-x64@0.19.0':
+    resolution: {integrity: sha512-lK8/Vto7DvMlMUHqWHElb8QP/VZbmJGvm5AP4r0xUz6qLB2aWuAQcmO1WEKRxb4ipSdCaYJUrQ0ceJHBs7ic+A==}
     cpu: [x64]
     os: [darwin]
 
-  '@monochange/cli-linux-arm64-gnu@0.8.3':
-    resolution: {integrity: sha512-b0MMws8q0W/krfSg8BZ5NYGAsR2liADKHI1VmX6oasHiOlQAtTtPr+HWcZhS1YziYGgFonU/fa19LFrGkjoM/Q==}
+  '@monochange/cli-linux-arm64-gnu@0.19.0':
+    resolution: {integrity: sha512-Oepq7+6sOrhHbgMOlVxJzYxvznd6+Djw2roGcNZL7ULfsCqciq86JCX7mIlEwQGkwNGyVqu0vPzYMk7Y2NTEgQ==}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@monochange/cli-linux-arm64-musl@0.8.3':
-    resolution: {integrity: sha512-OU09m27JCYPFj5nbGPQprEPBTsmxbIoSo6SzA441ycpMNxS2BUMOpz0s5KcyZH8vThlWGKfISwLQ6uoHyV3BaA==}
+  '@monochange/cli-linux-arm64-musl@0.19.0':
+    resolution: {integrity: sha512-ALF0gt6tLkW+YkWqK8zZFdOEvnLVyb3P3EW+wqTqII2zsYnZQR5BJKeGyteOMqZwBYS05ip7qJHdIxVSemCnqw==}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@monochange/cli-linux-x64-gnu@0.8.3':
-    resolution: {integrity: sha512-rWT2Gzha+hPvDtxvrMq525/NcaWYvftuygt28TiLp+0sMNDA0ChX8WwA9HUqM3hCEcBFZiu/jXsdUOkihdhJoA==}
+  '@monochange/cli-linux-x64-gnu@0.19.0':
+    resolution: {integrity: sha512-1ND72LYot87MGvyz/EvaefinlCcBbAYAdptBF6UN18hLvI9CUwjoBun4DKSjQ+T9nN2FY3p4PTBKRlMh+6dqRw==}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@monochange/cli-linux-x64-musl@0.8.3':
-    resolution: {integrity: sha512-GAoXysw8oeDagIaqGq+S+LCcfcnRSV1E+cJ2SFz6LBnizxPLmLOdYDnIpoTPbtlnRbekRXUwA5uCgwuXQjIYRw==}
+  '@monochange/cli-linux-x64-musl@0.19.0':
+    resolution: {integrity: sha512-1bT8YGX4G2t0dQl9Z18OXs/m3XhM8QpNZrWT1lY/qaKG8tNX+tYFOnMxXKbT9QeS7ITJgLKb1Qy7v0ZpQatikQ==}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@monochange/cli-win32-arm64-msvc@0.8.3':
-    resolution: {integrity: sha512-xXuZsvpybZBrhggD1OCMTK8E+jTIaOT5xe9HNANZ6Fy3JwdBjZXKyvShOPI7bGz1UrS5qfbxqtOGK2mKA0FcgA==}
+  '@monochange/cli-win32-arm64-msvc@0.19.0':
+    resolution: {integrity: sha512-3vy4Zd9PuUUzl+l2pMZCy9U9E4FbDC03+U5J5quxShEG1X+do/R3Pn4zBPp0/7prCkUl3wh/7zfwyGAnk+ZNPQ==}
     cpu: [arm64]
     os: [win32]
 
-  '@monochange/cli-win32-x64-msvc@0.8.3':
-    resolution: {integrity: sha512-NvHbOGTLan15PQf5jys+D+U/aHDbTNv3TlLNFb8eNS99jIjaaiFYC0po57jLNOio182JEUvG/IJf5dY3bE35xw==}
+  '@monochange/cli-win32-x64-msvc@0.19.0':
+    resolution: {integrity: sha512-BlNp7yk3VbqeCqQFTfeu/f68x009kRkGcOU93BRlt5fFdqhbqEtu5SKfs7FL1xSfXmIdWDYd8hxLeK0d2A5Mww==}
     cpu: [x64]
     os: [win32]
 
-  '@monochange/cli@0.8.3':
-    resolution: {integrity: sha512-W08heK/A5YJh0ylw7VWzA5N8eoohymwZBhRiPNmyb2vH0DQFMYox49J4HSqbdS8PrRHH1Bwa+HFi47FRDC1caQ==}
+  '@monochange/cli@0.19.0':
+    resolution: {integrity: sha512-mJfwrgK65mjDsOr8EnQ6gbeJt9rXbGSltYsHrg9pNN3/+jqkmnJYZ4jIUWxFozOs7NCKKOgUEbSJR0hAmG4bfA==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -6031,40 +6031,40 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@monochange/cli-darwin-arm64@0.8.3':
+  '@monochange/cli-darwin-arm64@0.19.0':
     optional: true
 
-  '@monochange/cli-darwin-x64@0.8.3':
+  '@monochange/cli-darwin-x64@0.19.0':
     optional: true
 
-  '@monochange/cli-linux-arm64-gnu@0.8.3':
+  '@monochange/cli-linux-arm64-gnu@0.19.0':
     optional: true
 
-  '@monochange/cli-linux-arm64-musl@0.8.3':
+  '@monochange/cli-linux-arm64-musl@0.19.0':
     optional: true
 
-  '@monochange/cli-linux-x64-gnu@0.8.3':
+  '@monochange/cli-linux-x64-gnu@0.19.0':
     optional: true
 
-  '@monochange/cli-linux-x64-musl@0.8.3':
+  '@monochange/cli-linux-x64-musl@0.19.0':
     optional: true
 
-  '@monochange/cli-win32-arm64-msvc@0.8.3':
+  '@monochange/cli-win32-arm64-msvc@0.19.0':
     optional: true
 
-  '@monochange/cli-win32-x64-msvc@0.8.3':
+  '@monochange/cli-win32-x64-msvc@0.19.0':
     optional: true
 
-  '@monochange/cli@0.8.3':
+  '@monochange/cli@0.19.0':
     optionalDependencies:
-      '@monochange/cli-darwin-arm64': 0.8.3
-      '@monochange/cli-darwin-x64': 0.8.3
-      '@monochange/cli-linux-arm64-gnu': 0.8.3
-      '@monochange/cli-linux-arm64-musl': 0.8.3
-      '@monochange/cli-linux-x64-gnu': 0.8.3
-      '@monochange/cli-linux-x64-musl': 0.8.3
-      '@monochange/cli-win32-arm64-msvc': 0.8.3
-      '@monochange/cli-win32-x64-msvc': 0.8.3
+      '@monochange/cli-darwin-arm64': 0.19.0
+      '@monochange/cli-darwin-x64': 0.19.0
+      '@monochange/cli-linux-arm64-gnu': 0.19.0
+      '@monochange/cli-linux-arm64-musl': 0.19.0
+      '@monochange/cli-linux-x64-gnu': 0.19.0
+      '@monochange/cli-linux-x64-musl': 0.19.0
+      '@monochange/cli-win32-arm64-msvc': 0.19.0
+      '@monochange/cli-win32-x64-msvc': 0.19.0
 
   '@napi-rs/wasm-runtime@1.1.6(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)':
     dependencies:
