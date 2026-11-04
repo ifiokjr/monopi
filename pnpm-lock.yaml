@@ -164,7 +164,9 @@ settings:
 
 overrides:
   file-type: 21.3.2
-  undici: 7.29.1
+  body-parser: 2.4.0
+  undici: 7.30.1
+  zod: 4.6.7
   yauzl@<3.2.1: '>=3.2.1'
   file-type@>=20.0.0 <=21.3.2: '>=21.3.2'
   fast-xml-parser: '>=5.7.0'
@@ -199,13 +201,13 @@ importers:
     devDependencies:
       '@earendil-works/pi-agent-core':
         specifier: 0.84.1
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: 0.84.1
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: 0.84.1
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: 0.84.1
         version: 0.84.1
@@ -256,13 +258,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -404,13 +406,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -425,13 +427,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -443,13 +445,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -527,13 +529,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -565,7 +567,7 @@ importers:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       better-sqlite3:
         specifier: ^12.11.1
         version: 12.11.1
@@ -584,13 +586,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -648,13 +650,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -669,13 +671,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -687,13 +689,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -708,13 +710,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -729,13 +731,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -747,13 +749,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -762,13 +764,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -780,13 +782,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       typebox:
         specifier: ^1.1.24
         version: 1.3.0
@@ -795,25 +797,25 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
 
   packages/monopi__extension-review:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -822,13 +824,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -849,13 +851,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -870,13 +872,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -888,13 +890,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -906,13 +908,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -924,13 +926,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -945,13 +947,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -966,13 +968,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -993,7 +995,7 @@ importers:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -1016,13 +1018,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -1040,13 +1042,13 @@ importers:
         version: 2.12.1
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -1058,13 +1060,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -1076,13 +1078,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -1112,13 +1114,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -1135,7 +1137,7 @@ importers:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@monopi/web-server':
         specifier: 0.6.1
         version: link:../monopi__web-server
@@ -1147,7 +1149,7 @@ importers:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@hono/node-server':
         specifier: '>=2.0.10'
         version: 2.1.0(hono@4.13.13)
@@ -1171,7 +1173,7 @@ packages:
     resolution: {integrity: sha512-LAmu761tSN9r66ixvmciswUj/ZC+1Q4iAfpedTfSVLeswRwnY3n2Nb6Tsk+cLPP28aLOPWeMgIuTuCcMC6W/iw==}
     hasBin: true
     peerDependencies:
-      zod: ^3.25.0 || ^4.0.0
+      zod: 4.6.7
     peerDependenciesMeta:
       zod:
         optional: true
@@ -2872,6 +2874,7 @@ packages:
   '@smithy/core@3.32.0':
     resolution: {integrity: sha512-NAiCSC78fzbNIEWoheoF74Ob5ZorLijCHpMY26Fqvqg/+9LuyIqMfHDg2p8Yk1rqOyowtiL3y7WX0AW+teL6zw==}
     engines: {node: '>=18.0.0'}
+    deprecated: Deprecated due to a bug in custom logger data redaction. See https://github.com/aws/aws-sdk-js-v3/issues/8393.
 
   '@smithy/credential-provider-imds@4.5.0':
     resolution: {integrity: sha512-2jsPi+7Zv2hSzD9IXR9D7DTqSn7mv4XalzRm+bESh53jiaUS3NKEUbpQFTJP0HhQy9qzZvluxQ3yS24zdRrqsA==}
@@ -3461,8 +3464,8 @@ packages:
   bl@4.1.0:
     resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
 
-  body-parser@2.3.0:
-    resolution: {integrity: sha512-2cGmJupaNgg+QUwVLAucDuWuoMZ6EX9iHDRswZ5lsNYEmwPaRknMPCLZz07yTzVq/83p4o/wzbDZbBrTvGGTIw==}
+  body-parser@2.4.0:
+    resolution: {integrity: sha512-Ifk1KcLrxaGt1occQagQNFNNOqRt1LFuehEnHHzB8Z6cRgIxRU1TBaiIsUiCdA+gy5PL7Y1IX31DNKkRmxtXjQ==}
     engines: {node: '>=18'}
 
   bowser@2.14.1:
@@ -3567,6 +3570,10 @@ packages:
 
   content-type@2.0.0:
     resolution: {integrity: sha512-j/O/d7GcZCyNl7/hwZAb606rzqkyvaDctLmckbxLzHvFBzTJHuGEdodATcP3yIRoDrLHkIATJuvzbFlp/ki2cQ==}
+    engines: {node: '>=18'}
+
+  content-type@2.1.0:
+    resolution: {integrity: sha512-mj7UPXE0jaqaOsukNZRUEfEi2AcL7C/vwmwcHV0O97eO1E1pxBZuyjlZrx5seTaNBg1U6+o35wpa35Qfcc+7ag==}
     engines: {node: '>=18'}
 
   convert-source-map@2.0.0:
@@ -4655,7 +4662,7 @@ packages:
     hasBin: true
     peerDependencies:
       ws: 8.21.0
-      zod: ^3.25 || ^4.0
+      zod: 4.6.7
     peerDependenciesMeta:
       ws:
         optional: true
@@ -5267,8 +5274,8 @@ packages:
   undici-types@8.3.0:
     resolution: {integrity: sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ==}
 
-  undici@7.29.1:
-    resolution: {integrity: sha512-RYONW2MeafgYlkVOKYKkA/Ag7BmXqgIWCa8t1m0JcxrQg9pI9lEqRhAOruOBCbAohOa/gkCF+iPi9hrgvTzu6Q==}
+  undici@7.30.1:
+    resolution: {integrity: sha512-03KrMbjIFDWQR5RNPrSw3bd1r12JpyFQl9/yxjUbJtqkjmllqC5lFjZh6ujeuJCKr8EOQvRW872Oy/az+nLYxg==}
     engines: {node: '>=20.18.1'}
 
   unified@11.0.5:
@@ -5502,10 +5509,10 @@ packages:
   zod-to-json-schema@3.25.2:
     resolution: {integrity: sha512-O/PgfnpT1xKSDeQYSCfRI5Gy3hPf91mKVDuYLUHZJMiDFptvP41MSnWofm8dnCm0256ZNfZIM7DSzuSMAFnjHA==}
     peerDependencies:
-      zod: ^3.25.28 || ^4
+      zod: 4.6.7
 
-  zod@4.4.3:
-    resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
+  zod@4.6.7:
+    resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
 
   zustand@5.0.14:
     resolution: {integrity: sha512-/8tAspM5LMPr28b3fwLYrtdj77ECpfZviaP75CMTnwO8ISyaE4GDIG/9rDDYq/cH9D2Xw2A2RXglLInmVBQB/g==}
@@ -5532,11 +5539,11 @@ snapshots:
 
   '@adobe/css-tools@4.5.0': {}
 
-  '@anthropic-ai/sdk@0.91.1(zod@4.4.3)':
+  '@anthropic-ai/sdk@0.91.1(zod@4.6.7)':
     dependencies:
       json-schema-to-ts: 3.1.1
     optionalDependencies:
-      zod: 4.4.3
+      zod: 4.6.7
 
   '@asamuzakjp/css-color@5.1.11':
     dependencies:
@@ -5863,9 +5870,9 @@ snapshots:
 
   '@drizzle-team/brocli@0.10.2': {}
 
-  '@earendil-works/pi-agent-core@0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)':
+  '@earendil-works/pi-agent-core@0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)':
     dependencies:
-      '@earendil-works/pi-ai': 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+      '@earendil-works/pi-ai': 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-telemetry': 0.84.1
       diff: 8.0.4
       ignore: 7.0.5
@@ -5879,9 +5886,9 @@ snapshots:
       - ws
       - zod
 
-  '@earendil-works/pi-ai@0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)':
+  '@earendil-works/pi-ai@0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)':
     dependencies:
-      '@anthropic-ai/sdk': 0.91.1(zod@4.4.3)
+      '@anthropic-ai/sdk': 0.91.1(zod@4.6.7)
       '@aws-sdk/client-bedrock-runtime': 3.1048.0
       '@earendil-works/pi-telemetry': 0.84.1
       '@google/genai': 1.52.0(supports-color@10.2.2)
@@ -5890,7 +5897,7 @@ snapshots:
       '@smithy/node-http-handler': 4.7.3
       http-proxy-agent: 7.0.2(supports-color@10.2.2)
       https-proxy-agent: 7.0.6(supports-color@10.2.2)
-      openai: 6.26.0(ws@8.21.0)(zod@4.4.3)
+      openai: 6.26.0(ws@8.21.0)(zod@4.6.7)
       partial-json: 0.1.7
       typebox: 1.3.7
     transitivePeerDependencies:
@@ -5905,10 +5912,10 @@ snapshots:
     dependencies:
       '@earendil-works/pi-protocol': 0.84.1
 
-  '@earendil-works/pi-coding-agent@0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)':
+  '@earendil-works/pi-coding-agent@0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)':
     dependencies:
-      '@earendil-works/pi-agent-core': 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
-      '@earendil-works/pi-ai': 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+      '@earendil-works/pi-agent-core': 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
+      '@earendil-works/pi-ai': 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.6.7)
       '@earendil-works/pi-client': 0.84.1
       '@earendil-works/pi-protocol': 0.84.1
       '@earendil-works/pi-tui': 0.84.1
@@ -5926,7 +5933,7 @@ snapshots:
       proper-lockfile: 4.1.2
       semver: 7.8.0
       typebox: 1.3.7
-      undici: 7.29.1
+      undici: 7.30.1
       yaml: 2.8.3
     optionalDependencies:
       '@mariozechner/clipboard': 0.3.9
@@ -6348,8 +6355,8 @@ snapshots:
     dependencies:
       '@opentelemetry/semantic-conventions': 1.43.0
       ws: 8.21.0
-      zod: 4.4.3
-      zod-to-json-schema: 3.25.2(zod@4.4.3)
+      zod: 4.6.7
+      zod-to-json-schema: 3.25.2(zod@4.6.7)
     optionalDependencies:
       '@opentelemetry/api': 1.9.0
     transitivePeerDependencies:
@@ -7427,10 +7434,10 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
-  body-parser@2.3.0(supports-color@10.2.2):
+  body-parser@2.4.0(supports-color@10.2.2):
     dependencies:
       bytes: 3.1.2
-      content-type: 2.0.0
+      content-type: 2.1.0
       debug: 4.4.3(supports-color@10.2.2)
       http-errors: 2.0.1
       iconv-lite: 0.7.3
@@ -7526,6 +7533,8 @@ snapshots:
   content-type@1.0.5: {}
 
   content-type@2.0.0: {}
+
+  content-type@2.1.0: {}
 
   convert-source-map@2.0.0: {}
 
@@ -7830,7 +7839,7 @@ snapshots:
   express@5.2.1(supports-color@10.2.2):
     dependencies:
       accepts: 2.0.0
-      body-parser: 2.3.0(supports-color@10.2.2)
+      body-parser: 2.4.0(supports-color@10.2.2)
       content-disposition: 1.1.0
       content-type: 1.0.5
       cookie: 0.7.2
@@ -8192,7 +8201,7 @@ snapshots:
       saxes: 6.0.0
       symbol-tree: 3.2.4
       tough-cookie: 6.0.1
-      undici: 7.29.1
+      undici: 7.30.1
       w3c-xmlserializer: 5.0.0
       webidl-conversions: 8.0.1
       whatwg-mimetype: 5.0.0
@@ -8801,7 +8810,7 @@ snapshots:
       semver: 7.8.5
       tar: 7.5.22
       tinyglobby: 0.2.17
-      undici: 7.29.1
+      undici: 7.30.1
       which: 7.0.0
 
   node-pty@1.1.0:
@@ -8836,10 +8845,10 @@ snapshots:
       regex: 6.1.0
       regex-recursion: 6.0.2
 
-  openai@6.26.0(ws@8.21.0)(zod@4.4.3):
+  openai@6.26.0(ws@8.21.0)(zod@4.6.7):
     optionalDependencies:
       ws: 8.21.0
-      zod: 4.4.3
+      zod: 4.6.7
 
   oxfmt@0.57.0:
     dependencies:
@@ -9616,7 +9625,7 @@ snapshots:
 
   undici-types@8.3.0: {}
 
-  undici@7.29.1: {}
+  undici@7.30.1: {}
 
   unified@11.0.5:
     dependencies:
@@ -9811,11 +9820,11 @@ snapshots:
       y18n: 5.0.8
       yargs-parser: 22.0.0
 
-  zod-to-json-schema@3.25.2(zod@4.4.3):
+  zod-to-json-schema@3.25.2(zod@4.6.7):
     dependencies:
-      zod: 4.4.3
+      zod: 4.6.7
 
-  zod@4.4.3: {}
+  zod@4.6.7: {}
 
   zustand@5.0.14(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7)):
     optionalDependencies:
