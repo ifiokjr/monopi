@@ -41,3 +41,8 @@ overrides:
   "source-map-js@<1.2.2": ">=1.2.2"
   "proxy-addr@<2.0.8": ">=2.0.8"
   "tinypool@<2.1.2": ">=2.1.2"
+
+# Keep pnpm-lock.yaml a single YAML document so GitHub's dependency graph can
+# read it for Dependabot alerts. CI still installs the exact version from
+# packageManager via pnpm/action-setup.
+pmOnFail: ignore
