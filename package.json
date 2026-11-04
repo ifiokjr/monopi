@@ -60,6 +60,7 @@
 		"@types/node": "^26.1.0",
 		"@typescript/native-preview": "7.0.0-dev.20260704.1",
 		"@vitest/coverage-v8": "^4.1.12",
+		"node-gyp": "^13.1.0",
 		"oxfmt": "^0.57.0",
 		"oxlint": "^1.72.0",
 		"oxlint-tsgolint": "^0.24.0",
@@ -70,7 +71,7 @@
 	"engines": {
 		"node": ">=22.19.0"
 	},
-	"packageManager": "pnpm@10.33.0",
+	"packageManager": "pnpm@12.16.1",
 	"pi": {
 		"extensions": [
 			"./packages/monopi__extension-answer/index.ts",
