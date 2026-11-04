@@ -60,6 +60,7 @@
 		"@types/node": "^26.1.0",
 		"@typescript/native-preview": "7.0.0-dev.20260704.1",
 		"@vitest/coverage-v8": "^4.1.12",
+		"node-gyp": "^13.1.0",
 		"oxfmt": "^0.57.0",
 		"oxlint": "^1.72.0",
 		"oxlint-tsgolint": "^0.24.0",

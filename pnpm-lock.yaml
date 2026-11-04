@@ -199,13 +199,13 @@ importers:
     devDependencies:
       '@earendil-works/pi-agent-core':
         specifier: 0.84.1
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: 0.84.1
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: 0.84.1
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: 0.84.1
         version: 0.84.1
@@ -224,6 +224,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^4.1.12
         version: 4.1.12(@vitest/browser@4.1.12)(vitest@4.1.12)
+      node-gyp:
+        specifier: ^13.1.0
+        version: 13.1.0
       oxfmt:
         specifier: ^0.57.0
         version: 0.57.0
@@ -253,13 +256,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -355,7 +358,7 @@ importers:
         version: 2.8.6
       express:
         specifier: ^5.2.1
-        version: 5.2.1
+        version: 5.2.1(supports-color@10.2.2)
       jsdom:
         specifier: ^29.1.1
         version: 29.1.1
@@ -401,13 +404,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -422,13 +425,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -440,13 +443,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -524,13 +527,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -562,7 +565,7 @@ importers:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       better-sqlite3:
         specifier: ^12.11.1
         version: 12.11.1
@@ -581,13 +584,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -618,7 +621,7 @@ importers:
     devDependencies:
       '@mdx-js/rollup':
         specifier: ^3.1.1
-        version: 3.1.1(rollup@4.60.2)
+        version: 3.1.1(rollup@4.60.2)(supports-color@10.2.2)
       '@tailwindcss/vite':
         specifier: ^4.3.2
         version: 4.3.2(vite@8.1.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.0)(yaml@2.8.3))
@@ -633,7 +636,7 @@ importers:
         version: 6.0.3(vite@8.1.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.0)(yaml@2.8.3))
       remark-gfm:
         specifier: ^4.0.1
-        version: 4.0.1
+        version: 4.0.1(supports-color@10.2.2)
       tailwindcss:
         specifier: ^4.3.2
         version: 4.3.2
@@ -645,13 +648,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -666,13 +669,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -684,13 +687,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -705,13 +708,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -726,13 +729,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -744,13 +747,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -759,13 +762,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -777,13 +780,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       typebox:
         specifier: ^1.1.24
         version: 1.3.0
@@ -792,25 +795,25 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
 
   packages/monopi__extension-review:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -819,13 +822,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -846,13 +849,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -867,13 +870,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -885,13 +888,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -903,13 +906,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -921,13 +924,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -942,13 +945,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -963,13 +966,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -990,7 +993,7 @@ importers:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -1013,13 +1016,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -1037,13 +1040,13 @@ importers:
         version: 2.12.1
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -1055,13 +1058,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -1073,13 +1076,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -1109,13 +1112,13 @@ importers:
     dependencies:
       '@earendil-works/pi-agent-core':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-tui':
         specifier: '>=0.84.1'
         version: 0.84.1
@@ -1132,7 +1135,7 @@ importers:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@monopi/web-server':
         specifier: 0.6.1
         version: link:../monopi__web-server
@@ -1144,7 +1147,7 @@ importers:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '>=0.84.1'
-        version: 0.84.1(ws@8.21.0)(zod@4.4.3)
+        version: 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@hono/node-server':
         specifier: '>=2.0.10'
         version: 2.1.0(hono@4.13.13)
@@ -1882,6 +1885,10 @@ packages:
     resolution: {integrity: sha512-kQQo4xPUdnvPNXvfaPXBcy+1yFxv1LhjM8vGaUGlq4BOy2wyD4QcXrKDReqcUJbk6Yg5lNffxrbKLKrnB11djw==}
     engines: {node: '>=18'}
     hasBin: true
+
+  '@isaacs/fs-minipass@4.0.1':
+    resolution: {integrity: sha512-wgm9Ehl2jpeqP3zw/7mo3kRHFp5MEDhqAdwy1fTGkHAwnkGOVsgpvQhL8B5n1qlb01jV3n/bI0ZfZp5lWA1k4w==}
+    engines: {node: '>=18.0.0'}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -3349,6 +3356,10 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  abbrev@5.0.0:
+    resolution: {integrity: sha512-/XrFJgzQQQHpti1raDJC6m4ws6aNktmjBlhk8Fdlk7LwCEuDoieEJJY9OFHjfiFJFFRM2tK+Ky/IsfbbmlMu1w==}
+    engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
+
   accepts@2.0.0:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
     engines: {node: '>= 0.6'}
@@ -3522,6 +3533,10 @@ packages:
 
   chownr@1.1.4:
     resolution: {integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==}
+
+  chownr@3.0.0:
+    resolution: {integrity: sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==}
+    engines: {node: '>=18'}
 
   cliui@9.0.1:
     resolution: {integrity: sha512-k7ndgKhwoQveBL+/1tqGJYNz097I7WOvwbmmU2AR5+magtbjPWQTS1C5vzGkBC8Ym8UWRzfKUzUUqFLypY4Q+w==}
@@ -3839,6 +3854,10 @@ packages:
     resolution: {integrity: sha512-zwfzJecQ/Uej6tusMqwAqU/6KL2XaB2VZ2Jg54Je6ahNBGNH6Ek6g3jjNCF0fG9EWQKGZNddNjU5F1ZQn/sBnA==}
     engines: {node: '>=20.19.0'}
 
+  env-paths@2.2.1:
+    resolution: {integrity: sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==}
+    engines: {node: '>=6'}
+
   es-define-property@1.0.1:
     resolution: {integrity: sha512-e3nRfgfUZ4rNGL232gUgX06QNyyez04KdjFrF+LTRoOXmrOgFKDg4BCdsjW8EnT69eqdYGmRpJwiPVYNrCaW3g==}
     engines: {node: '>= 0.4'}
@@ -3922,6 +3941,9 @@ packages:
   expect-type@1.4.0:
     resolution: {integrity: sha512-KfYbmpRm0VbLjEvVa9yGwCi9GI34xvi7A/HXYWQO65CSD2u3MczUJSuwXKFIxlGsgBQizV9q5J9NHj4VG0n+pA==}
     engines: {node: '>=12.0.0'}
+
+  exponential-backoff@3.1.3:
+    resolution: {integrity: sha512-ZgEeZXj30q+I0EN+CbSSpIyPaJ5HVQD18Z1m+u1FXbAeT94mr1zw50q4q6jiiC447Nl/YTcIYSAftiGqetwXCA==}
 
   express@5.2.1:
     resolution: {integrity: sha512-hIS4idWWai69NezIdRt2xFVofaF4j+6INOpJlVOLDO8zXGpUVEVzIYk12UUi2JzjEzWL3IOAxcTubgz9Po0yXw==}
@@ -4173,6 +4195,10 @@ packages:
 
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
+
+  isexe@4.0.0:
+    resolution: {integrity: sha512-FFUtZMpoZ8RqHS3XeXEmHWLA4thH+ZxCv2lOiPIn1Xc7CxrqhWzNSDzD+/chS/zbYezmiwWLdQC09JdQKmthOw==}
+    engines: {node: '>=20'}
 
   istanbul-lib-coverage@3.2.2:
     resolution: {integrity: sha512-O8dpsF+r0WV/8MNRKfnmrtCWhuKjxrq2w+jpzBL5UZKTi2LeVWnWOmWRxFlesJONmc+wLAGvKQZEOanko0LFTg==}
@@ -4540,6 +4566,10 @@ packages:
   minisearch@7.2.0:
     resolution: {integrity: sha512-dqT2XBYUOZOiC5t2HRnwADjhNS2cecp9u+TJRiJ1Qp/f5qjkeT5APcGPjHw+bz89Ms8Jp+cG4AlE+QZ/QnDglg==}
 
+  minizlib@3.1.0:
+    resolution: {integrity: sha512-KZxYo1BUkWD2TVFLr0MQoM8vUUigWD3LlD83a/75BqC+4qE0Hb1Vo5v1FgcfaNXvfXzr+5EhQ6ing/CaBijTlw==}
+    engines: {node: '>= 18'}
+
   mkdirp-classic@0.5.3:
     resolution: {integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==}
 
@@ -4578,12 +4608,22 @@ packages:
     resolution: {integrity: sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
+  node-gyp@13.1.0:
+    resolution: {integrity: sha512-FpNzOLFACKG0oRBYbZ5WOeWD1EqRTIWX90MaRIWTO18lVYPx8fqIjrdS3pihjnCkSmgop6zVGkSqg1vXZLksuw==}
+    engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
+    hasBin: true
+
   node-pty@1.1.0:
     resolution: {integrity: sha512-20JqtutY6JPXTUnL0ij1uad7Qe1baT46lyolh2sSENDd4sTzKZ4nmAFkeAARDKwmlLjPx6XKRlwRUxwjOy+lUg==}
 
   node-releases@2.0.54:
     resolution: {integrity: sha512-YHs7BmmcsdAI5Ozuf8JZo6PT0mv2GIWC9vMfvUC3dp65M8hn7Ux8CPL+2oBI7juNuj9d0ndhTcznq2ODBps9cQ==}
     engines: {node: '>=18'}
+
+  nopt@10.0.1:
+    resolution: {integrity: sha512-df3sBr/6ax9hSGuC3CspvLlbnX8cP5L5nZwXF8cGN8l0zSWR6BvzmQ6jPUKjvo6+/xdpkNvEcucBNUdBeeV13g==}
+    engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
+    hasBin: true
 
   object-assign@4.1.1:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
@@ -4720,6 +4760,10 @@ packages:
   pretty-format@27.5.1:
     resolution: {integrity: sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
+
+  proc-log@7.0.0:
+    resolution: {integrity: sha512-FYgfaA69XZ93zaXLoMNQ+ViDXGGBgR8aLh03txzcFhV+9xOXx7+8DLCULrKKpR9+GsH9ZfHm82aSUPpozX0Ztg==}
+    engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
 
   proper-lockfile@4.1.2:
     resolution: {integrity: sha512-TjNPblN4BwAWMXU8s9AEz4JmQxnD1NNL7bNOY/AKUzyamc379FWASUhc/K1pL2noVb+XmZKLL68cjzLsiOAMaA==}
@@ -5100,6 +5144,10 @@ packages:
     resolution: {integrity: sha512-ujeqbceABgwMZxEJnk2HDY2DlnUZ+9oEcb1KzTVfYHio0UE6dG71n60d8D2I4qNvleWrrXpmjpt7vZeF1LnMZQ==}
     engines: {node: '>=6'}
 
+  tar@7.5.22:
+    resolution: {integrity: sha512-MFO/QzvtAOmJbkhOaCTvbGcFN9L9b+JunIsDwaKljSOdcLMea3NJ1k9Usz/rjdfSXTq4dfzfeS7W4p4YOAAHeA==}
+    engines: {node: '>=18'}
+
   tiny-invariant@1.3.3:
     resolution: {integrity: sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==}
 
@@ -5394,6 +5442,11 @@ packages:
     engines: {node: '>= 8'}
     hasBin: true
 
+  which@7.0.0:
+    resolution: {integrity: sha512-RancgH2dmbLdHl6LRhEqvklWMgl/Hdnun0Y90KhBOLkMefg8Qa7/Zel8Sm+8HEcP6DEjzsWzpkuBQEZok58isA==}
+    engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
+    hasBin: true
+
   why-is-node-running@2.3.0:
     resolution: {integrity: sha512-hUrmaWBdVDcxvYqnyh09zunKzROWjbZTiNy8dBEjkS7ehEDQibXJ7XvlmtbwuTclUiIyN+CyXQD4Vmko8fNm8w==}
     engines: {node: '>=8'}
@@ -5428,6 +5481,10 @@ packages:
   y18n@5.0.8:
     resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}
     engines: {node: '>=10'}
+
+  yallist@5.0.0:
+    resolution: {integrity: sha512-YgvUTfwqyc7UXVMrB+SImsVYSmTS8X/tSrtdNZMImM+n7+QTriRXyXim0mBrTXNeqzVF0KWGgHPeiyViFFrNDw==}
+    engines: {node: '>=18'}
 
   yaml@2.8.3:
     resolution: {integrity: sha512-AvbaCLOO2Otw/lW5bmh9d/WEdcDFdQp2Z2ZUH3pX9U2ihyUY0nvLv7J6TrWowklRGPYbB/IuIMfYgxaCPg5Bpg==}
@@ -5806,9 +5863,9 @@ snapshots:
 
   '@drizzle-team/brocli@0.10.2': {}
 
-  '@earendil-works/pi-agent-core@0.84.1(ws@8.21.0)(zod@4.4.3)':
+  '@earendil-works/pi-agent-core@0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)':
     dependencies:
-      '@earendil-works/pi-ai': 0.84.1(ws@8.21.0)(zod@4.4.3)
+      '@earendil-works/pi-ai': 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-telemetry': 0.84.1
       diff: 8.0.4
       ignore: 7.0.5
@@ -5822,17 +5879,17 @@ snapshots:
       - ws
       - zod
 
-  '@earendil-works/pi-ai@0.84.1(ws@8.21.0)(zod@4.4.3)':
+  '@earendil-works/pi-ai@0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)':
     dependencies:
       '@anthropic-ai/sdk': 0.91.1(zod@4.4.3)
       '@aws-sdk/client-bedrock-runtime': 3.1048.0
       '@earendil-works/pi-telemetry': 0.84.1
-      '@google/genai': 1.52.0
+      '@google/genai': 1.52.0(supports-color@10.2.2)
       '@mistralai/mistralai': 2.2.6(@opentelemetry/api@1.9.0)
       '@opentelemetry/api': 1.9.0
       '@smithy/node-http-handler': 4.7.3
-      http-proxy-agent: 7.0.2
-      https-proxy-agent: 7.0.6
+      http-proxy-agent: 7.0.2(supports-color@10.2.2)
+      https-proxy-agent: 7.0.6(supports-color@10.2.2)
       openai: 6.26.0(ws@8.21.0)(zod@4.4.3)
       partial-json: 0.1.7
       typebox: 1.3.7
@@ -5848,10 +5905,10 @@ snapshots:
     dependencies:
       '@earendil-works/pi-protocol': 0.84.1
 
-  '@earendil-works/pi-coding-agent@0.84.1(ws@8.21.0)(zod@4.4.3)':
+  '@earendil-works/pi-coding-agent@0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)':
     dependencies:
-      '@earendil-works/pi-agent-core': 0.84.1(ws@8.21.0)(zod@4.4.3)
-      '@earendil-works/pi-ai': 0.84.1(ws@8.21.0)(zod@4.4.3)
+      '@earendil-works/pi-agent-core': 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
+      '@earendil-works/pi-ai': 0.84.1(supports-color@10.2.2)(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-client': 0.84.1
       '@earendil-works/pi-protocol': 0.84.1
       '@earendil-works/pi-tui': 0.84.1
@@ -6130,9 +6187,9 @@ snapshots:
       '@ff-labs/fff-bin-win32-x64': 0.9.6
     optional: true
 
-  '@google/genai@1.52.0':
+  '@google/genai@1.52.0(supports-color@10.2.2)':
     dependencies:
-      google-auth-library: 10.9.1
+      google-auth-library: 10.9.1(supports-color@10.2.2)
       p-retry: 4.6.2
       protobufjs: 7.6.5
       ws: 8.21.0
@@ -6179,6 +6236,10 @@ snapshots:
       '@ifi/mdt-linux-x64-musl': 0.7.0
       '@ifi/mdt-win32-arm64-msvc': 0.7.0
       '@ifi/mdt-win32-x64-msvc': 0.7.0
+
+  '@isaacs/fs-minipass@4.0.1':
+    dependencies:
+      minipass: 7.1.3
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
@@ -6243,7 +6304,7 @@ snapshots:
       '@mariozechner/clipboard-win32-x64-msvc': 0.3.9
     optional: true
 
-  '@mdx-js/mdx@3.1.1':
+  '@mdx-js/mdx@3.1.1(supports-color@10.2.2)':
     dependencies:
       '@types/estree': 1.0.9
       '@types/estree-jsx': 1.0.5
@@ -6255,14 +6316,14 @@ snapshots:
       estree-util-is-identifier-name: 3.0.0
       estree-util-scope: 1.0.0
       estree-walker: 3.0.3
-      hast-util-to-jsx-runtime: 2.3.6
+      hast-util-to-jsx-runtime: 2.3.6(supports-color@10.2.2)
       markdown-extensions: 2.0.0
       recma-build-jsx: 1.0.0
       recma-jsx: 1.0.1(acorn@8.17.0)
       recma-stringify: 1.0.0
-      rehype-recma: 1.0.0
-      remark-mdx: 3.1.1
-      remark-parse: 11.0.0
+      rehype-recma: 1.0.0(supports-color@10.2.2)
+      remark-mdx: 3.1.1(supports-color@10.2.2)
+      remark-parse: 11.0.0(supports-color@10.2.2)
       remark-rehype: 11.1.2
       source-map: 0.7.6
       unified: 11.0.5
@@ -6273,9 +6334,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@mdx-js/rollup@3.1.1(rollup@4.60.2)':
+  '@mdx-js/rollup@3.1.1(rollup@4.60.2)(supports-color@10.2.2)':
     dependencies:
-      '@mdx-js/mdx': 3.1.1
+      '@mdx-js/mdx': 3.1.1(supports-color@10.2.2)
       '@rollup/pluginutils': 5.4.0(rollup@4.60.2)
       rollup: 4.60.2
       source-map: 0.7.6
@@ -7279,6 +7340,8 @@ snapshots:
   '@yuuang/ffi-rs-win32-x64-msvc@1.3.2':
     optional: true
 
+  abbrev@5.0.0: {}
+
   accepts@2.0.0:
     dependencies:
       mime-types: 3.0.2
@@ -7364,11 +7427,11 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
-  body-parser@2.3.0:
+  body-parser@2.3.0(supports-color@10.2.2):
     dependencies:
       bytes: 3.1.2
       content-type: 2.0.0
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       http-errors: 2.0.1
       iconv-lite: 0.7.3
       on-finished: 2.4.1
@@ -7434,6 +7497,8 @@ snapshots:
   character-reference-invalid@2.0.1: {}
 
   chownr@1.1.4: {}
+
+  chownr@3.0.0: {}
 
   cliui@9.0.1:
     dependencies:
@@ -7541,9 +7606,11 @@ snapshots:
 
   date-fns@4.4.0: {}
 
-  debug@4.4.3:
+  debug@4.4.3(supports-color@10.2.2):
     dependencies:
       ms: 2.1.3
+    optionalDependencies:
+      supports-color: 10.2.2
 
   decimal.js-light@2.5.1: {}
 
@@ -7622,6 +7689,8 @@ snapshots:
       tapable: 2.3.3
 
   entities@8.0.0: {}
+
+  env-paths@2.2.1: {}
 
   es-define-property@1.0.1: {}
 
@@ -7756,20 +7825,22 @@ snapshots:
 
   expect-type@1.4.0: {}
 
-  express@5.2.1:
+  exponential-backoff@3.1.3: {}
+
+  express@5.2.1(supports-color@10.2.2):
     dependencies:
       accepts: 2.0.0
-      body-parser: 2.3.0
+      body-parser: 2.3.0(supports-color@10.2.2)
       content-disposition: 1.1.0
       content-type: 1.0.5
       cookie: 0.7.2
       cookie-signature: 1.2.2
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       depd: 2.0.0
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
-      finalhandler: 2.1.1
+      finalhandler: 2.1.1(supports-color@10.2.2)
       fresh: 2.0.0
       http-errors: 2.0.1
       merge-descriptors: 2.0.0
@@ -7780,9 +7851,9 @@ snapshots:
       proxy-addr: 2.0.8
       qs: 6.16.1
       range-parser: 1.3.0
-      router: 2.2.0
-      send: 1.2.1
-      serve-static: 2.2.1
+      router: 2.2.0(supports-color@10.2.2)
+      send: 1.2.1(supports-color@10.2.2)
+      serve-static: 2.2.1(supports-color@10.2.2)
       statuses: 2.0.2
       type-is: 2.1.0
       vary: 1.1.2
@@ -7827,9 +7898,9 @@ snapshots:
 
   file-uri-to-path@1.0.0: {}
 
-  finalhandler@2.1.1:
+  finalhandler@2.1.1(supports-color@10.2.2):
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       encodeurl: 2.0.0
       escape-html: 1.0.3
       on-finished: 2.4.1
@@ -7858,17 +7929,17 @@ snapshots:
 
   function-bind@1.1.2: {}
 
-  gaxios@7.3.0:
+  gaxios@7.3.0(supports-color@10.2.2):
     dependencies:
       extend: 3.0.2
-      https-proxy-agent: 7.0.6
+      https-proxy-agent: 7.0.6(supports-color@10.2.2)
       node-fetch: 3.3.2
     transitivePeerDependencies:
       - supports-color
 
-  gcp-metadata@8.1.2:
+  gcp-metadata@8.1.2(supports-color@10.2.2):
     dependencies:
-      gaxios: 7.3.0
+      gaxios: 7.3.0(supports-color@10.2.2)
       google-logging-utils: 1.1.3
       json-bigint: 1.0.0
     transitivePeerDependencies:
@@ -7912,12 +7983,12 @@ snapshots:
       minipass: 7.1.3
       path-scurry: 2.0.2
 
-  google-auth-library@10.9.1:
+  google-auth-library@10.9.1(supports-color@10.2.2):
     dependencies:
       base64-js: 1.5.1
       ecdsa-sig-formatter: 1.0.11
-      gaxios: 7.3.0
-      gcp-metadata: 8.1.2
+      gaxios: 7.3.0(supports-color@10.2.2)
+      gcp-metadata: 8.1.2(supports-color@10.2.2)
       google-logging-utils: 1.1.3
       jws: 4.0.1
     transitivePeerDependencies:
@@ -7939,7 +8010,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hast-util-to-estree@3.1.3:
+  hast-util-to-estree@3.1.3(supports-color@10.2.2):
     dependencies:
       '@types/estree': 1.0.9
       '@types/estree-jsx': 1.0.5
@@ -7949,9 +8020,9 @@ snapshots:
       estree-util-attach-comments: 3.0.0
       estree-util-is-identifier-name: 3.0.0
       hast-util-whitespace: 3.0.0
-      mdast-util-mdx-expression: 2.0.1
-      mdast-util-mdx-jsx: 3.2.0
-      mdast-util-mdxjs-esm: 2.0.1
+      mdast-util-mdx-expression: 2.0.1(supports-color@10.2.2)
+      mdast-util-mdx-jsx: 3.2.0(supports-color@10.2.2)
+      mdast-util-mdxjs-esm: 2.0.1(supports-color@10.2.2)
       property-information: 7.2.0
       space-separated-tokens: 2.0.2
       style-to-js: 1.1.21
@@ -7974,7 +8045,7 @@ snapshots:
       stringify-entities: 4.0.4
       zwitch: 2.0.4
 
-  hast-util-to-jsx-runtime@2.3.6:
+  hast-util-to-jsx-runtime@2.3.6(supports-color@10.2.2):
     dependencies:
       '@types/estree': 1.0.9
       '@types/hast': 3.0.4
@@ -7983,9 +8054,9 @@ snapshots:
       devlop: 1.1.0
       estree-util-is-identifier-name: 3.0.0
       hast-util-whitespace: 3.0.0
-      mdast-util-mdx-expression: 2.0.1
-      mdast-util-mdx-jsx: 3.2.0
-      mdast-util-mdxjs-esm: 2.0.1
+      mdast-util-mdx-expression: 2.0.1(supports-color@10.2.2)
+      mdast-util-mdx-jsx: 3.2.0(supports-color@10.2.2)
+      mdast-util-mdxjs-esm: 2.0.1(supports-color@10.2.2)
       property-information: 7.2.0
       space-separated-tokens: 2.0.2
       style-to-js: 1.1.21
@@ -8026,17 +8097,17 @@ snapshots:
       statuses: 2.0.2
       toidentifier: 1.0.1
 
-  http-proxy-agent@7.0.2:
+  http-proxy-agent@7.0.2(supports-color@10.2.2):
     dependencies:
       agent-base: 7.1.4
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
-  https-proxy-agent@7.0.6:
+  https-proxy-agent@7.0.6(supports-color@10.2.2):
     dependencies:
       agent-base: 7.1.4
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -8082,6 +8153,8 @@ snapshots:
   is-promise@4.0.0: {}
 
   isexe@2.0.0: {}
+
+  isexe@4.0.0: {}
 
   istanbul-lib-coverage@3.2.2: {}
 
@@ -8242,14 +8315,14 @@ snapshots:
       unist-util-is: 6.0.1
       unist-util-visit-parents: 6.0.2
 
-  mdast-util-from-markdown@2.0.3:
+  mdast-util-from-markdown@2.0.3(supports-color@10.2.2):
     dependencies:
       '@types/mdast': 4.0.4
       '@types/unist': 3.0.3
       decode-named-character-reference: 1.3.0
       devlop: 1.1.0
       mdast-util-to-string: 4.0.0
-      micromark: 4.0.2
+      micromark: 4.0.2(supports-color@10.2.2)
       micromark-util-decode-numeric-character-reference: 2.0.2
       micromark-util-decode-string: 2.0.1
       micromark-util-normalize-identifier: 2.0.1
@@ -8267,67 +8340,67 @@ snapshots:
       mdast-util-find-and-replace: 3.0.2
       micromark-util-character: 2.1.1
 
-  mdast-util-gfm-footnote@2.1.0:
+  mdast-util-gfm-footnote@2.1.0(supports-color@10.2.2):
     dependencies:
       '@types/mdast': 4.0.4
       devlop: 1.1.0
-      mdast-util-from-markdown: 2.0.3
+      mdast-util-from-markdown: 2.0.3(supports-color@10.2.2)
       mdast-util-to-markdown: 2.1.2
       micromark-util-normalize-identifier: 2.0.1
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-gfm-strikethrough@2.0.0:
+  mdast-util-gfm-strikethrough@2.0.0(supports-color@10.2.2):
     dependencies:
       '@types/mdast': 4.0.4
-      mdast-util-from-markdown: 2.0.3
+      mdast-util-from-markdown: 2.0.3(supports-color@10.2.2)
       mdast-util-to-markdown: 2.1.2
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-gfm-table@2.0.0:
+  mdast-util-gfm-table@2.0.0(supports-color@10.2.2):
     dependencies:
       '@types/mdast': 4.0.4
       devlop: 1.1.0
       markdown-table: 3.0.4
-      mdast-util-from-markdown: 2.0.3
+      mdast-util-from-markdown: 2.0.3(supports-color@10.2.2)
       mdast-util-to-markdown: 2.1.2
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-gfm-task-list-item@2.0.0:
+  mdast-util-gfm-task-list-item@2.0.0(supports-color@10.2.2):
     dependencies:
       '@types/mdast': 4.0.4
       devlop: 1.1.0
-      mdast-util-from-markdown: 2.0.3
+      mdast-util-from-markdown: 2.0.3(supports-color@10.2.2)
       mdast-util-to-markdown: 2.1.2
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-gfm@3.1.0:
+  mdast-util-gfm@3.1.0(supports-color@10.2.2):
     dependencies:
-      mdast-util-from-markdown: 2.0.3
+      mdast-util-from-markdown: 2.0.3(supports-color@10.2.2)
       mdast-util-gfm-autolink-literal: 2.0.1
-      mdast-util-gfm-footnote: 2.1.0
-      mdast-util-gfm-strikethrough: 2.0.0
-      mdast-util-gfm-table: 2.0.0
-      mdast-util-gfm-task-list-item: 2.0.0
+      mdast-util-gfm-footnote: 2.1.0(supports-color@10.2.2)
+      mdast-util-gfm-strikethrough: 2.0.0(supports-color@10.2.2)
+      mdast-util-gfm-table: 2.0.0(supports-color@10.2.2)
+      mdast-util-gfm-task-list-item: 2.0.0(supports-color@10.2.2)
       mdast-util-to-markdown: 2.1.2
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-mdx-expression@2.0.1:
+  mdast-util-mdx-expression@2.0.1(supports-color@10.2.2):
     dependencies:
       '@types/estree-jsx': 1.0.5
       '@types/hast': 3.0.4
       '@types/mdast': 4.0.4
       devlop: 1.1.0
-      mdast-util-from-markdown: 2.0.3
+      mdast-util-from-markdown: 2.0.3(supports-color@10.2.2)
       mdast-util-to-markdown: 2.1.2
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-mdx-jsx@3.2.0:
+  mdast-util-mdx-jsx@3.2.0(supports-color@10.2.2):
     dependencies:
       '@types/estree-jsx': 1.0.5
       '@types/hast': 3.0.4
@@ -8335,7 +8408,7 @@ snapshots:
       '@types/unist': 3.0.3
       ccount: 2.0.1
       devlop: 1.1.0
-      mdast-util-from-markdown: 2.0.3
+      mdast-util-from-markdown: 2.0.3(supports-color@10.2.2)
       mdast-util-to-markdown: 2.1.2
       parse-entities: 4.0.2
       stringify-entities: 4.0.4
@@ -8344,23 +8417,23 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-mdx@3.0.0:
+  mdast-util-mdx@3.0.0(supports-color@10.2.2):
     dependencies:
-      mdast-util-from-markdown: 2.0.3
-      mdast-util-mdx-expression: 2.0.1
-      mdast-util-mdx-jsx: 3.2.0
-      mdast-util-mdxjs-esm: 2.0.1
+      mdast-util-from-markdown: 2.0.3(supports-color@10.2.2)
+      mdast-util-mdx-expression: 2.0.1(supports-color@10.2.2)
+      mdast-util-mdx-jsx: 3.2.0(supports-color@10.2.2)
+      mdast-util-mdxjs-esm: 2.0.1(supports-color@10.2.2)
       mdast-util-to-markdown: 2.1.2
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-mdxjs-esm@2.0.1:
+  mdast-util-mdxjs-esm@2.0.1(supports-color@10.2.2):
     dependencies:
       '@types/estree-jsx': 1.0.5
       '@types/hast': 3.0.4
       '@types/mdast': 4.0.4
       devlop: 1.1.0
-      mdast-util-from-markdown: 2.0.3
+      mdast-util-from-markdown: 2.0.3(supports-color@10.2.2)
       mdast-util-to-markdown: 2.1.2
     transitivePeerDependencies:
       - supports-color
@@ -8646,10 +8719,10 @@ snapshots:
 
   micromark-util-types@2.0.2: {}
 
-  micromark@4.0.2:
+  micromark@4.0.2(supports-color@10.2.2):
     dependencies:
       '@types/debug': 4.1.13
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       decode-named-character-reference: 1.3.0
       devlop: 1.1.0
       micromark-core-commonmark: 2.0.3
@@ -8688,6 +8761,10 @@ snapshots:
 
   minisearch@7.2.0: {}
 
+  minizlib@3.1.0:
+    dependencies:
+      minipass: 7.1.3
+
   mkdirp-classic@0.5.3: {}
 
   mrmime@2.0.1: {}
@@ -8714,11 +8791,28 @@ snapshots:
       fetch-blob: 3.2.0
       formdata-polyfill: 4.0.10
 
+  node-gyp@13.1.0:
+    dependencies:
+      env-paths: 2.2.1
+      exponential-backoff: 3.1.3
+      graceful-fs: 4.2.11
+      nopt: 10.0.1
+      proc-log: 7.0.0
+      semver: 7.8.5
+      tar: 7.5.22
+      tinyglobby: 0.2.17
+      undici: 7.29.1
+      which: 7.0.0
+
   node-pty@1.1.0:
     dependencies:
       node-addon-api: 7.1.1
 
   node-releases@2.0.54: {}
+
+  nopt@10.0.1:
+    dependencies:
+      abbrev: 5.0.0
 
   object-assign@4.1.1: {}
 
@@ -8879,6 +8973,8 @@ snapshots:
       ansi-regex: 5.0.1
       ansi-styles: 5.2.0
       react-is: 17.0.2
+
+  proc-log@7.0.0: {}
 
   proper-lockfile@4.1.2:
     dependencies:
@@ -9043,36 +9139,36 @@ snapshots:
     dependencies:
       regex-utilities: 2.3.0
 
-  rehype-recma@1.0.0:
+  rehype-recma@1.0.0(supports-color@10.2.2):
     dependencies:
       '@types/estree': 1.0.9
       '@types/hast': 3.0.4
-      hast-util-to-estree: 3.1.3
+      hast-util-to-estree: 3.1.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
-  remark-gfm@4.0.1:
+  remark-gfm@4.0.1(supports-color@10.2.2):
     dependencies:
       '@types/mdast': 4.0.4
-      mdast-util-gfm: 3.1.0
+      mdast-util-gfm: 3.1.0(supports-color@10.2.2)
       micromark-extension-gfm: 3.0.0
-      remark-parse: 11.0.0
+      remark-parse: 11.0.0(supports-color@10.2.2)
       remark-stringify: 11.0.0
       unified: 11.0.5
     transitivePeerDependencies:
       - supports-color
 
-  remark-mdx@3.1.1:
+  remark-mdx@3.1.1(supports-color@10.2.2):
     dependencies:
-      mdast-util-mdx: 3.0.0
+      mdast-util-mdx: 3.0.0(supports-color@10.2.2)
       micromark-extension-mdxjs: 3.0.0
     transitivePeerDependencies:
       - supports-color
 
-  remark-parse@11.0.0:
+  remark-parse@11.0.0(supports-color@10.2.2):
     dependencies:
       '@types/mdast': 4.0.4
-      mdast-util-from-markdown: 2.0.3
+      mdast-util-from-markdown: 2.0.3(supports-color@10.2.2)
       micromark-util-types: 2.0.2
       unified: 11.0.5
     transitivePeerDependencies:
@@ -9213,9 +9309,9 @@ snapshots:
       '@rollup/rollup-win32-x64-msvc': 4.60.2
       fsevents: 2.3.3
 
-  router@2.2.0:
+  router@2.2.0(supports-color@10.2.2):
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       depd: 2.0.0
       is-promise: 4.0.0
       parseurl: 1.3.3
@@ -9241,9 +9337,9 @@ snapshots:
 
   semver@7.8.5: {}
 
-  send@1.2.1:
+  send@1.2.1(supports-color@10.2.2):
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
@@ -9257,12 +9353,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  serve-static@2.2.1:
+  serve-static@2.2.1(supports-color@10.2.2):
     dependencies:
       encodeurl: 2.0.0
       escape-html: 1.0.3
       parseurl: 1.3.3
-      send: 1.2.1
+      send: 1.2.1(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -9415,6 +9511,14 @@ snapshots:
       fs-constants: 1.0.0
       inherits: 2.0.4
       readable-stream: 3.6.2
+
+  tar@7.5.22:
+    dependencies:
+      '@isaacs/fs-minipass': 4.0.1
+      chownr: 3.0.0
+      minipass: 7.1.3
+      minizlib: 3.1.0
+      yallist: 5.0.0
 
   tiny-invariant@1.3.3: {}
 
@@ -9667,6 +9771,10 @@ snapshots:
     dependencies:
       isexe: 2.0.0
 
+  which@7.0.0:
+    dependencies:
+      isexe: 4.0.0
+
   why-is-node-running@2.3.0:
     dependencies:
       siginfo: 2.0.0
@@ -9687,6 +9795,8 @@ snapshots:
   xmlchars@2.2.0: {}
 
   y18n@5.0.8: {}
+
+  yallist@5.0.0: {}
 
   yaml@2.8.3: {}
 

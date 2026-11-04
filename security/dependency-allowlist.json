@@ -67,6 +67,7 @@
 		"ws",
 		"zustand",
 		"@xterm/headless",
+		"node-gyp",
 		"node-pty",
 		"qrcode-terminal",
 		"@shikijs/cli",
