@@ -53,9 +53,9 @@ importers:
       '@earendil-works/pi-tui':
         specifier: 0.84.1
         version: 0.84.1
-      '@ifi/mdt':
-        specifier: ^0.7.0
-        version: 0.7.0
+      '@m-d-t/cli':
+        specifier: ^0.9.8
+        version: 0.9.8
       '@monochange/cli':
         specifier: ^0.21.0
         version: 0.21.0
@@ -1681,55 +1681,6 @@ packages:
     peerDependencies:
       hono: '>=4.13.7'
 
-  '@ifi/mdt-darwin-arm64@0.7.0':
-    resolution: {integrity: sha512-nwPEb0XULP2X1bY5Aw8tPVsWwvXgbljoBcpCzKyw2lDnelM/MvVk3r4p8E7VemlUVHRdcM/RNo7L+Wzsfx05hg==}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@ifi/mdt-darwin-x64@0.7.0':
-    resolution: {integrity: sha512-AbAbil8WdeuuugbTUfejAxpLcSo2p4fdpBSVMkekepcbl7Tnt2U7hp3VxqhQcFWeCAFMWLCNSXr6QuIhj8z7zQ==}
-    cpu: [x64]
-    os: [darwin]
-
-  '@ifi/mdt-linux-arm64-gnu@0.7.0':
-    resolution: {integrity: sha512-Ezuhm8Za4LjM5SOvIvcl1PqwX64spYxOLyC/cFyIIIqHd7sQ4R7Fuc6EoM3Jd0XRpMk0bILk68pj3NOApM78+A==}
-    cpu: [arm64]
-    os: [linux]
-    libc: [glibc]
-
-  '@ifi/mdt-linux-arm64-musl@0.7.0':
-    resolution: {integrity: sha512-sCoeMMw/S1QLN5h1XJ/ZuQ5OlBh8wPTH/5EspGXDTo0lIWINTe8EC+k/RE5oK6r9m7T/HhvAXgjNzR+dMfGYgg==}
-    cpu: [arm64]
-    os: [linux]
-    libc: [musl]
-
-  '@ifi/mdt-linux-x64-gnu@0.7.0':
-    resolution: {integrity: sha512-ZURi0UMPjPr94g5r4fjc/N7DWwm3w2W8mp8xzNNElrauEDY0JMLPf6XkxruE/U9hVNOIwX/nxeaVN/jqUSFSSg==}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
-
-  '@ifi/mdt-linux-x64-musl@0.7.0':
-    resolution: {integrity: sha512-oA8lPkFKNTtuI3NFGmo0aAHZOSzXz88pCYeQwiHqe7KF0ErUm7dsVLRtGYc5qspzrfkkNX6CBD4XVOUVsRXc2w==}
-    cpu: [x64]
-    os: [linux]
-    libc: [musl]
-
-  '@ifi/mdt-win32-arm64-msvc@0.7.0':
-    resolution: {integrity: sha512-NzHy7jwTQ3QjpjR234aJc6vqS36VmXoJyqrJNtRL8CFcH8r3uzi5UqhckH1Lqa3Pi62sSDuN1qy6ArKsHp63MQ==}
-    cpu: [arm64]
-    os: [win32]
-
-  '@ifi/mdt-win32-x64-msvc@0.7.0':
-    resolution: {integrity: sha512-EHBSqCmHaZU4mteoVacx5o1AVgCtTjXpmmfoMxhs19+yQvGxDVyR+3y/4vTf8MvQS2SnkQNmfMQSqZRDvbnZDg==}
-    cpu: [x64]
-    os: [win32]
-
-  '@ifi/mdt@0.7.0':
-    resolution: {integrity: sha512-kQQo4xPUdnvPNXvfaPXBcy+1yFxv1LhjM8vGaUGlq4BOy2wyD4QcXrKDReqcUJbk6Yg5lNffxrbKLKrnB11djw==}
-    engines: {node: '>=18'}
-    hasBin: true
-
   '@isaacs/fs-minipass@4.0.1':
     resolution: {integrity: sha512-wgm9Ehl2jpeqP3zw/7mo3kRHFp5MEDhqAdwy1fTGkHAwnkGOVsgpvQhL8B5n1qlb01jV3n/bI0ZfZp5lWA1k4w==}
     engines: {node: '>=18.0.0'}
@@ -1749,6 +1700,55 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@m-d-t/cli-darwin-arm64@0.9.8':
+    resolution: {integrity: sha512-BUpRvt8JZfbSdsgakbJUD4A//9u0eQrVT0/UNYzrkP3UO7lfCirNL30+kx2m0nhh51XmsOp6U70MX20N6dlzoQ==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@m-d-t/cli-darwin-x64@0.9.8':
+    resolution: {integrity: sha512-0k0MqEmTs1TROsHmbMnR7S4zKU05MSBTtuwOaeeVKAXLi0d1ufbCEkpSLLfaCHTVqZGeQessd7S2Sv2mhpsnLA==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@m-d-t/cli-linux-arm64-gnu@0.9.8':
+    resolution: {integrity: sha512-e6csESDmXAUvTv0skp4zYIJ/OdrjfzKiCZPNisaGEsCdyltSLDriwbSBo+8yEBA6Igo31uNbwt27Z/jMo6VuKQ==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@m-d-t/cli-linux-arm64-musl@0.9.8':
+    resolution: {integrity: sha512-xVGJI+wRGCc2ZuS1EXDsy0kQ5fZ8TpiKPdHsIzXuFJ9mJLI257pUtL/fjF8ZVLQSiytmMC0BRvEDMow1LtZKkQ==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@m-d-t/cli-linux-x64-gnu@0.9.8':
+    resolution: {integrity: sha512-S/45M2mVlPFkbKx2zxDl4UF0j0QriM/0SkZxJAFmPYekebYPuB6MDEoqs7s6a7h2x9ZeCMJmddHrea2A0STktg==}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@m-d-t/cli-linux-x64-musl@0.9.8':
+    resolution: {integrity: sha512-jH5DzUXRXe/frRs7SVjoyKlmLsWGYaVtTWjOq14QO4wkqzSnsJlo17bRuuRFsrVPYd6kYcNsd2szkEu+UZnMoQ==}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@m-d-t/cli-win32-arm64-msvc@0.9.8':
+    resolution: {integrity: sha512-dPpKO/CPRcKRCCxIY8x1BeTGQutevlk7V/vD5SFdjawYoQ2mCA/Pv3qQ71gpWBAlMRz3ZwQCB3oz/fZNupxjlQ==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@m-d-t/cli-win32-x64-msvc@0.9.8':
+    resolution: {integrity: sha512-/6ZytOZTKH0083OZ97p61EtORA7qDSrJds11DAnD4oKhwArpe/CPfcroFedWtEK6UcsDuhptjZnuFbihmKA94A==}
+    cpu: [x64]
+    os: [win32]
+
+  '@m-d-t/cli@0.9.8':
+    resolution: {integrity: sha512-ZkCSitzoVVoxUKfO3K9WNAeE+qaW3zY25CwlhrGP+d3S1y3TO5KBcc1u6oxmDEEESwOgmZqx51kEDrG8tlcCdA==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   '@mariozechner/clipboard-darwin-arm64@0.3.9':
     resolution: {integrity: sha512-BfgV7vCEWZwJwZJw03r6bP5+tf0iI/ANuQYCxi9RNn7FrWB3yzGuMKCrNLRl6V761vXRdL8+OqZ0wd4TqlsNOQ==}
@@ -6051,41 +6051,6 @@ snapshots:
     dependencies:
       hono: 4.13.13
 
-  '@ifi/mdt-darwin-arm64@0.7.0':
-    optional: true
-
-  '@ifi/mdt-darwin-x64@0.7.0':
-    optional: true
-
-  '@ifi/mdt-linux-arm64-gnu@0.7.0':
-    optional: true
-
-  '@ifi/mdt-linux-arm64-musl@0.7.0':
-    optional: true
-
-  '@ifi/mdt-linux-x64-gnu@0.7.0':
-    optional: true
-
-  '@ifi/mdt-linux-x64-musl@0.7.0':
-    optional: true
-
-  '@ifi/mdt-win32-arm64-msvc@0.7.0':
-    optional: true
-
-  '@ifi/mdt-win32-x64-msvc@0.7.0':
-    optional: true
-
-  '@ifi/mdt@0.7.0':
-    optionalDependencies:
-      '@ifi/mdt-darwin-arm64': 0.7.0
-      '@ifi/mdt-darwin-x64': 0.7.0
-      '@ifi/mdt-linux-arm64-gnu': 0.7.0
-      '@ifi/mdt-linux-arm64-musl': 0.7.0
-      '@ifi/mdt-linux-x64-gnu': 0.7.0
-      '@ifi/mdt-linux-x64-musl': 0.7.0
-      '@ifi/mdt-win32-arm64-msvc': 0.7.0
-      '@ifi/mdt-win32-x64-msvc': 0.7.0
-
   '@isaacs/fs-minipass@4.0.1':
     dependencies:
       minipass: 7.1.3
@@ -6108,6 +6073,41 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@m-d-t/cli-darwin-arm64@0.9.8':
+    optional: true
+
+  '@m-d-t/cli-darwin-x64@0.9.8':
+    optional: true
+
+  '@m-d-t/cli-linux-arm64-gnu@0.9.8':
+    optional: true
+
+  '@m-d-t/cli-linux-arm64-musl@0.9.8':
+    optional: true
+
+  '@m-d-t/cli-linux-x64-gnu@0.9.8':
+    optional: true
+
+  '@m-d-t/cli-linux-x64-musl@0.9.8':
+    optional: true
+
+  '@m-d-t/cli-win32-arm64-msvc@0.9.8':
+    optional: true
+
+  '@m-d-t/cli-win32-x64-msvc@0.9.8':
+    optional: true
+
+  '@m-d-t/cli@0.9.8':
+    optionalDependencies:
+      '@m-d-t/cli-darwin-arm64': 0.9.8
+      '@m-d-t/cli-darwin-x64': 0.9.8
+      '@m-d-t/cli-linux-arm64-gnu': 0.9.8
+      '@m-d-t/cli-linux-arm64-musl': 0.9.8
+      '@m-d-t/cli-linux-x64-gnu': 0.9.8
+      '@m-d-t/cli-linux-x64-musl': 0.9.8
+      '@m-d-t/cli-win32-arm64-msvc': 0.9.8
+      '@m-d-t/cli-win32-x64-msvc': 0.9.8
 
   '@mariozechner/clipboard-darwin-arm64@0.3.9':
     optional: true

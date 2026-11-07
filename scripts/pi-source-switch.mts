@@ -3,9 +3,7 @@
 /**
 <!-- {=repoPiLocalSwitcherOverviewDocs} -->
 
-The `pnpm pi:local` workflow points a real pi install at this checkout instead of the published npm
-packages. It is the normal local development loop for testing unpublished monopi changes in a real
-interactive pi session.
+The `pnpm pi:local` workflow points a real pi install at this checkout instead of the published npm packages. It is the normal local development loop for testing unpublished monopi changes in a real interactive pi session.
 
 <!-- {/repoPiLocalSwitcherOverviewDocs} -->
 
@@ -37,17 +35,13 @@ Managed local switching covers these packages:
 - `@monopi/provider-catalog`
 - `@monopi/provider-cursor`
 - `@monopi/provider-ollama`
-- `@monopi/bash-live-view`
-- `@monopi/pretty`
-- `@monopi/remote-tailscale`
 - `@monopi/analytics-extension`
 
 <!-- {/repoPiLocalManagedPackagesDocs} -->
 
 <!-- {=repoPiSourceSwitchRestartDocs} -->
 
-After switching package sources, fully restart `pi`. Do not rely on `/reload` for source switches,
-because it can keep previously loaded package modules alive.
+After switching package sources, fully restart `pi`. Do not rely on `/reload` for source switches, because it can keep previously loaded package modules alive.
 
 <!-- {/repoPiSourceSwitchRestartDocs} -->
 */

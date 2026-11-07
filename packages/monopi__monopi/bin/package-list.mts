@@ -3,17 +3,6 @@
 
 Default runtime/content packages installed by `npx @monopi/monopi`:
 
-- `@monopi/extension-answer`
-- `@monopi/extension-watchdog`
-- `@monopi/extension-btw`
-- `@monopi/extension-compact-header`
-- `@monopi/extension-custom-footer`
-- `@monopi/extension-external-editor`
-- `@monopi/extension-git-guard`
-- `@monopi/extension-scheduler`
-- `@monopi/extension-shell-format`
-- `@monopi/extension-tool-metadata`
-- `@monopi/extension-usage-tracker`
 - `@monopi/extension-worktree`
 - `@monopi/background-tasks`
 - `@monopi/diagnostics`
@@ -52,10 +41,10 @@ Opt-in packages that stay separate from the default installer bundle:
 - `@monopi/provider-catalog`
 - `@monopi/provider-cursor`
 - `@monopi/provider-ollama`
+- `@monopi/analytics-extension`
+- `@monopi/remote-tailscale`
 - `@monopi/bash-live-view`
 - `@monopi/pretty`
-- `@monopi/remote-tailscale`
-- `@monopi/analytics-extension`
 
 <!-- {/repoExperimentalPackagesDocs} -->
 */

@@ -1,2 +1,8 @@
 [exclude]
-patterns = ["**/dist/**", "**/.mdt/**"]
+patterns = [
+	"**/dist/**",
+	"**/.mdt/**",
+	# This script documents the tag syntax with literal examples inside comments,
+	# which mdt otherwise reads as unclosed consumer tags.
+	"packages/monopi__docs/scripts/sync-content.mjs",
+]
