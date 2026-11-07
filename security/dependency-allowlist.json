@@ -7,7 +7,7 @@
 		"@biomejs/biome",
 		"@bufbuild/protobuf",
 		"@clack/prompts",
-		"@ifi/mdt",
+		"@m-d-t/cli",
 		"@hono/node-server",
 		"@earendil-works/pi-agent-core",
 		"@earendil-works/pi-ai",

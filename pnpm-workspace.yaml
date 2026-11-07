@@ -46,3 +46,13 @@ overrides:
 # read it for Dependabot alerts. CI still installs the exact version from
 # packageManager via pnpm/action-setup.
 pmOnFail: ignore
+minimumReleaseAgeExclude:
+  - "@m-d-t/cli-darwin-arm64@0.9.8"
+  - "@m-d-t/cli-darwin-x64@0.9.8"
+  - "@m-d-t/cli-linux-arm64-gnu@0.9.8"
+  - "@m-d-t/cli-linux-arm64-musl@0.9.8"
+  - "@m-d-t/cli-linux-x64-gnu@0.9.8"
+  - "@m-d-t/cli-linux-x64-musl@0.9.8"
+  - "@m-d-t/cli-win32-arm64-msvc@0.9.8"
+  - "@m-d-t/cli-win32-x64-msvc@0.9.8"
+  - "@m-d-t/cli@0.9.8"
