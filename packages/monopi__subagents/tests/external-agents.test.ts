@@ -292,13 +292,27 @@ describe("resolveExternalAgent", () => {
 			expect(result2).toBeDefined();
 			expect(result2!.config.systemPrompt).toBe("cached agent");
 
-			// Modify the file
+			// Modify the file. The rewrite can land on the same mtime.
 			fs.writeFileSync(path.join(agentsDir, "cached.md"), "updated agent");
 
-			// Should detect mtime change and re-resolve
 			const result3 = resolveExternalAgent("cached", tmpDir);
 			expect(result3).toBeDefined();
 			expect(result3!.config.systemPrompt).toBe("updated agent");
+		});
+
+		it("re-resolves equal-length edits that share a filesystem timestamp", () => {
+			const agentsDir = path.join(tmpDir, ".pi", "agents");
+			fs.mkdirSync(agentsDir, { recursive: true });
+			const agentPath = path.join(agentsDir, "cached.md");
+			fs.writeFileSync(agentPath, "aaaa agent");
+
+			const result1 = resolveExternalAgent("cached", tmpDir);
+			expect(result1?.config.systemPrompt).toBe("aaaa agent");
+
+			fs.writeFileSync(agentPath, "bbbb agent");
+
+			const result2 = resolveExternalAgent("cached", tmpDir);
+			expect(result2?.config.systemPrompt).toBe("bbbb agent");
 		});
 	});
 
