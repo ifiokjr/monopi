@@ -1,0 +1,4 @@
+{
+	"name": "monopi",
+	"install": "bash .cursor/install.sh"
+}
