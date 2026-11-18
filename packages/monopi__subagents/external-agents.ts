@@ -11,6 +11,7 @@
  * Also checks .pi/agents/<name>.md for pi-specific project agents.
  */
 
+import { createHash } from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
@@ -26,6 +27,8 @@ import { createDynamicAgent } from "./dynamic-agent.js";
 interface CacheEntry {
 	result: ExternalAgentResult | null;
 	mtime: number;
+	size: number;
+	contentHash: string;
 	filePath: string;
 }
 
@@ -53,10 +56,19 @@ function cacheKey(name: string, cwd: string): string {
 	return `${name}:${path.resolve(cwd)}`;
 }
 
+function hashFileContents(filePath: string): string {
+	return createHash("sha256").update(fs.readFileSync(filePath)).digest("hex");
+}
+
 function isCacheValid(entry: CacheEntry): boolean {
 	try {
 		const stats = fs.statSync(entry.filePath);
-		return stats.mtimeMs === entry.mtime;
+		// Some filesystems keep the same mtime for back-to-back writes, so size and
+		// contents have to participate or an edited agent stays cached.
+		if (stats.mtimeMs !== entry.mtime || stats.size !== entry.size) {
+			return false;
+		}
+		return hashFileContents(entry.filePath) === entry.contentHash;
 	} catch {
 		return false;
 	}
@@ -76,8 +88,13 @@ function getCachedResult(name: string, cwd: string): ExternalAgentResult | null 
 function setCachedResult(name: string, cwd: string, result: ExternalAgentResult | null, filePath: string) {
 	const key = cacheKey(name, cwd);
 	let mtime = 0;
+	let size = 0;
+	let contentHash = "";
 	try {
-		mtime = fs.statSync(filePath).mtimeMs;
+		const stats = fs.statSync(filePath);
+		mtime = stats.mtimeMs;
+		size = stats.size;
+		contentHash = hashFileContents(filePath);
 	} catch {}
 
 	// Evict oldest if at capacity
@@ -86,7 +103,7 @@ function setCachedResult(name: string, cwd: string, result: ExternalAgentResult 
 		if (firstKey !== undefined) resolutionCache.delete(firstKey);
 	}
 
-	resolutionCache.set(key, { result, mtime, filePath });
+	resolutionCache.set(key, { result, mtime, size, contentHash, filePath });
 }
 
 /**
