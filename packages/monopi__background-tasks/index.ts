@@ -1052,6 +1052,7 @@ export default function backgroundTasksExtension(pi: ExtensionAPI): void {
 					cwd: params.cwd,
 					reactToOutput: params.reactToOutput,
 					notifyPattern: params.notifyPattern,
+					expiresAt: params.expiresAt,
 				});
 
 				return makeToolResult(
@@ -1105,6 +1106,15 @@ export default function backgroundTasksExtension(pi: ExtensionAPI): void {
 				Type.String({
 					description: "Optional substring or /regex/flags gate for output wakeups.",
 				}),
+			),
+			expiresAt: Type.Optional(
+				Type.Union(
+					[
+						Type.Number({ description: "Absolute expiry time in Unix milliseconds. Defaults to 10 minutes." }),
+						Type.Null(),
+					],
+					{ description: "Pass null to disable expiry for a long-running task." },
+				),
 			),
 		}),
 	});

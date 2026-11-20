@@ -44,6 +44,11 @@ vi.mock("typebox", () => ({
 			type: "number",
 			...options,
 		}),
+		Null: () => ({ type: "null" }),
+		Union: (types: unknown[], options?: Record<string, unknown>) => ({
+			anyOf: types,
+			...options,
+		}),
 		Boolean: (options?: Record<string, unknown>) => ({
 			type: "boolean",
 			...options,
@@ -129,6 +134,35 @@ describe("background tasks extension", () => {
 		expect(harness.messages).toHaveLength(2);
 		expect(harness.messages[1].details.eventType).toBe("exit");
 		expect(harness.messages[1].details.task.status).toBe("completed");
+	});
+
+	it("honors explicit indefinite and absolute expiries without changing the default", async () => {
+		const harness = createExtensionHarness();
+		backgroundTasksExtension(harness.pi as never);
+		const tool = harness.tools.get("bg_task");
+
+		for (let i = 0; i < 3; i++) {
+			spawnMock.mockReturnValueOnce(createMockChild());
+		}
+		const defaultTask = await tool.execute("default", { action: "spawn", command: "echo default" });
+		expect(defaultTask.details.task.expiresAt).toBe(Date.now() + 600_000);
+
+		const indefinite = await tool.execute("indefinite", {
+			action: "spawn",
+			command: "wait for run",
+			expiresAt: null,
+			reactToOutput: false,
+		});
+		expect(indefinite.details.task.expiresAt).toBeNull();
+		expect(indefinite.content[0].text).toContain("Expiry: none");
+
+		const expiry = Date.now() + 1_800_000;
+		const absolute = await tool.execute("absolute", {
+			action: "spawn",
+			command: "echo later",
+			expiresAt: expiry,
+		});
+		expect(absolute.details.task.expiresAt).toBe(expiry);
 	});
 
 	it("opens the dashboard from the slash command and shortcut, and supports /bg watch --follow", async () => {
