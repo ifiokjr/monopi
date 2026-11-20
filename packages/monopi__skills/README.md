@@ -4,11 +4,12 @@
 
 ## Included skills
 
-| Skill          | What it does                                              |
-| -------------- | --------------------------------------------------------- |
-| `btw` (`/qq`)  | Run side conversations without interrupting main work.    |
-| `debug-helper` | Analyze errors, logs, crashes, and performance issues.    |
-| `nushell`      | Nushell syntax reference for commands and shell snippets. |
+| Skill          | What it does                                                             |
+| -------------- | ------------------------------------------------------------------------ |
+| `agent-qa`     | Natural-language web/mobile testing and recorded evidence with vostride. |
+| `btw` (`/qq`)  | Run side conversations without interrupting main work.                   |
+| `debug-helper` | Analyze errors, logs, crashes, and performance issues.                   |
+| `nushell`      | Nushell syntax reference for commands and shell snippets.                |
 
 ## Installation
 
@@ -30,6 +31,7 @@ pi install npm:@monopi/skills
 
 ```text
 skills/
+├── agent-qa/SKILL.md
 ├── btw/SKILL.md
 ├── debug-helper/SKILL.md
 └── nushell/SKILL.md

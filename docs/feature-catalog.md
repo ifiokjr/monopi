@@ -410,10 +410,11 @@ Purpose:
 
 ## `@monopi/skills`
 
-The skills pack currently ships 3 maintained skills.
+The skills pack currently ships 4 maintained skills.
 
 | Skill          | What it is for                                                                    |
 | -------------- | --------------------------------------------------------------------------------- |
+| `agent-qa`     | Run agent-qa web/mobile tests and review recorded evidence and memidex knowledge  |
 | `btw` (`/qq`)  | Use the `/btw` or `/qq` side-conversation workflow without interrupting main work |
 | `debug-helper` | Analyze errors, logs, crashes, and performance issues                             |
 | `nushell`      | Nushell syntax reference for shell commands                                       |

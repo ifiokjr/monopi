@@ -111,7 +111,7 @@ This is a monorepo. Install everything at once with `npx @monopi/monopi`, or pic
 | [`@monopi/provider-catalog`](./packages/monopi__provider-catalog)       | Experimental OpenCode-backed provider catalog                              | `pi install npm:@monopi/provider-catalog`    |
 | [`@monopi/provider-cursor`](./packages/monopi__provider-cursor)         | Experimental Cursor OAuth provider                                         | `pi install npm:@monopi/provider-cursor`     |
 | [`@monopi/provider-ollama`](./packages/monopi__provider-ollama)         | Experimental Ollama local + cloud provider                                 | `pi install npm:@monopi/provider-ollama`     |
-| [`@monopi/skills`](./packages/monopi__skills)                           | 3 maintained skill packs                                                   | `pi install npm:@monopi/skills`              |
+| [`@monopi/skills`](./packages/monopi__skills)                           | 4 maintained skill packs                                                   | `pi install npm:@monopi/skills`              |
 | [`@monopi/agents`](./packages/monopi__agents)                           | 4 AGENTS.md templates                                                      | (used by CLI/templates)                      |
 | [`@monopi/shared-qna`](./packages/monopi__shared-qna)                   | Shared Q&A TUI helpers                                                     | (library, not installed directly)            |
 | [`@monopi/web-client`](./packages/monopi__web-client)                   | Platform-agnostic remote session client library                            | `pnpm add @monopi/web-client`                |
@@ -422,11 +422,12 @@ Anthropic · OpenAI · Google Gemini · Groq · OpenRouter · xAI · Mistral
 
 ## Skills
 
-| Skill          | What it does                                          |
-| -------------- | ----------------------------------------------------- |
-| `btw` (`/qq`)  | Run side conversations without interrupting main work |
-| `debug-helper` | Error analysis, log interpretation, and profiling     |
-| `nushell`      | Nushell syntax reference for shell commands           |
+| Skill          | What it does                                                          |
+| -------------- | --------------------------------------------------------------------- |
+| `agent-qa`     | Natural-language web/mobile tests and recorded evidence with vostride |
+| `btw` (`/qq`)  | Run side conversations without interrupting main work                 |
+| `debug-helper` | Error analysis, log interpretation, and profiling                     |
+| `nushell`      | Nushell syntax reference for shell commands                           |
 
 ## Themes
 
